@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第 0.5 章 · 证明操作系统：一套程序 + 八件工具 —— 数学A速成讲义</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+<div class="wrap">
+
+<div class="bookbar">
+  <span><a href="index.html">← 返回首页</a></span>
+  <span>卷零 · 起点</span>
+</div>
+
+<div class="chapter-kicker">CHAPTER 0.5 · 卷零</div>
+<h1>证明操作系统：一套程序 + 八件工具</h1>
+
+<div class="exam box" data-tag="这一页是什么">
+  <p>这是全书的<strong>操作系统</strong>。后面每一章的例题拆解，都是本页程序的一次运行——你会看到它出现 30 次以上，直到它变成你自己的反射。</p>
+  <p><strong>先建立一个信念</strong>：数学证明不靠灵感。证明 = <strong>固定程序</strong>（搭骨架）+ <strong>工具箱</strong>（装关节）+ <strong>翻译</strong>（语言，第 1 章起每章练）。所谓"想不到"，几乎都是程序没走完；所谓"灵感"，只是熟练之后被压缩看不见的程序。</p>
+  <p><strong>读法</strong>：现在通读一遍，建立框架；学完数分第 3 章回来再读一遍，你会发现每条都见过活的。</p>
+</div>
+
+<h2>§1 主程序：五步</h2>
+
+<div class="net box" data-tag="每道题按这个顺序过">
+  <p><strong>第 1 步 · 翻译</strong>：题面 → 符号 → 目标式。"要证的到底是什么？"写成一行符号。</p>
+  <p><strong>第 2 步 · 拆目标</strong>：看结论的<strong>最外层逻辑结构</strong>，它<strong>机械地</strong>决定证明骨架（§2 总表）。这一步不产生任何内容，只决定"这篇证明长几条腿"。</p>
+  <p><strong>第 3 步 · 盘点库存</strong>：把每个已知条件展开成"它能产出什么"的清单（§3）。条件不是用来看的，是用来取货的。</p>
+  <p><strong>第 4 步 · 会师</strong>：从目标<strong>倒推</strong>充分条件链（"要证 A，只需证 B，只需证 C"），从库存<strong>正推</strong>，让两条链在中间碰上。碰不上，再回工具箱找关节（§4）。</p>
+  <p><strong>第 5 步 · 定型</strong>：把会师后的链条<strong>正着</strong>写进卷面，每步标注依据；<strong>倒推过程全部删除</strong>。</p>
+</div>
+
+<div class="warn box" data-tag="为什么卷面读起来像魔术">
+  <p>因为第 4 步是倒着走的，第 5 步又把它正过来、并且把倒推痕迹删了。所以教科书上的证明总是"取 $n&gt;\frac1\varepsilon$（为什么？别问）"——不是作者不想说，是文体不允许。<strong>你训练时要练的就是被删掉的第 4 步</strong>，考试时才轮得到第 5 步帮你拿分。</p>
+</div>
+
+<h2>§2 拆目标总表：结论的形态决定证明的骨架</h2>
+
+<p>这张表是全程序的核心。它不需要聪明，只需要你<strong>先看结论再动笔</strong>。</p>
+
+<div class="symbol box" data-tag="拆目标总表">
+  <table>
+    <tr><th>结论的形态</th><th>卷面开局（骨架）</th><th>备注</th></tr>
+    <tr><td>$\forall x\in D,\ P(x)$</td><td>"任取 $x\in D$……" 最后证 $P(x)$</td><td>$x$ 不许选特定的，全程一般化处理</td></tr>
+    <tr><td>$\exists x\in D,\ P(x)$</td><td>"取 $x=\cdots$（构造），验证 $P(x)$"</td><td>构造靠<strong>倒推</strong>（工具一）；$x$ 可以依赖它<strong>前面</strong>的 $\forall$ 量</td></tr>
+    <tr><td>$P\Rightarrow Q$</td><td>"假设 $P$ 成立……证 $Q$"</td><td>或等价地证逆否 $\neg Q\Rightarrow\neg P$</td></tr>
+    <tr><td>$P\land Q$（两条都要）</td><td>分两段，各证一半</td><td>漏一半 = 漏一半分</td></tr>
+    <tr><td>$P\lor Q$</td><td>假设 $\neg P$，证 $Q$</td><td>"或"很难直接证，转成"非此即彼"</td></tr>
+    <tr><td>存在且唯一</td><td>先 $\exists$，再"任取两个证相等"</td><td>两步缺一不可（第 1 章变式 3 见过）</td></tr>
+    <tr><td>不存在 / 不可能 / 任意都不</td><td><strong>反证</strong>：假设存在，推出矛盾</td><td>否定句首选反证（工具四）</td></tr>
+    <tr><td>$A=B$（数）</td><td>拆 $A\le B$ 与 $A\ge B$（两头夹）</td><td>或证 $A-B=0$；不等式世界的基本功</td></tr>
+    <tr><td>$A=B$（集合）</td><td>互相包含：$A\subseteq B$ 且 $B\subseteq A$</td><td></td></tr>
+    <tr><td>$f=g$（函数/映射）</td><td>$\forall x$ 证 $f(x)=g(x)$</td><td>回到 $\forall$ 型</td></tr>
+    <tr><td>$x_n\to L$（极限）</td><td>"任取 $\varepsilon>0$……" 回到 $\forall\exists$ 链</td><td>第 2 章主场</td></tr>
+  </table>
+  <p><strong>量词顺序通则（最重要的元规则）</strong>：在 $\forall a\ \exists b$ 的链里，$b$ <strong>必须允许依赖</strong> $a$。所以"取一个固定的 $b$ 对付所有 $a$"注定失败——这不是技巧，是规则。反过来，"$\exists b\ \forall a$"型的结论（一致连续、一致收敛）正是在说"<strong>存在不依赖 $a$ 的统一 $b$</strong>"——它就是难在这里。第 2 章的一致连续、第 8 章的一致收敛，全部靠这条通则理解。</p>
+</div>
+
+<h2>§3 盘点库存：条件是用来取货的</h2>
+
+<p>每个已知条件都对应一张"产出清单"。证明卡壳时，第一检查项永远是：<strong>哪个条件还没用？它的哪条产出还没取？</strong>全书会逐章充实这些清单，先见识格式：</p>
+
+<div class="trans box" data-tag="库存清单（持续补货）">
+  <table>
+    <tr><th>条件</th><th>能产出什么（取货窗口）</th></tr>
+    <tr><td>$f$ 在 $[a,b]$ 连续</td><td>有界；取到最大最小值；一致连续；介值/零点；可积</td></tr>
+    <tr><td>$f$ 可导，$f'&gt;0$</td><td>$f$ 严格递增；$f(a)=f(b)$ 时 Rolle 定理待命</td></tr>
+    <tr><td>$M=\sup E$</td><td>罩得住 $\forall x\in E, x\le M$；压不下 $\forall\varepsilon\ \exists x&gt;M-\varepsilon$（还能生成序列 $x_n\to M$）</td></tr>
+    <tr><td>$\{x_n\}$ 单调有界</td><td>极限存在，且就是 $\sup$ / $\inf$（§5 演示）</td></tr>
+    <tr><td>$A$ 实对称正定</td><td>特征值全正；顺序主子式全正；$x^TAx&gt;0$（卷二补全）</td></tr>
+  </table>
+</div>
+
+<h2>§4 八件工具（碰不上时来这里找关节）</h2>
+
+<div class="recog box" data-tag="工具箱">
+  <table>
+    <tr><th>工具</th><th>干什么</th><th>什么时候伸手</th></tr>
+    <tr><td><strong>一 · 倒推法</strong></td><td>草稿纸上从目标不等式解出参数（$n$、$N$、$\delta$、辅助量），卷面正着写</td><td>$\exists$ 型构造；证明里一切"取 $n&gt;\cdots$""取 $\delta=\cdots$"</td></tr>
+    <tr><td><strong>二 · 误差预算</strong></td><td>多个误差合计 $&lt;\varepsilon$：均分 $\frac{\varepsilon}{2},\frac{\varepsilon}{3}$，或 $2^{-k}\varepsilon$ 求和</td><td>几项相加要同时逼近时</td></tr>
+    <tr><td><strong>三 · 特殊化侦察</strong></td><td>用具体小例验证猜想、找结构；或找反例推翻错误猜想</td><td>动笔证之前；怀疑结论有误时</td></tr>
+    <tr><td><strong>四 · 量词否定</strong></td><td>反证的机械操作：$\forall\leftrightarrow\exists$ 互换，结论取反</td><td>结论是否定句；正面链条走不通时</td></tr>
+    <tr><td><strong>五 · 生成序列</strong></td><td>取 $\varepsilon=\frac1n$ 把确界/极限条件变成一列点</td><td>手里有 sup / inf / 极限条件，需要"具体的点"时</td></tr>
+    <tr><td><strong>六 · 划归</strong></td><td>化为已证结论或标准定理，写"由 …… 定理"</td><td>目标和某个定理长得只差一层皮时</td></tr>
+    <tr><td><strong>七 · 极端原理</strong></td><td>取最大元/最小元/第一个反例，从极端对象推矛盾</td><td>反证法中需要"挑一个代表"时</td></tr>
+    <tr><td><strong>八 · 辅助函数</strong></td><td>要证 $F'(\xi)=0$ 形态：倒推 $F$ 该长什么样（积分因子等）</td><td>中值定理类题（数分第 5 章系统讲）</td></tr>
+  </table>
+</div>
+
+<h2>§5 会师演示：程序现场生成一个真定理</h2>
+
+<p>来看一次完整运行。命题：<strong>若 $\{x_n\}$ 单调递增且有上界，则 $\{x_n\}$ 收敛，且极限 $=\sup\{x_n\}$。</strong>（这条就是单调有界定理的一半，第 3 章的主角——我们现在用程序把它<strong>生产</strong>出来。）</p>
+
+<div class="mind" data-tag="按总纲五步运行">
+  <p><span class="stage">【1 · 翻译】</span>要证：$\exists L,\ \lim x_n=L$。$L$ 是谁还不知道——这是 $\exists$ 型，先猜构造对象。</p>
+  <p><span class="stage">【2 · 拆目标】</span>猜 $L=\sup\{x_n\}=:M$（有上界，确界公理保证 $M$ 存在——候选对象白送）。于是目标变成极限定义：$\forall\varepsilon>0,\ \exists N,\ \forall n\ge N:\ |x_n-M|&lt;\varepsilon$。$\forall\exists\forall$ 链：$N$ 用构造（可依赖 $\varepsilon$），内层 $\forall n$ 用任取。</p>
+  <p><span class="stage">【3 · 盘点】</span>库存三条：<br>
+  ① 罩得住：$\forall n,\ x_n\le M$；<br>
+  ② 压不下：$\forall\varepsilon>0,\ \exists N,\ x_N&gt;M-\varepsilon$；<br>
+  ③ 单调递增：$n\ge N\Rightarrow x_n\ge x_N$。</p>
+  <p><span class="stage">【4 · 会师】</span>目标 $|x_n-M|&lt;\varepsilon$ 拆成 $M-\varepsilon&lt;x_n\le M$。<br>
+  右半：由①白送。<br>
+  左半倒推：$x_n&gt;M-\varepsilon \Longleftarrow x_n\ge x_N&gt;M-\varepsilon \Longleftarrow$ ③传递 ②。<br>
+  <strong>链条闭合，而且每一环都是库存里取出来的货，没有一个动作靠"想"。</strong></p>
+  <p><span class="stage">【5 · 定型】</span>见下方卷面。</p>
+</div>
+
+<div class="calc box" data-tag="卷面书写（约 8 分）">
+  <p><strong>证明</strong>　$\{x_n\}$ 有上界，由确界存在定理，设 $M=\sup\{x_n\}$。<span class="step-score">（2 分）</span></p>
+  <p>任取 $\varepsilon>0$。由上确界定义，存在 $N$ 使 $x_N&gt;M-\varepsilon$。<span class="step-score">（4 分）</span></p>
+  <p>对任意 $n\ge N$，由单调递增性，$x_n\ge x_N&gt;M-\varepsilon$；又由 $M$ 是上界，$x_n\le M$。故
+  $$M-\varepsilon&lt;x_n\le M,\quad\text{即 }|x_n-M|&lt;\varepsilon.$$<span class="step-score">（7 分）</span></p>
+  <p>由极限定义，$\lim x_n=M=\sup\{x_n\}$。$\square$<span class="step-score">（8 分）</span></p>
+</div>
+
+<p>回头数一数：罩得住、压不下、单调性——三个条件各用一次，一个不多一个不少。<strong>证明写到这个程度，你自己都会感到它是"必然"的</strong>，这就是程序跑通的体感。以后每章例题的拆解框都按【拆目标】【盘点】【会师】【定型】四段写，标注用的是哪件工具。</p>
+
+<div class="net box" data-tag="本页使用约定">
+  <p>① 例题拆解里出现的「工具一~八」指 §4 的工具箱；② "拆目标总表"建议抄在纸上贴在桌前，做题前十道题强制查表，十道之后它就长在你手上了；③ 卡壳第一检查项：哪个条件还没用？</p>
+</div>
+
+<div class="chapnav">
+  <span><a href="ch00.html">← 第 0 章 · 摸底诊断</a></span>
+  <span><a href="index.html">首页</a></span>
+  <span><a href="ch01.html">第 1 章 · 天花板定理 →</a></span>
+</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高代第 6 章 · Cayley–Hamilton 与最小多项式：一台天天发工资的魔术 —— 数学A速成讲义</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+<div class="wrap">
+
+<div class="bookbar">
+  <span><a href="index.html">← 返回首页</a></span>
+  <span>卷二 · 高等代数 · 第 6 章</span>
+</div>
+
+<div class="chapter-kicker">CHAPTER 6 · 高等代数</div>
+<h1>Cayley–Hamilton 与最小多项式：一台天天发工资的魔术</h1>
+
+<div class="exam box" data-tag="本章导览">
+  <p><strong>这一章在整张卷子上的位置</strong>：特征多项式 $\chi_A$ 与最小多项式 $m_A$ 很少在题面上留名，却是高代大题的<strong>隐形主轴</strong>。第 15 届题四（15 分）整道题就是"猜零化关系 $A^3=\frac{n^2}{4}A$ → 排除因子锁定 $m_A=x^3-\frac{n^2}{4}x$ → 定特征值 → 算行列式"这条流水线，官方 15 分里约 13 分踩在本章动作上；第 15 届题三（20 分）必要性一上来就是友矩阵（官方 2–8 分点），18 分点用的是"零化 $\alpha_i$ 的最低次多项式整除 $p(x)$"；第 11 届题三（15 分）则把特征多项式的系数性质（实系数）当作整题主角。粗估本章动作值 <strong>5–13 分的步骤分</strong>，而且是第 7 章 Jordan 标准形的直接地基。</p>
+  <p><strong>学完你能</strong>：① 默写 Cayley–Hamilton 定理，并一眼识破"$\det(AI-A)=\det O=0$"式伪证（说清它错在哪一类错误）；② 用 $\chi_A(A)=O$ 把 $A^{-1}$ 写成 $A$ 的多项式、把 $A^{100}$ 降成不超过 $n-1$ 次的式子；③ 按"算 $A^2$ 猜关系 + 排除因子法"的流程求最小多项式，并用"$m_A$ 无重根 $\iff$ 可对角化"一句话判对角化；④ 写出给定多项式的友矩阵，说出它 $\chi=m=p$ 的原因，以及它在循环基下的来历（第 15 届题三）。</p>
+  <p><strong>前置</strong>：卷二第 5 章<a href="ch15.html">特征值再认识</a>的特征值与特征向量语言（用你线代课的同等内容即可——会算 $\operatorname{tr}A$、$\det A$、$\chi_A(\lambda)$，知道"可对角化"的含义）；多项式带余除法（高中）；第 2 章直和的基本语言（<a href="ch12.html">ch12</a>）。</p>
+</div>
+
+<h2>§1 开场谜题：矩阵吞下自己的出生证明</h2>
+
+<div class="hook box" data-tag="开场谜题">
+  <p>每个方阵 $A$ 一出生就带着一张"出生证明"——它的特征多项式 $\chi_A(\lambda)=\det(\lambda I-A)$。比如
+  $$A=\begin{pmatrix}1&2\\3&4\end{pmatrix},\qquad \chi_A(\lambda)=\lambda^2-5\lambda-2.$$</p>
+  <p>现在做一个看似无聊的动作：<strong>把 $A$ 自己代入它自己的出生证明</strong>，算算 $\chi_A(A)=A^2-5A-2I$。矩阵代入多项式是合法的（$A^2$ 就是 $A\cdot A$，常数项 $-2$ 配 $-2I$），算一下：
+  $$A^2=\begin{pmatrix}7&10\\15&22\end{pmatrix},\qquad 5A+2I=\begin{pmatrix}7&10\\15&22\end{pmatrix}.$$
+  两者一模一样——$\chi_A(A)=O$，<strong>零矩阵</strong>。</p>
+  <p>换个矩阵再试，还是零。第一次见的人都觉得这是魔术。而且你一定想这样"证"它：$\chi_A(\lambda)=\det(\lambda I-A)$，把 $\lambda=A$ 代进去，得 $\det(AI-A)=\det O=0$。证毕？<strong>不，这是伪证</strong>——而且它错得很有教益，§3 会把它完整拆开：错不在某一步计算，而在这个动作<strong>根本没有定义</strong>（先剧透两层：$\det(\lambda I-A)$ 是"先拼矩阵、后取行列式"，$\lambda$ 的槽在 $\det$ <strong>内部</strong>，行列式取完之后已经没有任何槽可以往里代 $A$；何况 $\chi_A(A)$ 是个矩阵，$\det(\cdots)$ 是个数，$0\ne O$）。</p>
+  <p>那这个魔术到底为什么成立？更重要的是——<strong>它天天在发工资</strong>：</p>
+  <ul>
+    <li>由 $A^2-5A-2I=O$ 得 $A(A-5I)=2I$，于是 $A^{-1}=\dfrac{A-5I}{2}$——<strong>求逆变成多项式四则运算</strong>，伴随矩阵那一页纸的公式当场失业；</li>
+    <li>同一条关系反复用：$A^2=5A+2I \Rightarrow A^3=27A+10I \Rightarrow \cdots \Rightarrow A^{100}=aA+bI$——<strong>任意大的幂都塌成一次式</strong>；</li>
+    <li>第 15 届题四（15 分）里，官方解答的核心就是发现 $A^3=\frac{n^2}{4}A$ 这个零化关系——它一出现，$A$ 的特征值只剩 $0,\pm\frac n2$ 三种可能，$|E+A^{2023}|$ 应声塌成 $1-\left(\frac n2\right)^{4046}$。</li>
+  </ul>
+  <p>本章主角有两件：<strong>Cayley–Hamilton 定理</strong>（每个方阵都满足自己的特征多项式——魔术的真身），与<strong>最小多项式 $m_A$</strong>（零化 $A$ 的"最低剂量"，判对角化、定特征值的真正抓手）。魔术怎么证、工资怎么领，往下走。</p>
+</div>
+
+<h2>§2 先看见它：无限幂次塔，塌进一间 $n$ 维房</h2>
+
+<div class="vision box" data-tag="直觉与图像">
+  <p>全体 $2\times2$ 矩阵组成 $4$ 维空间；单看 $A$ 的幂 $I,A,A^2,A^3,\dots$——一座无限高的塔。Cayley–Hamilton 说：从 $A^2$ 起，每一层都能"折回"塔底的房间 $\operatorname{span}\{I,A\}$。$n\times n$ 时同理：房间是 $\operatorname{span}\{I,A,\dots,A^{n-1}\}$，至多 $n$ 维，$A^n$ 及以上全部折回。<strong>$A$ 的全部幂（连同 $A^{-1}$）都住在同一间 $n$ 维房里</strong>——这就是 CH 的图像，也是"降次"二字的本义。</p>
+</div>
+
+<figure>
+<svg viewBox="0 0 720 262" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="幂次塔塌进 n 维房间：A²=5A+2I 把 A 的所有幂折回 span{I,A}">
+  <defs>
+    <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+  <!-- 标题 -->
+  <text x="60" y="34" font-size="13.5" fill="#2b2620" font-weight="bold">塔无限高，房间只 n 维</text>
+  <text x="60" y="54" font-size="11.5" fill="#5c554b">CH：从 A² 起，每一层都折回塔底这间房</text>
+  <!-- 房间 -->
+  <rect x="55" y="150" width="215" height="88" rx="8" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="162" y="140" font-size="12.5" fill="#1d4ed8" text-anchor="middle" font-weight="bold">房间 span{I, A}（2×2：≤ 2 维）</text>
+  <rect x="80" y="176" width="38" height="32" rx="4" fill="#ffffff" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="99" y="197" font-size="14" fill="#1d4ed8" text-anchor="middle">I</text>
+  <rect x="134" y="176" width="38" height="32" rx="4" fill="#ffffff" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="153" y="197" font-size="14" fill="#1d4ed8" text-anchor="middle">A</text>
+  <rect x="188" y="176" width="56" height="32" rx="4" fill="#ffffff" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="216" y="197" font-size="13" fill="#1d4ed8" text-anchor="middle">A⁻¹</text>
+  <text x="162" y="227" font-size="10.5" fill="#1d4ed8" text-anchor="middle">A⁻¹ = (A−5I)/2 也住在这间房</text>
+  <!-- 幂次塔 -->
+  <text x="527" y="14" font-size="12" fill="#7a4a12" text-anchor="middle">⋮ 无限高</text>
+  <rect x="440" y="22" width="175" height="34" rx="4" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5"/>
+  <text x="527" y="44" font-size="12" fill="#7a4a12" text-anchor="middle">A⁵ = 779A + 290I</text>
+  <rect x="440" y="72" width="175" height="34" rx="4" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5"/>
+  <text x="527" y="94" font-size="12" fill="#7a4a12" text-anchor="middle">A⁴ = 145A + 54I</text>
+  <rect x="440" y="122" width="175" height="34" rx="4" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5"/>
+  <text x="527" y="144" font-size="12" fill="#7a4a12" text-anchor="middle">A³ = 27A + 10I</text>
+  <rect x="440" y="172" width="175" height="34" rx="4" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="527" y="194" font-size="12" fill="#7a4a12" text-anchor="middle" font-weight="bold">A² = 5A + 2I（折返定律）</text>
+  <!-- 折返箭头 -->
+  <path d="M 440,189 C 380,186 330,175 274,168" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <path d="M 440,139 C 375,137 325,150 274,162" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <path d="M 440,89 C 370,90 320,130 276,156" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <path d="M 440,39 C 360,45 310,110 278,152" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+</svg>
+<figcaption>以 $A=\begin{pmatrix}1&2\\3&4\end{pmatrix}$ 为例：折返定律 $A^2=5A+2I$ 把无限高的幂次塔全部折回 $\operatorname{span}\{I,A\}$；连 $A^{-1}=\frac{A-5I}{2}$ 也是房客。</figcaption>
+</figure>
+
+<p>读图读两层：① 折返定律从哪来——$A^2=5A+2I$ 正是 $\chi_A(A)=O$ 移项，系数 $5,-2$ 就是 $\chi_A$ 的系数（迹与行列式）；② 一旦有一层折回，<strong>上面所有层跟着塌</strong>：$A^3=A\cdot A^2=A(5A+2I)=5A^2+2A=5(5A+2I)+2A=27A+10I$，归纳上去每一层都是 $I,A$ 的组合。塔无限，房间有限——这就是为什么矩阵的"函数"（逆、幂、指数）最终都是多项式算术。</p>
+
+<h2>§3 精确定义：从代入规则到最小多项式</h2>
+
+<h3>3.1 矩阵多项式：把多项式这台机器搬到矩阵世界</h3>
+
+<div class="def">
+  <p class="def-title">定义（矩阵多项式 $p(A)$）</p>
+  <p>设 $p(x)=c_kx^k+c_{k-1}x^{k-1}+\cdots+c_1x+c_0\in F[x]$，$A\in M_n(F)$。定义
+  $$p(A)\;\overset{\mathrm{def}}{=}\;c_kA^k+c_{k-1}A^{k-1}+\cdots+c_1A+c_0I\;\in M_n(F).$$</p>
+  <p>运算规则（代入保持运算）：对任意 $p,q\in F[x]$，
+  $$(p+q)(A)=p(A)+q(A),\qquad (pq)(A)=p(A)\,q(A).$$</p>
+</div>
+
+<div class="symbol box" data-tag="逐符号朗读">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$c_kA^k+\cdots+c_1A+c_0I$</td><td>"$x$ 的槽全部换成 $A$，常数项 $c_0$ 配 $c_0$ 倍单位阵"</td><td>常数项的槽位在矩阵世界是 $I$——少了这个 $I$，连 $p(x)=1$ 都代不进去；矩阵和数更不能直接相加</td></tr>
+    <tr><td>$(pq)(A)=p(A)q(A)$</td><td>"先乘多项式再代入 = 先各自代入再乘矩阵"</td><td>保证矩阵多项式的加减乘与普通多项式是<strong>同一套算术</strong>：因式分解可以直接搬进矩阵世界（两边系数都是 $\sum_{i+j=m}c_id_j$，对照即等）</td></tr>
+    <tr><td>$p(A)q(A)=q(A)p(A)$</td><td>"同一个 $A$ 的两个多项式，永远可交换"</td><td>上一条的推论（数的 $pq=qp$）。<strong>第 15 届题四</strong>把 $x^3-\frac{n^2}{4}x=x\bigl(x-\frac n2\bigr)\bigl(x+\frac n2\bigr)$ 代入 $A$ 后随意换因子顺序，靠的就是它；注意：两个<strong>不同</strong>矩阵的多项式一般不可交换</td></tr>
+  </table>
+</div>
+
+<h3>3.2 零化多项式与 Cayley–Hamilton 定理</h3>
+
+<div class="def">
+  <p class="def-title">定义（零化多项式）</p>
+  <p>设 $A\in M_n(F)$。若非零多项式 $f(x)\in F[x]$ 满足 $f(A)=O$，称 $f$ <strong>零化</strong> $A$（$f$ 是 $A$ 的一张"停机密码"）。</p>
+  <p>零化多项式<strong>一定存在</strong>：$M_n(F)$ 是 $n^2$ 维空间，$n^2+1$ 个矩阵 $I,A,A^2,\dots,A^{n^2}$ 必线性相关——那个非平凡线性组合就是一张次数 $\le n^2$ 的零化多项式。</p>
+</div>
+
+<p>次数 $\le n^2$ 只是粗估计。真正的定理把次数直接压到 $n$，而且把那张零化多项式<strong>点名</strong>了：</p>
+
+<div class="def">
+  <p class="def-title">定理（Cayley–Hamilton，本章 C 位）</p>
+  <p>设 $A\in M_n(F)$，$\chi_A(\lambda)=\det(\lambda I-A)=\lambda^n+c_{n-1}\lambda^{n-1}+\cdots+c_1\lambda+c_0$ 为 $A$ 的特征多项式（其中 $c_{n-1}=-\operatorname{tr}A$，$c_0=(-1)^n\det A$）。则
+  $$\chi_A(A)=A^n+c_{n-1}A^{n-1}+\cdots+c_1A+c_0I=O.$$</p>
+  <p>一句话：<strong>每个方阵都满足自己的特征多项式</strong>。</p>
+</div>
+
+<div class="calc box" data-tag="2×2 直接验证（完整计算，一步不跳）">
+  <p>设 $A=\begin{pmatrix}a&b\\c&d\end{pmatrix}$，则 $\chi_A(\lambda)=\lambda^2-(a+d)\lambda+(ad-bc)$。算：
+  $$A^2=\begin{pmatrix}a^2+bc&b(a+d)\\c(a+d)&bc+d^2\end{pmatrix},\qquad (a+d)A=\begin{pmatrix}a(a+d)&b(a+d)\\c(a+d)&d(a+d)\end{pmatrix}.$$
+  相减：
+  $$A^2-(a+d)A=\begin{pmatrix}bc-ad&0\\0&bc-ad\end{pmatrix}=-(ad-bc)I,$$
+  即 $A^2-(a+d)A+(ad-bc)I=O$，正是 $\chi_A(A)=O$。$\square$</p>
+  <p class="aside">记住这个 $2\times2$ 形态：<strong>$A^2=(\operatorname{tr}A)A-(\det A)I$</strong>——考场上的"降次发动机"，例 1 全靠它。</p>
+</div>
+
+<div class="warn box" data-tag="伪证警告：det(AI−A)=det O=0 错在哪">
+  <p>"证明"：$\chi_A(\lambda)=\det(\lambda I-A)$，代入 $\lambda=A$ 得 $\chi_A(A)=\det(AI-A)=\det O=0$。证毕？<strong>错，而且错在类型上</strong>：</p>
+  <ul>
+    <li><strong>代入顺序非法</strong>：$\det(\lambda I-A)$ 的意思是"先把数 $\lambda$ 填进矩阵元的槽，拼出矩阵 $\lambda I-A$，<strong>再</strong>取行列式"。$\lambda$ 的槽在 $\det$ 的<strong>内部</strong>；行列式一旦取完，式子里已经没有任何槽可以往里面塞矩阵。$\lambda I-A$ 是"矩阵元矩阵"（每个元素是 $\lambda$ 的多项式），$\det$ 作用之后得到的是数——把方阵 $A$ 代入一个数的位置，这个动作从未被定义过。</li>
+    <li><strong>两边类型不配</strong>：$\chi_A(A)$ 按定义是一个<strong>矩阵</strong>（结论说它是零矩阵 $O$）；而 $\det(\cdots)$ 是一个<strong>数</strong>。$0\ne O$——数的 $0$ 和零矩阵是两个物种，伪证靠混用它们蒙混过关。</li>
+    <li><strong>它"证"得太多了</strong>：若这套代入合法，任何含 $\lambda$ 的行列式恒等式都能照样"代入 $\lambda=A$"，荒唐结论要多少有多少。一个能证出假命题的推理，本身就不可能是有效推理。</li>
+  </ul>
+  <p>教训一句话：<strong>$\det(\lambda I-A)$ 是关于数 $\lambda$ 的标量函数；$\chi_A(A)$ 是把矩阵代入多项式的矩阵值运算</strong>。两者长得像，中间隔着一个类型深渊。真证明见下。</p>
+</div>
+
+<h3>3.3 真证明的骨架：能对角化的一行，不能对角化的靠 Jordan</h3>
+
+<p><strong>情形一 · $A$ 可对角化（一行证完）</strong>：设 $A=P\,\mathrm{diag}(\lambda_1,\dots,\lambda_n)\,P^{-1}$。相似保持多项式（$p(PDP^{-1})=P\,p(D)\,P^{-1}$），而每个 $\lambda_i$ 都是 $\chi_A$ 的根，故
+$$\chi_A(A)=P\,\mathrm{diag}\bigl(\chi_A(\lambda_1),\dots,\chi_A(\lambda_n)\bigr)\,P^{-1}=P\,O\,P^{-1}=O.\ \square$$</p>
+
+<p><strong>情形二 · 一般情形（$\mathbb C$ 上，骨架）</strong>：每个复方阵相似于 Jordan 形 $J=\mathrm{diag}(J_1,\dots,J_s)$，由相似保持多项式只需证 $\chi_A(J)=O$。$\chi_A(J)$ 是分块对角阵，第 $i$ 块是 $\chi_A(J_i)$。对 $k$ 阶 Jordan 块 $J_i=J_k(\lambda)$：因子 $(x-\lambda)^k$ 整除 $\chi_A(x)$（块的阶不超过 $\lambda$ 的代数重数），写 $\chi_A(x)=(x-\lambda)^k g(x)$，则
+$$\chi_A\bigl(J_k(\lambda)\bigr)=\bigl(J_k(\lambda)-\lambda I\bigr)^k\,g\bigl(J_k(\lambda)\bigr)=N^k\,g\bigl(J_k(\lambda)\bigr)=O,$$
+因为 $N=J_k(\lambda)-\lambda I$ 是 $k$ 阶幂零块，$N^k=O$。每块都是 $O$，故 $\chi_A(J)=O$，从而 $\chi_A(A)=O$。$\square$</p>
+
+<p><strong>关于逻辑环的交代</strong>：Jordan 标准形是第 7 章的主角，这里先赊账使用——环不存在：CH 另有不依赖 Jordan 的经典证明（伴随矩阵路线：$(\lambda I-A)\,\mathrm{adj}(\lambda I-A)=\chi_A(\lambda)I$ 两边都是"矩阵元多项式"，比较各次系数即得），以及"每个向量生成循环子空间"的路线（第 15 届题三的场景），骨架都在第 7 章补齐。你现在要带走的是：<strong>伪证死于类型，真证活在"对角线上逐点为零"</strong>。</p>
+
+<h3>亲手验证这个魔术（交互）</h3>
+
+<div class="widget" id="ch-widget">
+  <p class="w-title">▶ CH 验证器：拖动矩阵元素，看 $\chi_A(A)$ 永远归零</p>
+  <p class="w-row">四个滑块设定 $A=\begin{pmatrix}a&b\\c&d\end{pmatrix}$。面板实时给出 $\operatorname{tr}A$、$\det A$ 与 $\chi_A(\lambda)=\lambda^2-(\operatorname{tr}A)\lambda+\det A$，并逐元素算出 $\chi_A(A)=A^2-(\operatorname{tr}A)A+(\det A)I$ 的四个元素。　<button id="chw-rand" type="button">随机生成一个矩阵</button></p>
+  <div class="w-row"><label>a = <span id="chw-av">1</span></label>　<input type="range" id="chw-a" min="-3" max="3" step="0.5" value="1">　　<label>b = <span id="chw-bv">2</span></label>　<input type="range" id="chw-b" min="-3" max="3" step="0.5" value="2"></div>
+  <div class="w-row"><label>c = <span id="chw-cv">3</span></label>　<input type="range" id="chw-c" min="-3" max="3" step="0.5" value="3">　　<label>d = <span id="chw-dv">4</span></label>　<input type="range" id="chw-d" min="-3" max="3" step="0.5" value="4"></div>
+  <svg id="chw-svg" viewBox="0 0 720 195" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div class="w-verdict" id="chw-out">加载中……（需要启用 JavaScript）</div>
+  <p class="w-row" style="font-size:0.88em;color:#5c554b">玩出这三个体验再往下走：<strong>①</strong> 把 $b,c$ 拖到 $0$（对角阵），$\chi_A$ 变成 $(\lambda-a)(\lambda-d)$，四个元素照样全零；<strong>②</strong> 拖出 $a=d=0,\ b=1,\ c=0$（严格上三角，幂零），此时 $\chi_A=\lambda^2$，看 $A^2$ 自己就是 $O$；<strong>③</strong> 连点几次「随机生成」，刻意构造一个破坏魔术的矩阵——你永远失败。这就是"定理"和"巧合"的区别。</p>
+</div>
+
+<h3>3.4 CH 的三份工资</h3>
+
+<div class="def">
+  <p class="def-title">工资一：$A^{-1}$ 写成 $A$ 的多项式</p>
+  <p>$A$ 可逆 $\iff c_0=(-1)^n\det A\ne0$。此时由 $\chi_A(A)=A^n+c_{n-1}A^{n-1}+\cdots+c_1A+c_0I=O$，移项提出 $A$：
+  $$A\bigl(A^{n-1}+c_{n-1}A^{n-2}+\cdots+c_1I\bigr)=-c_0I
+  \;\Longrightarrow\;
+  A^{-1}=-\frac1{c_0}\bigl(A^{n-1}+c_{n-1}A^{n-2}+\cdots+c_1I\bigr).$$</p>
+  <p>求逆 = 多项式算术，次数不超过 $n-1$。$2\times2$ 时就是 $A^{-1}=\dfrac{(\operatorname{tr}A)I-A}{\det A}$。例 1 有完整示范。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">工资二：任意大幂 $A^m$ 降成不超过 $n-1$ 次（带余除法）</p>
+  <p>对任意正整数 $m$，作多项式带余除法
+  $$\lambda^m=q(\lambda)\,\chi_A(\lambda)+r(\lambda),\qquad \deg r&lt;n\ \text{或}\ r=0.$$
+  代入 $\lambda=A$（合法！这是多项式恒等式，代入保持运算），由 $\chi_A(A)=O$：
+  $$A^m=q(A)\,\chi_A(A)+r(A)=r(A).$$</p>
+  <p>于是 <strong>$A$ 的一切幂都落在 $\operatorname{span}\{I,A,\dots,A^{n-1}\}$ 里</strong>——§2 那张图的代数表述。注意商 $q$ 根本不必算出来；$r$ 的系数可由"在 $\chi_A$ 的根处取值"列方程定出（$\lambda_i^m=r(\lambda_i)$）。$2\times2$ 时连除法都省了：由 $A^2=(\operatorname{tr}A)A-(\det A)I$ 递推即可（例 1）。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">工资三：矩阵幂级数塌成有限次多项式</p>
+  <p>$e^A=\sum_{k\ge0}\frac{A^k}{k!}$、$\sin A$ 这类无穷级数，每一项 $A^k$ 都能降成不超过 $n-1$ 次，所以整个级数仍是一个不超过 $n-1$ 次的多项式：$f(A)=r(A)$。系数怎么定，第 7 章用 Jordan 形算给你看；现在先记住结论：<strong>矩阵的函数，本质是有限维房间里的事</strong>。</p>
+</div>
+
+<div class="think">
+  <p>别急着往下翻。<strong>拿张纸，对 $A=\begin{pmatrix}2&1\\1&2\end{pmatrix}$ 亲手做三件事</strong>：① 算 $\chi_A(\lambda)$ 并验证 $\chi_A(A)=O$；② 不碰伴随矩阵，用 ① 的关系写出 $A^{-1}$；③ 用 $A^2=4A-3I$ 把 $A^3$ 降成一次式。写完再展开对照。</p>
+  <details class="answer">
+    <summary>对照</summary>
+    <p>① $\chi_A(\lambda)=\lambda^2-4\lambda+3$；$A^2=\begin{pmatrix}5&4\\4&5\end{pmatrix}=4A-3I$，即 $A^2-4A+3I=O$ ✓。</p>
+    <p>② $A(A-4I)=-3I$，故 $A^{-1}=\dfrac{4I-A}{3}=\dfrac13\begin{pmatrix}2&-1\\-1&2\end{pmatrix}$。验证：$\frac13\begin{pmatrix}2&1\\1&2\end{pmatrix}\begin{pmatrix}2&-1\\-1&2\end{pmatrix}=\frac13\begin{pmatrix}3&0\\0&3\end{pmatrix}=I$ ✓。</p>
+    <p>③ $A^3=A\cdot A^2=A(4A-3I)=4A^2-3A=4(4A-3I)-3A=13A-12I$。</p>
+    <p>记忆锚点：零化关系里<strong>常数项不为零</strong>（$c_0=\det A=3\ne0$）是"能解出 $A^{-1}$"的全部条件。</p>
+  </details>
+</div>
+
+<h3>3.5 最小多项式 $m_A$：零化的"最低剂量"</h3>
+
+<div class="def">
+  <p class="def-title">定义（最小多项式）</p>
+  <p>$A$ 的零化多项式中，次数最低的<strong>首一</strong>多项式称为 $A$ 的<strong>最小多项式</strong>，记 $m_A(x)$。<br>
+  <strong>唯一性</strong>：若 $m_1,m_2$ 都符合，则 $m_1-m_2$ 仍零化 $A$ 且次数更低——除非 $m_1-m_2=0$。故 $m_A$ 唯一。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">性质一：$m_A$ 整除<strong>一切</strong>零化多项式</p>
+  <p>设 $f(A)=O$。带余除法 $f=q\,m_A+r$，$\deg r&lt;\deg m_A$ 或 $r=0$。则
+  $$r(A)=f(A)-q(A)\,m_A(A)=O,$$
+  若 $r\ne0$ 则与 $m_A$ 次数最低矛盾，故 $r=0$，即 $m_A\mid f$。</p>
+  <p>这是<strong>带余除法</strong>在本书的第一次主役——卷二第 10 章（多项式）里它是全部整除理论的发条；这里先看到它的威力：<strong>"最小"二字把"零化"变成了整除关系</strong>。特别地 $m_A\mid\chi_A$（CH 保证 $\chi_A$ 是零化多项式），故 $\deg m_A\le n$。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">性质二：$m_A$ 与 $\chi_A$ 同根（不计重数）</p>
+  <p>在 $\mathbb C$ 上看：$m_A\mid\chi_A$，故 $m_A$ 的根都是特征值。反过来，每个特征值 $\lambda$ 都是 $m_A$ 的根：取特征向量 $v\ne0$，$Av=\lambda v$，则对任意多项式 $p$ 有 $p(A)v=p(\lambda)v$（由 $A^kv=\lambda^kv$ 线性组合即得）；取 $p=m_A$ 得
+  $$0=m_A(A)v=m_A(\lambda)\,v\;\Longrightarrow\; m_A(\lambda)=0.$$</p>
+  <p>所以若 $\chi_A(x)=\prod_{i=1}^s(x-\lambda_i)^{d_i}$（$\lambda_i$ 互异，$d_i$ 为代数重数），则
+  $$m_A(x)=\prod_{i=1}^s(x-\lambda_i)^{k_i},\qquad 1\le k_i\le d_i.$$</p>
+  <p><strong>重数 $k_i$ 才是 $m_A$ 的全部秘密</strong>——它等于 $\lambda_i$ 的最大 Jordan 块的阶（§3.6 的直觉，第 7 章严格化）。</p>
+</div>
+
+<h3>3.6 可对角化 $\iff m_A$ 无重根</h3>
+
+<div class="def">
+  <p class="def-title">定理（对角化的最小多项式判据）</p>
+  <p>设 $A\in M_n(\mathbb C)$。则
+  $$A\ \text{可对角化}\ \iff\ m_A(x)\ \text{无重根}\ \iff\ m_A(x)=\prod_{i=1}^s(x-\lambda_i)\ (\lambda_i\ \text{互异}).$$</p>
+</div>
+
+<p><strong>$\Rightarrow$ 方向（能证，两行）</strong>：$A$ 可对角化，取特征向量基。令 $p(x)=\prod_{i=1}^s(x-\lambda_i)$（互异特征值各取一次）。对任一特征向量 $v$（设特征值 $\lambda_j$），因子 $(A-\lambda_jI)$ 把 $v$ 清零；而各因子 $(A-\lambda_iI)$ 是同一个 $A$ 的多项式、<strong>互相可交换</strong>（§3.1），把 $(A-\lambda_jI)$ 换到最后作用即得 $p(A)v=0$。$p(A)$ 在一组基上为零，故 $p(A)=O$，于是 $m_A\mid p$，$m_A$ 无重根。$\square$</p>
+
+<p><strong>$\Leftarrow$ 方向的直觉（Jordan 块，第 7 章严格化）</strong>：$k$ 阶 Jordan 块 $J_k(\lambda)=\lambda I+N$（$N$ 为超对角线上全是 $1$ 的幂零块）满足
+$$\bigl(J_k(\lambda)-\lambda I\bigr)^j=N^j:\qquad N^{k-1}\ne O,\quad N^k=O,$$
+所以 <strong>$J_k(\lambda)$ 的最小多项式恰好是 $(x-\lambda)^k$</strong>——块的阶 $=$ 根的重数。分块对角阵的最小多项式是各块最小多项式的最小公倍式，故 $m_A=\prod_i(x-\lambda_i)^{k_i^{\max}}$（$k_i^{\max}$ 为 $\lambda_i$ 最大块的阶）。于是
+$$m_A\ \text{无重根}\ \iff\ \text{每个 Jordan 块都是 }1\ \text{阶}\ \iff\ A\ \text{相似于对角阵}.$$
+<strong>$m_A$ 的重数，就是在给 Jordan 块的尺寸点名</strong>——这就是第 7 章的接口。等价地，"$m_A$ 无重根 $\Rightarrow$ 可对角化"也可以绕过 Jordan，用互素分解直接证：$\prod(x-\lambda_i)$ 的因子两两互素，由 Bezout 把 $V$ 劈成 $\ker(A-\lambda_iI)$ 的直和（第 2 章直和 + 第 10 章互素）。</p>
+
+<h3>3.7 求 $m_A$ 的实战流程：先猜，再排除</h3>
+
+<div class="net box" data-tag="三步流程（第 15 届题四官方路线）">
+  <p><strong>第 1 步 · 猜零化关系</strong>：算 $A^2$（必要时 $A^3$），盯着 $I,A,A^2,\dots$ 找线性关系；或利用结构——低秩分解 $uv^t$ 类、实对称、幂零痕迹。第 15 届题四：复指数拆开 $A=\frac1{2i}\bigl(vv^t-\overline v v^{*}\bigr)$，算出 $A^3=\frac{n^2}{4}A$。</p>
+  <p><strong>第 2 步 · 列候选</strong>：零化关系给出 $g$（如 $x^3-\frac{n^2}{4}x$），则 $m_A\mid g$；再联立 $m_A\mid\chi_A$ 与"$m_A$ 与 $\chi_A$ 同根"，候选集缩成 $g$ 的若干个含全部互异根的首一因子。</p>
+  <p><strong>第 3 步 · 排除因子法</strong>：把候选从低次到高次逐个代入 $A$ 验证：$f(A)\ne O$ 就排除（只需亮出一个非零元素）。低次全灭后，幸存的最轻者即 $m_A$。第 15 届题四：三个一次因子被 $A\ne O$、$A\pm\frac n2E\ne O$ 排除；三个二次因子用对角元排除（如 $A^2$ 的 $(n,n)$ 元为 $\frac n2\ne0$）——幸存者只有 $x^3-\frac{n^2}{4}x$ 本身。</p>
+  <p><strong>纪律</strong>：只证"$g(A)=O$"不写排除，等于只找到<strong>一张</strong>零化多项式，$m_A$ 的分拿不到——零化 $\ne$ 最小，差的就是第 3 步。</p>
+</div>
+
+<h3>3.8 友矩阵：$\chi$ 与 $m$ 都等于指定多项式的矩阵</h3>
+
+<div class="def">
+  <p class="def-title">定义（友矩阵 companion matrix）</p>
+  <p>给定首一多项式 $p(x)=x^n+c_{n-1}x^{n-1}+\cdots+c_1x+c_0$，其<strong>友矩阵</strong>为
+  $$C(p)=\begin{pmatrix}0&0&\cdots&0&-c_0\\1&0&\cdots&0&-c_1\\0&1&\ddots&\vdots&\vdots\\\vdots&\ddots&\ddots&0&-c_{n-2}\\0&\cdots&0&1&-c_{n-1}\end{pmatrix}.$$</p>
+  <p><strong>性质</strong>：$\chi_{C(p)}(x)=m_{C(p)}(x)=p(x)$。</p>
+</div>
+
+<p>两条性质分开看。$\chi=p$：对 $\det\bigl(xI-C(p)\bigr)$ 按第一行展开 + 归纳（本章变式 2 就是这道题）。$m=p$：记 $e_1,\dots,e_n$ 为标准基，则
+$$C(p)\,e_1=e_2,\quad C(p)\,e_2=e_3,\quad\dots,\quad C(p)\,e_{n-1}=e_n,$$
+即 $e_1,\,C(p)e_1,\,\dots,\,C(p)^{n-1}e_1$ 恰好是 $e_1,e_2,\dots,e_n$——线性无关！若 $q$ 零化 $C(p)$ 且 $\deg q&lt;n$，则 $q\bigl(C(p)\bigr)e_1=0$ 给出这 $n$ 个向量的非平凡线性关系，矛盾。故 $\deg m_{C(p)}\ge n$，又 $m\mid\chi$ 且二者同为首一 $n$ 次，得 $m=\chi=p$。</p>
+
+<div class="calc box" data-tag="例子：p(x)=x³−2x+1 的友矩阵">
+  <p>$$C=\begin{pmatrix}0&0&-1\\1&0&2\\0&1&0\end{pmatrix},\qquad \det(xI-C)=\begin{vmatrix}x&0&1\\-1&x&-2\\0&-1&x\end{vmatrix}=x(x^2-2)+1=x^3-2x+1=p(x).$$
+  并且 $Ce_1=e_2,\ Ce_2=e_3,\ Ce_3=-e_1+2e_2$，即 $C^3e_1=2Ce_1-e_1$，正对应 $p(C)e_1=(C^3-2C+I)e_1=0$。</p>
+</div>
+
+<p><strong>它在真题里的身份</strong>：第 15 届题三的必要性——若 $\{\alpha,\mathbf A\alpha,\dots,\mathbf A^{n-1}\alpha\}$ 是 $V$ 的基（循环基），则 $\mathbf A$ 在这组基下的矩阵<strong>就是友矩阵</strong>：前 $n-1$ 列把 $\mathbf A^i\alpha$ 送到 $\mathbf A^{i+1}\alpha$（即 $e_{i+1}$），最后一列是 $\mathbf A^n\alpha$ 在这组基下的坐标。官方解答随即指出 $cI-C$ 的左下角 $n-1$ 阶子式非零，得 $\operatorname{rank}(cI-C)\ge n-1$，从而每个特征值的几何重数 $\le1$。友矩阵就是"循环向量"的矩阵化身。</p>
+
+<h2>§4 翻译轨：三个标准动作 + 一间练功房</h2>
+
+<p>CH 与 $m_A$ 在卷面上只有三种打法。练成反射，本章毕业。</p>
+
+<div class="trans box" data-tag="动作一：A⁻¹ 多项式化（五步流程）">
+  <p><strong>题面</strong>："证明：$A$ 可逆时 $A^{-1}$ 可表示为 $A$ 的多项式" / "用 Cayley–Hamilton 求 $A^{-1}$"。</p>
+  <p><strong>翻译</strong>：固定五步：</p>
+  <p>① 写 $\chi_A(\lambda)=\lambda^n+c_{n-1}\lambda^{n-1}+\cdots+c_1\lambda+c_0$（$2\times2$：$\lambda^2-(\operatorname{tr}A)\lambda+\det A$）；<br>
+  ② 由 CH 写 $A^n+c_{n-1}A^{n-1}+\cdots+c_1A+c_0I=O$；<br>
+  ③ $A$ 可逆 $\Rightarrow c_0=(-1)^n\det A\ne0$，把含 $A$ 的项并起来提出 $A$；<br>
+  ④ $A\bigl(A^{n-1}+c_{n-1}A^{n-2}+\cdots+c_1I\bigr)=-c_0I$；<br>
+  ⑤ $A^{-1}=-\dfrac1{c_0}\bigl(A^{n-1}+c_{n-1}A^{n-2}+\cdots+c_1I\bigr)$。</p>
+  <p><strong>用在哪、值多少</strong>：一切"求逆 / 证可逆"步骤；$2\times2$ 时 $A^{-1}=\dfrac{(\operatorname{tr}A)I-A}{\det A}$ 可直接背。完整写出来值一个小问（约 3–5 分）。</p>
+</div>
+
+<div class="trans box" data-tag="动作二：大幂求值 → 带余除法">
+  <p><strong>题面</strong>："求 $A^{100}$" / "计算 $|E+A^{2023}|$" / "讨论 $A^m$"。</p>
+  <p><strong>翻译</strong>：两条路，先试短的那条：</p>
+  <p>路一（有现成零化关系）：幂次直接循环塌缩——如 $A^3=\frac{n^2}{4}A$ 一出来，$A^{2023}$ 的奇偶幂规律立刻透明；<br>
+  路二（标准件）：带余除法 $\lambda^m=q(\lambda)\chi_A(\lambda)+r(\lambda)$（$\deg r&lt;n$），得 $A^m=r(A)$；$r$ 的系数用特征值插值定（$\chi_A$ 的根满足 $\lambda_i^m=r(\lambda_i)$），商 $q$ 不必算。</p>
+  <p><strong>用在哪、值多少</strong>：第 15 届题四最后一步（15 分点）：$m_A$ 定出特征值 $0,\pm\frac n2$，于是 $E+A^{2023}$ 的特征值为 $1,\ 1\pm\bigl(\frac n2\bigr)^{2023}$，行列式 $=$ 特征值之积 $=1-\bigl(\frac n2\bigr)^{4046}$。"行列式经特征值过桥"是动作二的标配收尾。</p>
+</div>
+
+<div class="trans box" data-tag="动作三："存在多项式使……" → CH / m_A">
+  <p><strong>题面</strong>："证明存在非零多项式 $f$ 使 $f(A)=O$" / "求最小多项式" / "证明 $A$ 可被无重根多项式零化"。</p>
+  <p><strong>翻译</strong>："存在零化多项式" $\to$ 直接报 $\chi_A$（CH），或报"$n^2+1$ 个幂线性相关"；"求 $m_A$" $\to$ 走 §3.7 三步流程（猜关系 → 列候选 → 排除因子）；"可被无重根多项式零化" $\to$ 这是"可对角化"的另一种说法（§3.6）——见到 $A^2=A$、$A^3=A$、$A^2=I$ 这类题面，零化关系 $x(x-1)$、$x(x-1)(x+1)$、$(x-1)(x+1)$ 都无重根，直接判可对角化。</p>
+</div>
+
+<h3>翻译练功房：八句互译</h3>
+
+<p>老规矩：<strong>先全部写在纸上，再逐条展开对照</strong>。每条不超过 1 分钟。</p>
+
+<div class="trans box" data-tag="互译 8 句">
+  <p><strong>T1</strong>　自然→符号："$x^2-3x+2$ 零化 $A$。"</p>
+  <details class="answer"><summary>对照</summary><p>$A^2-3A+2I=O$。<strong>易错</strong>：写成 $A^2-3A+2=O$——常数项必须配 $I$，否则矩阵与数相加，类型先错（和伪证同一种病）。</p></details>
+  <p><strong>T2</strong>　符号→自然："$m_A\mid\chi_A$。"</p>
+  <details class="answer"><summary>对照</summary><p>"最小多项式整除特征多项式"——由 CH，$\chi_A$ 是一张零化多项式，而 $m_A$ 整除一切零化多项式（性质一）。直接推论：$\deg m_A\le n$。</p></details>
+  <p><strong>T3</strong>　自然→符号 + 证明："$A$ 的每个特征值都是 $m_A$ 的根。"</p>
+  <details class="answer"><summary>对照</summary><p>$\forall\lambda\in\mathbb C$，若 $\exists v\ne0$ 使 $Av=\lambda v$，则 $m_A(\lambda)=0$。证：$m_A(A)v=m_A(\lambda)v$，左边 $=O\,v=0$，右边 $v\ne0$，故 $m_A(\lambda)=0$。关键一步 $p(A)v=p(\lambda)v$：特征向量把"矩阵多项式"变成"数的多项式"。</p></details>
+  <p><strong>T4</strong>　判断（说理由）："$A$ 满足 $A^2=I$，则 $m_A=x^2-1$。"</p>
+  <details class="answer"><summary>对照</summary><p>错。$x^2-1$ 零化 $A$ 只说明 $m_A\mid x^2-1$，极小性还要排除：$m_A\in\{x-1,\ x+1,\ x^2-1\}$。$A=I$ 时 $m_A=x-1$；$A=-I$ 时 $m_A=x+1$；其余（如 $\mathrm{diag}(1,-1)$）才是 $x^2-1$。<strong>零化 $\ne$ 最小</strong>——排除因子法就是为这一步存在的。</p></details>
+  <p><strong>T5</strong>　互译：把"$A$ 可对角化"译成 $m_A$ 语言，再译成"零化多项式"语言。</p>
+  <details class="answer"><summary>对照</summary><p>可对角化 $\iff m_A$ 无重根 $\iff$ 存在无重根的多项式零化 $A$（第三句 $\Rightarrow$ 第一句：$m_A$ 整除那张无重根多项式，故也无重根）。应用：$A^2=A$ 被 $x^2-x=x(x-1)$ 零化，无重根 $\Rightarrow$ 可对角化——见变式 1。</p></details>
+  <p><strong>T6</strong>　符号→自然："设 $g(A)=O$，作 $g=q\,m_A+r$，$\deg r&lt;\deg m_A$。"这句话在干嘛？</p>
+  <details class="answer"><summary>对照</summary><p>这是"$m_A\mid g$"的证明开局，也是排除因子法的代数底座：$r(A)=g(A)-q(A)m_A(A)=O$，若 $r\ne0$ 就是一张比 $m_A$ 次数还低的零化多项式，矛盾。卷面上"逐一排除一次与二次因子"，本质就是这句话在每个候选上各跑一遍。</p></details>
+  <p><strong>T7</strong>　自然→符号："用 $\chi_A$ 把 $A^{100}$ 表示成次数小于 $n$ 的 $A$ 的多项式。"</p>
+  <details class="answer"><summary>对照</summary><p>带余除法 $\lambda^{100}=q(\lambda)\chi_A(\lambda)+r(\lambda)$（$\deg r&lt;n$），代入得 $A^{100}=r(A)$。<strong>易错</strong>：有人真去算商 $q$——不需要，答案只含 $r$；定 $r$ 用特征值插值（$\lambda_i^{100}=r(\lambda_i)$）比展开除法快得多。</p></details>
+  <p><strong>T8</strong>　判断（说理由）："$\chi_A=m_A$ 当且仅当 $A$ 的每个特征值的几何重数为 $1$。"（这是第 15 届题三的等价命题之一。）</p>
+  <details class="answer"><summary>对照</summary><p>对。$\chi_A=\prod(x-\lambda_i)^{d_i}$（$d_i$ 为代数重数），$m_A=\prod(x-\lambda_i)^{k_i^{\max}}$（$k_i^{\max}$ 为 $\lambda_i$ 最大 Jordan 块的阶）。$\chi_A=m_A$ $\iff$ 每个 $d_i=k_i^{\max}$ $\iff$ 每个特征值只有<strong>一个</strong> Jordan 块 $\iff$ 几何重数（$=$ 块数）为 $1$。第 15 届题三证的正是这串等价再加上"存在循环向量"那一环。</p></details>
+</div>
+
+<h2>§5 类型识别：什么信号在召唤 CH / $m_A$</h2>
+
+<div class="recog box" data-tag="识别反射表">
+  <table>
+    <tr><th>题面信号</th><th>反射</th></tr>
+    <tr><td>"求 $A^{100}$ / $A^{2023}$ / 含大幂的式子"</td><td>动作二：带余除法降次；有现成零化关系先循环塌缩</td></tr>
+    <tr><td>"证存在非零多项式 $f$ 使 $f(A)=O$"</td><td>CH 报 $\chi_A$；或 $n^2+1$ 个幂线性相关</td></tr>
+    <tr><td>"$A^{-1}$ 表示为 $A$ 的多项式 / 求逆"</td><td>动作一五步：$\chi_A(A)=O$ 移项提 $A$，前提 $c_0\ne0$</td></tr>
+    <tr><td>"判断 $A$ 可否对角化"</td><td>$m_A$ 无重根？或找无重根零化多项式（$A^2=A$、$A^3=A$ 类直接判可）</td></tr>
+    <tr><td>"求最小多项式"</td><td>§3.7 三步：算 $A^2$ 猜关系 → $m_A\mid g$ 列候选 → 排除因子</td></tr>
+    <tr><td>"矩阵元带三角/指数结构（$a_{st}=\sin(s+t)\theta$）"</td><td>复指数拆成 $vv^t$ 低秩型，算 $A^2$ 找零化关系（15 届题四路线）</td></tr>
+    <tr><td>"$|E+A^k|$、$|f(A)|$ 类行列式"</td><td>先经 $m_A$ / $\chi_A$ 定全部特征值，行列式 = 特征值之积</td></tr>
+    <tr><td>"$\{\alpha,\mathbf A\alpha,\dots,\mathbf A^{n-1}\alpha\}$ 成基"</td><td>循环基 ⟹ 矩阵为友矩阵 ⟹ $\chi_A=m_A$（15 届题三）</td></tr>
+  </table>
+</div>
+
+<h2>§6 考法定位：它藏在哪里、值多少分</h2>
+
+<div class="exam box" data-tag="考法定位">
+  <table>
+    <tr><th>出处</th><th>题号</th><th>本章扮演什么角色</th><th>分值权重</th></tr>
+    <tr><td>第 15 届（2023）</td><td>题四</td><td>全题主线：猜 $A^3=\frac{n^2}{4}A$ → 排除因子锁定 $m_A=x^3-\frac{n^2}{4}x$（官方 10 分点）→ 特征值 $0,\pm\frac n2$ → $|E+A^{2023}|$（15 分点）</td><td>15 分（直接；约 13 分在本章动作上）</td></tr>
+    <tr><td>第 15 届（2023）</td><td>题三</td><td>必要性 = 循环基下矩阵为友矩阵 + $cI-C$ 的秩（2–8 分点）；18 分点 = 零化 $\alpha_i$ 的最低次多项式 $(x-\lambda_i)^{d_i}$ 整除 $p(x)$</td><td>约 8 分步骤</td></tr>
+    <tr><td>第 11 届（2019）</td><td>题三</td><td>特征多项式 $p(x)=\det\bigl(xI-(I-\overline AA)\bigr)$ 的系数性质（实系数）是整题目标；收尾一步用"两多项式在无穷多点相等 ⟹ 恒等"</td><td>15 分（特征多项式主场）</td></tr>
+  </table>
+  <p><strong>规律</strong>：CH / $m_A$ 是"<strong>闷声发分</strong>"型考点——题面从不点名，但"零化关系 → 特征值 → 行列式 / 可对角化"这条流水线是高代计算大题的标配。第 15 届一年两题都踩在本章（题三、题四共 35 分，约 23 分与本章直接相关），密度罕见。判对角化类证明则把 §3.6 当一句话武器："$A^2=A$，故 $m_A\mid x(x-1)$ 无重根，故可对角化"，两行收尾。</p>
+</div>
+
+<h2>§7 关系网：一张出生证明，养活半个高代</h2>
+
+<p>本章所有角色的来龙去脉画在下面：<span style="color:#b45309">三角形</span>是来源与动机，<span style="color:#1d4ed8">圆角矩形</span>是公理与定义，<span style="color:#15803d">矩形</span>是定理，<span style="color:#7c3aed">六边形</span>是方法动作，<span style="color:#0f766e">椭圆</span>是应用出口。顺着箭头走一遍，就是本章的全部逻辑。</p>
+
+<figure>
+<svg viewBox="0 0 720 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cayley-Hamilton 与最小多项式关系网">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+
+  <!-- 图例 -->
+  <polygon points="30,16 22,30 38,30" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5"/>
+  <text x="44" y="28" font-size="11.5" fill="#5c554b">来源·动机</text>
+  <rect x="116" y="17" width="22" height="13" rx="6.5" fill="#eef3fe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="144" y="28" font-size="11.5" fill="#5c554b">公理·定义</text>
+  <rect x="222" y="17" width="22" height="13" fill="#ecf8f0" stroke="#15803d" stroke-width="1.5"/>
+  <text x="250" y="28" font-size="11.5" fill="#5c554b">定理</text>
+  <polygon points="300,23.5 306,16 320,16 326,23.5 320,31 306,31" fill="#f4effd" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="332" y="28" font-size="11.5" fill="#5c554b">方法·动作</text>
+  <ellipse cx="420" cy="23.5" rx="12" ry="7" fill="#ecf8f5" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="438" y="28" font-size="11.5" fill="#5c554b">应用·出口</text>
+
+  <!-- 来源：魔术与伪证（三角） -->
+  <polygon points="115,58 45,150 185,150" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="115" y="106" font-size="12.5" fill="#7a4a12" text-anchor="middle" font-weight="bold">χ_A(A) = O ?</text>
+  <text x="115" y="122" font-size="10.5" fill="#7a4a12" text-anchor="middle">魔术还是定理</text>
+  <text x="115" y="137" font-size="10.5" fill="#be123c" text-anchor="middle">伪证 det(AI−A)=0 ✗</text>
+
+  <!-- 来源 → 定义 -->
+  <line x1="187" y1="104" x2="246" y2="104" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="216" y="94" font-size="10.5" fill="#5c554b" text-anchor="middle">逼出概念</text>
+
+  <!-- 定义（圆角矩形） -->
+  <rect x="250" y="68" width="210" height="72" rx="30" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="355" y="92" font-size="14" fill="#1d4ed8" text-anchor="middle" font-weight="bold">零化多项式与 m_A</text>
+  <text x="355" y="110" font-size="10.5" fill="#1d4ed8" text-anchor="middle">f(A)=O；m_A = 最低次首一者</text>
+  <text x="355" y="126" font-size="10.5" fill="#1d4ed8" text-anchor="middle">m_A ∣ 一切零化（带余除法）</text>
+
+  <!-- 定义 → CH -->
+  <line x1="462" y1="104" x2="501" y2="104" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="481" y="94" font-size="10" fill="#5c554b" text-anchor="middle">CH 点名</text>
+
+  <!-- CH 定理（矩形，c 位） -->
+  <rect x="505" y="62" width="185" height="84" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="597" y="86" font-size="13.5" fill="#15803d" text-anchor="middle" font-weight="bold">Cayley–Hamilton</text>
+  <text x="597" y="106" font-size="14" fill="#15803d" text-anchor="middle" font-weight="bold">χ_A(A) = O</text>
+  <text x="597" y="126" font-size="10" fill="#4a7c59" text-anchor="middle">次数压到 n：χ_A 自己就是零化</text>
+
+  <!-- CH → 三个动作（肘形走线） -->
+  <polyline points="545,146 545,200 140,200 140,224" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="330" y="192" font-size="10.5" fill="#5c554b" text-anchor="middle">λᵐ = qχ_A + r</text>
+  <polyline points="597,146 597,207 360,207 360,224" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="478" y="199" font-size="10.5" fill="#5c554b" text-anchor="middle">排除：m_A 极小性</text>
+  <polyline points="649,146 649,214 580,214 580,224" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="655" y="210" font-size="10.5" fill="#5c554b">χ = m = p</text>
+
+  <!-- 三动作（六边形） -->
+  <polygon points="50,256 65,228 215,228 230,256 215,284 65,284" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="140" y="252" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">带余除法降次</text>
+  <text x="140" y="269" font-size="10" fill="#6a55a3" text-anchor="middle">幂次全塌进 n 维房</text>
+  <polygon points="270,256 285,228 435,228 450,256 435,284 285,284" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="360" y="252" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">排除因子法</text>
+  <text x="360" y="269" font-size="10" fill="#6a55a3" text-anchor="middle">候选从低次逐个审判</text>
+  <polygon points="490,256 505,228 655,228 670,256 655,284 505,284" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="580" y="252" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">友矩阵 C(p)</text>
+  <text x="580" y="269" font-size="10" fill="#6a55a3" text-anchor="middle">χ = m = p · 循环基化身</text>
+
+  <!-- 动作 → 出口 -->
+  <line x1="120" y1="284" x2="108" y2="374" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="80" y="334" font-size="10.5" fill="#5c554b">工资一</text>
+  <line x1="190" y1="284" x2="272" y2="374" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="215" y="334" font-size="10.5" fill="#5c554b">工资二·三</text>
+  <line x1="390" y1="284" x2="478" y2="374" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="420" y="334" font-size="10.5" fill="#5c554b">判据</text>
+  <line x1="585" y1="284" x2="638" y2="374" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="600" y="334" font-size="10.5" fill="#5c554b">接口</text>
+
+  <!-- 四出口（椭圆） -->
+  <ellipse cx="105" cy="410" rx="85" ry="32" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="105" y="406" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">A⁻¹ = p(A)</text>
+  <text x="105" y="422" font-size="10" fill="#3d7a70" text-anchor="middle">求逆 = 多项式算术</text>
+  <ellipse cx="300" cy="410" rx="92" ry="32" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="300" y="406" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">Aᵐ 降次 · 矩阵函数</text>
+  <text x="300" y="422" font-size="10" fill="#3d7a70" text-anchor="middle">|E+Aᵏ| 走特征值桥</text>
+  <ellipse cx="500" cy="410" rx="80" ry="32" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="500" y="406" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">m_A 无重根</text>
+  <text x="500" y="422" font-size="10" fill="#3d7a70" text-anchor="middle">⟺ 可对角化</text>
+  <ellipse cx="650" cy="410" rx="62" ry="32" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="650" y="406" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">第 7 章</text>
+  <text x="650" y="422" font-size="10" fill="#3d7a70" text-anchor="middle">Jordan 标准形</text>
+</svg>
+<figcaption>本章地图：一个魔术逼出"零化"概念，CH 把次数压到 $n$ 并点名 $\chi_A$，三件手上武器各自通往发工资现场与第 7 章。</figcaption>
+</figure>
+
+<div class="net box" data-tag="画面感锚点（记这些，不记条文）">
+  <table>
+    <tr><th>节点</th><th>一句话画面</th><th>擅长场景</th></tr>
+    <tr><td>零化多项式</td><td>$A$ 的"停机密码"：代进去就归零</td><td>$A^3=\frac{n^2}{4}A$ 这类关系的学名</td></tr>
+    <tr><td>CH 定理</td><td>出生证明自带停机密码，次数只要 $n$</td><td>一切"存在零化多项式"的默认答案</td></tr>
+    <tr><td>最小多项式 $m_A$</td><td>停机密码的"最低剂量"，整除所有密码</td><td>判对角化、定特征值候选</td></tr>
+    <tr><td>带余除法</td><td>幂次塔的折叠机：$\lambda^m=q\,\chi_A+r$</td><td>$A^{100}$、$A^{-1}$、矩阵函数</td></tr>
+    <tr><td>排除因子法</td><td>候选因子的淘汰赛，低次先上场</td><td>求 $m_A$ 的最后一步（15 届题四）</td></tr>
+    <tr><td>友矩阵</td><td>循环基的矩阵化身：$\chi=m=p$</td><td>15 届题三必要性；构造指定 $\chi,m$ 的矩阵</td></tr>
+  </table>
+  <p><strong>焊接点</strong>：① 高中的多项式带余除法在这里升级成主力武器（$m_A$ 的整除性、大幂降次都靠它）；② 第 5 章的特征值 / 特征向量经 $p(A)v=p(\lambda)v$ 与多项式对接；③ 第 2 章的直和（ch12）在"$m_A$ 无重根 $\Rightarrow$ 可对角化"与根子空间分解里反复使用；④ 本章的"$m_A$ 重数 $=$ Jordan 块的阶"直接焊进第 7 章 Jordan 标准形。</p>
+</div>
+
+<h2>§8 计算示范：先看真人怎么想，再看卷面怎么写</h2>
+
+<h3>例 1 · CH 发工资示范：$A^{-1}$ 与 $A^5$（约 10 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>"求 $A^{-1}$、求 $A^5$"是计算型目标，拆目标总表没有现成骨架——把它翻译成 $\exists$ 型：各构造一个对象并验证（$A^{-1}$ 验证 $AA^{-1}=I$；$A^5$ 算出那个确定的矩阵）。构造材料从库存取。</p>
+  <p><span class="stage">【盘点】</span>$A=\begin{pmatrix}1&2\\3&4\end{pmatrix}$ 的产出：$\operatorname{tr}A=5$，$\det A=-2$，$\chi_A(\lambda)=\lambda^2-5\lambda-2$；由 CH 得<strong>降次发动机</strong> $A^2=5A+2I$（库存第 1 条，全场通用）；常数项 $c_0=-2\ne0$（库存第 2 条，可逆白送）。</p>
+  <p><span class="stage">【会师 · $A^{-1}$】</span>倒推：要 $A\cdot(\;?\;)=I$。由发动机 $A^2-5A=2I$，即 $A\cdot\dfrac{A-5I}{2}=I$——那个"?"只能是 $\dfrac{A-5I}{2}$。链条只有一环，因为 $2\times2$ 的 $\chi_A$ 只有三项。</p>
+  <p><span class="stage">【会师 · $A^5$】</span>两条路：① 带余除法 $\lambda^5=q(\lambda^2-5\lambda-2)+r$；② 发动机递推（$2\times2$ 专属快车道）：设 $A^n=a_nA+b_nI$，两边乘 $A$ 并用 $A^2=5A+2I$ 换代，得 $a_{n+1}=5a_n+b_n,\ b_{n+1}=2a_n$。递推 4 步出 $a_5,b_5$——<strong>工具五 · 生成序列</strong>：把"无限次乘法"换成"有限步递推"。</p>
+  <p><span class="stage">【定型】</span>卷面不写倒推，直接从 $\chi_A$ 写起；递推列表呈现，最后用一次直接乘法抽查防算错。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 降次发动机</strong>：$2\times2$ 矩阵的 $\chi_A(A)=O$ 移项得 $A^2=(\operatorname{tr}A)A-(\det A)I$。它是台两冲程发动机：① 常数项 $\ne0$ 时反解出 $A^{-1}$；② 反复代入把一切幂次折回 $\operatorname{span}\{I,A\}$。$n\times n$ 时同一思想由带余除法执行（工资二）。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 1</strong>　设 $A=\begin{pmatrix}1&2\\3&4\end{pmatrix}$。用 Cayley–Hamilton 定理求 $A^{-1}$（写成 $A$ 的多项式），并计算 $A^5$（写成 $A$ 的一次式）。</p>
+  <hr>
+  <p class="proof-line"><strong>第一步（写 $\chi_A$，立发动机）</strong>：$\operatorname{tr}A=5$，$\det A=4-6=-2$，故 $\chi_A(\lambda)=\lambda^2-5\lambda-2$。由 Cayley–Hamilton 定理，
+  $$A^2-5A-2I=O,\qquad\text{即}\quad A^2=5A+2I. \tag{1}$$<span class="step-score">（2 分）</span></p>
+  <p class="proof-line"><strong>第二步（求 $A^{-1}$）</strong>：$\det A=-2\ne0$，$A$ 可逆。由 (1)，$A(A-5I)=2I$，故
+  $$A^{-1}=\frac{A-5I}{2}=\frac12\begin{pmatrix}-4&2\\3&-1\end{pmatrix}=\begin{pmatrix}-2&1\\3/2&-1/2\end{pmatrix}.$$<span class="step-score">（4 分）</span></p>
+  <p class="proof-line"><strong>第三步（递推降次求 $A^5$）</strong>：设 $A^n=a_nA+b_nI$。两边乘 $A$ 并用 (1)：
+  $$A^{n+1}=a_nA^2+b_nA=a_n(5A+2I)+b_nA=(5a_n+b_n)A+2a_nI,$$
+  得 $a_{n+1}=5a_n+b_n,\ b_{n+1}=2a_n$，初值 $a_1=1,\ b_1=0$。列表：
+  $$\begin{array}{c|ccccc}n&1&2&3&4&5\\\hline a_n&1&5&27&145&779\\ b_n&0&2&10&54&290\end{array}$$
+  故 $A^5=779A+290I=\begin{pmatrix}1069&1558\\2337&3406\end{pmatrix}$。<span class="step-score">（9 分）</span></p>
+  <p class="proof-line"><strong>第四步（抽查）</strong>：$A^2=\begin{pmatrix}7&10\\15&22\end{pmatrix}=5A+2I$ ✓；$A^3=A^2A=\begin{pmatrix}37&54\\81&118\end{pmatrix}=27A+10I$ ✓。<span class="step-score">（10 分）</span></p>
+  <p class="aside">书写点评：第二步的分点在"<strong>由 (1) 提出 $A$</strong>"那一步——只写公式 $A^{-1}=\frac{(\operatorname{tr}A)I-A}{\det A}$ 不交代 CH 出处，小题可用，大题扣分。第三步改用带余除法同样满分：$\lambda^5=(\lambda^3+5\lambda^2+27\lambda+145)(\lambda^2-5\lambda-2)+(779\lambda+290)$——商其实不必算出来，它的存在性就够。</p>
+</div>
+
+<h3>例 2 · 求最小多项式并判可对角化（约 6 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>"求 $m_A$" = 在候选集中确定唯一对象；"判可否对角化" = 调用 §3.6 判据，一句话结论。骨架：候选集 → 从低次逐个排除（每次排除是 $\exists$ 型验证：亮出 $f(A)$ 的一个非零元素即可）。</p>
+  <p><span class="stage">【盘点】</span>$A=\begin{pmatrix}2&1&0\\0&2&0\\0&0&2\end{pmatrix}=2I+N$，其中 $N=\begin{pmatrix}0&1&0\\0&0&0\\0&0&0\end{pmatrix}$ 满足 $N\ne O$，$N^2=O$（库存第 1 条：$N$ 的幂零档案）。$\chi_A(x)=(x-2)^3$（库存第 2 条）。</p>
+  <p><span class="stage">【会师】</span>$m_A\mid\chi_A$ 且与 $\chi_A$ 同根（性质一、二）⟹ $m_A=(x-2)^k$，$k\in\{1,2,3\}$——候选集只有 3 个元素，排除法主场。$k=1$？$A-2I=N\ne O$，排除。$k=2$？$(A-2I)^2=N^2=O$，命中。故 $m_A=(x-2)^2$；有重根 ⟹ 不可对角化。<strong>工具七 · 极端原理</strong>的身影：候选有限，从最低次开始审判，第一个幸存者就是"最小"。</p>
+  <p><span class="stage">【定型】</span>卷面按"$\chi_A$ → 候选 → 排除 $k=1$ → 验证 $k=2$ → 判据一句话"五步写；$N\ne O$ 与 $N^2=O$ 各给一行计算，不许跳。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 排除因子法</strong>：$m_A$ 的候选集 = 零化多项式（或 $\chi_A$）的首一因子中<strong>含全部互异根</strong>的那些。从低次到高次逐个代入 $A$，"$f(A)\ne O$"只需亮出一个非零元素。它是"极小性"的唯一合法证明方式——第 15 届题四官方 10 分点的一半就是它。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 2</strong>　设 $A=\begin{pmatrix}2&1&0\\0&2&0\\0&0&2\end{pmatrix}$。求 $A$ 的最小多项式，并判断 $A$ 是否可对角化。</p>
+  <hr>
+  <p class="proof-line"><strong>第一步（$\chi_A$ 定候选）</strong>：$\chi_A(x)=(x-2)^3$。由 $m_A\mid\chi_A$ 且 $m_A$ 与 $\chi_A$ 同根（不计重数），
+  $$m_A(x)=(x-2)^k,\qquad k\in\{1,2,3\}.$$<span class="step-score">（2 分）</span></p>
+  <p class="proof-line"><strong>第二步（排除 $k=1$）</strong>：
+  $$A-2I=\begin{pmatrix}0&1&0\\0&0&0\\0&0&0\end{pmatrix}\ne O,$$
+  故 $x-2$ 不零化 $A$，$k\ne1$。<span class="step-score">（3 分）</span></p>
+  <p class="proof-line"><strong>第三步（验证 $k=2$）</strong>：
+  $$(A-2I)^2=\begin{pmatrix}0&1&0\\0&0&0\\0&0&0\end{pmatrix}^2=O,$$
+  故 $(x-2)^2$ 零化 $A$，$m_A\mid(x-2)^2$。结合第二步，$m_A(x)=(x-2)^2$。<span class="step-score">（5 分）</span></p>
+  <p class="proof-line"><strong>第四步（判对角化）</strong>：$m_A$ 有二重根 $2$，由"$A$ 可对角化 $\iff m_A$ 无重根"，$A$ <strong>不可对角化</strong>。$\square$<span class="step-score">（6 分）</span></p>
+  <p class="aside">书写点评：对比 $B=2I$：$\chi_B=(x-2)^3$ 与 $A$ 相同，但 $m_B=x-2$（$B-2I=O$），$B$ 可对角化（它已是对角阵）。<strong>同样的 $\chi$，不同的 $m$</strong>——特征多项式看不见 Jordan 块的尺寸，最小多项式看得见。区分度全在第二、三步那两个"一行计算"里，跳过即归零。</p>
+</div>
+
+<h2>§9 配套题目</h2>
+
+<p>铁律：<strong>先写在纸上，写到写不动再展开答案</strong>。模仿题照例 1、例 2 的卷面格式写；变式题开始没有模板，先问自己"第一反应是什么"。</p>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 1</span>设 $A=\begin{pmatrix}2&1\\1&2\end{pmatrix}$。用 Cayley–Hamilton 定理求 $A^{-1}$（写成 $A$ 的多项式），并把 $A^3$ 写成 $A$ 的一次式。</p>
+  <details class="answer">
+    <summary>参考答案（约 6 分书写量）</summary>
+    <p>$\operatorname{tr}A=4$，$\det A=3$，$\chi_A(\lambda)=\lambda^2-4\lambda+3$。由 CH：$A^2-4A+3I=O$，即 $A^2=4A-3I$（2 分）。</p>
+    <p>$\det A=3\ne0$，$A$ 可逆；由 $A(A-4I)=-3I$ 得 $A^{-1}=\dfrac{4I-A}{3}=\dfrac13\begin{pmatrix}2&-1\\-1&2\end{pmatrix}$（4 分）。</p>
+    <p>$A^3=A\cdot A^2=A(4A-3I)=4A^2-3A=4(4A-3I)-3A=13A-12I$（6 分）。</p>
+    <p><strong>易错点</strong>：$A^2=4A-3I$ 的 $-3I$ 写成 $-3$（常数项忘配 $I$）；求逆时不交代 $\det A\ne0$ 这步"可逆"依据。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 2</span>设 $A=\begin{pmatrix}1&1&0\\0&1&0\\0&0&3\end{pmatrix}$。求 $A$ 的最小多项式，并判断 $A$ 是否可对角化。</p>
+  <details class="answer">
+    <summary>参考答案（约 6 分书写量）</summary>
+    <p>$\chi_A(x)=(x-1)^2(x-3)$。由 $m_A\mid\chi_A$ 且 $m_A$ 与 $\chi_A$ 同根，候选只有两个：$(x-1)(x-3)$ 与 $(x-1)^2(x-3)$（2 分）。</p>
+    <p>试 $(x-1)(x-3)$：
+    $$(A-I)(A-3I)=\begin{pmatrix}0&1&0\\0&0&0\\0&0&2\end{pmatrix}\begin{pmatrix}-2&1&0\\0&-2&0\\0&0&0\end{pmatrix}=\begin{pmatrix}0&-2&0\\0&0&0\\0&0&0\end{pmatrix}\ne O,$$
+    排除（4 分）。由 CH，$(x-1)^2(x-3)=\chi_A$ 零化 $A$，故 $m_A(x)=(x-1)^2(x-3)$（5 分）。$m_A$ 有二重根 $1$，$A$ 不可对角化（6 分）。</p>
+    <p><strong>易错点</strong>：漏用"$m_A$ 与 $\chi_A$ 同根"（否则候选有 6 个，平白多算）；宣布 $(A-I)(A-3I)\ne O$ 只需亮出一个非零元，不必算完整个乘积。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 1</span>设 $A\in M_n(\mathbb C)$ 满足 $A^2=A$（幂等）。证明：$A$ 可对角化，且特征值只属于 $\{0,1\}$。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：题面直接白送一张零化多项式 $x^2-x=x(x-1)$——无重根。剩下就是调用判据。</p>
+    <p><strong>证明</strong>：$x^2-x=x(x-1)$ 零化 $A$，由性质一 $m_A\mid x(x-1)$，故 $m_A$ 无重根；由 §3.6 判据，$A$ 可对角化。又由性质二，特征值都是 $m_A$ 的根，故特征值 $\in\{0,1\}$。$\square$</p>
+    <p><strong>点评</strong>：三行证完。$m_A$ 只有三种可能：$x$（$A=O$）、$x-1$（$A=I$）、$x(x-1)$（其余）。同一手法通吃 $A^3=A$、$A^2=I$ 一族题——题面给的零化关系无重根，对角化自动成立。幂等矩阵的直和刻画 $V=\ker A\oplus\operatorname{Im}A$（见第 2 章）与本法互为表里。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 2</span>设 $p(x)=x^n+c_{n-1}x^{n-1}+\cdots+c_1x+c_0$，$C(p)$ 为其友矩阵。证明：$\det\bigl(xI-C(p)\bigr)=p(x)$。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：对 $n$ 归纳。$n=1$：$C=(-c_0)$，$\det(xI-C)=x+c_0$ ✓。设 $n-1$ 阶成立。$xI-C(p)$ 的第一行是 $(x,0,\dots,0,c_0)$，按第一行展开：
+    $$\det\bigl(xI-C(p)\bigr)=x\,D_{n-1}+c_0(-1)^{1+n}M_{1n},$$
+    其中 $D_{n-1}$ 正是"截断版"友矩阵（对应 $x^{n-1}+c_{n-1}x^{n-2}+\cdots+c_1$）的行列式，由归纳假设等于 $x^{n-1}+c_{n-1}x^{n-2}+\cdots+c_1$；$M_{1n}$ 是下三角阵（对角线全为 $-1$）的行列式，等于 $(-1)^{n-1}$。故
+    $$\det\bigl(xI-C(p)\bigr)=x\bigl(x^{n-1}+c_{n-1}x^{n-2}+\cdots+c_1\bigr)+c_0(-1)^{2n}=p(x).\ \square$$</p>
+    <p><strong>点评</strong>：两个小心处——① $c_0$ 的代数余子式符号 $(-1)^{1+n}$ 与 $M_{1n}=(-1)^{n-1}$ 相乘恰好为 $+1$；② 归纳对象要看清：删掉第一行第一列后剩下的仍是友矩阵形态（少了一项 $c_0$）。配合 §3.8 的 $m_{C(p)}=p$（由 $e_1,Ce_1,\dots,C^{n-1}e_1$ 线性无关），友矩阵成为"$\chi$ 与 $m$ 同时定制"的标准件。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv3">真题节选</span><strong>（第 15 届题四，15 分）</strong>设 $n\geqslant 3$ 为自然数，$\theta=\dfrac{2\pi}{n}$。对任意 $1\le s,t\le n$，取 $a_{st}=\sin(s+t)\theta$，令矩阵 $A=(a_{st})_{n\times n}$，计算 $E+A^{2023}$ 的行列式，其中 $E$ 为 $n$ 阶单位矩阵。</p>
+  <p>这是本章的"全家桶"题。先回答四个梯子问题（写在纸上）：</p>
+  <p>（i）$\sin(s+t)\theta$ 用复指数拆开后，$A$ 怎么分解成 $vv^t$ 型？这个分解给出 $\operatorname{rank}A$ 的什么上界？<br>
+  （ii）顺着分解算 $A^2,A^3$（需要两个内积 $v^tv=0$、$v^{*}v=n$），发现 $A^3=\dfrac{n^2}{4}A$——这给出 $m_A$ 的什么候选？<br>
+  （iii）$x^3-\frac{n^2}{4}x$ 有 7 个首一因子，极小性怎么排除？（提示：一次的用 $A\ne O$ 类事实，二次的亮出一个对角元。）<br>
+  （iv）$m_A$ 一定，$A$ 的特征值只剩哪几个？$|E+A^{2023}|$ 怎么用特征值算出来？</p>
+  <details class="answer">
+    <summary>梯子参考答案</summary>
+    <p>（i）$\sin(s+t)\theta=\frac1{2i}\bigl(e^{i(s+t)\theta}-e^{-i(s+t)\theta}\bigr)$，令 $v=(e^{i\theta},e^{2i\theta},\dots,e^{ni\theta})^t$，则 $A=\frac1{2i}\bigl(vv^t-\overline v\,v^{*}\bigr)$；两项秩都 $\le1$，故 $\operatorname{rank}A\le2$。</p>
+    <p>（ii）$v^tv=\sum_{k=1}^n e^{2ik\theta}=0$（等比求和，$e^{2in\theta}=1$），$v^{*}v=n$。展开得 $A^2=\frac n4\bigl(vv^{*}+\overline v v^t\bigr)$，再乘得 $A^3=\frac{n^2}{4}A$。故 $g(x)=x^3-\frac{n^2}{4}x$ 零化 $A$，$m_A\mid g$。</p>
+    <p>（iii）$g=x\bigl(x-\frac n2\bigr)\bigl(x+\frac n2\bigr)$，三个互异根都必须保留在 $m_A$ 里才算命中——所以要逐个验证"少一个因子都不行"：一次因子 $x$、$x\mp\frac n2$ 分别被 $A\ne O$、$A\pm\frac n2E\ne O$ 排除；二次因子看 $(n,n)$ 对角元：$A^2$ 的 $(n,n)$ 元为 $\frac n2$，而 $A$ 的 $(n,n)$ 元 $=\sin 2n\theta=0$，于是 $A^2-\frac{n^2}{4}E$、$A\bigl(A\pm\frac n2E\bigr)$ 的 $(n,n)$ 元分别为 $\frac n2-\frac{n^2}{4}\ne0$（$n\ge3$）与 $\frac n2\ne0$，二次全排除。幸存者只有 $g$ 本身。</p>
+    <p>（iv）特征值全是 $m_A$ 的根：含于 $\{0,\frac n2,-\frac n2\}$，且 $m_A=g$ 保证三者都出现；$A$ 实对称可对角化，$\operatorname{rank}A\le2$ 说明非零特征值（计重数）至多两个。合起来：$0$（$n-2$ 重）、$\frac n2$、$-\frac n2$。$E+A^{2023}$ 的特征值为 $1$（$n-2$ 重）、$1\pm\bigl(\frac n2\bigr)^{2023}$，行列式 $=$ 特征值之积 $=1-\bigl(\frac n2\bigr)^{4046}$。</p>
+  </details>
+  <details class="answer">
+    <summary>官方解答骨架（转录自官方参考答案）</summary>
+    <p>① $A$ 为实对称矩阵，可对角化；$n\ge3$ 且 $n\ne4$ 时 $a_{11}=\sin\frac{4\pi}{n}\ne0$，$n=4$ 时 $a_{12}=\sin\frac{3\pi}{2}\ne0$，故 $A\ne O$。<span class="step-score">（2 分）</span></p>
+    <p>② 断言 $A$ 的最小多项式为 $x^3-\dfrac{n^2}{4}x$：用 $\sin(s+t)\theta=\dfrac{1}{2i}\bigl(e^{i(s+t)\theta}-e^{-i(s+t)\theta}\bigr)$，令 $v=(e^{i\theta},e^{i2\theta},\dots,e^{in\theta})^t$，则
+    $$A=\frac{1}{2i}\left(vv^t-\overline{v}\,\overline{v^t}\right)=\frac{1}{2i}\left(vv^t-\overline{v}v^{*}\right),\quad v^{*}=\overline{v}^{\,t}.$$
+    注意 $v^tv=e^{2i\theta}+\cdots+e^{2in\theta}=e^{2i\theta}\cdot\dfrac{1-e^{2in\theta}}{1-e^{2i\theta}}=0$，$v^{*}v=n$。于是
+    $$A^2=-\frac14\left[(vv^t-\overline{v}v^{*})(vv^t-\overline{v}v^{*})\right]=\frac{n}{4}\left(vv^{*}+\overline{v}v^t\right),\qquad A^3=\frac{n^2}{4}A,$$
+    得零化多项式 $x^3-\tfrac{n^2}{4}x=x\bigl(x+\tfrac n2\bigr)\bigl(x-\tfrac n2\bigr)$；逐一排除一次与二次因子（考察 $A\pm\tfrac n2E$、$A(A\pm\tfrac n2E)$ 的对角元，如 $A^2$ 的 $(n,n)$ 元为 $\tfrac n2\ne0$），确证最小多项式即 $x^3-\tfrac{n^2}{4}x$。<span class="step-score">（10 分）</span></p>
+    <p>③ $A$ 的互异特征值含于 $\{0,\tfrac n2,-\tfrac n2\}$；又 $\operatorname{rank}A\le\operatorname{rank}(vv^t)+\operatorname{rank}(\overline{v}v^{*})\le2$，故 $A$ 至多两个非零特征值，$n$ 个特征值为
+    $$\underbrace{0,\dots,0}_{n-2},\ \frac n2,\ -\frac n2.$$
+    $E+A^{2023}$ 的特征值为 $\underbrace{1,\dots,1}_{n-2},\ 1+\bigl(\tfrac n2\bigr)^{2023},\ 1-\bigl(\tfrac n2\bigr)^{2023}$，故
+    $$\left|E+A^{2023}\right|=\left(1+\left(\frac n2\right)^{2023}\right)\left(1-\left(\frac n2\right)^{2023}\right)=1-\left(\frac n2\right)^{4046}.\ \square$$<span class="step-score">（15 分）</span></p>
+    <p><strong>复盘</strong>：本题就是 §3.7 三步流程的官方示范——第 1 步（拆结构猜关系）与第 3 步（排除因子）合占 10 分；第 ③ 段"行列式 = 特征值之积"是动作二的标配收尾。官方排除二次因子用的是"<strong>亮出一个非零对角元</strong>"——和例 2 的"$N\ne O$"同一个动作。注意官方第 ① 步的 $A\ne O$ 也不是废话：它是排除一次因子 $x$ 的弹药。<em>（题目与解答转录自第 15 届官方 PDF，见 <a href="真题索引/第15届_2023.md">真题索引</a>。）</em></p>
+  </details>
+</div>
+
+<h2>§9.5 熟练度训练场</h2>
+
+<p>理解只是入场券，<strong>考场上拼的是基本动作的速度</strong>。两种训练，每天 10 分钟：</p>
+
+<h3>训练一 · 翻卡快测（目标：每卡 10 秒内出答案）</h3>
+<div class="quiz" data-quiz="ch16-drill"></div>
+
+<h3>训练二 · 计时默写（写在纸上，掐表）</h3>
+<div class="calc box" data-tag="默写清单">
+  <p>① <strong>60 秒</strong>：默写 Cayley–Hamilton 定理的完整陈述（含 $\chi_A$ 的定义与 $c_{n-1}=-\operatorname{tr}A$、$c_0=(-1)^n\det A$ 两个系数），并写出 $2\times2$ 验证的结论行 $A^2-(\operatorname{tr}A)A+(\det A)I=O$；</p>
+  <p>② <strong>90 秒</strong>：默写 $m_A$ 的定义 + 两条性质（整除一切零化多项式——带余除法一句话证；与 $\chi_A$ 同根——$m_A(A)v=m_A(\lambda)v$ 一句话证）；</p>
+  <p>③ <strong>3 分钟</strong>：默写例 1 全流程：$\chi_A$ → $A^2=5A+2I$ → $A^{-1}=\frac{A-5I}{2}$ → 递推 $a_{n+1}=5a_n+b_n,\ b_{n+1}=2a_n$ 直到 $A^5=779A+290I$。</p>
+  <p><strong>过关标准</strong>：连续两天全对才算过。做不到就回到对应小节重读，再默。</p>
+</div>
+
+<h2>§10 六方向自测卡</h2>
+
+<div class="selftest">
+  <h3>合上书，拿张白纸，默写以下六项</h3>
+  <div class="st-item">
+    <p class="st-q"><em>=（它是什么）</em>　默写 CH 定理与 $m_A$ 的定义，以及 $m_A$ 的两条性质。</p>
+    <details><summary>对照</summary><p>CH：$\chi_A(\lambda)=\det(\lambda I-A)$，则 $\chi_A(A)=O$。$m_A$：零化 $A$ 的次数最低首一多项式。性质：$m_A$ 整除一切零化多项式；$m_A$ 与 $\chi_A$ 同根（不计重数）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>←（什么带来它）</em>　为什么不能把 $\lambda=A$ 代入 $\det(\lambda I-A)=0$ 来"证"CH？真证明的两条路线是什么？</p>
+    <details><summary>对照</summary><p>伪证：$\lambda$ 的槽在 $\det$ 内部，取完行列式无槽可代；且 $\chi_A(A)$ 是矩阵、$\det(\cdots)$ 是数，$0\ne O$——类型错误。真证：可对角化情形由 $\chi_A(\lambda_i)=0$ 一行得；一般情形经 Jordan 形（$(J_k-\lambda I)^k=N^k=O$）或伴随矩阵比较系数。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>→（它带来什么）</em>　说出 CH 的三份工资与 $m_A$ 的两个出口。</p>
+    <details><summary>对照</summary><p>工资：$A^{-1}=p(A)$（$c_0\ne0$ 时）；$A^m$ 带余除法降为不超过 $n-1$ 次；矩阵幂级数化为有限次。出口：$m_A$ 无重根 ⟺ 可对角化；$m_A$ 的根集 = 特征值集（定特征值候选，再算行列式）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>∈（实例）</em>　各写一个 $3\times3$ 矩阵使 $m_A$ 分别为 $x-2$、$(x-2)^2$、$(x-2)^3$。</p>
+    <details><summary>对照</summary><p>$2I$（$m=x-2$）；例 2 的 $A$（$m=(x-2)^2$）；$3$ 阶 Jordan 块 $J_3(2)=\begin{pmatrix}2&1&0\\0&2&1\\0&0&2\end{pmatrix}$（$m=(x-2)^3$）。三者 $\chi$ 全是 $(x-2)^3$——$\chi$ 看不见块尺寸，$m$ 看得见。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>≠（区分）</em>　"零化多项式"与"最小多项式"差在哪？各配一例。</p>
+    <details><summary>对照</summary><p>差"极小性"：$x^2-1$ 零化 $A=I$，但 $m_I=x-1$；判 $m_A$ 必须做排除因子（低次候选逐个代入验证 $\ne O$）。零化多项式有无穷多张（$m_A$ 的任意倍式），最小多项式唯一。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>（为何要有它）</em>　没有 CH，$A^{-1}$、$A^{100}$、$e^A$ 各会变成什么麻烦？</p>
+    <details><summary>对照</summary><p>$A^{-1}$ 只剩伴随矩阵一条苦路（$n^2$ 个代数余子式）；$A^{100}$ 要做 99 次矩阵乘法（或先对角化 / Jordan 化）；$e^A$ 是无穷级数、无法有限计算。CH 把它们全部关进 $\operatorname{span}\{I,A,\dots,A^{n-1}\}$ 这间 $n$ 维房，变成多项式算术。</p></details>
+  </div>
+</div>
+
+<div class="net box" data-tag="间隔复习安排">
+  <p><strong>1 天后</strong>：重做六方向自测卡（不翻书）+ 翻卡快测第二轮；<strong>3 天后</strong>：重做模仿 2 与真题节选的梯子问题 + 计时默写②③；<strong>1 周后</strong>：把 §3.7 三步流程在真题节选上完整重演一遍（不看答案，做到排除因子那步不停顿）。</p>
+  <p>本章是<strong>第 7 章 Jordan 标准形</strong>（$m_A$ 的重数 = Jordan 块的阶，那里全部严格化）和<strong>第 10 章多项式</strong>（带余除法与整除理论）的直接地基。</p>
+</div>
+
+<div class="chapnav">
+  <span><a href="ch15.html">← 第 5 章 · 特征值再认识</a></span>
+  <span><a href="index.html">首页</a></span>
+  <span><a href="ch17.html">第 7 章 · Jordan 标准形：不可对角化的真相 →</a></span>
+</div>
+
+</div>
+
+<script src="assets/quiz.js"></script>
+<script>
+/* §9.5 翻卡数据 */
+registerQuiz("ch16-drill", [
+  { q: "默写 Cayley–Hamilton 定理。", a: "$\\chi_A(\\lambda)=\\det(\\lambda I-A)$，则 $\\chi_A(A)=O$：每个方阵都满足自己的特征多项式。" },
+  { q: "$2\\times2$ 矩阵的「降次发动机」？", a: "$A^2=(\\operatorname{tr}A)A-(\\det A)I$。由 $\\chi_A(\\lambda)=\\lambda^2-(\\operatorname{tr}A)\\lambda+\\det A$ 与 CH 移项即得。" },
+  { q: "用 CH 求 $A^{-1}$ 的前提与公式？", a: "前提 $c_0=(-1)^n\\det A\\ne0$；$A^{-1}=-\\frac1{c_0}(A^{n-1}+c_{n-1}A^{n-2}+\\cdots+c_1I)$。" },
+  { q: "$A^{100}$ 怎么降成低次式？", a: "带余除法 $\\lambda^{100}=q(\\lambda)\\chi_A(\\lambda)+r(\\lambda)$（$\\deg r<n$），代入得 $A^{100}=r(A)$。商 $q$ 不用算。" },
+  { q: "$m_A$ 的定义？唯一性怎么证？", a: "零化 $A$ 的次数最低首一多项式。两张相减仍零化且次数更低，故必相等。" },
+  { q: "$m_A$ 的两条性质？", a: "① $m_A$ 整除一切零化多项式（带余除法）；② $m_A$ 与 $\\chi_A$ 同根（不计重数）：$m_A(A)v=m_A(\\lambda)v$。" },
+  { q: "可对角化 $\\iff$（$m_A$ 语言）？", a: "$m_A$ 无重根。直觉：$k$ 阶 Jordan 块的 $m=(x-\\lambda)^k$，无重根 ⟺ 块全一阶。" },
+  { q: "排除因子法干什么用？", a: "证 $m_A$ 的极小性：候选因子从低次到高次逐个代入 $A$，亮出一个非零元即排除。" },
+  { q: "友矩阵 $C(p)$ 的 $\\chi$ 与 $m$？为什么？", a: "都等于 $p$ 本身。$\\chi=p$：按第一行展开归纳；$m=p$：$e_1,Ce_1,\\dots,C^{n-1}e_1$ 线性无关，故 $\\deg m\\ge n$。" },
+  { q: "「$\\det(AI-A)=\\det O=0$，故 CH 成立」错在哪？", a: "$\\lambda$ 的槽在 $\\det$ 内部，取完行列式无槽可代；且左边是矩阵、右边是数，$0\\ne O$。类型错误，不是计算错误。" }
+]);
+</script>
+
+<script>
+/* §3 CH 验证器 */
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  var svg = document.getElementById("chw-svg");
+  var out = document.getElementById("chw-out");
+  var keys = ["a", "b", "c", "d"];
+  var sliders = {}, spans = {};
+  keys.forEach(function (k) {
+    sliders[k] = document.getElementById("chw-" + k);
+    spans[k] = document.getElementById("chw-" + k + "v");
+  });
+
+  function mk(tag, attrs) {
+    var el = document.createElementNS(NS, tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    svg.appendChild(el);
+    return el;
+  }
+  function mtxt(x, y, attrs) {
+    var t = mk("text", attrs || {});
+    t.setAttribute("x", x); t.setAttribute("y", y);
+    return t;
+  }
+  function fmt(x) {
+    if (Math.abs(x) < 1e-12) return "0";
+    return String(parseFloat(x.toFixed(2)));
+  }
+
+  /* 静态脚手架 */
+  mtxt(18, 44, { "font-size": 15, "font-weight": "bold", fill: "#2b2620" }).textContent = "A =";
+  var grids = {};
+  function makeGrid(name, x0, y0, label) {
+    mk("rect", { x: x0 - 5, y: y0 - 5, width: 110, height: 62, rx: 4, fill: "none", stroke: "#b8b0a2", "stroke-width": 1 });
+    if (label) {
+      mtxt(x0 + 50, y0 - 12, { "font-size": 12.5, "font-weight": "bold", fill: "#5c554b", "text-anchor": "middle" }).textContent = label;
+    }
+    var cells = [];
+    for (var i = 0; i < 4; i++) {
+      var cx = x0 + (i % 2) * 52, cy = y0 + Math.floor(i / 2) * 28;
+      var r = mk("rect", { x: cx, y: cy, width: 48, height: 24, fill: "#ffffff", stroke: "#d8d2c6", "stroke-width": 1 });
+      var t = mtxt(cx + 24, cy + 17, { "font-size": 12, fill: "#2b2620", "text-anchor": "middle" });
+      cells.push({ rect: r, text: t });
+    }
+    grids[name] = cells;
+  }
+  makeGrid("A", 55, 14, "");
+  var trText = mtxt(190, 28, { "font-size": 13, fill: "#2b2620" });
+  var detText = mtxt(190, 50, { "font-size": 13, fill: "#2b2620" });
+  var chiText = mtxt(190, 74, { "font-size": 13.5, "font-weight": "bold", fill: "#1d4ed8" });
+
+  makeGrid("A2", 20, 120, "A²");
+  mtxt(148, 150, { "font-size": 18, fill: "#2b2620", "text-anchor": "middle" }).textContent = "−";
+  makeGrid("trA", 180, 120, "(tr A)·A");
+  mtxt(308, 150, { "font-size": 18, fill: "#2b2620", "text-anchor": "middle" }).textContent = "+";
+  makeGrid("detI", 340, 120, "(det A)·I");
+  mtxt(468, 150, { "font-size": 18, fill: "#2b2620", "text-anchor": "middle" }).textContent = "=";
+  makeGrid("res", 520, 120, "χ_A(A)");
+  var eqText = mtxt(655, 150, { "font-size": 16, "font-weight": "bold", fill: "#15803d" });
+
+  function setGrid(name, vals, highlight) {
+    var cells = grids[name];
+    vals.forEach(function (v, i) {
+      cells[i].text.textContent = fmt(v);
+      if (highlight) {
+        var zero = Math.abs(v) < 1e-12;
+        cells[i].rect.setAttribute("fill", zero ? "#ecf8f0" : "#fdeef2");
+        cells[i].rect.setAttribute("stroke", zero ? "#15803d" : "#be123c");
+      }
+    });
+  }
+  function polyStr(tr, det) {
+    var s = "λ²";
+    if (tr !== 0) s += (tr > 0 ? " − " : " + ") + fmt(Math.abs(tr)) + "λ";
+    if (det !== 0) s += (det > 0 ? " + " : " − ") + fmt(Math.abs(det));
+    return s;
+  }
+
+  function update() {
+    var a = parseFloat(sliders.a.value), b = parseFloat(sliders.b.value),
+        c = parseFloat(sliders.c.value), d = parseFloat(sliders.d.value);
+    spans.a.textContent = fmt(a); spans.b.textContent = fmt(b);
+    spans.c.textContent = fmt(c); spans.d.textContent = fmt(d);
+    var tr = a + d, det = a * d - b * c;
+    var A2 = [a * a + b * c, b * (a + d), c * (a + d), b * c + d * d];
+    var trA = [tr * a, tr * b, tr * c, tr * d];
+    var res = [A2[0] - trA[0] + det, A2[1] - trA[1], A2[2] - trA[2], A2[3] - trA[3] + det];
+    setGrid("A", [a, b, c, d], false);
+    setGrid("A2", A2, false);
+    setGrid("trA", trA, false);
+    setGrid("detI", [det, 0, 0, det], false);
+    setGrid("res", res, true);
+    trText.textContent = "tr A = " + fmt(tr);
+    detText.textContent = "det A = " + fmt(det);
+    chiText.textContent = "χ_A(λ) = " + polyStr(tr, det);
+    var mx = Math.max(Math.abs(res[0]), Math.abs(res[1]), Math.abs(res[2]), Math.abs(res[3]));
+    eqText.textContent = mx < 1e-12 ? "= O" : "≠ O ?";
+    out.innerHTML = "χ_A(A) = A² − (tr A)A + (det A)I 的四个元素最大偏差：<strong>" + fmt(mx) +
+      "</strong>（滑块步长 0.5，所有中间量都是二进制精确分数，这个 0 是精确的，不是约等于）<br><strong>" +
+      (mx < 1e-12 ? "归零 ✓ —— 再拖任意滑块，它永远归零。这不是巧合，是定理。" : "没有归零？请联系讲义作者——你推翻 Cayley–Hamilton 了。") +
+      "</strong>";
+  }
+  keys.forEach(function (k) { sliders[k].addEventListener("input", update); });
+  document.getElementById("chw-rand").onclick = function () {
+    keys.forEach(function (k) {
+      sliders[k].value = (Math.floor(Math.random() * 13) - 6) / 2;
+    });
+    update();
+  };
+  update();
+})();
+</script>
+
+</body>
+</html>

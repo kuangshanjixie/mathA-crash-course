@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高代第 1 章 · 从矩阵到线性空间：抽象的第一步 —— 数学A速成讲义</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+<div class="wrap">
+
+<div class="bookbar">
+  <span><a href="index.html">← 返回首页</a></span>
+  <span>卷二 · 高等代数 · 第 1 章</span>
+</div>
+
+<div class="chapter-kicker">CHAPTER 11 · 高等代数（卷二开篇）</div>
+<h1>从矩阵到线性空间：抽象的第一步</h1>
+
+<div class="exam box" data-tag="本章导览">
+  <p><strong>这一章在整张卷子上的位置</strong>：高等代数占初赛约 35%，而"线性空间"是高代证明题的<strong>第一语言</strong>——它有时直接出题：第 16 届题四把定义写进题面，让你证 2024 个多项式线性相关（15 分）；第 11 届题四直接要求"证明某集合构成实向量空间并求维数"（20 分）。更多时候它是开局语言："成为基"（第 15 届题三，20 分）、"解空间维数为 3"（第 12 届题三，15 分）、"三维空间中四向量必线性相关"（第 17 届题一）——这些题的第一步分，都在本章。</p>
+  <p><strong>学完你能</strong>：① 默写线性空间定义（三组八条），并说出"封闭性"为什么是暗考点；② 用<strong>组合=0 标准流程</strong>证线性无关，用<strong>个数 &gt; 维数</strong>证线性相关；③ 判断一个"集合 + 运算"是不是线性空间（会抓非例）；④ 说出基的四个等价说法，背出 $\dim F[x]_n$、$\dim M_n(F)$、$\dim\{Ax=0\}$；⑤ 复述第 16 届题四"消元降次"论证的骨架。</p>
+  <p><strong>前置</strong>：线性代数课的矩阵运算、行列式、齐次方程组理论（本章直接用"方程个数 &lt; 未知数个数 ⟹ 有非零解"这一条）；第 0.5 章的证明程序（$\forall$/$\exists$ 拆目标）。</p>
+</div>
+
+<h2>§1 开场谜题：四个毫不相关的世界，同一套规则</h2>
+
+<div class="hook box" data-tag="开场谜题">
+  <p>看四个你早就认识、但从没放在一起看过的世界：</p>
+  <ul>
+    <li><strong>世界一 · 箭头</strong>：$\mathbb{R}^3$ 中的向量 $(1,2,-1)$、$(0,3,5)$……会加，会乘一个数；</li>
+    <li><strong>世界二 · 多项式</strong>：次数不超过 3 的多项式 $2-x+7x^3$……会加，会乘一个数；</li>
+    <li><strong>世界三 · 连续函数</strong>：$[a,b]$ 上的连续函数 $\sin x$、$e^x$……会加，会乘一个数；</li>
+    <li><strong>世界四 · 矩阵</strong>：全体 $n$ 阶方阵……会加，会乘一个数。</li>
+  </ul>
+  <p>四个世界长得<strong>毫不相关</strong>：箭头、解析式、曲线、数表。但如果你把"加法"和"数乘"满足的规矩一条条写下来——加法交换、结合、有零元、有负元；数乘对加法分配、对数的加法分配、数乘结合、$1$ 乘谁都不动——<strong>四个世界交上来的是同一份答卷，八条，一字不差</strong>。</p>
+  <p>于是数学家问了一个"偷懒"的问题：<strong>这套规则本身值不值得研究？</strong>如果把四个世界的皮肉剥掉，只留八条规则当骨架，证出来的定理——关于组合、相关、基、维数的每一个定理——是不是四个世界自动通用？</p>
+  <p>答案是：是。这个骨架叫<strong>线性空间</strong>。你为抽象付一次学费（背下并理解八条公理），换来的是：所有定理，全科通用，考场上见到多项式、函数、矩阵，都可以用同一套向量语言说话。</p>
+  <p><strong>抽象红利，现场验货</strong>。第 16 届题四要证"2024 个多项式线性相关"。证"多项式组线性相关"和你在旧线代课上证"向量组 $(1,0,0),(1,1,0),(1,1,1)$ 线性无关"，判卷人想看到的那句话竟然是<strong>同一句话</strong>——"设 $k_1\alpha_1+\cdots+k_s\alpha_s=0$，推出 $k_1=\cdots=k_s=0$"。多项式世界没有发明任何新东西，它只是把旧世界的证明换了个舞台。这一章，就是把这个舞台搭起来。</p>
+</div>
+
+<h2>§2 先看见它：把四个世界剥到只剩骨架</h2>
+
+<div class="vision box" data-tag="直觉与图像">
+  <p>抽象不是凭空拔高，是<strong>对照着具体例子做减法</strong>：把四个世界各自的"内容"（坐标、解析式、函数值、矩阵元）擦掉，只留下"加法、数乘、八条规则"。擦完之后剩下的那个东西，就是线性空间。以后每证一个定理，等于同时在四个世界（以及无穷多个你没见过的世界）里各证了一遍。</p>
+</div>
+
+<figure>
+<svg viewBox="0 0 720 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="四个世界共享同一套运算规则">
+  <defs>
+    <marker id="arr11" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+  <!-- 世界一：R³ 箭头 -->
+  <rect x="20" y="30" width="150" height="100" rx="8" fill="#eef3fe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <line x1="48" y1="105" x2="98" y2="62" stroke="#1d4ed8" stroke-width="2.5" marker-end="url(#arr11)"/>
+  <line x1="48" y1="105" x2="120" y2="95" stroke="#1d4ed8" stroke-width="2.5" opacity="0.5" marker-end="url(#arr11)"/>
+  <text x="95" y="50" font-size="13" fill="#1d4ed8" text-anchor="middle" font-weight="bold">世界一 · ℝ³</text>
+  <text x="95" y="122" font-size="11" fill="#1d4ed8" text-anchor="middle">箭头：会加，会乘数</text>
+  <!-- 世界二：多项式 -->
+  <rect x="20" y="170" width="150" height="100" rx="8" fill="#ecf8f0" stroke="#15803d" stroke-width="1.5"/>
+  <path d="M 35 255 Q 70 190 105 235 T 155 205" fill="none" stroke="#15803d" stroke-width="2.5"/>
+  <text x="95" y="192" font-size="13" fill="#15803d" text-anchor="middle" font-weight="bold">世界二 · F[x]</text>
+  <text x="95" y="263" font-size="11" fill="#15803d" text-anchor="middle">多项式：会加，会乘数</text>
+  <!-- 世界三：连续函数 -->
+  <rect x="550" y="30" width="150" height="100" rx="8" fill="#f4effd" stroke="#7c3aed" stroke-width="1.5"/>
+  <path d="M 560 90 Q 590 40 620 85 T 685 70" fill="none" stroke="#7c3aed" stroke-width="2.5"/>
+  <text x="625" y="50" font-size="13" fill="#7c3aed" text-anchor="middle" font-weight="bold">世界三 · C[a,b]</text>
+  <text x="625" y="122" font-size="11" fill="#7c3aed" text-anchor="middle">连续函数：会加，会乘数</text>
+  <!-- 世界四：矩阵 -->
+  <rect x="550" y="170" width="150" height="100" rx="8" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5"/>
+  <rect x="590" y="195" width="70" height="50" fill="none" stroke="#b45309" stroke-width="2"/>
+  <line x1="625" y1="195" x2="625" y2="245" stroke="#b45309" stroke-width="1.5"/>
+  <line x1="590" y1="220" x2="660" y2="220" stroke="#b45309" stroke-width="1.5"/>
+  <text x="625" y="192" font-size="13" fill="#b45309" text-anchor="middle" font-weight="bold">世界四 · Mₙ(F)</text>
+  <text x="625" y="263" font-size="11" fill="#b45309" text-anchor="middle">矩阵：会加，会乘数</text>
+  <!-- 中央：骨架 -->
+  <line x1="170" y1="80" x2="262" y2="130" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr11)"/>
+  <line x1="170" y1="220" x2="262" y2="170" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr11)"/>
+  <line x1="550" y1="80" x2="458" y2="130" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr11)"/>
+  <line x1="550" y1="220" x2="458" y2="170" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr11)"/>
+  <rect x="268" y="105" width="184" height="90" rx="45" fill="#fdeef2" stroke="#be123c" stroke-width="2.5"/>
+  <text x="360" y="135" font-size="15" fill="#be123c" text-anchor="middle" font-weight="bold">加法 + 数乘</text>
+  <text x="360" y="155" font-size="12.5" fill="#be123c" text-anchor="middle">八条规则，一字不差</text>
+  <text x="360" y="174" font-size="11.5" fill="#be123c" text-anchor="middle">擦掉内容，只剩骨架</text>
+  <!-- 骨架向下 -->
+  <line x1="360" y1="195" x2="360" y2="242" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr11)"/>
+  <text x="375" y="225" font-size="11.5" fill="#5c554b">提炼一次</text>
+  <rect x="240" y="248" width="240" height="40" rx="20" fill="#fdeef2" stroke="#be123c" stroke-width="2.5"/>
+  <text x="360" y="273" font-size="14.5" fill="#be123c" text-anchor="middle" font-weight="bold">线性空间 V —— 证一次，全科通用</text>
+  <text x="210" y="95" font-size="10.5" fill="#5c554b">同一份答卷</text>
+  <text x="210" y="215" font-size="10.5" fill="#5c554b">同一份答卷</text>
+  <text x="478" y="95" font-size="10.5" fill="#5c554b">同一份答卷</text>
+  <text x="478" y="215" font-size="10.5" fill="#5c554b">同一份答卷</text>
+</svg>
+<figcaption>四个世界共享同一套运算规则；把内容擦掉只剩规则，得到的就是线性空间。</figcaption>
+</figure>
+
+<p>这张图也预告了本章的考法：竞赛题从来不直接考"背八条公理"，它考的是你能不能在<strong>多项式、函数、矩阵的皮肉之下认出那副骨架</strong>——第 16 届题四的题面第一句"熟知 $\mathbb{R}[x]$ 在多项式加法和数乘下构成 $\mathbb{R}$ 上的线性空间"，就是官方替你完成了这次辨认，然后考你骨架上的定理。</p>
+
+<h2>§3 精确定义：逐符号朗读</h2>
+
+<div class="def">
+  <p class="def-title">定义（数域 $F$ 上的线性空间）</p>
+  <p>设 $V$ 是非空集合，$F$ 是数域（如 $\mathbb{Q}$、$\mathbb{R}$、$\mathbb{C}$）。在 $V$ 上定义<strong>加法</strong>（$\alpha,\beta\mapsto\alpha+\beta$）与<strong>数乘</strong>（$k\in F,\ \alpha\mapsto k\alpha$），且满足：</p>
+  <p>$$\underbrace{\begin{cases}\alpha+\beta=\beta+\alpha\\ (\alpha+\beta)+\gamma=\alpha+(\beta+\gamma)\\ \exists\,0\in V:\ \alpha+0=\alpha\\ \forall\alpha\ \exists\,(-\alpha):\ \alpha+(-\alpha)=0\end{cases}}_{\text{第 ① 组 · }V\text{ 对加法成群}}\quad \underbrace{\begin{cases}k(\alpha+\beta)=k\alpha+k\beta\\ (k+l)\alpha=k\alpha+l\alpha\end{cases}}_{\text{第 ② 组 · 数乘对两种加法分配}}\quad \underbrace{\begin{cases}k(l\alpha)=(kl)\alpha\\ 1\alpha=\alpha\end{cases}}_{\text{第 ③ 组 · 数乘的结合与单位元}}$$</p>
+  <p>则称 $V$ 为 $F$ 上的<strong>线性空间</strong>（向量空间），$V$ 的元素统称<strong>向量</strong>。暗考点在定义之外：<strong>封闭性</strong>——任何 $\alpha,\beta\in V$、$k\in F$，必须有 $\alpha+\beta\in V$、$k\alpha\in V$。</p>
+</div>
+
+<div class="symbol box" data-tag="逐符号朗读">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$V$ 非空 + 加法、数乘</td><td>"先有一个集合，再给它配两种运算"</td><td>线性空间 = 集合 + 结构；运算不是自带的，是<strong>指定</strong>的</td></tr>
+    <tr><td>第 ① 组（4 条）</td><td>"加法交换、结合、有零元、每个元素有负元"</td><td>保证"搬家、抵消"合法：等式两边能加同一向量消去</td></tr>
+    <tr><td>第 ② 组（2 条）</td><td>"$k$ 乘和 = $k$ 分乘；和乘 $\alpha$ = 分乘再相加"</td><td>数乘与加法的桥——展开括号全靠它，证明里每步展开都在用</td></tr>
+    <tr><td>第 ③ 组（2 条）</td><td>"先乘 $l$ 再乘 $k$ = 一次乘 $kl$；$1$ 乘谁都不动"</td><td>让 $k_1(k_2\alpha)$ 可以脱括号；$1\alpha=\alpha$ 保证数乘"有个头"</td></tr>
+    <tr><td>封闭性（暗考点）</td><td>"算出来的结果，必须还在这口锅里"</td><td>验证线性空间/子空间时<strong>先查它</strong>——九成的非例都死在这</td></tr>
+  </table>
+  <p>禁止逐条念经。记三组的名字：<strong>加法成群 / 数乘分配 / 结合与单位元</strong>。考场上验证一个具体空间时，八条公理几乎总是从已知运算免费继承（比如函数的加法当然交换），真正要动手证的只有封闭性——这正是"暗考点"的含义。</p>
+</div>
+
+<div class="think">
+  <p>别急着往下翻。<strong>拿张纸，写出"要证明 $C[a,b]$ 是 $\mathbb{R}$ 上的线性空间，必须验证哪几件事"</strong>——提示：哪些条是从函数运算免费继承的？哪条必须动用数学分析的定理？写完再展开对照。</p>
+  <details class="answer">
+    <summary>对照：$C[a,b]$ 的验证清单</summary>
+    <p>① <strong>封闭性</strong>（要动真格）：两个连续函数之和仍连续、连续函数乘常数仍连续——这是数分里"连续函数对加法与数乘封闭"的定理，必须引；② 零元：常函数 $0$ 连续 ✓；③ 八条公理：函数的加法、数乘满足交换、结合、分配……全部从"逐点数值运算"继承，一句话带过。</p>
+    <p>结论：真正花笔墨的只有封闭性。第 11 届题四"证明 $V$ 构成实向量空间"那 20 分里，第一步分就是证 $V$ 非空（$0\in V$）且对数乘封闭。</p>
+  </details>
+</div>
+
+<h3>3.1 例子家族与非例</h3>
+
+<div class="calc box" data-tag="六个正例（背熟，考场即取）">
+  <table>
+    <tr><th>空间</th><th>元素</th><th>维数（预告 §3.4）</th></tr>
+    <tr><td>$F^n$</td><td>$n$ 元列（行）向量</td><td>$n$</td></tr>
+    <tr><td>$F[x]$</td><td>全体一元多项式</td><td>无限（$1,x,x^2,\dots$ 任意有限段无关）</td></tr>
+    <tr><td>$F[x]_n=\{f\in F[x]:\deg f&lt;n\}$</td><td>次数小于 $n$ 的多项式（含 $0$）</td><td>$n$（基 $1,x,\dots,x^{n-1}$）</td></tr>
+    <tr><td>$C[a,b]$</td><td>闭区间上的连续函数</td><td>无限（含 $F[x]$）</td></tr>
+    <tr><td>$M_n(F)$</td><td>$n$ 阶方阵</td><td>$n^2$（基 $E_{ij}$）</td></tr>
+    <tr><td>$\{x\in F^n:Ax=0\}$</td><td>齐次方程组的解（解空间）</td><td>$n-\operatorname{r}(A)$（秩-零度，第 3 章）</td></tr>
+  </table>
+  <p>每个空间的"加法、数乘"都是通常的那个。注意 $F[x]$ 与 $C[a,b]$ 是<strong>无限维</strong>的——有限维的定理（坐标化）管不到它们，但"线性无关"的定义管得到（每次只谈<strong>有限</strong>向量组）。第 16 届题四正是在无限维的 $\mathbb{R}[x]$ 里谈一个 2024 元的有限组。</p>
+</div>
+
+<div class="warn box" data-tag="两个非例：都死在封闭性">
+  <p><strong>非例一 · "次数恰为 $n$ 的多项式全体"</strong>：不是线性空间。$x^n$ 与 $-x^n+1$ 都在其中，其和 $1$ 的次数是 $0\ne n$——<strong>加法不封闭</strong>（零多项式也不在其中）。</p>
+  <p><strong>非例二 · $\{x:Ax=b\}$（$b\ne0$）的解集</strong>：不是线性空间。两个解之和满足 $A(x_1+x_2)=2b\ne b$——加法不封闭；数乘 $2$ 倍同理；而且 $0$ 根本不在解集里。它是"解空间平移了一块"（仿射子空间），第 2 章会讲它和 $Ax=0$ 的解空间差的就是一个特解。</p>
+  <p>规律一句话：<strong>判一个"子集 + 运算"是不是线性空间，先查三样东西：加法封闭？数乘封闭？零元在不在？</strong>三关都过，八条公理几乎自动成立。</p>
+</div>
+
+<h3>3.2 线性组合、线性相关与线性无关</h3>
+
+<div class="def">
+  <p class="def-title">定义（线性组合 · 线性相关 · 线性无关）</p>
+  <p>设 $\alpha_1,\dots,\alpha_s\in V$。形如 $k_1\alpha_1+\cdots+k_s\alpha_s$（$k_i\in F$）的向量称为它们的<strong>线性组合</strong>；若 $\beta$ 等于某个这样的组合，称 $\beta$ 可由该组<strong>线性表出</strong>。全体线性组合记为 $\operatorname{span}\{\alpha_1,\dots,\alpha_s\}$（它们的<strong>张成</strong>）。</p>
+  <p>$$\alpha_1,\dots,\alpha_s\ \text{线性相关}\iff \exists\,k_1,\dots,k_s\ \textbf{不全为}\ 0,\quad k_1\alpha_1+\cdots+k_s\alpha_s=0.$$</p>
+  <p>$$\alpha_1,\dots,\alpha_s\ \text{线性无关}\iff \Bigl(k_1\alpha_1+\cdots+k_s\alpha_s=0\ \Longrightarrow\ k_1=\cdots=k_s=0\Bigr).$$</p>
+</div>
+
+<p>两个定义互为<strong>量词否定</strong>（工具四）：相关 = "存在一组不全零的系数把组合压成零"；无关 = "任何压成零的组合，系数早就被迫全是零"。画面感：<strong>相关 = 组里有冗余</strong>——某个向量能被其余向量表出，它活在别人的张成里；无关 = 每个向量都带来一个新方向，谁也替代不了谁。下面的交互件让你亲眼看见这件事。</p>
+
+<div class="recog box" data-tag="证无关的标准判定流程（背下来）">
+  <p><strong>第一步（设）</strong>：设 $k_1\alpha_1+\cdots+k_s\alpha_s=0$。<strong>第二步（榨）</strong>：利用 $V$ 的具体结构，从这个等式榨出关于 $k_1,\dots,k_s$ 的方程——三件常用兵器：<strong>比较系数</strong>、<strong>代特殊值</strong>、<strong>求导代值</strong>。<strong>第三步（解）</strong>：解出 $k_1=\cdots=k_s=0$，下结论"线性无关"。证<strong>相关</strong>则反过来：构造一组不全零的系数（或改用 §3.4 的维数计数）。</p>
+</div>
+
+<h3>3.3 亲手摸一摸张成：span 探索器（交互）</h3>
+
+<div class="widget" id="span-widget">
+  <p class="w-title">▶ 张成探索器：拖动向量，看"相关 = 有冗余"</p>
+  <p class="w-row">平面（即 $\mathbb{R}^2$）上有三个可拖动的向量：<strong style="color:#1d4ed8">v₁ 蓝</strong>、<strong style="color:#15803d">v₂ 绿</strong>、<strong style="color:#be123c">v₃ 红</strong>（抓住端点圆点拖）。淡金色区域是 $\operatorname{span}\{v_1,v_2\}$——可能是<strong>一个点</strong>、<strong>一条过原点的直线</strong>，或<strong>整个平面</strong>。下方实时报告：span 是什么、v₃ 落没落在里面、$\{v_1,v_2,v_3\}$ 相关与否。</p>
+  <svg id="spanw-svg" viewBox="0 0 640 430" xmlns="http://www.w3.org/2000/svg" style="cursor:default;touch-action:none"></svg>
+  <div class="w-verdict" id="spanw-out">加载中……（需要启用 JavaScript）</div>
+  <p class="w-row" style="font-size:0.88em;color:#5c554b">玩出这三个体验再往下走：<strong>①</strong> 把 v₂ 拖到与 v₁ 共线——看张成从"整个平面"塌缩成"一条线"：相关 ⟺ 张成塌维；<strong>②</strong> 保持共线，拖 v₃：沿那条线滑动时它"落在 span 里"（冗余），一离线就"跳出去"（带来新方向）——相关的一个成员，就是活在别人张成里的成员；<strong>③</strong> 把 v₁、v₂ 张开一个明显夹角，然后随便怎么拖 v₃——它<strong>永远</strong>落在 span 里：$\mathbb{R}^2$ 中任意 3 个向量必相关（个数 3 &gt; 维数 2）。第 17 届题一用的正是这一步。</p>
+</div>
+
+<h3>3.4 基与维数：给空间发身份证</h3>
+
+<div class="def">
+  <p class="def-title">定义（基 · 维数）</p>
+  <p>$V$ 中的向量组 $\varepsilon_1,\dots,\varepsilon_n$ 若同时满足：<strong>（i）线性无关；（ii）$V$ 中每个向量都可由它们线性表出</strong>（即 $\operatorname{span}=V$），则称为 $V$ 的一组<strong>基</strong>。基中向量的个数称为 $V$ 的<strong>维数</strong>，记 $\dim V$。</p>
+</div>
+
+<p>基有四种读法，考场按题切换：<strong>基 = 极大无关组</strong>（再多一个就相关）；<strong>基 = 极小生成组</strong>（再少一个就张不满）；<strong>基 = 坐标化的身份证</strong>（每个向量唯一写成 $\sum x_i\varepsilon_i$，§3.5）；<strong>基 = 维数的载体</strong>。维数本身良定义——任意两组基所含向量个数相同，一句话理由：<strong>替换定理</strong>（无关组的个数不超过任何生成组的个数），两组基互相套用这个不等式即得等势。</p>
+
+<div class="calc box" data-tag="两个引擎定理（本章的得分机器）">
+  <p><strong>引擎一（个数 &gt; 维数 ⟹ 相关）</strong>：$\dim V=n$，则 $V$ 中任意 $n+1$ 个（或更多）向量必线性相关。——例 2 给出完整证明；第 17 届题一"三维空间中四向量必线性相关"是它的 $n=3$ 特例。</p>
+  <p><strong>引擎二（$n$ 维空间中 $n$ 个无关 ⟹ 基）</strong>：$\dim V=n$，则任意 $n$ 个线性无关的向量必为基。——由 §3.6 基扩充定理：若张不成 $V$ 就还能再加，与 $\dim V=n$ 矛盾。例 1 用它收尾。</p>
+</div>
+
+<h3>3.5 坐标与坐标向量：一切有限维空间都是 $F^n$</h3>
+
+<p>取定基 $\varepsilon_1,\dots,\varepsilon_n$ 后，每个 $\alpha\in V$ 有<strong>唯一</strong>表出 $\alpha=x_1\varepsilon_1+\cdots+x_n\varepsilon_n$，称列向量 $(x_1,\dots,x_n)^{T}\in F^n$ 为 $\alpha$ 在这组基下的<strong>坐标</strong>。关键是：对应 $\alpha\mapsto$ 坐标，<strong>保持加法与数乘</strong>（和的坐标 = 坐标的和，$k$ 倍的坐标 = 坐标的 $k$ 倍）。于是抽象空间 $V$ 里的"组合 = 0"，原封不动翻译成 $F^n$ 里的齐次方程组——这就是"<strong>一切 $n$ 维线性空间本质上都是 $F^n$</strong>"（同构），第 3 章会把它写成定理；本章例 2 先让你用一次它的威力。</p>
+
+<h3>3.6 基扩充定理</h3>
+
+<div class="def">
+  <p class="def-title">定理（基扩充）</p>
+  <p>$n$ 维空间 $V$ 中，任何线性无关组 $\alpha_1,\dots,\alpha_s$（$s\le n$）都可以<strong>扩充</strong>成一组基 $\alpha_1,\dots,\alpha_s,\alpha_{s+1},\dots,\alpha_n$。</p>
+</div>
+
+<p>一句话理由：若 $\operatorname{span}\{\alpha_1,\dots,\alpha_s\}\ne V$，任取 $\alpha_{s+1}$ 不在其中，加入后仍无关（它不能被表出，否则与新组合=0 矛盾）；重复至多 $n-s$ 步，到 $n$ 个无关向量为止——引擎二保证已经是基。它是<strong>秩-零度定理、维数公式</strong>（第 2、3 章）的种子：以后几乎每个"dim"等式的证明，都是先扩基再数个数。</p>
+
+<h2>§4 翻译轨：三个标准动作 + 一间练功房</h2>
+
+<p>本章概念在卷面上只有三种用法：证无关、证相关、认空间。练成反射，高代的开局分就到手了。</p>
+
+<div class="trans box" data-tag="动作一：证无关 = 设组合为 0，榨出系数全 0">
+  <p><strong>题面</strong>："证明 $\alpha_1,\dots,\alpha_s$ 线性无关" / "证明 … 构成一组基"（基 = 无关 + 生成/计数，无关那一半永远是这个动作）。</p>
+  <p><strong>翻译</strong>：卷面第一行雷打不动："设 $k_1\alpha_1+\cdots+k_s\alpha_s=0$。"然后按空间品种选榨法：$F^n$ 中<strong>比较分量</strong>（直接得方程组）；多项式空间中<strong>比较系数 / 代特殊值 / 求导代值</strong>（例 1 三法对比）；函数空间中<strong>代特殊点</strong>或<strong>利用渐近行为</strong>（变式 2）。</p>
+  <p><strong>用在哪一步、值多少分</strong>：这是高代证明题的"开门句"。第 15 届题三官方解答的入口"若线性相关，则存在非零 $p(x)$ 使 $p(\mathbf{A})\alpha=0$"就是本动作的逆否形态——写出这一句，步骤分先到手。</p>
+</div>
+
+<div class="trans box" data-tag="动作二：证相关 = 构造非零组合 或 维数计数">
+  <p><strong>题面</strong>："证明 $\alpha_1,\dots,\alpha_s$ 线性相关" / "证明任意 $m$ 个 … 必线性相关"。</p>
+  <p><strong>翻译</strong>：先查<strong>个数与维数</strong>：若向量都在某个已知维数的空间里且个数 $&gt;\dim$，直接引擎一收尾（坐标化 + 齐次方程组，例 2 是模板）。个数压不过维数时，才走<strong>构造</strong>：找同次/同型的一对做消元（第 16 届题四的 $g=f_i-\frac{a}{b}f_j$），或反设无关推出矛盾。</p>
+  <p><strong>用在哪一步</strong>：第 16 届题四的第一步"次数两两不同则次数之和 $\ge\frac{2023\times2024}{2}$，矛盾"就是维数计数思想的翻版：每个次数一层楼，2024 个互不相同的次数至少要盖 2024 层楼。</p>
+</div>
+
+<div class="trans box" data-tag="动作三：真题原句长这样（第 16 届题四开场白）">
+  <p><strong>题面</strong>："熟知实数域 $\mathbb{R}$ 上的一元多项式集合 $\mathbb{R}[x]$ 在多项式加法和数乘下构成 $\mathbb{R}$ 上的一个线性空间。"</p>
+  <p><strong>翻译</strong>：这句话是官方<strong>白送的三样东西</strong>：① 授权你把多项式叫"向量"、把"$\sum k_if_i=0$"叫线性组合——后面用向量语言不算超纲；② 提醒你本题的舞台是抽象线性空间，工具是相关/无关的定义；③ 暗示"$\deg 0=-\infty$"这条补充规定会用到（零多项式何时出现，正是全题的胜负手）。竞赛题面里没有废话——把定义写进题面，等于告诉你"考点就是定义本身"。</p>
+</div>
+
+<h3>4.4 翻译练功房：像学语言一样，大量互译</h3>
+
+<p>学翻译和学外语一样：<strong>看 3 个示范是输入，写 8 个互译才是输出</strong>。下面 8 句，先全部写在纸上，再逐条展开对照。每条不超过 1 分钟。</p>
+
+<div class="trans box" data-tag="互译 8 句">
+  <p><strong>T1</strong>　自然→符号："证明 $\alpha_1,\dots,\alpha_s$ 线性无关" 的标准开局，写出卷面第一行。</p>
+  <details class="answer"><summary>对照</summary><p>"设 $k_1\alpha_1+\cdots+k_s\alpha_s=0$（$k_i\in F$）。下证 $k_1=\cdots=k_s=0$。"<strong>易错</strong>：漏写"设……=0"直接展开——没有假设就没有要解的方程，后面每一步都无的放矢。</p></details>
+  <p><strong>T2</strong>　符号→自然："$\exists\,k_1,\dots,k_s$ 不全为 $0$，使 $k_1\alpha_1+\cdots+k_s\alpha_s=0$。"它和无关定义是什么关系？</p>
+  <details class="answer"><summary>对照</summary><p>"存在一组<strong>不全是零</strong>的系数，把组合压成零向量"——这是线性<strong>相关</strong>的定义，恰是无关定义（任意组合 $=0\Rightarrow$ 系数全 $0$）的量词否定：$\forall\leftrightarrow\exists$ 互换、结论取反（工具四）。证相关 = 找一组非零系数；证无关 = 堵死所有可能。</p></details>
+  <p><strong>T3</strong>　判断（说理由）："次数<strong>恰为</strong> 3 的多项式全体"配上多项式加法与数乘，是 $\mathbb{R}$ 上的线性空间吗？</p>
+  <details class="answer"><summary>对照</summary><p>不是。$x^3$ 与 $-x^3+x$ 都是三次的，但它们的和 $x$ 次数为 1，不在集合里——<strong>加法不封闭</strong>；零多项式（次数 $-\infty$）也不在其中。<strong>点评</strong>：封闭性三关（加法/数乘/零元）第一关就死，后面八条公理根本轮不到查。</p></details>
+  <p><strong>T4</strong>　判断（说理由）：$Ax=b$（$b\ne0$）的解集，对"向量加法 + 数乘"封闭吗？它和 $Ax=0$ 的解集差在哪？</p>
+  <details class="answer"><summary>对照</summary><p>不封闭：两解之和 $A(x_1+x_2)=2b\ne b$，且 $0$ 不是解。差一个"平移"：取定特解 $\eta$，则 $\{x:Ax=b\}=\eta+\{x:Ax=0\}$——它不是线性空间，是解空间（线性空间）的平行移动。<strong>点评</strong>：这就是非齐次方程组解结构定理的几何说法，第 2 章细讲。</p></details>
+  <p><strong>T5</strong>　维数语言互译：把"$\dim V=n$"翻译成不带 dim 的两句话。</p>
+  <details class="answer"><summary>对照</summary><p>① $V$ 中<strong>存在</strong> $n$ 个线性无关的向量；② $V$ 中<strong>任意</strong> $n+1$ 个向量必线性相关。（基 = 极大无关组的直接展开。）<strong>用途</strong>：题目给"任意 $n+1$ 个必相关"就是在给你 $\dim V\le n$，给"存在 $n$ 个无关"就是 $\dim V\ge n$——维数论证两头夹。</p></details>
+  <p><strong>T6</strong>　找坑："$\alpha_1,\alpha_2,\alpha_3$ 中任意两个都线性无关，所以三者线性无关。"对吗？</p>
+  <details class="answer"><summary>对照</summary><p>错。反例 $\mathbb{R}^2$ 中 $(1,0),(0,1),(1,1)$：两两不共线（两两无关），但 $(1,1)=(1,0)+(0,1)$——第三个活在另两个的张成里，整体相关。<strong>点评</strong>：相关/无关是<strong>整体</strong>性质，不能两两验收；冗余只要存在一处，全组就相关。</p></details>
+  <p><strong>T7</strong>　符号→自然："$\dim\{x\in F^n:Ax=0\}=n-\operatorname{r}(A)$。"这句话说的"自由"是什么？基叫什么？</p>
+  <details class="answer"><summary>对照</summary><p>解空间的维数 = 未知数个数 − 系数矩阵的秩 = <strong>自由未知量的个数</strong>（每个自由未知量贡献一维）；解空间的一组基就是<strong>基础解系</strong>。<strong>点评</strong>：这就是秩-零度定理的雏形（$\dim\ker+\operatorname{秩}=n$），第 3 章完整版。</p></details>
+  <p><strong>T8</strong>　自然→符号 + 追问："任何有限维空间中，无关组的向量个数不会超过生成组的向量个数。"这句话保证了什么"良定义"？</p>
+  <details class="answer"><summary>对照</summary><p>符号：$\alpha_1,\dots,\alpha_s$ 无关且每个 $\alpha_i$ 可由 $\beta_1,\dots,\beta_t$ 表出 $\Rightarrow s\le t$（替换定理）。它保证<strong>维数良定义</strong>：任取两组基，互相视为"无关组 vs 生成组"，得 $n_1\le n_2$ 且 $n_2\le n_1$，故两组基等势——$\dim V$ 不依赖基的选法。</p></details>
+</div>
+
+<h2>§5 类型识别：什么信号在召唤本章</h2>
+
+<div class="recog box" data-tag="识别反射表">
+  <table>
+    <tr><th>题面信号</th><th>反射</th></tr>
+    <tr><td>"证明 … 线性无关"</td><td>设组合 $=0$ → 榨（比较系数/代值/求导）→ 解出系数全 $0$</td></tr>
+    <tr><td>"证明 …（必）线性相关"</td><td>先数个数与维数：个数 $&gt;\dim$ 用引擎一；不够就构造非零组合或反证</td></tr>
+    <tr><td>"任意 $n+1$ 个 / $n+2$ 个 … 必相关"</td><td>维数计数定型文：坐标化到 $F^{\dim}$，齐次方程组未知数 $&gt;$ 方程数（例 2）</td></tr>
+    <tr><td>"验证某集合按某运算构成线性空间"</td><td>先查封闭性三关（加法/数乘/零元），公理一句话带过（第 11 届题四）</td></tr>
+    <tr><td>"次数两两不同的多项式"</td><td>必无关——最高次项无人可抵消（变式 1）；逆否：相关 ⟹ 次数必有重复</td></tr>
+    <tr><td>"构成基 / 求一组基 / 成为基"</td><td>无关 + 个数 $=\dim$（引擎二），或无关 + 直接验证表出</td></tr>
+    <tr><td>"解空间 / $Ax=0$ 的全部解"</td><td>是线性空间，$\dim=n-\operatorname{r}(A)$，基 = 基础解系</td></tr>
+    <tr><td>题面把"线性空间"定义写进题干</td><td>官方在送定义分 + 授权向量语言；考点就是定义与相关性本身（第 16 届题四）</td></tr>
+  </table>
+</div>
+
+<h2>§6 考法定位：它藏在哪里、值多少分</h2>
+
+<div class="exam box" data-tag="考法定位">
+  <table>
+    <tr><th>出处</th><th>题号</th><th>本章概念扮演什么角色</th><th>分值权重</th></tr>
+    <tr><td>第 16 届（2024）</td><td>题四</td><td>线性空间定义写进题面；结论就是"线性相关"；官方解法为次数下界 + 消元降次</td><td>15 分（直接）</td></tr>
+    <tr><td>第 11 届（2019）</td><td>题四</td><td>"证明 $V$ 按通常运算构成实向量空间，并求维数"（答案：$1$ 维）</td><td>20 分（直接）</td></tr>
+    <tr><td>第 15 届（2023）</td><td>题三</td><td>"$\{\alpha,\mathbf{A}\alpha,\dots,\mathbf{A}^{n-1}\alpha\}$ 成为基"贯穿全题；几何重数 = 解空间维数</td><td>20 分（骨架语言）</td></tr>
+    <tr><td>第 12 届（2020）</td><td>题三</td><td>"$Ax=Bx$ 解空间维数为 $3$" $\iff$ $\operatorname{r}(A-B)=2017$，全题第一块多米诺</td><td>15 分（关键步骤）</td></tr>
+    <tr><td>第 16 届（2024）</td><td>题三</td><td>开局用秩定理 $\operatorname{r}(A^*)\in\{0,1\}$——秩即维数（值域/零度的维数）</td><td>20 分中约 3 分步骤</td></tr>
+    <tr><td>第 17 届（2025）</td><td>题一(2)</td><td>"三维欧氏空间中四向量必线性相关"（引擎一，$n=3$）</td><td>15 分中的入口步骤</td></tr>
+  </table>
+  <p><strong>规律</strong>：本章是罕见的"定义直接上卷"的章节——第 16 届题四、第 11 届题四考的就是定义与相关性本身，合计 35 分量级；其余届次则以"基、维数、解空间维数"的语言形式，成为每道高代大题的<strong>开局步骤分</strong>。换句话说：本章动作不熟，高代每道题的第一行都写不出来。</p>
+</div>
+
+<h2>§7 关系网：一次抽象，四个出口</h2>
+
+<p>本章的逻辑是一张"提炼—使用"图：<span style="color:#b45309">三角形</span>是来源动机（四个世界共享的规则），<span style="color:#1d4ed8">圆角矩形</span>是公理与定义，<span style="color:#15803d">矩形</span>是定理，<span style="color:#7c3aed">六边形</span>是方法动作，<span style="color:#0f766e">椭圆</span>是应用出口。顺着箭头走一遍，就是本章的全部逻辑。</p>
+
+<figure>
+<svg viewBox="0 0 720 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="线性空间关系网地图">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+
+  <!-- 图例 -->
+  <polygon points="30,16 22,30 38,30" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5"/>
+  <text x="44" y="28" font-size="11.5" fill="#5c554b">来源·动机</text>
+  <rect x="116" y="17" width="22" height="13" rx="6.5" fill="#eef3fe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="144" y="28" font-size="11.5" fill="#5c554b">公理·定义</text>
+  <rect x="222" y="17" width="22" height="13" fill="#ecf8f0" stroke="#15803d" stroke-width="1.5"/>
+  <text x="250" y="28" font-size="11.5" fill="#5c554b">定理</text>
+  <polygon points="300,23.5 306,16 320,16 326,23.5 320,31 306,31" fill="#f4effd" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="332" y="28" font-size="11.5" fill="#5c554b">方法·动作</text>
+  <ellipse cx="420" cy="23.5" rx="12" ry="7" fill="#ecf8f5" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="438" y="28" font-size="11.5" fill="#5c554b">应用·出口</text>
+
+  <!-- 来源三角 -->
+  <polygon points="360,52 268,132 452,132" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="360" y="96" font-size="12.5" fill="#7a4a12" text-anchor="middle" font-weight="bold">四个世界 · 同一套规则</text>
+  <text x="360" y="114" font-size="11" fill="#7a4a12" text-anchor="middle">ℝⁿ · F[x] · C[a,b] · Mₙ(F)</text>
+
+  <!-- 三角 → 公理 -->
+  <line x1="360" y1="132" x2="360" y2="168" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="372" y="156" font-size="11" fill="#5c554b">擦掉内容，提炼骨架</text>
+
+  <!-- 公理（圆角矩形） -->
+  <rect x="220" y="174" width="280" height="62" rx="31" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="360" y="199" font-size="15" fill="#1d4ed8" text-anchor="middle" font-weight="bold">线性空间 V（加法 + 数乘）</text>
+  <text x="360" y="219" font-size="11.5" fill="#1d4ed8" text-anchor="middle">三组八条公理 · 封闭性是暗考点</text>
+
+  <!-- 公理 → 两个定义层矩形 -->
+  <line x1="290" y1="236" x2="200" y2="284" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="212" y="262" font-size="11" fill="#5c554b" text-anchor="end">长出判定问题</text>
+  <line x1="430" y1="236" x2="520" y2="284" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="508" y="262" font-size="11" fill="#5c554b">长出结构问题</text>
+
+  <!-- 定义/定理矩形层 -->
+  <rect x="60" y="290" width="240" height="58" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="180" y="313" font-size="12.5" fill="#15803d" text-anchor="middle" font-weight="bold">线性相关 / 无关（定义）</text>
+  <text x="180" y="331" font-size="10.5" fill="#4a7c59" text-anchor="middle">相关 = 有冗余：有人活在别人的 span 里</text>
+  <rect x="420" y="290" width="240" height="58" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="540" y="313" font-size="12.5" fill="#15803d" text-anchor="middle" font-weight="bold">基与维数</text>
+  <text x="540" y="331" font-size="10.5" fill="#4a7c59" text-anchor="middle">极大无关组 = 极小生成组；替换定理 ⟹ 维数良定义</text>
+
+  <!-- 定义 → 方法 -->
+  <line x1="180" y1="348" x2="180" y2="392" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="540" y1="348" x2="540" y2="392" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="192" y="374" font-size="11" fill="#5c554b">判无关</text>
+  <text x="480" y="374" font-size="11" fill="#5c554b" text-anchor="end">判相关/求维数</text>
+
+  <!-- 方法六边形 -->
+  <polygon points="60,428 92,398 268,398 300,428 268,458 92,458" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="180" y="424" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">组合 = 0 标准流程</text>
+  <text x="180" y="441" font-size="10.5" fill="#6a55a3" text-anchor="middle">设 → 榨（系数/代值/求导）→ 解出全 0</text>
+  <polygon points="420,428 452,398 628,398 660,428 628,458 452,458" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="540" y="424" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">维数计数</text>
+  <text x="540" y="441" font-size="10.5" fill="#6a55a3" text-anchor="middle">个数 &gt; dim ⟹ 相关（坐标化 + 齐次方程组）</text>
+
+  <!-- 方法 → 出口 -->
+  <polyline points="180,458 180,490 130,490 130,512" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <polyline points="540,458 540,490 590,490 590,512" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <polyline points="300,438 360,438 360,512" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="330" y="430" font-size="11" fill="#5c554b">发身份证</text>
+  <polyline points="420,438 455,470 455,512" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- 出口椭圆 -->
+  <ellipse cx="130" cy="538" rx="118" ry="26" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="130" y="535" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">解空间 dim = n − r(A)</text>
+  <text x="130" y="551" font-size="10.5" fill="#3d7a70" text-anchor="middle">秩-零度（第 3 章）</text>
+  <ellipse cx="360" cy="538" rx="104" ry="26" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="360" y="535" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">坐标化：一切 n 维 ≅ Fⁿ</text>
+  <text x="360" y="551" font-size="10.5" fill="#3d7a70" text-anchor="middle">同构（第 3 章展开）</text>
+  <ellipse cx="592" cy="538" rx="112" ry="26" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="592" y="535" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">子空间 · 和与直和</text>
+  <text x="592" y="551" font-size="10.5" fill="#3d7a70" text-anchor="middle">第 2 章；再通线性映射（第 3 章）</text>
+</svg>
+<figcaption>本章地图：四个世界提炼出一副骨架，骨架上长出"判定"与"结构"两类问题，各配一件手上武器，再各自通往后面的章节。</figcaption>
+</figure>
+
+<div class="net box" data-tag="画面感锚点（记这些，不记条文）">
+  <table>
+    <tr><th>节点</th><th>一句话画面</th><th>擅长场景</th></tr>
+    <tr><td>线性空间</td><td>擦掉皮肉只剩骨架：加法成群、数乘分配、结合与单位元</td><td>把多项式/函数/矩阵当向量说话（第 16 届题四）</td></tr>
+    <tr><td>线性相关</td><td>组里有冗余：某个向量活在别人的张成里</td><td>"必相关"型大题；个数 vs 维数</td></tr>
+    <tr><td>线性无关</td><td>每个向量都带来一个新方向</td><td>"设组合=0"开门句，高代证明题通用</td></tr>
+    <tr><td>基</td><td>身份证：每个向量唯一一串坐标</td><td>坐标化、表出唯一性论证</td></tr>
+    <tr><td>维数</td><td>空间的"楼层数"：每层至多站一个无关向量</td><td>计数论证：个数超楼层必相关</td></tr>
+    <tr><td>基扩充</td><td>无关的树苗总能补栽成满林的基</td><td>秩-零度、维数公式的种子</td></tr>
+  </table>
+  <p><strong>和你已学知识的焊接点</strong>：旧线代课的"向量组、极大无关组、基础解系"——那全是 $F^n$ 里的本章概念，现在只是把舞台从 $F^n$ 搬到任意线性空间，结论一字不改；"齐次方程组有非零解 ⟺ 列向量组相关"，正是例 2 那座桥。数分侧：$C[a,b]$ 是线性空间，所以"函数可以当向量加"这件事在卷一就已经悄悄用过（如函数空间中的逼近）。</p>
+</div>
+
+<h2>§8 计算示范：先看真人怎么想，再看卷面怎么写</h2>
+
+<p>两道例题分别对应本章两大得分机器：<strong>组合=0 流程</strong>（证无关、证基）与<strong>维数计数</strong>（证必相关）。照样分两层：按总纲拆解 + 卷面书写。</p>
+
+<h3>例 1 · 证无关并证基（约 8 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>结论有两半：① "线性无关"是<strong>否定句</strong>（不存在非零系数组合 $=0$）——查拆目标总表，否定句转 $\forall$ 型处理：任取使组合 $=0$ 的系数，证它们被迫全 $0$；② "是基" $=$ 无关 $+$（生成 或 个数 $=\dim$）——$P\land Q$ 型，分两段。骨架不需要灵感。</p>
+  <p><span class="stage">【盘点】</span>库存三条：① $(x-1)^j$ 的次数<strong>恰好</strong>是 $j$，且它在 $x=1$ 处的"指纹"是阶梯式的——$j$ 阶以下导数在 $1$ 处全为 $0$，$j$ 阶导数在 $1$ 处等于 $j!$；② 多项式 $p\equiv0$ ⟹ 它在任一点的各阶导数全为 $0$；③ $\dim F[x]_4=4$（基 $1,x,x^2,x^3$）。注意①是本题的特产：$x-1$ 的幂在 $x=1$ 处"逐级归零"，正好供我们逐层剥皮。</p>
+  <p><span class="stage">【会师】</span>要 $k_0=k_1=k_2=k_3=0$ $\Longleftarrow$ 逐个掐头：$p(1)=k_0$（其余项都含因子 $x-1$）$\Longrightarrow k_0=0$；$p'(1)=k_1$（同理）$\Longrightarrow k_1=0$；$p''(1)=2k_2\Longrightarrow k_2=0$；$p'''(1)=6k_3\Longrightarrow k_3=0$。链条闭合，每环都是库存①②。这是<strong>工具三 · 特殊化侦察</strong>的正面用法：选一个点榨信息——选 $x=1$ 不是灵感，是因为 $(x-1)^j$ 在那里归零。备选手法：比较系数（展开成 $x$ 的幂，四元方程组，繁）；代四个特殊值（Vandermonde 行列式，可证但书写长）。<strong>三法选优：求导代值最省。</strong></p>
+  <p><span class="stage">【定型】</span>卷面顺序：设组合 $=0$ 记为 $p(x)$ → 代 $x=1$ → 逐次求导代 $x=1$ → 四系数全 $0$ → 无关 ✓；再用 $\dim F[x]_4=4$ + 引擎二（$n$ 维空间中 $n$ 个无关 ⟹ 基）收尾。"为什么想到求导"的侦察痕迹全部删除。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 阶梯归零法</strong>：向量组自带"阶梯结构"（次数、阶数、大小两两错开）时，选阶梯的<strong>落脚点</strong>（本题 $x=1$）代值/求导，系数会像台阶一样从低到高逐个现形。同一动作还出现在：$1,x,x^2,\dots$ 在 $x=0$ 处；三角函数组在特殊角处。第 16 届题四的"次数两两不同必无关"（变式 1）用的也是阶梯思想——最高阶台阶无人可替。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 1</strong>　设 $F$ 为数域。证明：$1,\ x-1,\ (x-1)^2,\ (x-1)^3$ 在 $F[x]_4$ 中线性无关，且构成 $F[x]_4$ 的一组基。</p>
+  <hr>
+  <p class="proof-line"><strong>证明</strong>　设
+  $$p(x)=k_0+k_1(x-1)+k_2(x-1)^2+k_3(x-1)^3=0\quad(k_i\in F).$$<span class="step-score">（2 分）</span></p>
+  <p class="proof-line">代入 $x=1$：$0=p(1)=k_0$，得 $k_0=0$。<span class="step-score">（4 分）</span></p>
+  <p class="proof-line">求导得 $p'(x)=k_1+2k_2(x-1)+3k_3(x-1)^2$，代入 $x=1$：$0=p'(1)=k_1$，得 $k_1=0$；再求导代入 $x=1$：$0=p''(1)=2k_2$，得 $k_2=0$；$0=p'''(1)=6k_3$，得 $k_3=0$。<span class="step-score">（6 分）</span></p>
+  <p class="proof-line">故 $k_0=k_1=k_2=k_3=0$，该组线性无关。<span class="step-score">（7 分）</span></p>
+  <p class="proof-line">又 $F[x]_4$ 有基 $1,x,x^2,x^3$，故 $\dim F[x]_4=4$；$4$ 维空间中 $4$ 个线性无关的向量必为基。$\square$<span class="step-score">（8 分）</span></p>
+  <p class="aside">书写点评：分点有三处——"设"字开门（没有它后面全是空转）、逐次代值（每步只写"求导 → 代入 → 得 $k_i=0$"，不许跳成"同理可得"）、收尾用引擎二必须写出"$\dim F[x]_4=4$"的依据（报出标准基）。只写"显然线性无关"归零。另一条路：对任意 $f\in F[x]_4$ 用 Taylor 公式 $f(x)=\sum_{j=0}^3\frac{f^{(j)}(1)}{j!}(x-1)^j$ 直接验证生成——同样满分，书写更长。</p>
+</div>
+
+<h3>例 2 · 维数计数：个数 &gt; 维数 ⟹ 必相关（约 10 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>"<strong>任何</strong> $n+2$ 个多项式必相关" $=\forall$（任取一组）套 $\exists$（存在不全零的系数）。$\forall$ 用任取；$\exists$ 用构造——构造一组非零系数，靠<strong>工具六 · 划归</strong>：化归 $F^{n+1}$ 中齐次方程组的可解性，那是旧线代课的现成定理。</p>
+  <p><span class="stage">【盘点】</span>库存：① $F[x]_{n+1}=\{f:\deg f\le n\}$ 有现成基 $1,x,\dots,x^n$，$\dim=n+1$；② 多项式相等 ⟺ 各次系数全等——所以"组合 $=0$"可翻译成 $n+1$ 个标量方程；③ 旧课定理：齐次方程组若未知数个数 $&gt;$ 方程个数，必有非零解（$\operatorname{r}(C)\le$ 行数 $&lt;$ 未知数个数）。③ 正是我们需要的存在性结论，库存与目标严丝合缝。</p>
+  <p><span class="stage">【会师】</span>要：存在不全零的 $k_1,\dots,k_{n+2}$ 使 $\sum k_jf_j=0$ $\Longleftarrow$（②，逐次比较系数）齐次方程组 $C\mathbf{k}=0$ 有非零解 $\Longleftarrow$（③）$C$ 是 $(n+1)\times(n+2)$ 矩阵，$\operatorname{r}(C)\le n+1&lt;n+2$ $\Longleftarrow$（①）取基写出每个 $f_j$ 的坐标。链条闭合。另一条路：反设无关，由基扩充定理可扩成基，基的个数 $\ge n+2&gt;\dim$，矛盾——同样正确，但坐标化版本同时演示了 §3.5 的同构思想，选它。</p>
+  <p><span class="stage">【定型】</span>卷面顺序：取基 → 写坐标 → 组合 $=0$ 翻译成 $C\mathbf{k}=0$ → 引"未知数 $&gt;$ 方程数有非零解" → 下结论。"为什么要取基"（划归的动机）一个字不写。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 坐标化搬兵</strong>：抽象空间里答不上来的问题，取基写成坐标，整体搬进 $F^m$——那里有你旧课的全部武器（方程组、秩、行列式）。一句话纲领：<strong>一切 $n$ 维线性空间都是 $F^n$ 的马甲</strong>（同构，第 3 章定理化）。本题把"多项式的相关性"搬成了"列向量的相关性"，第 16 届题四如果走坐标化路线，搬的也是同一座桥。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 2</strong>　设 $F$ 为数域，$F[x]_{n+1}=\{f\in F[x]:\deg f\le n\}\cup\{0\}$。证明：$F[x]_{n+1}$ 中<strong>任意</strong> $n+2$ 个多项式必线性相关。</p>
+  <hr>
+  <p class="proof-line"><strong>证明</strong>　任取 $f_1,\dots,f_{n+2}\in F[x]_{n+1}$。取基 $1,x,\dots,x^n$，设
+  $$f_j(x)=a_{0j}+a_{1j}x+\cdots+a_{nj}x^n,\qquad j=1,\dots,n+2,$$
+  即 $f_j$ 的坐标为列向量 $(a_{0j},a_{1j},\dots,a_{nj})^{T}\in F^{n+1}$。<span class="step-score">（3 分）</span></p>
+  <p class="proof-line">设 $k_1f_1+\cdots+k_{n+2}f_{n+2}=0$。比较两边 $x^0,x^1,\dots,x^n$ 的系数，得齐次线性方程组
+  $$a_{i1}k_1+a_{i2}k_2+\cdots+a_{i,n+2}k_{n+2}=0,\qquad i=0,1,\dots,n,$$
+  即 $C\mathbf{k}=0$，其中 $C=(a_{ij})$ 为 $(n+1)\times(n+2)$ 矩阵。<span class="step-score">（6 分）</span></p>
+  <p class="proof-line">该方程组有 $n+2$ 个未知数、$n+1$ 个方程，$\operatorname{r}(C)\le n+1&lt;n+2$，故必有非零解 $(k_1,\dots,k_{n+2})\ne(0,\dots,0)$。<span class="step-score">（9 分）</span></p>
+  <p class="proof-line">即存在不全为零的系数使组合为零多项式，$f_1,\dots,f_{n+2}$ 线性相关。$\square$<span class="step-score">（10 分）</span></p>
+  <p class="aside">书写点评：桥梁分在第一步"取基写坐标"——不写坐标，后面的方程组就是无源之水；"$\operatorname{r}(C)\le n+1&lt;n+2$ 必有非零解"要写明依据（秩不超过行数，小于未知数个数），只写"显然有非零解"扣步骤分。本题即"<strong>个数 &gt; 维数 ⟹ 相关</strong>"（引擎一）的完整证明：$\dim F[x]_{n+1}=n+1$，而向量有 $n+2$ 个。与第 16 届题四同型——那里是 2024 个多项式对上界 $2047276=\frac{2023\times2024}{2}$ 控制的次数之和，见 §9 真题节选。</p>
+</div>
+
+<h2>§9 配套题目</h2>
+
+<p>铁律：<strong>先写在纸上，写到写不动再展开答案</strong>。模仿题照例 1、例 2 的卷面格式写；变式题先问自己"结论是什么形态、库存里有什么"。</p>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 1</span>证明：$1,\ x+1,\ (x+1)^2$ 在 $F[x]_3$ 中线性无关，且构成 $F[x]_3$ 的一组基。</p>
+  <details class="answer">
+    <summary>参考答案（约 8 分书写量）</summary>
+    <p>设 $p(x)=k_0+k_1(x+1)+k_2(x+1)^2=0$（2 分）。代入 $x=-1$：$0=p(-1)=k_0$（4 分）；求导代入 $x=-1$：$0=p'(-1)=k_1$；$0=p''(-1)=2k_2$（6 分）。故系数全 $0$，线性无关（7 分）。又 $\dim F[x]_3=3$（基 $1,x,x^2$），$3$ 维空间中 $3$ 个无关向量必为基（8 分）。</p>
+    <p><strong>易错点</strong>：落脚点是 $x=-1$ 不是 $x=1$——阶梯 $(x+1)^j$ 在 $-1$ 处归零；只证无关漏证"是基"（或反过来）各丢一半分。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 2</span>证明：$M_2(\mathbb{R})$（全体 $2$ 阶实方阵）中任意 $5$ 个矩阵必线性相关。</p>
+  <details class="answer">
+    <summary>参考答案（约 8 分书写量）</summary>
+    <p>$M_2(\mathbb{R})$ 有基 $E_{11},E_{12},E_{21},E_{22}$（在 $(i,j)$ 位为 $1$、其余为 $0$ 的矩阵），故 $\dim M_2(\mathbb{R})=4$（2 分）。任取 $5$ 个矩阵 $A_1,\dots,A_5$，各自写成坐标 $\in\mathbb{R}^4$（4 分）。设 $\sum_{j=1}^5 k_jA_j=O$，逐元比较得 $4$ 个方程、$5$ 个未知数的齐次方程组，$\operatorname{r}\le4&lt;5$，必有非零解（7 分）。故 $A_1,\dots,A_5$ 线性相关（8 分）。</p>
+    <p><strong>易错点</strong>：坐标要写对——$A=\begin{pmatrix}a&b\\c&d\end{pmatrix}$ 的坐标是 $(a,b,c,d)^{T}$；"$4$ 维空间中 $5$ 个向量"这一步若直接写"由个数 &gt; 维数"而引用引擎一，也可以——但要求你先证过它（例 2），考场默写本流程最稳。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 1</span>设 $f_1,\dots,f_s\in F[x]$ 均为<strong>非零</strong>多项式，且次数<strong>两两不同</strong>。证明：$f_1,\dots,f_s$ 线性无关。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：标准开局 + 阶梯思想。次数两两不同 ⟹ 组合里"最高次的那一级台阶"只有一个向量能站上去，没人帮它抵消。</p>
+    <p><strong>证明</strong>：设 $k_1f_1+\cdots+k_sf_s=0$。若有系数非零，取 $m$ 使 $k_m\ne0$ 且 $\deg f_m$ 在 $\{\deg f_i:k_i\ne0\}$ 中最大。左端 $x^{\deg f_m}$ 项的系数只能来自 $k_mf_m$（其余 $k_i\ne0$ 的项次数都与 $\deg f_m$ 不同、且不超过它，故都严格小于它），即 $k_m\cdot(\text{$f_m$ 的首项系数})\ne0$——与左端为零多项式矛盾。故所有 $k_i=0$，线性无关。$\square$</p>
+    <p><strong>点评</strong>：这就是第 16 届题四第一步的"另一半"：次数两两不同 ⟹ 无关；其逆否给出——相关 ⟹ 次数必有重复。官方的 "$\sum n_i\ge0+1+\cdots+2023$" 是把同一思想换成计数语言。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 2</span>证明：$1,\ e^x,\ e^{2x}$ 在 $C(\mathbb{R})$ 中线性无关。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路一（代特殊值）</strong>：设 $a+be^x+ce^{2x}=0$（恒等于零函数）。代 $x=0,\ln2,\ln3$ 得
+    $a+b+c=0,\ a+2b+4c=0,\ a+3b+9c=0$。系数行列式为 Vandermonde 行列式 $(2-1)(3-1)(3-2)=2\ne0$，故只有零解 $a=b=c=0$。</p>
+    <p><strong>思路二（渐近行为）</strong>：等式两边除以 $e^{2x}$ 得 $ae^{-2x}+be^{-x}+c=0$，令 $x\to+\infty$ 得 $c=0$；再除以 $e^x$ 令 $x\to+\infty$ 得 $b=0$；于是 $a=0$。</p>
+    <p><strong>点评</strong>：函数世界没有"系数"可比较，但有"函数值"可代、"极限"可取——榨取方程的兵器因空间而异，流程不变：设组合 $=0$ → 榨 → 解。这就是 §1 说的抽象红利。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv3">真题节选</span><strong>（第 16 届题四，15 分）</strong>熟知实数域 $\mathbb{R}$ 上的一元多项式集合 $\mathbb{R}[x]$ 在多项式加法和数乘下构成 $\mathbb{R}$ 上的一个线性空间。设 $f_i(x)\in\mathbb{R}[x]$ 且次数为 $n_i$，$1\le i\le 2024$，这里规定零多项式的次数为 $-\infty$。已知
+  $$\sum_{i=1}^{2024}n_i&lt;2047276,$$
+  证明：$f_1(x),f_2(x),\cdots,f_{2024}(x)$ 为空间 $\mathbb{R}[x]$ 中线性相关的向量组。</p>
+  <p>先回答三个梯子问题（写在纸上）：</p>
+  <p>（i）若 2024 个非负整数 $n_1,\dots,n_{2024}$ <strong>两两不同</strong>，它们的和最小可能是多少？（算出这个数，和题设的 $2047276$ 对照——你得到什么结论？）<br>
+  （ii）设 $N=\max n_i$。所有 $f_i$ 都活在哪个有限维空间里？它的维数是多少？这个维数一定比 $2024$ 小吗？（想想：$2023$ 个零次多项式加 $1$ 个 $2047275$ 次多项式，次数之和是多少？）<br>
+  （iii）次数相同的两个多项式 $f_i,f_j$（首项系数 $a,b$）能怎样"合体"？$g=f_i-\frac{a}{b}f_j$ 的次数变了没有？新向量组与原组"等价"意味着什么？反复合体下去，次数之和这个非负整数列会怎样？</p>
+  <details class="answer">
+    <summary>梯子参考答案</summary>
+    <p>（i）两两不同的非负整数至少取遍 $0,1,2,\dots,2023$，和 $\ge 0+1+\cdots+2023=\frac{2023\times2024}{2}=2047276$——恰与题设上界相撞。故次数<strong>不可能两两不同</strong>，必有 $n_i=n_j$（抽屉原理）。</p>
+    <p>（ii）都活在 $\mathbb{R}[x]_{N+1}$（次数 $\le N$）里，$\dim=N+1$。<strong>但 $N$ 可以高达 $2047275$</strong>（2023 个常数的次数和为 $0$，加一个 $2047275$ 次，总和 $2047275&lt;2047276$ 仍满足题设）——此时维数 $2047276$ 远大于 $2024$，"个数 &gt; 维数"直接用不上。所以本题不能只数最大次数，必须把整个次数之和"压下去"。</p>
+    <p>（iii）合体：$g=f_i-\frac{a}{b}f_j$ 消去首项，$\deg g&lt;\deg f_i$（次数之和严格变小）；"等价" = 两组向量可以互相线性表出 ⟹ 张成相同 ⟹ <strong>相关性相同</strong>（一组相关当且仅当另一组相关）。反复合体：次数之和是严格递减的非负整数列，不能无限下降 ⟹ 有限步后必停，停的方式只能是某处出现零多项式——而含零向量的组必然相关（$1\cdot0=0$ 就是非零组合）。</p>
+  </details>
+  <details class="answer">
+    <summary>官方解答骨架（转录自官方参考答案）</summary>
+    <p><strong>第一步（次数必有重复）</strong>：若向量组 (I) 含零多项式，显然线性相关；下设每个 $f_i$ 非零。若次数 $n_1,\dots,n_{2024}$ 两两不同，不妨 $n_1&lt;n_2&lt;\cdots&lt;n_{2024}$，则 $n_i\ge i-1$，从而 $\sum n_i\ge\sum_{i=1}^{2024}(i-1)=\frac{2023\times2024}{2}=2047276$，矛盾——故必有两个次数相同。<span class="step-score">（5 分）</span></p>
+    <p><strong>第二步（消元降次，等价替换）</strong>：设 $n_i=n_j=n$（$j&gt;i$），$f_i(x)=ax^n+\cdots$，$f_j(x)=bx^n+\cdots$（$a,b\ne0$）。构造 $g(x)=f_i(x)-\frac{a}{b}f_j(x)$，则 (I) 与向量组 (II)：$f_1,\dots,f_{i-1},g,f_{i+1},\dots,f_{2024}$ 等价。<span class="step-score">（10 分）</span></p>
+    <p><strong>第三步（递降终止）</strong>：因 $\deg g&lt;\deg f_i$，(II) 的次数之和严格小于 (I) 的（仍 $&lt;2047276$）。对 (II) 重复上述过程：每步得到与原组等价的向量组，且若不含零多项式则次数之和严格下降。过程不能无限进行，最终得到与 (I) 等价的向量组 (IV) 其次数之和 $&lt;0$，故 (IV) 必含零多项式，即 (IV) 线性相关；由等价的传递性，(I) 即 $f_1,\dots,f_{2024}$ 在 $\mathbb{R}[x]$ 中线性相关。$\square$<span class="step-score">（15 分）</span></p>
+    <p><strong>复盘</strong>：本题用了本章三个动作——① 变式 1 的逆否（相关 ⟹ 次数必有重复，第一步的抽屉计数）；② "等价向量组相关性相同"（表出关系保持张成，张成决定相关性——§3.2 冗余画面）；③ 递降论证（非负整数不能无限降，本质是<strong>工具七 · 极端原理</strong>）。官方解法是"构造非零组合"的精炼版：不直接给系数，而是给一台<strong>生产非零组合的机器</strong>。注意梯子 (ii) 的教训：次数之和的上界 $\ne$ 最大次数的上界——这正是本题配得起 15 分的原因。<em>（题目与解答骨架转录自第 16 届官方 PDF，见 <a href="真题索引/第16届_2024.md">真题索引</a>。）</em></p>
+  </details>
+</div>
+
+<h2>§9.5 熟练度训练场</h2>
+
+<p>理解只是入场券，<strong>考场上拼的是基本动作的速度</strong>。两种训练，每天 10 分钟：</p>
+
+<h3>训练一 · 翻卡快测（目标：每卡 10 秒内出答案）</h3>
+<div class="quiz" data-quiz="ch11-drill"></div>
+
+<h3>训练二 · 计时默写（写在纸上，掐表）</h3>
+<div class="calc box" data-tag="默写清单">
+  <p>① <strong>90 秒</strong>：默写线性空间定义——按三组写：加法成群 4 条、数乘分配 2 条、结合与单位元 2 条，外加一句封闭性；</p>
+  <p>② <strong>60 秒</strong>：默写线性相关与线性无关的定义（量词形式），并写出证无关的标准开局第一行；</p>
+  <p>③ <strong>3 分钟</strong>：默写例 1 全流程（设组合 $=0$ → 代 $x=1$ → 逐次求导代值 → 系数全 $0$ → $\dim F[x]_4=4$ + 引擎二收尾），以及例 2 的证明骨架（取基 → 坐标 → $C\mathbf{k}=0$ → 未知数 $&gt;$ 方程数 → 相关）。</p>
+  <p><strong>过关标准</strong>：连续两天全对才算过。做不到就回到对应小节重读，再默。</p>
+</div>
+
+<h2>§10 六方向自测卡</h2>
+
+<div class="selftest">
+  <h3>合上书，拿张白纸，默写以下六项</h3>
+  <div class="st-item">
+    <p class="st-q"><em>=（它是什么）</em>　写出线性空间的定义（三组八条 + 封闭性），以及线性无关的定义。</p>
+    <details><summary>对照</summary><p>非空集合 $V$ + 数域 $F$ 上的加法与数乘，满足：加法交换/结合/有零元/有负元；$k(\alpha+\beta)=k\alpha+k\beta$，$(k+l)\alpha=k\alpha+l\alpha$；$k(l\alpha)=(kl)\alpha$，$1\alpha=\alpha$；且对加法、数乘封闭。无关：$k_1\alpha_1+\cdots+k_s\alpha_s=0\Rightarrow k_1=\cdots=k_s=0$。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>←（什么带来它）</em>　线性空间这个概念是从哪四个世界的什么共同财产里提炼出来的？</p>
+    <details><summary>对照</summary><p>$\mathbb{R}^n$、$F[x]$、$C[a,b]$、$M_n(F)$ 共享的"加法 + 数乘 + 八条规则"。擦掉各自的内容只剩规则，就是线性空间——第 16 届题四把这句提炼直接写进了题面。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>→（它带来什么）</em>　说出线性空间概念带来的三件直接武器和三个下游章节。</p>
+    <details><summary>对照</summary><p>武器：① 组合 $=0$ 标准流程（证无关）；② 个数 $&gt;$ 维数 ⟹ 相关（引擎一）；③ $n$ 维空间中 $n$ 个无关 ⟹ 基（引擎二）+ 坐标化搬兵。下游：第 2 章子空间/和与直和、第 3 章线性映射与同构、秩-零度定理。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>∈（实例）</em>　默写三个线性空间及各自的维数（至少一个无限维），再默一个非例及死因。</p>
+    <details><summary>对照</summary><p>$F[x]_n$（$\dim=n$，基 $1,x,\dots,x^{n-1}$）；$M_n(F)$（$\dim=n^2$）；$\{Ax=0\}$ 解空间（$\dim=n-\operatorname{r}(A)$）；无限维：$F[x]$ 或 $C[a,b]$。非例：次数恰为 $n$ 的多项式全体——加法不封闭（$x^n+(-x^n+1)=1$ 掉出集合）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>≠（区分）</em>　"两两线性无关"与"整体线性无关"的区别，配一个反例；"$Ax=0$ 解集"与"$Ax=b$（$b\ne0$）解集"的区别。</p>
+    <details><summary>对照</summary><p>两两无关是局部性质，整体无关要求不存在任何非零组合：$(1,0),(0,1),(1,1)$ 两两无关但 $(1,1)=(1,0)+(0,1)$ 整体相关。$Ax=0$ 的解集是线性空间（封闭、含 $0$）；$Ax=b$ 的解集不封闭、不含 $0$，是解空间的平移（仿射）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>（为何要有它）</em>　不抽象不行吗——直接在 $\mathbb{R}[x]$ 里谈"2024 个多项式相关"会丢掉什么？</p>
+    <details><summary>对照</summary><p>丢掉整个向量语言的武器库：相关/无关的判定流程、维数计数、坐标化、等价替换——这些定理只在"线性空间"这个抽象层上被一次性证明。没有抽象，多项式世界每条结论都要重新发明证明；有了抽象，第 16 届题四的开局"设组合 $=0$"与 $\mathbb{R}^3$ 里的写法一字不差。</p></details>
+  </div>
+</div>
+
+<div class="net box" data-tag="间隔复习安排">
+  <p><strong>1 天后</strong>：重做六方向自测卡（不翻书）+ 翻卡快测第二轮；<strong>3 天后</strong>：重做变式 1 与真题节选的梯子问题 + 计时默写②③；<strong>1 周后</strong>：默写"个数 &gt; 维数 ⟹ 相关"的完整证明（例 2），确认翻卡全部"会了"。</p>
+  <p>本章是<strong>卷二所有章的地基</strong>：第 2 章（子空间、和与直和——$\operatorname{span}$ 是第一个子空间）、第 3 章（线性映射、同构、秩-零度——坐标化定理在那里封口），以及更远的特征值章（"可对角化 ⟺ 特征向量成基"）都站在本章的定义上。本章动作不熟，后面每章都要补课。</p>
+</div>
+
+<div class="chapnav">
+  <span><a href="ch10.html">← 卷一 · 数学分析 · 第 10 章</a></span>
+  <span><a href="index.html">首页</a></span>
+  <span><a href="ch12.html">第 2 章 · 子空间、和与直和 ⊕ →</a></span>
+</div>
+
+</div>
+
+<script src="assets/quiz.js"></script>
+<script>
+/* §9.5 翻卡数据 */
+registerQuiz("ch11-drill", [
+  { q: "验证「某集合 + 运算是线性空间」时，真正的暗考点是什么？", a: "封闭性：加法、数乘的结果必须仍在集合里（顺带查零元）。八条公理几乎总从已知运算免费继承。" },
+  { q: "「次数恰为 $n$ 的多项式全体」是线性空间吗？为什么？", a: "不是。加法不封闭：$x^n$ 与 $-x^n+1$ 之和次数掉到 $0$；零多项式也不在其中。" },
+  { q: "证 $\\alpha_1,\\dots,\\alpha_s$ 线性无关的标准开局第一行？", a: "「设 $k_1\\alpha_1+\\cdots+k_s\\alpha_s=0$，下证 $k_1=\\cdots=k_s=0$。」没有「设」字，后面全是空转。" },
+  { q: "线性相关的定义（量词形式）？", a: "$\\exists\\,k_1,\\dots,k_s$ 不全为 $0$，使 $k_1\\alpha_1+\\cdots+k_s\\alpha_s=0$——无关定义的量词否定。" },
+  { q: "$\\dim F[x]_n$ = ？标准基？", a: "$n$（$F[x]_n$ 是次数 $<n$ 的多项式）；基 $1,x,\\dots,x^{n-1}$。" },
+  { q: "$\\dim M_n(F)$ = ？$\\dim\\{x:Ax=0\\}$ = ？", a: "$n^2$（基 $E_{ij}$）；$n-\\operatorname{r}(A)$（基础解系即基，秩-零度雏形）。" },
+  { q: "「个数 $>$ 维数」推出什么？证明用哪座桥？", a: "必线性相关。桥 = 坐标化：取基写成 $F^n$ 中的列向量，组合 $=0$ 变齐次方程组，未知数 $>$ 方程数必有非零解。" },
+  { q: "$n$ 维空间中 $n$ 个线性无关的向量 ⟹ ？", a: "必为基（引擎二）——由基扩充定理，张不满就还能再加，与维数 $n$ 矛盾。" },
+  { q: "基的四个等价说法？", a: "极大无关组 = 极小生成组 = 坐标化的身份证（表出唯一）= 维数的载体。" },
+  { q: "第 16 届题四第一步：为什么次数必有重复？", a: "$2024$ 个两两不同的非负次数之和 $\\ge 0+1+\\cdots+2023=\\frac{2023\\times2024}{2}=2047276$，恰与题设上界相撞（抽屉原理）。" }
+]);
+</script>
+
+<script>
+/* §3.3 张成探索器 */
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  var svg = document.getElementById("spanw-svg");
+  var out = document.getElementById("spanw-out");
+  var W = 640, H = 430, CX = 320, CY = 215, SC = 46;
+  var ZERO = 0.06, COLL = 0.10;
+  var vecs = [
+    { x: 2.2, y: 0.6, color: "#1d4ed8", name: "v₁" },
+    { x: 0.8, y: 1.9, color: "#15803d", name: "v₂" },
+    { x: 1.5, y: 1.3, color: "#be123c", name: "v₃" }
+  ];
+  function px(mx) { return CX + mx * SC; }
+  function py(my) { return CY - my * SC; }
+  function mk(tag, attrs, parent) {
+    var el = document.createElementNS(NS, tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    (parent || svg).appendChild(el);
+    return el;
+  }
+  /* 箭头标记（三色） */
+  var defs = mk("defs", {});
+  vecs.forEach(function (v, i) {
+    var m = mk("marker", { id: "sp-arr" + i, viewBox: "0 0 10 10", refX: 8, refY: 5, markerWidth: 6.5, markerHeight: 6.5, orient: "auto-start-reverse" }, defs);
+    mk("path", { d: "M 0 1 L 9 5 L 0 9 z", fill: v.color }, m);
+  });
+  /* 网格与坐标轴 */
+  for (var gx = 0; gx <= W; gx += SC) mk("line", { x1: gx, y1: 0, x2: gx, y2: H, stroke: "#ece5d8", "stroke-width": 1 });
+  for (var gy = 0; gy <= H; gy += SC) mk("line", { x1: 0, y1: gy, x2: W, y2: gy, stroke: "#ece5d8", "stroke-width": 1 });
+  mk("line", { x1: 0, y1: CY, x2: W, y2: CY, stroke: "#8a8175", "stroke-width": 1.5 });
+  mk("line", { x1: CX, y1: 0, x2: CX, y2: H, stroke: "#8a8175", "stroke-width": 1.5 });
+  var oLabel = mk("text", { x: CX - 14, y: CY + 18, "font-size": 12, fill: "#8a8175" });
+  oLabel.textContent = "O";
+  /* 张成显示层 */
+  var spanRect = mk("rect", { x: 0, y: 0, width: W, height: H, fill: "#f59e0b", opacity: 0.16 });
+  var spanLine = mk("line", { stroke: "#f59e0b", "stroke-width": 54, opacity: 0.22, "stroke-linecap": "round" });
+  var spanDot = mk("circle", { cx: CX, cy: CY, r: 9, fill: "#f59e0b", opacity: 0.55 });
+  /* 向量与手柄 */
+  var parts = vecs.map(function (v, i) {
+    var line = mk("line", { x1: CX, y1: CY, stroke: v.color, "stroke-width": 3, "marker-end": "url(#sp-arr" + i + ")" });
+    var handle = mk("circle", { r: 10, fill: v.color, stroke: "#ffffff", "stroke-width": 2, cursor: "grab" });
+    var label = mk("text", { "font-size": 14, "font-weight": "bold", fill: v.color });
+    label.textContent = v.name;
+    return { line: line, handle: handle, label: label };
+  });
+  function cross(a, b) { return a.x * b.y - a.y * b.x; }
+  function len(a) { return Math.sqrt(a.x * a.x + a.y * a.y); }
+  function isZero(a) { return len(a) < ZERO; }
+  function dirOf(a, b) { return isZero(a) ? b : a; }
+  function collinearWith(u, w) { return isZero(w) || Math.abs(cross(u, w)) < COLL; }
+  function update() {
+    var v1 = vecs[0], v2 = vecs[1], v3 = vecs[2];
+    /* 画向量 */
+    vecs.forEach(function (v, i) {
+      parts[i].line.setAttribute("x2", px(v.x));
+      parts[i].line.setAttribute("y2", py(v.y));
+      parts[i].handle.setAttribute("cx", px(v.x));
+      parts[i].handle.setAttribute("cy", py(v.y));
+      parts[i].label.setAttribute("x", px(v.x) + 12);
+      parts[i].label.setAttribute("y", py(v.y) - 10);
+    });
+    /* span{v1,v2} 的维数 */
+    var u = dirOf(v1, v2);
+    var d12;
+    if (isZero(v1) && isZero(v2)) d12 = 0;
+    else if (collinearWith(u, v1) && collinearWith(u, v2)) d12 = 1;
+    else d12 = 2;
+    /* v3 是否落在 span 里 */
+    var inSpan;
+    if (d12 === 2) inSpan = true;
+    else if (d12 === 1) inSpan = collinearWith(u, v3);
+    else inSpan = isZero(v3);
+    var d123 = (d12 === 2) ? 2 : (inSpan ? d12 : d12 + 1);
+    /* 画张成 */
+    spanRect.style.display = (d12 === 2) ? "" : "none";
+    spanLine.style.display = (d12 === 1) ? "" : "none";
+    spanDot.style.display = (d12 === 0) ? "" : "none";
+    if (d12 === 1) {
+      var L = len(u), dx = u.x / L, dy = u.y / L;
+      var tMax = 1e9, tMin = -1e9;
+      var cands = [];
+      if (Math.abs(dx) > 1e-9) { cands.push(6.95 / dx, -6.95 / dx); }
+      if (Math.abs(dy) > 1e-9) { cands.push(4.67 / dy, -4.67 / dy); }
+      cands.forEach(function (t) { if (t > 0 && t < tMax) tMax = t; if (t < 0 && t > tMin) tMin = t; });
+      if (tMax > 1e8) tMax = 8;
+      if (tMin < -1e8) tMin = -8;
+      spanLine.setAttribute("x1", px(dx * tMin)); spanLine.setAttribute("y1", py(dy * tMin));
+      spanLine.setAttribute("x2", px(dx * tMax)); spanLine.setAttribute("y2", py(dy * tMax));
+    }
+    /* 反馈文本 */
+    var spanDesc = (d12 === 2) ? "<b>整个平面</b>（dim 2）" : (d12 === 1) ? "<b>一条过原点的直线</b>（dim 1）" : "<b>只有原点一个点</b>（dim 0）";
+    var indepMsg = (d12 === 2)
+      ? '<span class="ok">✓ {v₁,v₂} 无关</span>——各管一维，谁也替不了谁'
+      : '<span class="no">✗ {v₁,v₂} 相关</span>——共线（或含零向量），张成塌了维';
+    var v3Msg = inSpan
+      ? '<span class="ok">v₃ 落在 span 里</span>——v₃ 是冗余成员：去掉它，张成不变'
+      : '<span class="no">v₃ 跳出了 span</span>——它带来新方向，dim span 升到 ' + d123 + '（此时冗余的是共线的那对 v₁,v₂）';
+    var always = "<b>{v₁,v₂,v₃} 必然相关</b>：3 个向量 &gt; dim ℝ² = 2（个数 &gt; 维数）。相关 = 有向量活在别人的张成里。";
+    var coords = "v₁=(" + v1.x.toFixed(2) + ", " + v1.y.toFixed(2) + ")　v₂=(" + v2.x.toFixed(2) + ", " + v2.y.toFixed(2) + ")　v₃=(" + v3.x.toFixed(2) + ", " + v3.y.toFixed(2) + ")　<span style='color:#b45309'>dim span{v₁,v₂,v₃} = " + d123 + "</span>";
+    out.innerHTML = "span{v₁,v₂} = " + spanDesc + "<br>" + indepMsg + "<br>" + v3Msg + "<br>" + always + "<br><span style='font-size:0.9em;color:#5c554b'>" + coords + "</span>";
+  }
+  /* 拖动 */
+  var dragIdx = -1;
+  function toMath(e) {
+    var r = svg.getBoundingClientRect();
+    var sx = (e.clientX - r.left) * W / r.width;
+    var sy = (e.clientY - r.top) * H / r.height;
+    return { x: (sx - CX) / SC, y: (CY - sy) / SC };
+  }
+  parts.forEach(function (p, i) {
+    p.handle.addEventListener("pointerdown", function (e) {
+      dragIdx = i;
+      svg.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    });
+  });
+  svg.addEventListener("pointermove", function (e) {
+    if (dragIdx < 0) return;
+    var m = toMath(e);
+    m.x = Math.max(-6.7, Math.min(6.7, m.x));
+    m.y = Math.max(-4.4, Math.min(4.4, m.y));
+    vecs[dragIdx].x = m.x;
+    vecs[dragIdx].y = m.y;
+    update();
+  });
+  svg.addEventListener("pointerup", function () { dragIdx = -1; });
+  svg.addEventListener("pointercancel", function () { dragIdx = -1; });
+  update();
+})();
+</script>
+
+</body>
+</html>

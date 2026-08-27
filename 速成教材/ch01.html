@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数分第 1 章 · 天花板定理：确界与实数的无缝性 —— 数学A速成讲义</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+<div class="wrap">
+
+<div class="bookbar">
+  <span><a href="index.html">← 返回首页</a></span>
+  <span>卷一 · 数学分析 · 第 1 章</span>
+</div>
+
+<div class="chapter-kicker">CHAPTER 1 · 数学分析</div>
+<h1>天花板定理：确界与实数的无缝性</h1>
+
+<div class="exam box" data-tag="本章导览">
+  <p><strong>这一章在整张卷子上的位置</strong>：确界（sup / inf）是数分证明题的<strong>通用语</strong>——近几届初赛里，它有时直接出题（第 15 届题五，15 分），更多时候作为步骤分藏在递推数列、积分振幅、直径估计里（第 11 届题五、题六；第 14 届题二、五、六）。学会它大约值 <strong>3–8 分的步骤分</strong>，但更重要的是：它是后面每一章的地基。</p>
+  <p><strong>学完你能</strong>：① 默写 sup / inf 的定义并逐符号朗读；② 把"$M=\sup E$"翻译成两个可执行条件，反向也会用；③ 掌握"倒推法"——卷面上那个凭空出现的 $n&gt;\frac1\varepsilon$，你能自己在草稿纸上算出来；④ 会做"求确界并论证"与"确界等式证明"两类题；⑤ 说出 sup 和 max 的三处不同。</p>
+  <p><strong>前置</strong>：做完第 0 章诊断（尤其 B3 那道题——如果它你空着了，正好，本章就是来填那个空缺的）。</p>
+</div>
+
+<h2>§1 开场谜题：数轴上的洞</h2>
+
+<div class="hook box" data-tag="开场谜题">
+  <p>先玩一个思想游戏。我给你一串数：</p>
+  <p>$$1,\ \ 1.4,\ \ 1.41,\ \ 1.414,\ \ 1.4142,\ \ \dots$$</p>
+  <p>——$\sqrt{2}$ 的十进制逼近，一位一位往下写。这串数有两个一目了然的特点：<strong>一直往上走</strong>（单调递增），而且<strong>永远超不过 $2$</strong>（有上界）。</p>
+  <p>问：它会停在哪里？</p>
+  <p>你会脱口而出：$\sqrt{2}$。但注意——$\sqrt{2}$ 不是有理数。<strong>如果你的世界里只有有理数 $\mathbb{Q}$，这串数哪儿也到不了</strong>：它拼命逼近的那个点，在 $\mathbb{Q}$ 里根本不存在。数轴上有一个洞，而这串数正朝着洞里冲。</p>
+  <p>你高数学的所有微积分，都默认数轴上<strong>没有洞</strong>。可是"没有洞"到底是一个什么样的性质？它能不能被精确地说出来、被当成工具来用？</p>
+  <p>这一章就是回答这个问题。而答案的钥匙，是一个你大概率没正式学过的概念——它先要从另一个更日常的问题里长出来。</p>
+</div>
+
+<p>再看一个更朴素的问题。开区间 $(0,1)$：它有上限吗？有，$1$（还有 $2$、$3.5$、$\pi$……都是上界）。它有<strong>最大值</strong>吗？没有——你说是 $0.999$？$0.9999$ 更大。最大值"缺席"了。</p>
+
+<p>但请注意一件微妙的事：虽然最大值缺席了，<strong>"最小的那个上限"却始终在场</strong>——$1$。它不属于 $(0,1)$，但它是所有上限里最贴身的那个。最大值会缺席，"最贴身的天花板"从不缺席——只要这个集合有上界，而且在实数里讨论。</p>
+
+<p>这个"最贴身的天花板"就是本章的主角：<strong>上确界</strong>。它是最大值缺席时的法定替身——而数学分析里一大半"存在某个临界值"的论证（连续函数的最值、积分的存在、递推数列的极限），靠的都是这个替身永远在场。</p>
+
+<h2>§2 先看见它：天花板的图像</h2>
+
+<div class="vision box" data-tag="直觉与图像">
+  <p>把集合 $E$ 想成数轴上的一群点。$E$ 的<strong>上界</strong>是所有"罩得住"这群点的数——它们组成一个向右无限延伸的<strong>天花板区间</strong>。而<strong>上确界 $\sup E$，就是这片天花板的最低点</strong>。</p>
+</div>
+
+<figure>
+<svg viewBox="0 0 720 205" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="上确界：天花板的最低点">
+  <!-- 天花板（上界区域） -->
+  <rect x="400" y="38" width="288" height="18" fill="#fdeef2"/>
+  <line x1="400" y1="56" x2="688" y2="56" stroke="#be123c" stroke-width="3"/>
+  <text x="544" y="30" font-size="13" fill="#be123c" text-anchor="middle">上界们的地盘（天花板，向右无限延伸）</text>
+  <!-- 数轴 -->
+  <line x1="40" y1="120" x2="695" y2="120" stroke="#2b2620" stroke-width="2"/>
+  <polygon points="705,120 692,115 692,125" fill="#2b2620"/>
+  <!-- 刻度 -->
+  <line x1="120" y1="114" x2="120" y2="126" stroke="#2b2620" stroke-width="2"/>
+  <text x="120" y="145" font-size="14" fill="#2b2620" text-anchor="middle">0</text>
+  <line x1="400" y1="114" x2="400" y2="126" stroke="#2b2620" stroke-width="2"/>
+  <text x="400" y="145" font-size="14" fill="#2b2620" text-anchor="middle">1</text>
+  <line x1="680" y1="114" x2="680" y2="126" stroke="#2b2620" stroke-width="2"/>
+  <text x="680" y="145" font-size="14" fill="#2b2620" text-anchor="middle">2</text>
+  <!-- E 的点 n/(n+1) -->
+  <circle cx="260" cy="120" r="4.5" fill="#1d4ed8"/>
+  <circle cx="307" cy="120" r="4.5" fill="#1d4ed8"/>
+  <circle cx="330" cy="120" r="4.5" fill="#1d4ed8"/>
+  <circle cx="344" cy="120" r="4.5" fill="#1d4ed8"/>
+  <circle cx="353" cy="120" r="4.5" fill="#1d4ed8"/>
+  <circle cx="360" cy="120" r="4" fill="#1d4ed8"/>
+  <circle cx="366" cy="120" r="3.5" fill="#1d4ed8"/>
+  <circle cx="371" cy="120" r="3" fill="#1d4ed8"/>
+  <text x="230" y="100" font-size="13" fill="#1d4ed8" text-anchor="middle">E = {n/(n+1)} 的点</text>
+  <!-- ε 缝隙 -->
+  <line x1="352" y1="80" x2="400" y2="80" stroke="#b45309" stroke-width="2" stroke-dasharray="5 4"/>
+  <text x="376" y="74" font-size="14" fill="#b45309" text-anchor="middle">ε 缝隙</text>
+  <text x="376" y="170" font-size="13" fill="#b45309" text-anchor="middle">天花板往下挪 ε，就有 E 的点戳上来</text>
+  <!-- sup 空心点 -->
+  <circle cx="400" cy="120" r="7" fill="#faf8f4" stroke="#be123c" stroke-width="2.5"/>
+  <text x="435" y="100" font-size="15" fill="#be123c" text-anchor="start" font-weight="bold">sup E = 1</text>
+  <text x="435" y="186" font-size="12.5" fill="#be123c" text-anchor="start">空心：它不属于 E（最大值缺席）</text>
+  <!-- 从 sup 到天花板的连接 -->
+  <line x1="400" y1="56" x2="400" y2="113" stroke="#be123c" stroke-width="1.5" stroke-dasharray="3 3"/>
+</svg>
+<figcaption>上确界 = 天花板的最低点：罩得住整个 $E$，但压不下去一丝一毫。</figcaption>
+</figure>
+
+<p>盯着这张图，读出 $\sup E$ 的"两副面孔"——它们就是定义的全部内容：</p>
+<ul>
+  <li><strong>罩得住</strong>：$\sup E$ 自己是上界，$E$ 里没有一个点超过它；</li>
+  <li><strong>压不下</strong>：把 $\sup E$ 往下挪任意一点点 $\varepsilon$，就罩不住了——总有 $E$ 的点戳进这道 $\varepsilon$ 缝隙里。</li>
+</ul>
+
+<p>第一副面孔说"$\sup E$ 是上界的一员"；第二副面孔说"它是上界里最小的"。两副面孔合起来 = <strong>最小上界</strong>。这就是精确定义要说的话，现在把它写成符号。</p>
+
+<h2>§3 精确定义：逐符号朗读</h2>
+
+<div class="def">
+  <p class="def-title">定义（上确界 supremum）</p>
+  <p>设 $E\subset\mathbb{R}$ 非空。称实数 $M$ 为 $E$ 的<strong>上确界</strong>，记 $M=\sup E$，如果：</p>
+  <p>$$M=\sup E \iff \begin{cases}\forall x\in E,\ x\le M & \text{（罩得住：}M\text{ 是上界）}\\ \forall\varepsilon>0,\ \exists x\in E,\ x&gt;M-\varepsilon & \text{（压不下：是最小的上界）}\end{cases}$$</p>
+</div>
+
+<div class="symbol box" data-tag="逐符号朗读">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$\forall x\in E,\ x\le M$</td><td>"对 $E$ 里<strong>每一个</strong> $x$，都有 $x$ 不超过 $M$"</td><td>宣布 $M$ 是上界俱乐部的一员（这个俱乐部有无穷多成员）</td></tr>
+    <tr><td>$\forall\varepsilon>0$</td><td>"随便给一个正数 $\varepsilon$，多小都行"</td><td>考验必须是<strong>任意</strong>严格的——只检查 $\varepsilon=0.1$ 不算数</td></tr>
+    <tr><td>$\exists x\in E,\ x&gt;M-\varepsilon$</td><td>"总能在 $E$ 里<strong>找到至少一个</strong> $x$，比 $M-\varepsilon$ 还大"</td><td>$M$ 往下挪 $\varepsilon$ 就压不住：没有比 $M$ 更低的天花板</td></tr>
+  </table>
+  <p>注意两个量词的搭档方式：<strong>$\forall\varepsilon$ 配 $\exists x$</strong>。"任你缩小缝隙，我都能找到点戳进去"——找到的这个 $x$ 可以随 $\varepsilon$ 而变，缝隙越小它越靠近 $M$。</p>
+</div>
+
+<div class="think">
+  <p>别急着往下翻。<strong>拿张纸，自己把"下确界 $\inf E$"（最大的下界，地板的最高点）的定义写出来</strong>——照猫画虎，把"罩得住/压不下"翻转到地板一侧。写完再展开对照。</p>
+  <details class="answer">
+    <summary>对照：下确界定义</summary>
+    <p>$$m=\inf E \iff \begin{cases}\forall x\in E,\ x\ge m & \text{（托得住：}m\text{ 是下界）}\\ \forall\varepsilon>0,\ \exists x\in E,\ x&lt;m+\varepsilon & \text{（抬不起：是最大的下界）}\end{cases}$$</p>
+    <p>记忆锚点：sup 用 $x&gt;M-\varepsilon$（从下面戳天花板），inf 用 $x&lt;m+\varepsilon$（从上面压地板）。方向感来自图像，不是背出来的。</p>
+  </details>
+</div>
+
+<h3>3.1 亲手摸一摸两副面孔（交互）</h3>
+
+<div class="widget" id="sup-widget">
+  <p class="w-title">▶ sup 探索器：拖动 ε 和 M，亲眼看"罩得住 / 压不下"</p>
+  <p class="w-row">集合还是 $E=\left\{\frac{n}{n+1}\right\}$（蓝色的点）。<strong style="color:#be123c">红色竖线</strong>是你设定的候选 $M$，<strong style="color:#b45309">橙色地带</strong>是缝隙 $(M-\varepsilon,\ M]$。点会变色：<strong style="color:#1d4ed8">蓝</strong>=安分，<strong style="color:#b45309">橙</strong>=戳进缝隙，<strong style="color:#be123c">红</strong>=漏在 $M$ 外面。</p>
+  <div class="w-row"><label>候选 M（从 0.9 拖到 1.05，试试 0.99、1、1.02）</label>
+  <input type="range" id="supw-m" min="0.9" max="1.05" step="0.001" value="1"></div>
+  <div class="w-row"><label>ε（从大到小拖，观察缝隙里的点怎么变）</label>
+  <input type="range" id="supw-e" min="0.01" max="0.5" step="0.01" value="0.2"></div>
+  <svg id="supw-svg" viewBox="0 0 720 175" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div class="w-verdict" id="supw-out">加载中……（需要启用 JavaScript）</div>
+  <p class="w-row" style="font-size:0.88em;color:#5c554b">玩出这三个体验再往下走：<strong>①</strong> $M=0.99$ 时发生了什么（为什么它连上界都不是）；<strong>②</strong> $M=1.02$ 时把 ε 拖小，缝隙空了说明什么（它是上界，但"压得下"，所以不是最贴身的）；<strong>③</strong> $M=1$ 时无论 ε 多小都有橙点——这就是 $\sup E=1$ 的全部含义。</p>
+</div>
+
+<h3>3.2 一个公理：实数没有洞</h3>
+
+<p>定义给了，但还有一个根本问题没解决：<strong>上确界一定存在吗？</strong>在有理数 $\mathbb{Q}$ 里，答案是否定的。回看开场谜题：</p>
+
+<div class="calc box" data-tag="关键例子">
+  <p>集合 $E=\{x\in\mathbb{Q}: x^2&lt;2\}$（即 $\sqrt2$ 的十进制逼近串所在的那个集合）。</p>
+  <p>它在 $\mathbb{Q}$ 里有上界吗？有——$2$、$1.5$、$1.42$ 都是。它在 $\mathbb{Q}$ 里有<strong>最小</strong>上界吗？没有：那个最小上界应该是 $\sqrt2$，但 $\sqrt2\notin\mathbb{Q}$。任何比 $\sqrt2$ 大的有理数都还能再往下压一点（压到 $\sqrt2$ 与它的中点），任何比 $\sqrt2$ 小的数又罩不住 $E$。<strong>天花板有洞，最低点漏下去了。</strong></p>
+</div>
+
+<p>所以"有上界 $\Rightarrow$ 有上确界"不是定理能证的，它是<strong>实数的定义性性质</strong>，作为公理收下：</p>
+
+<div class="def">
+  <p class="def-title">确界存在定理（实数完备性公理）</p>
+  <p>$\mathbb{R}$ 中<strong>非空有上界</strong>的数集必有上确界；<strong>非空有下界</strong>的数集必有下确界。</p>
+</div>
+
+<p>这条公理就是"实数轴没有洞"的精确说法。开场谜题里那串逼近 $\sqrt2$ 的数，在 $\mathbb{R}$ 里有了归宿——$\sup$ 就是那个归宿的名字。以后你在卷面上写的每一个 $\sup$，背后都是这条公理在兜底。</p>
+
+<div class="warn box" data-tag="头号陷阱：sup ≠ max">
+  <p>$\sup E$ <strong>不必属于</strong> $E$；$\max E$ <strong>必须属于</strong> $E$。</p>
+  <table>
+    <tr><th>集合 $E$</th><th>$\max E$</th><th>$\sup E$</th><th>$\inf E$</th></tr>
+    <tr><td>$(0,1)$</td><td>不存在</td><td>$1$（$\notin E$）</td><td>$0$（$\notin E$）</td></tr>
+    <tr><td>$[0,1]$</td><td>$1$</td><td>$1$（$\in E$）</td><td>$0$（$\in E$）</td></tr>
+    <tr><td>$\{\frac{n}{n+1}:n\ge1\}$</td><td>不存在</td><td>$1$（$\notin E$）</td><td>$\frac12$（$\in E$）</td></tr>
+    <tr><td>$\{\frac{(-1)^n}{n}:n\ge1\}$</td><td>$\frac12$</td><td>$\frac12$（$\in E$）</td><td>$-1$（$\in E$）</td></tr>
+  </table>
+  <p>规律一句话：<strong>$\sup E\in E \iff \max E$ 存在，且此时二者相等</strong>。卷面上写"取 $x_0\in E$ 使 $x_0=\sup E$"之前，必须先论证 $\sup E\in E$——漏了这句论证，后面整段可能崩。第 15 届题五的官方解答之所以要"取 $|x-y|\ge\rho-\varepsilon$"而不是"取 $|x-y|=\rho$"，就是因为直径 $\rho=\sup$ 未必能取到。</p>
+</div>
+
+<h2>§4 翻译轨：三个标准动作 + 一间练功房</h2>
+
+<p>确界在卷面上只有三种用法。把它们练成反射，这一章就毕业了。</p>
+
+<div class="trans box" data-tag="动作一：证 M = sup E（两步打法）">
+  <p><strong>题面</strong>："证明 $M$ 是 $E$ 的上确界" / "求 $\sup E$ 并论证"。</p>
+  <p><strong>翻译</strong>：必须分别证两条，缺一不可：</p>
+  <p>第 ① 步（罩得住）：任取 $x\in E$，证 $x\le M$。<br>
+  第 ② 步（压不下）：任取 $\varepsilon>0$，<strong>构造</strong>一个 $x\in E$ 使 $x&gt;M-\varepsilon$。</p>
+  <p>第 ② 步的构造靠"倒推法"：在草稿纸上把目标不等式化简，解出 $n$ 要满足的条件，再正着写进卷面。完整示范在 §8 例 1 的思路揭秘里。</p>
+</div>
+
+<div class="trans box" data-tag="动作二：用 sup（把确界变成序列）">
+  <p><strong>题面</strong>：已知 $\sup E=M$，要推出点什么。</p>
+  <p><strong>翻译</strong>：最高频的动作是<strong>取 $\varepsilon=\frac1n$，逐个生成一列点</strong>：</p>
+  <p>由压不下：对每个 $n\ge1$，存在 $x_n\in E$ 使 $x_n&gt;M-\frac1n$。又 $x_n\le M$，于是
+  $$M-\frac1n&lt;x_n\le M\ \Longrightarrow\ x_n\to M.$$</p>
+  <p>一句话：<strong>确界总可以被 $E$ 内的序列逼近</strong>——哪怕它自己不在 $E$ 里。这把"确界"翻译成了"极限"，之后所有极限工具（夹逼、保号性、连续性）全部解锁。第 15 届题五官方解答的第一步"取 $|x-y|\ge\rho-\varepsilon$"就是这个动作的单个版本。</p>
+</div>
+
+<div class="trans box" data-tag="动作三：真题原句长这样">
+  <p><strong>第 11 届题五</strong>："记 $c:=\inf\limits_{n\ge1}h_n&gt;0$。"</p>
+  <p><strong>翻译</strong>：这句话一口气给了你三件武器：</p>
+  <p>① 每个 $h_n\ge c$（托得住——下界）；<br>
+  ② $c$ 是能填进"$\forall n,\ h_n\ge c$"这句话里的<strong>最大</strong>的数（抬不起）；<br>
+  ③ $c&gt;0$——所以后面可以用 $\frac{c}{n^\alpha}$ 这种正的量去压递推式。</p>
+  <p>官方解答第 3 行的放缩 $|x_{n+1}|\le\left(1-\frac{c}{n^\alpha}\right)|x_n|+\frac1{n^{\alpha+\delta}}$，正是用①把 $h_n$ 换成更小的 $c$。看到"记 $c=\inf$"，反射出 $\forall n$ 不等式，这一步 3 分就到手了。</p>
+</div>
+
+<h3>4.4 翻译练功房：像学语言一样，大量互译</h3>
+
+<p>学翻译和学外语一样：<strong>看 3 个示范是输入，写 8 个互译才是输出</strong>。下面 8 句，先全部写在纸上（自然语言→符号，或符号→自然语言），再逐条展开对照。每条不超过 1 分钟。</p>
+
+<div class="trans box" data-tag="互译 8 句">
+  <p><strong>T1</strong>　自然→符号："$f$ 在 $D$ 上有界。"</p>
+  <details class="answer"><summary>对照</summary><p>$\exists M&gt;0,\ \forall x\in D:\ |f(x)|\le M$。<strong>易错</strong>：写成 $\forall x\ \exists M$——量词顺序错了，那是"每点各自有界"，等于什么都没说。</p></details>
+  <p><strong>T2</strong>　自然→符号："$M$ 是 $E$ 的上界，但不是 $E$ 的上确界。"</p>
+  <details class="answer"><summary>对照</summary><p>$\forall x\in E,\ x\le M$（是上界），<strong>且</strong> $\exists\varepsilon_0&gt;0,\ \forall x\in E,\ x\le M-\varepsilon_0$（第二条件被否定：存在一道压得住的缝隙）。<strong>关键</strong>：学会否定"$\forall\varepsilon\,\exists x$"——它变成"$\exists\varepsilon\,\forall x$"。量词否定：$\forall\leftrightarrow\exists$ 互换，结论取反。</p></details>
+  <p><strong>T3</strong>　自然→符号："$\sup A\le a$" 这句话等价于哪一句不带 sup 的话？</p>
+  <details class="answer"><summary>对照</summary><p>$\forall x\in A,\ x\le a$（$a$ 是 $A$ 的上界）。因为 $\sup A$ 是<strong>最小</strong>上界，它 $\le a$ 当且仅当 $a$ 本身就在上界俱乐部里。——"最小性"是不等式发生器，还记得吗。</p></details>
+  <p><strong>T4</strong>　自然→符号："数列 $\{x_n\}$ 无上界。"</p>
+  <details class="answer"><summary>对照</summary><p>$\forall M,\ \exists n:\ x_n&gt;M$。注意和"存在 $n$ 使 $x_n$ 很大"区分：<strong>任意</strong> $M$ 都能被超过，才是无上界。这类"$\forall M\ \exists n$"以后常记作 $x_n\to+\infty$ 的一种表述。</p></details>
+  <p><strong>T5</strong>　符号→自然："$\forall\varepsilon&gt;0,\ \exists\mathbf{x},\mathbf{y}\in E,\ \|\mathbf{x}-\mathbf{y}\|&gt;d-\varepsilon$。"</p>
+  <details class="answer"><summary>对照</summary><p>"$E$ 里有距离任意接近 $d$ 的点对"——这正是 $\operatorname{diam}E=d$ 的<strong>压不下</strong>那一半（第 15 届题五的第一步）。再配套半句罩得住"$\forall\mathbf{x},\mathbf{y}\in E,\ \|\mathbf{x}-\mathbf{y}\|\le d$"，合起来就是 $\operatorname{diam}E=d$。</p></details>
+  <p><strong>T6</strong>　自然→符号："$\operatorname{diam}E&lt;1$。"（小心，有坑）</p>
+  <details class="answer"><summary>对照</summary><p>直径是 $\sup$，所以"$\sup\{\|x-y\|\}&lt;1$"的含义是：$\exists r&lt;1,\ \forall x,y\in E,\ \|x-y\|\le r$——<strong>$1$ 下面还留着一档</strong>。只写"$\|x-y\|&lt;1$"是不够的（那只保证 $\sup\le1$）。sup 的严格小于 = 存在更小的一致上界。</p></details>
+  <p><strong>T7</strong>　判断（说理由）："$E$ 没有最大元，但 $\sup E\in E$" 可能吗？</p>
+  <details class="answer"><summary>对照</summary><p>不可能。$\sup E\in E$ 时 $\sup E$ 就是 $E$ 的最大元（它本身是上界，又在 $E$ 里）。所以"sup 属于集合"和"最大值存在"是同一件事的两句话。</p></details>
+  <p><strong>T8</strong>　符号→自然 + 追问："$\forall\varepsilon&gt;0,\ \exists N,\ \forall n\ge N:\ x_n&gt;M-\varepsilon$。"若又知 $\forall n,\ x_n\le M$，能推出什么？</p>
+  <details class="answer"><summary>对照</summary><p>"$x_n$ 最终进入 $(M-\varepsilon,\ M]$ 这条左邻域"。配上 $x_n\le M$ 就是 $|x_n-M|&lt;\varepsilon$——这正是 $x_n\to M$ 的定义（夹逼思想）。第 15 届题六法 III 里"取 $N$ 使 $n\ge N$ 时 $3-\delta&lt;x_n&lt;3$"用的就是它。</p></details>
+</div>
+
+<h2>§5 类型识别：什么信号在召唤确界</h2>
+
+<div class="recog box" data-tag="识别反射表">
+  <table>
+    <tr><th>题面信号</th><th>反射</th></tr>
+    <tr><td>"有上界 / 有下界 / 有界"</td><td>确界存在定理待命：$\sup$ / $\inf$ 可以上场了</td></tr>
+    <tr><td>"证明存在临界值（界、直径、最大值候选）"</td><td>先取 sup，再用动作二逼近</td></tr>
+    <tr><td>"$\sup$ / $\inf$ / diam / 振幅 / 上界中最小"</td><td>两条件拆解 + 警查是否属于集合</td></tr>
+    <tr><td>"$x_{n+1}=f(x_n)$，证明极限存在"</td><td>单调有界定理（确界的亲儿子，第 3 章）</td></tr>
+    <tr><td>"对任意 $\varepsilon&gt;0$，存在……"</td><td>这是确界第二条件的口音，八成在用 sup</td></tr>
+    <tr><td>"$A,B$ 有界，研究 $A+B$ / $A\cap B$ / $cA$ 的界"</td><td>确界运算题：两步打法（§8 例 2）</td></tr>
+  </table>
+</div>
+
+<h2>§6 考法定位：它藏在哪里、值多少分</h2>
+
+<div class="exam box" data-tag="考法定位">
+  <table>
+    <tr><th>出处</th><th>题号</th><th>确界扮演什么角色</th><th>分值权重</th></tr>
+    <tr><td>第 15 届（2023）</td><td>题五</td><td>$\operatorname{diam}E=\sup\|x-y\|$ 贯穿全题，第一步就是"取 $\rho-\varepsilon$ 逼近"</td><td>15 分（直接）</td></tr>
+    <tr><td>第 11 届（2019）</td><td>题六(ii)</td><td>确定 $\inf E=1$、$\sup E=n-1$ 并判断不属于 $E$</td><td>约 8 分（直接）</td></tr>
+    <tr><td>第 11 届（2019）</td><td>题五</td><td>"记 $c=\inf h_n$"开局，放缩全看它</td><td>3 分步骤</td></tr>
+    <tr><td>第 14 届（2022）</td><td>题二 / 五 / 六</td><td>$M$ 的定义、振幅 $\sup-\inf$、$M=\sup|f|$</td><td>3–5 分步骤</td></tr>
+  </table>
+  <p><strong>规律</strong>：确界作为独立大题不常出，但作为<strong>数分证明的通用语</strong>几乎届届出现。它的分值形态是"步骤分"——写出来 $\sup$ 的两条件、正确逼近，3–5 分到手；这恰好是"跳步就归零"的分步给分制下最值得练的基本功。</p>
+</div>
+
+<h2>§7 关系网：六张面孔，一个事实</h2>
+
+<p>确界公理不是孤军。数学分析第一章会证明它和另外五条定理<strong>互相等价</strong>——它们是"实数没有洞"这同一个事实的六张面孔。下面这张地图把本章所有出场角色的<strong>来龙去脉</strong>画在一起：<span style="color:#b45309">三角形</span>是来源与动机，<span style="color:#1d4ed8">圆角矩形</span>是公理与定义，<span style="color:#15803d">矩形</span>是定理，<span style="color:#7c3aed">六边形</span>是方法动作，<span style="color:#0f766e">椭圆</span>是应用出口。顺着箭头走一遍，就是本章的全部逻辑。</p>
+
+<figure>
+<svg viewBox="0 0 720 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="确界关系网地图">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+
+  <!-- 图例 -->
+  <polygon points="30,16 22,30 38,30" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5"/>
+  <text x="44" y="28" font-size="11.5" fill="#5c554b">来源·动机</text>
+  <rect x="116" y="17" width="22" height="13" rx="6.5" fill="#eef3fe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="144" y="28" font-size="11.5" fill="#5c554b">公理·定义</text>
+  <rect x="222" y="17" width="22" height="13" fill="#ecf8f0" stroke="#15803d" stroke-width="1.5"/>
+  <text x="250" y="28" font-size="11.5" fill="#5c554b">定理</text>
+  <polygon points="300,23.5 306,16 320,16 326,23.5 320,31 306,31" fill="#f4effd" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="332" y="28" font-size="11.5" fill="#5c554b">方法·动作</text>
+  <ellipse cx="420" cy="23.5" rx="12" ry="7" fill="#ecf8f5" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="438" y="28" font-size="11.5" fill="#5c554b">应用·出口</text>
+
+  <!-- 来源：ℚ 的洞（三角） -->
+  <polygon points="110,52 58,116 162,116" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="110" y="90" font-size="12.5" fill="#7a4a12" text-anchor="middle" font-weight="bold">ℚ 的洞</text>
+  <text x="110" y="106" font-size="11" fill="#7a4a12" text-anchor="middle">x²&lt;2 无 sup</text>
+
+  <!-- 来源 → 公理 -->
+  <line x1="168" y1="85" x2="262" y2="85" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="215" y="74" font-size="11" fill="#5c554b" text-anchor="middle">逼出来的公理</text>
+
+  <!-- 公理（圆角矩形） -->
+  <rect x="270" y="56" width="240" height="58" rx="29" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="390" y="82" font-size="15" fill="#1d4ed8" text-anchor="middle" font-weight="bold">确界存在公理</text>
+  <text x="390" y="101" font-size="11.5" fill="#1d4ed8" text-anchor="middle">非空有上界 ⟹ 有 sup（实数无缝）</text>
+
+  <!-- 公理 ⟺ 五定理 -->
+  <line x1="390" y1="114" x2="390" y2="158" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="400" y="141" font-size="11" fill="#5c554b">六张面孔 · 互相等价</text>
+
+  <!-- 五定理（矩形） -->
+  <rect x="22" y="165" width="118" height="50" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="81" y="186" font-size="12.5" fill="#15803d" text-anchor="middle" font-weight="bold">单调有界定理</text>
+  <text x="81" y="203" font-size="10.5" fill="#4a7c59" text-anchor="middle">单调+有界 ⟹ 收敛</text>
+  <text x="151" y="195" font-size="14" fill="#8a8175" text-anchor="middle">⟺</text>
+  <rect x="162" y="165" width="118" height="50" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="221" y="186" font-size="12.5" fill="#15803d" text-anchor="middle" font-weight="bold">区间套定理</text>
+  <text x="221" y="203" font-size="10.5" fill="#4a7c59" text-anchor="middle">越套越紧剩一点</text>
+  <text x="291" y="195" font-size="14" fill="#8a8175" text-anchor="middle">⟺</text>
+  <rect x="302" y="165" width="118" height="50" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="361" y="186" font-size="12.5" fill="#15803d" text-anchor="middle" font-weight="bold">B–W 子列定理</text>
+  <text x="361" y="203" font-size="10.5" fill="#4a7c59" text-anchor="middle">有界 ⟹ 有收敛子列</text>
+  <text x="431" y="195" font-size="14" fill="#8a8175" text-anchor="middle">⟺</text>
+  <rect x="442" y="165" width="118" height="50" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="501" y="186" font-size="12.5" fill="#15803d" text-anchor="middle" font-weight="bold">Cauchy 准则</text>
+  <text x="501" y="203" font-size="10.5" fill="#4a7c59" text-anchor="middle">Cauchy 列必收敛</text>
+  <text x="571" y="195" font-size="14" fill="#8a8175" text-anchor="middle">⟺</text>
+  <rect x="582" y="165" width="118" height="50" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="641" y="186" font-size="12.5" fill="#15803d" text-anchor="middle" font-weight="bold">有限覆盖定理</text>
+  <text x="641" y="203" font-size="10.5" fill="#4a7c59" text-anchor="middle">局部 ⟹ 整体一致</text>
+
+  <!-- 公理 → 三个动作（肘形走线） -->
+  <polyline points="330,114 330,245 200,245 200,264" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <polyline points="390,114 390,245" fill="none" stroke="#8a8175" stroke-width="1.5"/>
+  <line x1="390" y1="245" x2="400" y2="264" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <polyline points="450,114 450,245 600,245 600,264" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="462" y="238" font-size="11" fill="#5c554b">用"两副面孔"展开成动作</text>
+
+  <!-- 三动作（六边形） -->
+  <polygon points="125,300 150,272 250,272 275,300 250,328 150,328" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="200" y="296" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">两步打法</text>
+  <text x="200" y="312" font-size="10.5" fill="#6a55a3" text-anchor="middle">证 M = sup E</text>
+  <polygon points="325,300 350,272 450,272 475,300 450,328 350,328" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="400" y="296" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">取 ε = 1/n</text>
+  <text x="400" y="312" font-size="10.5" fill="#6a55a3" text-anchor="middle">sup → 序列 → 极限</text>
+  <polygon points="525,300 550,272 650,272 675,300 650,328 550,328" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="600" y="296" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">倒推法求 n</text>
+  <text x="600" y="312" font-size="10.5" fill="#6a55a3" text-anchor="middle">草稿纸上的构造</text>
+
+  <!-- 定理 → 应用 -->
+  <line x1="81" y1="215" x2="135" y2="394" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="92" y="310" font-size="11" fill="#5c554b">第 3 章</text>
+  <polyline points="361,215 361,250 300,250 300,392" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="296" y="243" font-size="11" fill="#5c554b" text-anchor="end">第 4 章</text>
+  <polyline points="641,215 641,250 520,250 520,392" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="586" y="243" font-size="11" fill="#5c554b">第 4 章</text>
+  <!-- 两步打法 → Darboux -->
+  <polyline points="200,328 200,362 620,362 620,392" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="410" y="354" font-size="11" fill="#5c554b" text-anchor="middle">上和下和 = 逐段取 sup / inf（第 7 章）</text>
+
+  <!-- 三应用（椭圆） -->
+  <ellipse cx="140" cy="428" rx="112" ry="30" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="140" y="424" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">递推数列的极限</text>
+  <text x="140" y="440" font-size="10.5" fill="#3d7a70" text-anchor="middle">x_(n+1) = f(x_n) 型</text>
+  <ellipse cx="395" cy="428" rx="135" ry="30" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="395" y="424" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">闭区间连续函数四定理</text>
+  <text x="395" y="440" font-size="10.5" fill="#3d7a70" text-anchor="middle">有界 · 最值 · 零点 · 一致连续</text>
+  <ellipse cx="620" cy="428" rx="98" ry="30" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="620" y="424" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">Darboux 上下和</text>
+  <text x="620" y="440" font-size="10.5" fill="#3d7a70" text-anchor="middle">Riemann 可积性</text>
+</svg>
+<figcaption>本章地图：一个洞逼出一条公理，一条公理长出五张等价面孔和三件手上武器，再各自通往后面的章节。</figcaption>
+</figure>
+
+<div class="net box" data-tag="画面感锚点（记这些，不记条文）">
+  <table>
+    <tr><th>面孔</th><th>一句话画面</th><th>擅长场景</th></tr>
+    <tr><td>确界</td><td>天花板的最低点，罩得住、压不下</td><td>"存在某个临界值"：直径、上下和、界</td></tr>
+    <tr><td>单调有界</td><td>爬楼梯撞天花板，必停下</td><td>递推数列 $x_{n+1}=f(x_n)$（第 3 章）</td></tr>
+    <tr><td>区间套</td><td>俄罗斯套娃越套越紧，只剩一点</td><td>二分逼近：零点定理（第 4 章）</td></tr>
+    <tr><td>B–W 子列</td><td>再乱的队伍也能抽出一条整齐的子队</td><td>"有界"条件下硬造收敛点</td></tr>
+    <tr><td>Cauchy</td><td>不知道终点，也能判断在赶路</td><td>级数判敛的理论底座（第 9 章）</td></tr>
+    <tr><td>有限覆盖</td><td>每点一把伞 → 换 finite 把伞罩全区间</td><td>局部性质升级为整体一致（一致连续）</td></tr>
+  </table>
+  <p><strong>和你已学知识的焊接点</strong>：$e$ 的定义"$\lim(1+\frac1n)^n$ 存在"——你高数直接信了它存在，严格证明用的就是单调有界定理；"连续函数在闭区间上有最大值"，证明链条的起点就站在本章公理上。</p>
+</div>
+
+<h2>§8 计算示范：先看真人怎么想，再看卷面怎么写</h2>
+
+<p>从这一章开始，每个例题都分两层：<strong>思路揭秘</strong>（真实的思考过程，含试错和草稿纸）+ <strong>卷面书写</strong>（分步给分格式）。前者教你"怎么想出来"，后者教你"写出来拿分"。</p>
+
+<h3>例 1 · 求确界并论证（约 6 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>要证"$1$ 满足 sup 定义的两条"——两条都是 $\forall$ 开头的语句，骨架由拆目标总表直接给出：<strong>罩得住（$\forall x$）+ 压不下（$\forall\varepsilon\,\exists x$）</strong>，两步打法。这个骨架不需要灵感，是结论的逻辑形态决定的。$M$ 猜成 $1$：列几项 $\frac12,\frac23,\frac34,\dots$ 看它往哪爬——这是<strong>工具三 · 特殊化侦察</strong>，猜想先行、证明随后。</p>
+  <p><span class="stage">【盘点】</span>$E$ 的元素形如 $1-\frac1{n+1}$，产出两句话：恒 $&lt;1$（罩得住白送）；随 $n$ 任意接近 $1$。</p>
+  <p><span class="stage">【会师】</span>压不下是 $\forall\varepsilon\,\exists x$ 型：$\exists$ 用构造，构造靠<strong>工具一 · 倒推</strong>。先注意<strong>量词顺序通则</strong>：$\varepsilon$ 在前、$x$ 在后，所以 $x$ <strong>必须依赖 $\varepsilon$</strong>——取任何固定的 $x$（比如 $0.99$）都注定失败，这不是技巧是规则。倒推：</p>
+  <div class="scratch">
+    <p>目标：$\dfrac{n}{n+1}&gt;1-\varepsilon$
+    $\iff 1-\dfrac1{n+1}&gt;1-\varepsilon$
+    $\iff \dfrac1{n+1}&lt;\varepsilon$
+    $\iff n+1&gt;\dfrac1\varepsilon$</p>
+    <p>所以取 $n&gt;\dfrac1\varepsilon$ 就够了（比如 $n=\left\lceil\frac1\varepsilon\right\rceil+1$，或干脆写"取 $n&gt;\frac1\varepsilon$"）。</p>
+  </div>
+  <p><span class="stage">【定型】</span>卷面上倒推过程<strong>一个字都不写</strong>——只写"取 $n&gt;\frac1\varepsilon$，则 $\frac{n}{n+1}&gt;1-\varepsilon$"。那个仿佛天上掉下来的 $n$，是程序第 4 步的产物。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 倒推法</strong>：写目标不等式 → 在草稿纸上化简，解出 $n$（或 $N$、$\delta$）要满足的条件 → 取定它 → 回到卷面<strong>正着写</strong>验证。以后所有证明里"取 $n&gt;\dots$""取 $\delta=\dots$"的神秘选择，全是倒推出来的——第 2 章的 ε-N、第 3 章的递推数列会反复用它。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 1</strong>　设 $E=\left\{\dfrac{n}{n+1}:n\in\mathbb{N}^{+}\right\}$。求 $\sup E$ 与 $\inf E$，并判断是否属于 $E$。</p>
+  <hr>
+  <p class="proof-line"><strong>解</strong>　先猜后证：$E=\left\{\frac12,\frac23,\frac34,\dots\right\}$，猜测 $\sup E=1$，$\inf E=\frac12$。</p>
+  <p class="proof-line"><strong>① $\sup E=1$（罩得住）</strong>：对任意 $n\ge1$，$\dfrac{n}{n+1}=1-\dfrac1{n+1}&lt;1$，故 $1$ 是 $E$ 的上界。<span class="step-score">（2 分）</span></p>
+  <p class="proof-line"><strong>②（压不下）</strong>：任取 $\varepsilon>0$，取 $n&gt;\dfrac1\varepsilon$，则 $\dfrac1{n+1}&lt;\dfrac1n&lt;\varepsilon$，于是
+  $$\frac{n}{n+1}=1-\frac1{n+1}>1-\varepsilon,$$
+  即 $E$ 中有元素大于 $1-\varepsilon$。由确界定义，$\sup E=1$。<span class="step-score">（4 分）</span></p>
+  <p class="proof-line"><strong>③</strong> 因 $\dfrac{n}{n+1}&lt;1$ 恒成立，$1\notin E$；又 $\dfrac{n}{n+1}$ 随 $n$ 递增，最小值在 $n=1$ 处取得，$\inf E=\min E=\dfrac12\in E$。<span class="step-score">（6 分）</span></p>
+  <p class="aside">书写点评：②是核心分点——必须出现"任取 $\varepsilon$、给出具体的 $n$、验证不等式"三个动作。只写"显然 $\sup E=1$"，这 2 分就没了。</p>
+</div>
+
+<h3>例 2 · 确界等式证明（约 10 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>结论是<strong>两个数相等</strong>——查拆目标总表"等式型"：拆 $\le$ 与 $\ge$ <strong>两头夹</strong>。骨架已定；每半边各自回到 $\forall\exists$ 型。</p>
+  <p><span class="stage">【盘点】</span>$\alpha=\sup A$ 产出两条：罩得住 $\forall a,\ a\le\alpha$；压不下 $\forall\delta>0,\ \exists a&gt;\alpha-\delta$（$\delta$ 是我们自由支配的小数）。$\beta$ 同理。另有一件免费武器：<strong>最小性</strong>——$\sup(A+B)$ 是最小上界，任何上界都 $\ge$ 它。</p>
+  <p><span class="stage">【会师 · $\le$】</span>倒推链：要证 $\sup(A+B)\le\alpha+\beta$ $\Longleftarrow$（最小性）只需证 $\alpha+\beta$ 是 $A+B$ 的上界 $\Longleftarrow$ $\forall a,b:\ a+b\le\alpha+\beta$ $\Longleftarrow$ 两条罩得住相加。链条闭合，每环都取自库存。</p>
+  <p><span class="stage">【会师 · $\ge$】</span>$\forall\varepsilon\,\exists$ 型，上构造。倒推：要 $a+b&gt;\alpha+\beta-\varepsilon$ $\Longleftarrow$ 只需 $a&gt;\alpha-\frac{\varepsilon}{2}$ 且 $b&gt;\beta-\frac{\varepsilon}{2}$ $\Longleftarrow$ 压不下各调用一次。预算劈半是因为两份误差合计须 $&lt;\varepsilon$——<strong>工具二 · 误差预算</strong>。至于"$a$ 取 $A$ 中最大元"这条路：库存里根本没有这件货（sup ≠ max），程序根本不会放它进来。</p>
+  <p><span class="stage">【定型前 · 特殊化侦察】</span>$A=B=(0,1)$：$A+B=(0,2)$，$2=1+1$ ✓；$A=(0,1),B=\{5\}$：$\sup=6=1+5$ ✓。猜想通过侦察才值得写进卷面——<strong>工具三</strong>是程序的正式步骤，不是花絮。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 ×2</strong>：① 证确界等式，先拆"$\le$ + $\ge$"两头夹，$\le$ 用第一条件（罩得住），$\ge$ 用第二条件（压不下）——<strong>一条件管一头</strong>；② sup 取不到就用第二条件逼近，误差按项均分（$\frac{\varepsilon}{2}$、$\frac{\varepsilon}{3}$……）。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 2</strong>　设 $A,B\subset\mathbb{R}$ 非空有上界，记 $A+B=\{a+b:a\in A,\ b\in B\}$。证明：
+  $$\sup(A+B)=\sup A+\sup B.$$</p>
+  <hr>
+  <p><strong>证明</strong>　记 $\alpha=\sup A$，$\beta=\sup B$。分别证 $\le$ 与 $\ge$。</p>
+  <p class="proof-line"><strong>第一步（$\sup(A+B)\le\alpha+\beta$）</strong>：任取 $a+b\in A+B$，由 $\sup$ 定义的第一条件，$a\le\alpha$，$b\le\beta$，故
+  $$a+b\le\alpha+\beta,$$
+  即 $\alpha+\beta$ 是 $A+B$ 的上界。而 $\sup(A+B)$ 是<strong>最小</strong>上界，所以 $\sup(A+B)\le\alpha+\beta$。<span class="step-score">（4 分）</span></p>
+  <p class="proof-line"><strong>第二步（$\sup(A+B)\ge\alpha+\beta$）</strong>：任取 $\varepsilon>0$。由 $\alpha=\sup A$ 的第二条件（取 $\frac{\varepsilon}{2}$），存在 $a\in A$ 使 $a&gt;\alpha-\frac{\varepsilon}{2}$；同理存在 $b\in B$ 使 $b&gt;\beta-\frac{\varepsilon}{2}$。于是 $a+b\in A+B$ 且
+  $$a+b&gt;\alpha+\beta-\varepsilon.$$
+  这说明任何比 $\alpha+\beta$ 小的数都不是 $A+B$ 的上界。<span class="step-score">（8 分）</span></p>
+  <p class="proof-line"><strong>第三步（合拢）</strong>：$\alpha+\beta$ 既是上界、又没有更小的上界，由定义 $\sup(A+B)=\alpha+\beta=\sup A+\sup B$。$\square$<span class="step-score">（10 分）</span></p>
+  <p class="aside">书写点评：注意 $\forall\varepsilon$ 意味着你有权把 $\varepsilon$ 换成任何正数代入——$\frac{\varepsilon}{2}$、$\frac1n$ 随你调遣，这是第二条件最常用的小手法。</p>
+</div>
+
+<h2>§9 配套题目</h2>
+
+<p>铁律：<strong>先写在纸上，写到写不动再展开答案</strong>。模仿题照例 1、例 2 的卷面格式写；变式题开始没有模板，先问自己"第一反应是什么、能拿什么东西做小实验"。</p>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 1</span>设 $E=\left\{\dfrac{(-1)^n}{n}:n\in\mathbb{N}^+\right\}$。求 $\sup E$ 与 $\inf E$，并判断是否属于 $E$。</p>
+  <details class="answer">
+    <summary>参考答案（约 6 分书写量）</summary>
+    <p>$E=\left\{-1,\frac12,-\frac13,\frac14,\dots\right\}$。</p>
+    <p><strong>$\sup E=\frac12$</strong>：偶数项为 $\frac1{2k}\le\frac12$，奇数项为 $-\frac1{2k-1}&lt;0&lt;\frac12$，故 $\frac12$ 罩得住（2 分）；又 $\frac12\in E$（$n=2$），任何更小的数都罩不住 $\frac12$ 这个点本身——$\sup E=\max E=\frac12$（4 分）。</p>
+    <p><strong>$\inf E=-1$</strong>：奇数项 $-\frac1{2k-1}\ge-1$，偶数项为正，故 $-1$ 托得住；又 $-1\in E$（$n=1$），故 $\inf E=\min E=-1$（6 分）。</p>
+    <p>均属于 $E$。<strong>易错点</strong>：被正负交错晃花眼，漏看 $\frac12$ 和 $-1$ 就在集合里。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 2</span>用定义证明：$\sup\left\{2-\dfrac1n:n\in\mathbb{N}^+\right\}=2$。</p>
+  <details class="answer">
+    <summary>参考答案（约 6 分书写量）</summary>
+    <p><strong>① 罩得住</strong>：$\forall n\ge1$，$2-\frac1n&lt;2$（2 分）。</p>
+    <p><strong>② 压不下</strong>：任取 $\varepsilon>0$，取 $n&gt;\frac1\varepsilon$，则 $\frac1n&lt;\varepsilon$，于是 $2-\frac1n&gt;2-\varepsilon$，集合中有元素大于 $2-\varepsilon$（5 分）。</p>
+    <p>由确界定义，$\sup E=2$。又 $2-\frac1n&lt;2$ 恒成立，故 $2\notin E$（6 分）。</p>
+    <p><strong>自查</strong>：你那个 $n$ 是倒推出来的吗？目标 $2-\frac1n&gt;2-\varepsilon \iff \frac1n&lt;\varepsilon$，和例 1 同构。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 1</span>设 $\varnothing\ne A\subseteq B\subseteq\mathbb{R}$，$B$ 有上界。证明：$\sup A\le\sup B$。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：要证 $\sup A\le\sup B$，只需证 $\sup B$ 是 $A$ 的上界——因为 $\sup A$ 是 $A$ 的<strong>最小</strong>上界，任何 $A$ 的上界都 $\ge\sup A$。</p>
+    <p><strong>证明</strong>：$B$ 有上界，由确界存在定理 $\sup B$ 存在。任取 $x\in A$，由 $A\subseteq B$ 知 $x\in B$，故 $x\le\sup B$。于是 $\sup B$ 是 $A$ 的上界。而 $\sup A$ 是 $A$ 的最小上界，所以 $\sup A\le\sup B$。$\square$</p>
+    <p><strong>点评</strong>：全题只用第一条件 + "最小性"一句话。确界证明有一半是这种"借最小性/最大性说话"，不需要每次都 $\varepsilon$。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 2</span>设 $A,B$ 非空有上界，且 $A\cap B\ne\varnothing$。<br>
+  （i）证明：$\sup(A\cap B)\le\min\{\sup A,\sup B\}$；<br>
+  （ii）举例说明严格小于号可以成立。</p>
+  <details class="answer">
+    <summary>参考答案</summary>
+    <p>（i）$A\cap B\subseteq A$ 且 $A\cap B\subseteq B$，由变式 1：$\sup(A\cap B)\le\sup A$ 且 $\sup(A\cap B)\le\sup B$，合起来即 $\sup(A\cap B)\le\min\{\sup A,\sup B\}$。$\square$</p>
+    <p>（ii）取 $A=[0,2]\cup\{5\}$，$B=[0,3]$。则 $\sup A=5$，$\sup B=3$，而 $A\cap B=[0,2]$，$\sup(A\cap B)=2&lt;3=\min\{5,3\}$。</p>
+    <p><strong>点评</strong>：直观——$\sup A$ 和 $\sup B$ 由各自集合的"最高点"决定，而交集可能恰好把双方的制高点都裁掉了。构造反例时让 $A$ 的制高点落在 $B$ 外即可。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 3</span>证明：若数集 $E$ 的上确界存在，则必唯一。</p>
+  <details class="answer">
+    <summary>参考答案</summary>
+    <p>设 $M_1,M_2$ 都是 $E$ 的上确界。</p>
+    <p>$M_1$ 是<strong>最小</strong>上界，$M_2$ 是上界 $\Rightarrow M_1\le M_2$；<br>
+    $M_2$ 是<strong>最小</strong>上界，$M_1$ 是上界 $\Rightarrow M_2\le M_1$。</p>
+    <p>故 $M_1=M_2$。$\square$</p>
+    <p><strong>点评</strong>：三行证完，但它把"最小"二字的威力显示得淋漓尽致——"最小性"本身就是一个不等式发生器。这也是例 2 第三步合拢时隐含的逻辑。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv3">真题节选</span><strong>（第 15 届题五，15 分）</strong>设 $E\subset\mathbb{R}^n$ 非空有界，$\mathbf{c}\in\mathbb{R}^n$，$\mathbf{c}$ 非零。用 $\operatorname{diam}E=\sup\limits_{\mathbf{x},\mathbf{y}\in E}\|\mathbf{x}-\mathbf{y}\|$ 表示 $E$ 的直径，记 $E+\mathbf{c}=\{\mathbf{x}+\mathbf{c}\mid\mathbf{x}\in E\}$。证明：
+  $$\operatorname{diam}E&lt;\operatorname{diam}\bigl(E\cup(E+\mathbf{c})\bigr).$$</p>
+  <p>别被 $\mathbb{R}^n$ 和直径吓到——这一题考的就是本章的<strong>动作二</strong>。先回答三个梯子问题（写在纸上）：</p>
+  <p>（i）把"$\rho=\operatorname{diam}E$"翻译成两句话（罩得住 / 压不下）；<br>
+  （ii）直径 $\rho$ 一定能被某对 $\mathbf{x},\mathbf{y}$ 取到吗？官方解答为什么要"取 $\|\mathbf{x}-\mathbf{y}\|\ge\rho-\varepsilon$"而不是"取 $\|\mathbf{x}-\mathbf{y}\|=\rho$"？<br>
+  （iii）$E\cup(E+\mathbf c)$ 里除了 $E$ 内部的点对，还有哪些新点对？要证它的直径更大，只要找到<strong>哪一类</strong>点对距离 $&gt;\rho$？</p>
+  <details class="answer">
+    <summary>梯子参考答案</summary>
+    <p>（i）罩得住：$\forall\mathbf{x},\mathbf{y}\in E,\ \|\mathbf{x}-\mathbf{y}\|\le\rho$；压不下：$\forall\varepsilon>0,\ \exists\mathbf{x},\mathbf{y}\in E,\ \|\mathbf{x}-\mathbf{y}\|&gt;\rho-\varepsilon$。</p>
+    <p>（ii）不一定取到——$\rho$ 是 sup 不是 max（本章头号陷阱）。所以只能用第二条件逼近到 $\rho-\varepsilon$。</p>
+    <p>（iii）新点对形如 $\mathbf{x}+\mathbf{c}$ 与 $\mathbf{y}$（跨集点对）。只要找到一对跨集点距离 $&gt;\rho$，并集的直径（作为 sup）就 $&gt;\rho$。</p>
+  </details>
+  <details class="answer">
+    <summary>官方解答全文（转录自官方参考答案）</summary>
+    <p>简记 $\|\mathbf{x}\|$ 为 $|\mathbf{x}|$，记 $\rho=\operatorname{diam}E$。若 $\rho=0$（$E$ 为单点集），结论显然成立。</p>
+    <p>下设 $\rho>0$。取 $\varepsilon>0$ 使 $\varepsilon&lt;\rho$ 且 $\varepsilon&lt;\dfrac{|\mathbf{c}|^2}{4\rho}$；由确界定义可取 $\mathbf{x},\mathbf{y}\in E$ 使 $a=|\mathbf{x}-\mathbf{y}|\ge\rho-\varepsilon$。<span class="step-score">（5 分）</span></p>
+    <p>记 $\cos\theta=\dfrac{\langle\mathbf{y}-\mathbf{x},\mathbf{c}\rangle}{|\mathbf{y}-\mathbf{x}|\,|\mathbf{c}|}$。若 $\cos\theta\ge0$，则由余弦定理
+    $$|(\mathbf{x}+\mathbf{c})-\mathbf{y}|=\sqrt{a^2+|\mathbf{c}|^2+2a|\mathbf{c}|\cos\theta}\ge\sqrt{(\rho-\varepsilon)^2+|\mathbf{c}|^2}&gt;\sqrt{\rho^2+\frac{|\mathbf{c}|^2}{2}}&gt;\rho,$$
+    （放缩用了 $\varepsilon&lt;\frac{|\mathbf{c}|^2}{4\rho}$，即 $-2\rho\varepsilon+\frac{|\mathbf c|^2}{2}&gt;0$。）若 $\cos\theta&lt;0$，同理 $|(\mathbf{y}+\mathbf{c})-\mathbf{x}|&gt;\rho$。</p>
+    <p>两种情形都在并集中找到距离 $&gt;\rho$ 的点对，故 $\operatorname{diam}\bigl(E\cup(E+\mathbf{c})\bigr)&gt;\rho=\operatorname{diam}E$。$\square$<span class="step-score">（15 分）</span></p>
+    <p><strong>复盘</strong>：整道题的"开门 5 分"就是本章动作二（由确界取 $\rho-\varepsilon$ 逼近点对）；后面 10 分是余弦定理放缩——那是计算功夫。确界语言帮你拿到入场券，计算能力帮你走完大厅。注意官方那个 $\varepsilon&lt;\frac{|\mathbf c|^2}{4\rho}$ 也不是天上掉下来的——<strong>它也是倒推的</strong>：在草稿纸上展开 $(\rho-\varepsilon)^2+|\mathbf c|^2$ 与 $\rho^2$ 比较，解出 $\varepsilon$ 需要满足的条件，再正着写进解答。<em>（题目与解答转录自第 15 届官方 PDF，见 <a href="真题索引/第15届_2023.md">真题索引</a>。）</em></p>
+  </details>
+</div>
+
+<h2>§9.5 熟练度训练场</h2>
+
+<p>理解只是入场券，<strong>考场上拼的是基本动作的速度</strong>。两种训练，每天 10 分钟：</p>
+
+<h3>训练一 · 翻卡快测（目标：每卡 10 秒内出答案）</h3>
+<div class="quiz" data-quiz="ch01-drill"></div>
+
+<h3>训练二 · 计时默写（写在纸上，掐表）</h3>
+<div class="calc box" data-tag="默写清单">
+  <p>① <strong>60 秒</strong>：默写 $\sup E$ 与 $\inf E$ 的完整定义（四个条件，一字不差）；</p>
+  <p>② <strong>45 秒</strong>：默写动作二（取 $\varepsilon=\frac1n$ 生成 $x_n\to\sup E$ 的完整推导）；</p>
+  <p>③ <strong>3 分钟</strong>：默写 $\sup(A+B)=\sup A+\sup B$ 的证明骨架（两头夹 + $\frac{\varepsilon}{2}$ 误差预算，可以不写细节，但四个关键步必须在）。</p>
+  <p><strong>过关标准</strong>：连续两天全对才算过。做不到就回到对应小节重读，再默。</p>
+</div>
+
+<h2>§10 六方向自测卡</h2>
+
+<div class="selftest">
+  <h3>合上书，拿张白纸，默写以下六项</h3>
+  <div class="st-item">
+    <p class="st-q"><em>=（它是什么）</em>　写出 $\sup E$ 的完整定义（两个条件），并各配一句大白话。</p>
+    <details><summary>对照</summary><p>$\forall x\in E, x\le M$（罩得住，是上界）；$\forall\varepsilon>0, \exists x\in E, x&gt;M-\varepsilon$（压不下，最小上界）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>←（什么带来它）</em>　为什么 $\mathbb{Q}$ 里没有确界存在定理？$\mathbb{R}$ 里它是什么身份？</p>
+    <details><summary>对照</summary><p>$\{x\in\mathbb{Q}:x^2&lt;2\}$ 有上界但在 $\mathbb{Q}$ 中无最小上界（$\sqrt2$ 是洞）；在 $\mathbb{R}$ 中它是公理级性质（完备性公理），不可证、作为实数定义的一部分。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>→（它带来什么）</em>　说出由确界公理出发的三条重要推论链。</p>
+    <details><summary>对照</summary><p>① 确界 ⟺ 单调有界 ⟺ 区间套 ⟺ B-W ⟺ Cauchy ⟺ 有限覆盖（六等价）；② 确界 → 闭区间连续函数四定理（有界/最值/零点/一致连续）；③ sup/inf → Darboux 上下和 → Riemann 积分理论。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>∈（实例）</em>　默写三个集合使 $\sup E$ 分别：属于 $E$、不属于 $E$、不存在。</p>
+    <details><summary>对照</summary><p>$[0,1]$（属于）；$(0,1)$ 或 $\{\frac{n}{n+1}\}$（不属于）；$(0,+\infty)$ 或 $\mathbb{N}$（无上界，不存在）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>≠（区分）</em>　$\sup$ 与 $\max$ 的三处不同；"上界"与"上确界"的不同。</p>
+    <details><summary>对照</summary><p>$\max$ 必须属于 $E$、可能不存在、若存在必唯一；$\sup$ 不必属于 $E$、有界即存在、必唯一。上界有无穷多个（一个区间），上确界是其中最小者（一个数）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>（为何要有它）</em>　$\max$ 不够用时发生了什么？没有确界，哪个你熟悉的定理证不了？</p>
+    <details><summary>对照</summary><p>$(0,1)$ 这类集合最大值缺席，但"最贴身上限"永在——分析学要的"临界值"大多只能保证是 sup 不保证是 max（如直径、积分上和）。没有确界公理，闭区间上连续函数的最值定理、单调有界定理都无从证起。</p></details>
+  </div>
+</div>
+
+<div class="net box" data-tag="间隔复习安排">
+  <p><strong>1 天后</strong>：重做六方向自测卡（不翻书）+ 翻卡快测第二轮；<strong>3 天后</strong>：重做变式 2 与真题节选的梯子问题 + 计时默写②③；<strong>1 周后</strong>：把 §4 动作二默写一遍，确认翻卡全部"会了"。</p>
+  <p>本章是<strong>数分第 3 章</strong>（单调有界与递推数列，第 15 届题六就在那里等你）和<strong>数分第 7 章</strong>（上和下和）的直接地基。</p>
+</div>
+
+<div class="chapnav">
+  <span><a href="ch00.html">← 第 0 章 · 摸底诊断</a></span>
+  <span><a href="index.html">首页</a></span>
+  <span><a href="ch02.html">第 2 章 · 极限的严格语言：ε-N / ε-δ 与一致连续 →</a></span>
+</div>
+
+</div>
+
+<script src="assets/quiz.js"></script>
+<script>
+/* §9.5 翻卡数据 */
+registerQuiz("ch01-drill", [
+  { q: "$(0,1)$ 的 $\\sup$ 和 $\\inf$？属于集合吗？", a: "$\\sup=1\\notin(0,1)$，$\\inf=0\\notin(0,1)$。开区间的端点是「够不着的天花板」。" },
+  { q: "$\\sup\\left\\{\\dfrac{(-1)^n}{n}\\right\\}$ = ？", a: "$\\frac12$（属于，$n=2$ 取到——它就是 max）。" },
+  { q: "$\\inf\\left\\{\\dfrac{n}{n+1}\\right\\}$ = ？", a: "$\\frac12$（属于，$n=1$ 就是最小项）。" },
+  { q: "证 $M=\\sup E$ 要证哪两条？", a: "罩得住：$\\forall x\\in E,\\ x\\le M$；压不下：$\\forall\\varepsilon>0,\\ \\exists x\\in E,\\ x>M-\\varepsilon$。" },
+  { q: "$\\sup(A+B)$ = ？（$A,B$ 非空有上界）", a: "$\\sup A+\\sup B$。证明：两头夹，$\\le$ 用罩得住，$\\ge$ 用压不下 + $\\frac{\\varepsilon}{2}$。" },
+  { q: "$A\\subseteq B$，$\\sup A$ 与 $\\sup B$ 谁大？", a: "$\\sup A\\le\\sup B$（$\\sup B$ 也是 $A$ 的上界，$\\sup A$ 最小）。" },
+  { q: "$\\sup E\\in E$ 当且仅当什么？", a: "$\\max E$ 存在（此时二者相等）。" },
+  { q: "动作二「取 $\\varepsilon=\\frac1n$」是为了得到什么？", a: "生成 $E$ 中的序列 $x_n\\to\\sup E$——把确界问题翻译成极限问题。" },
+  { q: "倒推法的第一步在草稿纸上干什么？", a: "把目标不等式化简，解出 $n$（或 $N$、$\\delta$）要满足的条件；然后回卷面正着写。" },
+  { q: "$E=(0,1]\\cup\\{2\\}$ 的 $\\sup$ 和 $\\inf$？", a: "$\\sup=2\\in E$；$\\inf=0\\notin E$。" }
+]);
+</script>
+
+<script>
+/* §3.1 sup 探索器 */
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  var svg = document.getElementById("supw-svg");
+  var out = document.getElementById("supw-out");
+  var mSlider = document.getElementById("supw-m");
+  var eSlider = document.getElementById("supw-e");
+  var y0 = 105;
+  function px(v) { return 60 + v * 300; }
+  function mk(tag, attrs) {
+    var el = document.createElementNS(NS, tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    svg.appendChild(el);
+    return el;
+  }
+  function mkText(x, y, str, attrs) {
+    var t = mk("text", attrs || {});
+    t.setAttribute("x", x); t.setAttribute("y", y);
+    t.textContent = str;
+    return t;
+  }
+  /* 数轴 */
+  mk("line", { x1: 40, y1: y0, x2: 700, y2: y0, stroke: "#2b2620", "stroke-width": 2 });
+  mk("polygon", { points: "708," + y0 + " 696," + (y0 - 5) + " 696," + (y0 + 5), fill: "#2b2620" });
+  [[60, "0"], [360, "1"], [660, "2"]].forEach(function (tk) {
+    mk("line", { x1: tk[0], y1: y0 - 6, x2: tk[0], y2: y0 + 6, stroke: "#2b2620", "stroke-width": 2 });
+    mkText(tk[0], y0 + 26, tk[1], { "font-size": 14, fill: "#2b2620", "text-anchor": "middle" });
+  });
+  mkText(150, y0 - 42, "E = {n/(n+1)}", { "font-size": 13, fill: "#1d4ed8" });
+  /* 缝隙阴影 */
+  var gap = mk("rect", { y: y0 - 30, height: 44, fill: "#b45309", opacity: 0.18 });
+  /* 200 个点 */
+  var dots = [];
+  for (var k = 1; k <= 200; k++) {
+    var v = k / (k + 1);
+    var c = mk("circle", { cx: px(v), cy: y0, r: 2.6, fill: "#1d4ed8" });
+    dots.push({ v: v, el: c });
+  }
+  /* M 竖线 */
+  var mline = mk("line", { y1: y0 - 44, y2: y0 + 10, stroke: "#be123c", "stroke-width": 2.5, "stroke-dasharray": "6 4" });
+  var mlabel = mkText(0, y0 - 52, "", { "font-size": 13.5, fill: "#be123c", "font-weight": "bold", "text-anchor": "middle" });
+  function update() {
+    var M = parseFloat(mSlider.value), e = parseFloat(eSlider.value);
+    gap.setAttribute("x", px(M - e));
+    gap.setAttribute("width", Math.max(0, px(M) - px(M - e)));
+    mline.setAttribute("x1", px(M)); mline.setAttribute("x2", px(M));
+    mlabel.setAttribute("x", Math.min(px(M) + 40, 660));
+    mlabel.textContent = "M = " + M.toFixed(3);
+    var leak = 0, poke = 0;
+    dots.forEach(function (d) {
+      if (d.v > M + 1e-9) { leak++; d.el.setAttribute("fill", "#be123c"); }
+      else if (d.v > M - e + 1e-9) { poke++; d.el.setAttribute("fill", "#b45309"); }
+      else d.el.setAttribute("fill", "#1d4ed8");
+    });
+    var cover = leak === 0, press = poke > 0;
+    var v1 = cover ? '<span class="ok">✓ 罩得住</span>' : '<span class="no">✗ 罩不住（' + leak + ' 个点漏在 M 外）</span>';
+    var v2 = press ? '<span class="ok">✓ 压不下（' + poke + ' 个点戳进缝隙）</span>' : '<span class="no">✗ 压不下（缝隙空空，M 还能往下压）</span>';
+    var verdict;
+    if (!cover) verdict = "M 连上界都不是——它不是天花板。";
+    else if (press) verdict = (Math.abs(M - 1) < 1e-9)
+      ? "两条件齐备：M = 1 就是 sup E！无论 ε 多小，都有点戳上来。"
+      : "目前两条件都满足……但 M > 1 时，把 ε 拖得更小，缝隙终会空——试试看。";
+    else verdict = "M 是上界，但不是最贴身的：往下挪 ε 也罩得住，所以它不是 sup。";
+    out.innerHTML = v1 + "　" + v2 + "<br><strong>" + verdict + "</strong>";
+  }
+  mSlider.addEventListener("input", update);
+  eSlider.addEventListener("input", update);
+  update();
+})();
+</script>
+
+</body>
+</html>

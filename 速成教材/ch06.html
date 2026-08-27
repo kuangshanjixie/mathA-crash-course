@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数分第 6 章 · Taylor 公式：阶的估计与不等式证明 —— 数学A速成讲义</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+<div class="wrap">
+
+<div class="bookbar">
+  <span><a href="index.html">← 返回首页</a></span>
+  <span>卷一 · 数学分析 · 第 6 章</span>
+</div>
+
+<div class="chapter-kicker">CHAPTER 6 · 数学分析</div>
+<h1>Taylor 公式：阶的估计与不等式证明</h1>
+
+<div class="exam box" data-tag="本章导览">
+  <p><strong>这一章在整张卷子上的位置</strong>：翻遍近七届索引，找不到一道"叙述并证明 Taylor 定理"的题——但 Taylor 以两种形态反复出场：一是<strong>"展开 + 逐项操作"的关键一步</strong>（第 16 届题二把 $-\ln(1-s)$ 展成幂级数逐项积分，15 分大题里约 4 分的咽喉步骤）；二是<strong>"高阶导数信息 → 函数与多项式的不等式"</strong>（第 17 届题五，$\sup f''=2$ 下二次多项式夹逼 $f$，15 分）。再配上第 14 届题二的主项–误差分解、第 11 届题五的阶估计，可以说：<strong>"阶"的语言每届都在卷面上</strong>。另一个隐形战场：一切 $\frac00$ 型极限的严格化——等价无穷小什么时候能用、什么时候是跳步，答案全在本章。</p>
+  <p><strong>学完你能</strong>：① 默写 Peano 与 Lagrange 两种余项的 Taylor 公式，说清条件差别与各自主场；② 背出六个基本展开式，并按"分母阶数 / 余项定号"决定展到几阶；③ 用 $o$ 运算严格书写极限计算，指出等价替换在加减中为什么是跳步；④ 用"展到 $n$ 阶 + Lagrange 余项定号"的机器证明多项式不等式；⑤ 说出"为什么余项才是 Taylor 的本体"。</p>
+  <p><strong>前置</strong>：第 2 章的极限语言（$o$ 记号的家）、第 5 章的微分中值定理（它是 Lagrange 余项的 $n=0$ 特例，本章会反复回头焊接）。</p>
+</div>
+
+<h2>§1 开场谜题："≈"到底差多少？</h2>
+
+<div class="hook box" data-tag="开场谜题">
+  <p>你从高一开始就在用这个东西：</p>
+  <p>$$\sin x\approx x-\frac{x^3}{6}\qquad(x\text{ 很小})$$</p>
+  <p>拿它算 $\lim\limits_{x\to0}\dfrac{x-\sin x}{x^3}=\dfrac16$，三年里可能用过几十次。先做个数值实验，$x=0.1$：</p>
+  <p>$$\sin 0.1=0.0998334166\ldots,\qquad 0.1-\frac{0.1^3}{6}=0.0998333333\ldots$$</p>
+  <p>两者相差约 $8.33\times10^{-8}$——而 $\dfrac{0.1^5}{120}\approx8.33\times10^{-8}$。<strong>误差恰好是"下一项"的量级。</strong>这不是巧合，是本章要揭开的账本。</p>
+  <p>现在追问一句：这个"$\approx$"到底差多少？如果差的部分里混着一个 $Cx^3$ 项呢？那么
+  $$\frac{x-\sin x}{x^3}=\frac{\frac{x^3}{6}-Cx^3-\cdots}{x^3}=\frac16-C,$$
+  答案立刻就不是 $\frac16$ 了。你每次用"$\approx$"算对极限，都在<strong>暗中假设"误差比 $x^3$ 高阶"</strong>。计算题里这个假设碰巧总对，没人追究；证明题里写"$\approx$"而不交代误差的账，就是跳步归零。</p>
+  <p>更本质的问题还在后面：Taylor 公式凭什么用<strong>一点</strong>的信息——$f(a),f'(a),\dots,f^{(n)}(a)$，共 $n+1$ 个数——重建函数在 $a$ <strong>附近</strong>的行为？警惕一个反例：函数
+  $$f(x)=\begin{cases}e^{-1/x^2},&x\ne0,\\0,&x=0\end{cases}$$
+  在 $0$ 点的各阶导数全是 $0$——它的任意阶 Taylor 多项式都是零多项式，可它不是零函数。<strong>"一点的全部导数"这堆信息本身，根本锁不住函数。</strong></p>
+  <p>所以 Taylor 定理的内容从来不在那个多项式里。它真正说的是：<strong>函数减去多项式，等于一个被 $(n+1)!$ 和 $(x-a)^{n+1}$ 死死压住的余项</strong>。余项才是 Taylor 的本体，多项式只是包装。本章就学两本账——Peano 账（$o$，局部）与 Lagrange 账（$\xi$，全局）——以及它们的两条生产线：极限的严格化与不等式的证明。</p>
+</div>
+
+<h2>§2 先看见它：从一点咬住曲线</h2>
+
+<div class="vision box" data-tag="直觉与图像">
+  <p>给定 $f$ 在 $a$ 点的前 $n$ 阶导数，存在唯一一个次数不超过 $n$ 的多项式 $T_n$，满足 $T_n(a)=f(a)$，$T_n'(a)=f'(a)$，……，$T_n^{(n)}(a)=f^{(n)}(a)$——即 $T_n$ 与 $f$ 在 $a$ 点<strong>$n$ 阶相切</strong>。几何上：$n=1$ 是切线（一阶咬合），$n=2$ 连弯曲方向也咬住，$n$ 越大，多项式从 $a$ 点向两侧"咬住"曲线的长度越长。</p>
+</div>
+
+<figure>
+<svg viewBox="0 0 720 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="sin x 与其在 0 点的一阶、三阶 Taylor 多项式">
+  <!-- x 轴 -->
+  <line x1="0" y1="140" x2="706" y2="140" stroke="#2b2620" stroke-width="1.6"/>
+  <polygon points="716,140 704,135 704,145" fill="#2b2620"/>
+  <!-- 刻度 -->
+  <line x1="189" y1="134" x2="189" y2="146" stroke="#2b2620" stroke-width="1.5"/>
+  <text x="189" y="163" font-size="13" fill="#2b2620" text-anchor="middle">−π</text>
+  <line x1="360" y1="134" x2="360" y2="146" stroke="#2b2620" stroke-width="1.5"/>
+  <text x="360" y="163" font-size="13" fill="#2b2620" text-anchor="middle">0</text>
+  <line x1="531" y1="134" x2="531" y2="146" stroke="#2b2620" stroke-width="1.5"/>
+  <text x="531" y="163" font-size="13" fill="#2b2620" text-anchor="middle">π</text>
+  <line x1="352" y1="66" x2="368" y2="66" stroke="#2b2620" stroke-width="1.5"/>
+  <text x="346" y="71" font-size="13" fill="#2b2620" text-anchor="end">1</text>
+  <line x1="352" y1="214" x2="368" y2="214" stroke="#2b2620" stroke-width="1.5"/>
+  <text x="346" y="219" font-size="13" fill="#2b2620" text-anchor="end">−1</text>
+  <!-- T1 切线 -->
+  <line x1="256" y1="280" x2="464" y2="0" stroke="#b45309" stroke-width="2" stroke-dasharray="7 5"/>
+  <!-- T3 -->
+  <path d="M183,-39 L190,-3 L196,29 L203,59 L209,85 L216,109 L223,129 L229,147 L236,162 L242,175 L249,186 L255,195 L262,201 L268,206 L275,208 L281,209 L288,209 L295,207 L301,204 L308,200 L314,195 L321,188 L327,182 L334,174 L340,166 L347,158 L353,149 L360,140 L367,131 L373,122 L380,114 L386,106 L393,98 L399,92 L406,85 L412,80 L419,76 L425,73 L432,71 L439,71 L445,72 L452,74 L458,79 L465,85 L471,94 L478,105 L484,118 L491,133 L497,151 L504,171 L511,195 L517,221 L524,251 L530,283 L537,319" fill="none" stroke="#7c3aed" stroke-width="2.2"/>
+  <!-- sin x -->
+  <path d="M0,163 L7,154 L13,146 L20,137 L26,128 L33,119 L39,111 L46,103 L52,96 L59,89 L65,83 L72,78 L79,74 L85,70 L92,68 L98,67 L105,66 L111,67 L118,69 L124,72 L131,76 L137,81 L144,86 L151,93 L157,100 L164,107 L170,116 L177,124 L183,133 L190,142 L196,150 L203,159 L209,167 L216,175 L223,183 L229,190 L236,196 L242,201 L249,206 L255,209 L262,212 L268,213 L275,214 L281,213 L288,211 L295,209 L301,205 L308,200 L314,195 L321,189 L327,182 L334,174 L340,166 L347,158 L353,149 L360,140 L367,131 L373,122 L380,114 L386,106 L393,98 L399,91 L406,85 L412,80 L419,75 L425,71 L432,69 L439,67 L445,66 L452,67 L458,68 L465,71 L471,74 L478,79 L484,84 L491,90 L497,97 L504,105 L511,113 L517,121 L524,130 L530,138 L537,147 L543,156 L550,164 L556,173 L563,180 L569,187 L576,194 L583,199 L589,204 L596,208 L602,211 L609,213 L615,214 L622,213 L628,212 L635,210 L641,206 L648,202 L655,197 L661,191 L668,184 L674,177 L681,169 L687,161 L694,152 L700,143 L707,134 L713,126 L720,117" fill="none" stroke="#1d4ed8" stroke-width="2.8"/>
+  <!-- 原点标记 -->
+  <circle cx="360" cy="140" r="4.5" fill="#be123c"/>
+  <text x="374" y="128" font-size="12.5" fill="#be123c">展开点 a = 0</text>
+  <!-- 标注 -->
+  <text x="620" y="80" font-size="13.5" fill="#1d4ed8" font-weight="bold">sin x</text>
+  <text x="452" y="52" font-size="12.5" fill="#b45309">T₁ = x（切线）</text>
+  <text x="238" y="252" font-size="12.5" fill="#7c3aed">T₃ = x − x³/6</text>
+  <text x="60" y="30" font-size="12.5" fill="#5c554b">T₃ 在 ±1 内几乎与 sin x 重合；出了 ±2 就跑飞——</text>
+  <text x="60" y="48" font-size="12.5" fill="#5c554b">「咬住」是展开点附近的事，这就是局部。</text>
+</svg>
+<figcaption>$T_1$ 与 $\sin x$ 一阶相切，$T_3$ 三阶相切：函数值、斜率、弯曲、三阶导在 $0$ 点全部相同。</figcaption>
+</figure>
+
+<p>盯住图看两件事：<strong>①</strong> 阶数越高，多项式从 $a$ 点"咬出去"的距离越长——这是"用一点信息重建附近行为"的图像；<strong>②</strong> 无论多高阶，多项式在远处总会跑飞（$\sin x$ 有界，多项式无界）——所以 Taylor 逼近天生是<strong>局部</strong>语言，"多近算附近、误差有多大"，必须由余项来回答。下面把这两本账精确写出来。</p>
+
+<h2>§3 精确定义：两本账</h2>
+
+<div class="def">
+  <p class="def-title">定义（Taylor 多项式与余项）</p>
+  <p>设 $f$ 在 $a$ 点 $n$ 阶可导。称
+  $$T_n(x)=\sum_{k=0}^{n}\frac{f^{(k)}(a)}{k!}(x-a)^k=f(a)+f'(a)(x-a)+\frac{f''(a)}{2!}(x-a)^2+\cdots+\frac{f^{(n)}(a)}{n!}(x-a)^n$$
+  为 $f$ 在 $a$ 点的 <strong>$n$ 阶 Taylor 多项式</strong>（$a=0$ 时也叫 Maclaurin 多项式）；称
+  $$R_n(x)=f(x)-T_n(x)$$
+  为 <strong>余项</strong>。$T_n$ 由"$n$ 阶相切"唯一决定；Taylor 定理的全部内容，就是给 $R_n$ 记两本不同格式的账。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定理一（Peano 余项 · 局部账）</p>
+  <p>设 $f$ 在 $a$ 点 $n$ 阶可导（这隐含 $f^{(n-1)}$ 在 $a$ 的某邻域内存在）。则当 $x\to a$ 时，
+  $$f(x)=\sum_{k=0}^{n}\frac{f^{(k)}(a)}{k!}(x-a)^k+o\bigl((x-a)^n\bigr),$$
+  即 $R_n(x)=o\bigl((x-a)^n\bigr)$：误差除以 $(x-a)^n$ 后仍趋于 $0$。</p>
+  <p style="font-size:0.92em;color:#5c554b">证明一句话：对 $\dfrac{R_n(x)}{(x-a)^n}$ 连续用 $n-1$ 次洛必达，最后一步正是 $f^{(n)}(a)$ 的导数定义——所以条件只要"一点 $n$ 阶可导"，最省。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定理二（Lagrange 余项 · 全局账）</p>
+  <p>设 $f$ 在含 $a$ 的开区间 $I$ 内 $n+1$ 阶可导。则对任意 $x\in I$，存在 $\xi$ 严格介于 $a$ 与 $x$ 之间，使
+  $$f(x)=\sum_{k=0}^{n}\frac{f^{(k)}(a)}{k!}(x-a)^k+\frac{f^{(n+1)}(\xi)}{(n+1)!}(x-a)^{n+1}.$$</p>
+  <p style="font-size:0.92em;color:#5c554b">证明骨架（工具八 · 辅助函数）：固定 $x$，令 $\varphi(t)=f(x)-\sum\limits_{k=0}^{n}\dfrac{f^{(k)}(t)}{k!}(x-t)^k-\dfrac{R_n(x)\,(x-t)^{n+1}}{(x-a)^{n+1}}$，则 $\varphi(a)=\varphi(x)=0$，Rolle 定理给出 $\xi$ 使 $\varphi'(\xi)=0$，求导整理即得。$n=0$ 时本定理就是 Lagrange 中值定理 $f(x)=f(a)+f'(\xi)(x-a)$——第 5 章的老朋友是 Taylor 的 $0$ 阶特例。</p>
+</div>
+
+<div class="symbol box" data-tag="两本账对照表">
+  <table>
+    <tr><th></th><th>Peano 余项</th><th>Lagrange 余项</th></tr>
+    <tr><td>条件</td><td>$a$ 点 $n$ 阶可导（最省）</td><td>区间上 $n+1$ 阶可导（最贵）</td></tr>
+    <tr><td>余项形状</td><td>$o\bigl((x-a)^n\bigr)$</td><td>$\dfrac{f^{(n+1)}(\xi)}{(n+1)!}(x-a)^{n+1}$</td></tr>
+    <tr><td>信息性质</td><td>定性、局部（只对 $x\to a$ 有意义）</td><td>定量、全局（区间里每个 $x$ 都有一笔账）</td></tr>
+    <tr><td>主场</td><td>极限、阶的估计、局部符号</td><td>不等式、误差界、全局估计</td></tr>
+    <tr><td>短板</td><td>给不了固定区间上的数值界</td><td>$\xi$ 不知道具体是谁，只能控它的范围</td></tr>
+  </table>
+  <p>选择反射一句话：<strong>极限用 Peano，不等式用 Lagrange</strong>；要"$\xi$ 定号"或"区间界"时，Peano 那本账根本不够格。</p>
+</div>
+
+<div class="symbol box" data-tag="逐符号朗读">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$\dfrac{f^{(k)}(a)}{k!}$</td><td>"$f$ 在 $a$ 点的 $k$ 阶导数除以 $k$ 阶乘"</td><td>多项式第 $k$ 项的系数；除以 $k!$ 是为了对它求 $k$ 阶导后恰好回到 $f^{(k)}(a)$（$n$ 阶相切的保证）</td></tr>
+    <tr><td>$(x-a)^k$</td><td>"$x$ 减 $a$ 的 $k$ 次方"</td><td>离展开点的距离幂次；$|x-a|$ 小时 $k$ 越大它越小——"越靠后的项越次要"的根源</td></tr>
+    <tr><td>$o\bigl((x-a)^n\bigr)$</td><td>"比 $(x-a)^n$ 高阶的无穷小"</td><td>Peano 账本：误差除以 $(x-a)^n$ 仍趋于 $0$；只承诺 $x\to a$ 时的事，别拿它管区间</td></tr>
+    <tr><td>$\dfrac{f^{(n+1)}(\xi)}{(n+1)!}$</td><td>"$n+1$ 阶导数在某中值点的值除以 $(n+1)$ 阶乘"</td><td>Lagrange 账本的"主犯"：若在区间上 $|f^{(n+1)}|\le M$，误差就被 $\dfrac{M|x-a|^{n+1}}{(n+1)!}$ 锁死；若能定号，不等式就出来了</td></tr>
+    <tr><td>$\xi$ 介于 $a$ 与 $x$ 之间</td><td>"存在某个中值点，不知道具体是谁"</td><td>存在性信息；对它只能做两件事：换成区间上的界，或判断它在区间上的符号</td></tr>
+  </table>
+</div>
+
+<div class="think">
+  <p>别急着往下翻。<strong>拿张纸：写出 $\cos x$ 在 $a=0$ 的 $4$ 阶 Taylor 多项式（带 Lagrange 余项），并据此给出 $|x|\le1$ 时 $\left|\cos x-\left(1-\frac{x^2}{2}+\frac{x^4}{24}\right)\right|$ 的上界。</strong>写完再展开对照。</p>
+  <details class="answer">
+    <summary>对照</summary>
+    <p>$\cos x=1-\dfrac{x^2}{2!}+\dfrac{x^4}{4!}+R_4(x)$，其中 $R_4(x)=\dfrac{\cos^{(5)}(\xi)}{5!}x^5=-\dfrac{\sin\xi}{120}x^5$（注意 $\cos$ 的 $x^5$ 项系数为 $0$，所以 $n=4$ 的余项用到 $5$ 阶导数）。由 $|\sin\xi|\le1$：
+    $$|R_4(x)|\le\frac{|x|^5}{120}\le\frac1{120}&lt;0.0084,\qquad |x|\le1.$$</p>
+    <p>这就是 Lagrange 账的标准用法：$\xi$ 不知道是谁，但 $|\sin\xi|\le1$ 与 $\xi$ 无关——界照拿。</p>
+  </details>
+</div>
+
+<h3>3.1 亲手摸一摸两本账（交互）</h3>
+
+<div class="widget" id="taylor-widget">
+  <p class="w-title">▶ Taylor 逼近探索器：拖 n 与 a，看多项式怎样从一点咬住曲线</p>
+  <p class="w-row">蓝线是 $\sin x$；<strong style="color:#be123c">红线</strong>是 $a$ 点的 $n$ 阶 Taylor 多项式 $T_n$；<strong style="color:#b45309">橙色带</strong>是 Lagrange 误差带 $|R_n(x)|\le\dfrac{|x-a|^{n+1}}{(n+1)!}$（$\sin$ 的各阶导数绝对值都不超过 $1$，故 $M=1$）——真实曲线一定躺在这条带子里。</p>
+  <div class="w-row"><label>展开阶数 n（0 到 7，逐格拖）</label>
+  <input type="range" id="tay-n" min="0" max="7" step="1" value="3"></div>
+  <div class="w-row"><label>展开点 a（−4 到 4，试试 0、1.5、3）</label>
+  <input type="range" id="tay-a" min="-4" max="4" step="0.05" value="0"></div>
+  <svg id="tay-svg" viewBox="0 0 720 300" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div class="w-verdict" id="tay-out">加载中……（需要启用 JavaScript）</div>
+  <p class="w-row" style="font-size:0.88em;color:#5c554b">玩出这三个体验再往下走：<strong>①</strong> $a=0$，$n$ 从 0 逐格拖到 7——看多项式怎样从原点一截截咬住正弦曲线，哪一阶开始 $\pm\pi$ 内肉眼难辨；<strong>②</strong> 固定 $n=1$，把 $a$ 从 0 拖到 3：切线始终贴在 $(a,\sin a)$ 却在远处崩坏（Taylor 是 $a$ 点的局部证件）；再拖到 $n=0$，那条 $|x-a|$ 误差带正是微分中值定理 $|\sin x-\sin a|\le|x-a|$；<strong>③</strong> 固定 $a=0$，比较 $n=3$ 与 $n=4$：误差带在 $|x|&lt;1$ 内如何塌缩（$\frac{|x|^{n+1}}{(n+1)!}$ 的阶），在窗口边缘如何炸开——Lagrange 上界是保险丝，不是精度计。</p>
+</div>
+
+<h3>3.2 常用展开表（默写级，一个符号都不许错）</h3>
+
+<div class="calc box" data-tag="常用展开表（均在 a = 0，x → 0）">
+  <table>
+    <tr><th>函数</th><th>展开式</th><th>备注与记忆</th></tr>
+    <tr><td>$e^x$</td><td>$1+x+\dfrac{x^2}{2!}+\dfrac{x^3}{3!}+\cdots+\dfrac{x^n}{n!}+o(x^n)$</td><td>各阶导数都是自己，在 $0$ 处全为 $1$</td></tr>
+    <tr><td>$\sin x$</td><td>$x-\dfrac{x^3}{3!}+\dfrac{x^5}{5!}-\cdots+(-1)^n\dfrac{x^{2n+1}}{(2n+1)!}+o(x^{2n+2})$</td><td>奇函数只有奇次项；$x^{2n+2}$ 项系数为 $0$，账可记到 $o(x^{2n+2})$</td></tr>
+    <tr><td>$\cos x$</td><td>$1-\dfrac{x^2}{2!}+\dfrac{x^4}{4!}-\cdots+(-1)^n\dfrac{x^{2n}}{(2n)!}+o(x^{2n+1})$</td><td>偶函数只有偶次项；$\sin$ 逐项求导即得</td></tr>
+    <tr><td>$\ln(1+x)$</td><td>$x-\dfrac{x^2}{2}+\dfrac{x^3}{3}-\cdots+(-1)^{n-1}\dfrac{x^n}{n}+o(x^n)$</td><td>没有阶乘，分母就是 $k$，符号交替；由 $\frac1{1+t}$ 展开再积分记忆</td></tr>
+    <tr><td>$(1+x)^\alpha$</td><td>$1+\alpha x+\dfrac{\alpha(\alpha-1)}{2!}x^2+\cdots+\dbinom{\alpha}{n}x^n+o(x^n)$</td><td>牛顿二项式；$\alpha$ 为非负整数时到 $x^\alpha$ 截断</td></tr>
+    <tr><td>$\dfrac{1}{1-x}$</td><td>$1+x+x^2+\cdots+x^n+o(x^n)$</td><td>等比，一切展开的"祖师"；$|x|&lt;1$ 时就是等比级数</td></tr>
+  </table>
+  <p>三个使用说明：① 换展开点 $a\ne0$，把 $x$ 换成 $(x-a)$ 重算系数（$e^x$ 在 $a$ 点：$e^a\sum\frac{(x-a)^k}{k!}$）；② 复合展开（如 $e^{-x^2/2}$）用换元，变式 1 专练这个动作；③ 这张表是默写对象，§9.5 计时默写①就考它。</p>
+</div>
+
+<h3>3.3 附一句：多元 Taylor 与 Hessian（不展开）</h3>
+
+<p>一元的情形弄明白后，多元只多一张矩阵皮：若 $f$ 在 $\mathbf{x}_0$ 附近二阶连续可微，
+$$f(\mathbf{x}_0+\mathbf{h})=f(\mathbf{x}_0)+\nabla f(\mathbf{x}_0)\cdot\mathbf{h}+\frac12\,\mathbf{h}^{T}H(\mathbf{x}_0)\,\mathbf{h}+o\bigl(\|\mathbf{h}\|^2\bigr),$$
+其中 $H$ 是二阶偏导组成的 Hessian 矩阵。驻点（$\nabla f=\mathbf0$）处一次项消失，$f$ 与 $f(\mathbf{x}_0)$ 的差由二次型 $\frac12\mathbf h^TH\mathbf h$ 决定：$H$ 正定 ⟹ 严格极小，负定 ⟹ 严格极大，不定 ⟹ 鞍点。第 15 届题二的唯一驻点 $(0,0,0)$ 处，$f=x^2+(y^2+z^2)(1-x)^3$ 的二次部正是 $x^2+y^2+z^2$（$H=2I$，正定），严格极小一眼看穿——官方解答用因式结构直接看出 $f\ge0$，更强；但驻点判别的通用后台就是这个二阶展开，第 10 章会正式启用。</p>
+
+<h2>§4 翻译轨：三个标准动作 + 一间练功房</h2>
+
+<p>Taylor 在卷面上只有三种用法。把它们练成反射，这一章就毕业了。</p>
+
+<div class="trans box" data-tag="动作一：定阶——展到几阶看目标">
+  <p><strong>题面</strong>：$\frac00$ 型极限，分子分母是 $e^x,\sin x,\ln(1+x)$ 之类的组合。</p>
+  <p><strong>翻译</strong>：<strong>分母是 $x$ 的几次，分子就精确到 $o(x^{})$ 几次</strong>。分母 $x^3$ ⟹ 分子每个因子展到 $o(x^3)$（或保证乘积误差 $o(x^3)$）；分母 $x^4$ ⟹ 展到 $o(x^4)$。原则一句话：让余项整项除以分母后仍趋于 $0$，同时主部不被误杀。</p>
+  <p><strong>不等式版</strong>：目标多项式到 $x$ 的几次，就展到 $n=$ 那次——余项 $R_n$ 由 $f^{(n+1)}(\xi)$ 定号（动作二接管）。</p>
+  <p><strong>用在哪一步</strong>：动笔之前。阶数定错，后面全白算：展不够，主部系数被余项污染；展过头，徒增计算量。口诀：<strong>看分母下菜碟</strong>。</p>
+</div>
+
+<div class="trans box" data-tag="动作二：余项定号证不等式">
+  <p><strong>题面</strong>："证明 $x>0$ 时 $f(x)>p(x)$"（$p$ 是 $n$ 次多项式），或双边夹 $p(x)&lt;f(x)&lt;q(x)$。</p>
+  <p><strong>翻译</strong>：先检查 $p$ 是否恰为 $f$ 在 $0$ 点的 $n$ 阶 Taylor 多项式——真题里几乎总是。然后三行套路：</p>
+  <p>① <strong>展到位</strong>：$f(x)=T_n(x)+R_n(x)$，Lagrange 余项 $R_n(x)=\dfrac{f^{(n+1)}(\xi)}{(n+1)!}x^{n+1}$；<br>
+  ② <strong>$\xi$ 定位</strong>：写明 $\xi\in(0,x)$（或相应区间）；<br>
+  ③ <strong>再定号</strong>：在该区间上判 $f^{(n+1)}$ 的符号 ⟹ $R_n$ 定号 ⟹ 不等式成立。</p>
+  <p><strong>用在哪一步、值多少分</strong>：这就是"Taylor 证不等式"的全部骨架，例 2 看完整示范；第 17 届题五的"$\sup f''=2$ ⟹ $F''\ge0$"一步，就是同一台机器的凸性外壳。三行各占分，漏写 $\xi$ 范围是常见扣分点。</p>
+</div>
+
+<div class="trans box" data-tag="动作三：o 运算——账本合并规则">
+  <p><strong>题面</strong>：极限书写中多个 $o$ 账合并、乘幂、吸收。</p>
+  <p><strong>翻译</strong>（均在 $x\to0$ 下，$o$ 不是某个函数，是<strong>一类函数</strong>的账）：</p>
+  <p>$$o(x^3)\pm o(x^3)=o(x^3),\qquad k\cdot o(x^3)=o(x^3),$$
+  $$x^2\cdot o(x)=o(x^3),\qquad o(x^2)\cdot o(x)=o(x^3),\qquad O(x^2)\cdot o(x)=o(x^3).$$</p>
+  <p>每条验证都回到定义：如 $x^2\cdot o(x)$，设 $g=o(x)$ 即 $\frac{g}{x}\to0$，则 $\frac{x^2g}{x^3}=\frac{g}{x}\to0$。<strong>方向感</strong>：高阶账可以记成低阶账（$o(x^3)\Rightarrow o(x^2)$），反之不行。</p>
+  <p><strong>头号禁忌</strong>：$o(x^3)-o(x^3)\ne0$——它只是 $o(x^3)$。等价无穷小替换（$f=g+o(g)$）只是 $o$ 账的特例：<strong>乘除中合法，加减中会误杀主部</strong>（练功房 T6 现场行刑）。</p>
+</div>
+
+<h3>4.4 翻译练功房：选择、正误、决策</h3>
+
+<p>老规矩：<strong>先全部写在纸上，再逐条展开对照</strong>。每条不超过 1 分钟。</p>
+
+<div class="trans box" data-tag="互译 8 条">
+  <p><strong>T1</strong>　选择（说理由）：求 $\lim\limits_{x\to0}\dfrac{x-\sin x}{x^3}$，用 Peano 还是 Lagrange？</p>
+  <details class="answer"><summary>对照</summary><p>Peano。极限是 $x\to0$ 的局部问题，只要 $\sin x=x-\frac{x^3}{6}+o(x^3)$ 这本局部账；Lagrange 也能做（$\sin x=x-\frac{\cos\xi}{2}x^2$ 不够，要 $n=3$），但杀鸡用牛刀，且书写更啰嗦。极限用 Peano。</p></details>
+  <p><strong>T2</strong>　选择（说理由）：证 $x>0$ 时 $e^x>1+x+\frac{x^2}{2}$，用哪本账？</p>
+  <details class="answer"><summary>对照</summary><p>Lagrange。要对区间 $(0,+\infty)$ 上每个 $x$ 给出一个定量的负/正余项：$R_2(x)=\frac{e^\xi}{6}x^3>0$。Peano 的 $o(x^2)$ 只管 $x\to0$，管不了 $x=100$ 处的不等式。不等式用 Lagrange。</p></details>
+  <p><strong>T3</strong>　正误（说理由）：① $o(x^3)+o(x^3)=o(x^3)$；② $o(x^3)-o(x^3)=0$。</p>
+  <details class="answer"><summary>对照</summary><p>① 对：两个"除以 $x^3$ 趋于 $0$"的量相加仍趋于 $0$。② 错：$x^4=o(x^3)$，$x^5=o(x^3)$，但 $x^4-x^5\ne0$（它只是 $o(x^3)$）。$o$ 是一类函数，做差不会归零——这正是"等价替换在加减中禁用"的代数版。</p></details>
+  <p><strong>T4</strong>　正误（说理由）：① $x^2\cdot o(x)=o(x^3)$；② $o(x^2)=o(x^3)$。</p>
+  <details class="answer"><summary>对照</summary><p>① 对（$\frac{x^2g}{x^3}=\frac{g}{x}\to0$）。② 错，方向反了：$o(x^3)\Rightarrow o(x^2)$（高阶账可记低阶），但 $x^{2.5}=o(x^2)$ 却不是 $o(x^3)$。账本只能往粗里记，不能往细里吹。</p></details>
+  <p><strong>T5</strong>　决策：求 $\lim\limits_{x\to0}\dfrac{\cos x-e^{-x^2/2}}{x^4}$，两边各展到几阶？动手算完。</p>
+  <details class="answer"><summary>对照</summary><p>分母 $x^4$ ⟹ 都展到 $o(x^4)$：$\cos x=1-\frac{x^2}{2}+\frac{x^4}{24}+o(x^4)$；换元 $u=-\frac{x^2}{2}$：$e^u=1+u+\frac{u^2}{2}+o(u^2)=1-\frac{x^2}{2}+\frac{x^4}{8}+o(x^4)$。差 $=\left(\frac1{24}-\frac18\right)x^4+o(x^4)=-\frac{x^4}{12}+o(x^4)$，极限 $=-\dfrac1{12}$。<strong>易错</strong>：只展到 $x^2$——主部消去后剩下的全是账，精度不够。</p></details>
+  <p><strong>T6</strong>　找坑：求 $\lim\limits_{x\to0}\dfrac{\tan x-\sin x}{x^3}$，有人用 $\tan x\sim x$、$\sin x\sim x$ 替换，得 $\frac{x-x}{x^3}=0$。错在哪？正确答案是多少？</p>
+  <details class="answer"><summary>对照</summary><p>主部 $x$ 与 $-x$ 恰好抵消，被替换扔掉的就是主部——跳步归零。Taylor：$\tan x=x+\frac{x^3}{3}+o(x^3)$，$\sin x=x-\frac{x^3}{6}+o(x^3)$，差 $=\frac{x^3}{2}+o(x^3)$，极限 $=\dfrac12$。<strong>铁律</strong>：加减（差）里的等价替换，一律回 Taylor 完整展开。</p></details>
+  <p><strong>T7</strong>　决策：要证 $x\in(0,\pi)$ 时 $\sin x>x-\frac{x^3}{6}$，展到几阶？余项怎么定号？</p>
+  <details class="answer"><summary>对照</summary><p>展到 $n=3$（目标多项式就是 $T_3$）：$\sin x=x-\frac{x^3}{6}+\dfrac{\sin^{(4)}(\xi)}{4!}x^4=x-\frac{x^3}{6}+\dfrac{\sin\xi}{24}x^4$，$\xi\in(0,x)\subset(0,\pi)$ 时 $\sin\xi>0$，故 $R_3>0$。<strong>关键</strong>：$\sin^{(4)}=\sin$，在 $(0,\pi)$ 上定正号——$f^{(n+1)}$ 在 $\xi$ 所在区间上定号，机器就转动了。</p></details>
+  <p><strong>T8</strong>　互译：自然语言"$f(x)$ 与 $x^3$ 是同阶无穷小（$x\to0$）"翻译成带 $o$ 的符号句。</p>
+  <details class="answer"><summary>对照</summary><p>$\exists\,c\ne0$，$\dfrac{f(x)}{x^3}\to c$，即 $f(x)=cx^3+o(x^3)$。这就是"阶的估计"的精确含义：Taylor 展开的第一个非零系数，给出无穷小的阶与主部。</p></details>
+</div>
+
+<h2>§5 类型识别：什么信号在召唤 Taylor</h2>
+
+<div class="recog box" data-tag="识别反射表">
+  <table>
+    <tr><th>题面信号</th><th>反射</th></tr>
+    <tr><td>$\frac00$ 型极限，分子分母是 $e^x/\sin/\ln/\cos$ 的组合，洛必达越导越繁</td><td>Taylor：定阶（分母几次展到 $o(x^{})$ 几次），一次结清</td></tr>
+    <tr><td>加减（差）里想代等价无穷小</td><td>禁用！回 Taylor 完整展开（主部会被误杀）</td></tr>
+    <tr><td>"证 $f(x)\ge$ 某多项式" 或双边夹</td><td>Taylor + Lagrange 余项定号：展到位 → $\xi$ 定位 → 再定号</td></tr>
+    <tr><td>题给一点的高阶导数信息（$f''(0)$、$f'''(a)$、$\sup f''$）</td><td>在该点 Taylor 展开——导数信息只有展成多项式 + 余项才能兑现</td></tr>
+    <tr><td>"比较无穷小的阶"、"求 $k,c$ 使 $f(x)\sim cx^k$"</td><td>Taylor 找第一个非零系数（T8）</td></tr>
+    <tr><td>含参积分 / 级数中要"展开再逐项算"</td><td>幂级数展开 + 逐项操作（第 9 章接口；第 16 届题二现场）</td></tr>
+    <tr><td>$\sup f''$ 有界 + 函数与二次多项式比大小</td><td>二阶 Taylor + Lagrange（第 17 届题五的底层思想）</td></tr>
+    <tr><td>多元驻点的极值判别</td><td>二元 Taylor 到二阶 + Hessian 定号（§6 与第 15 届题二背景）</td></tr>
+  </table>
+</div>
+
+<h2>§6 考法定位：它藏在哪里、值多少分</h2>
+
+<div class="exam box" data-tag="考法定位">
+  <table>
+    <tr><th>出处</th><th>题号</th><th>Taylor 扮演什么角色</th><th>分值权重</th></tr>
+    <tr><td>第 16 届（2024）</td><td>题二</td><td>"展开 + 逐项操作"：$-\ln(1-s)=\sum\frac{s^n}{n}$ 逐项积分得 $\zeta(2)$ 型求和 $\frac{\pi^2}{12}$、$\frac{\pi^2}{8}$</td><td>15 分大题中的约 4 分咽喉步</td></tr>
+    <tr><td>第 16 届（2024）</td><td>题六(2)</td><td>被迭代的函数 $t-\arctan t$、$2\arctan t-t$ 正是 $\arctan t$ 三阶展开的两个部分和——Taylor 视角预判符号与阶（官方用中值定理处理）</td><td>20 分题的背景板</td></tr>
+    <tr><td>第 17 届（2025）</td><td>题五</td><td>$\sup f''=2$ + 端点插值 ⟹ 二次多项式夹逼 $f$——"二阶导数信息 → 多项式逼近误差"，Lagrange 余项思想（官方走凸性路线）</td><td>15 分（整题的思想底座）</td></tr>
+    <tr><td>第 14 届（2022）</td><td>题二</td><td>主项–误差分解求卷积型极限——$o/O$ 思想的数列版</td><td>15 分题的主骨架</td></tr>
+    <tr><td>第 15 届（2023）</td><td>题二(1)</td><td>多元驻点：唯一驻点 $(0,0,0)$ 的判别背后是多元二阶 Taylor 与 Hessian（见 §3.3）</td><td>15 分题的第一问（5 分）</td></tr>
+    <tr><td>第 11 届（2019）</td><td>题五</td><td>递推数列的阶估计（配中值定理差分放缩）</td><td>15 分题的骨架语言</td></tr>
+  </table>
+  <p><strong>规律</strong>：七届索引里翻不到一道"叙述并证明 Taylor 定理"的题——Taylor 在真题中以两种形态出现：<strong>一是"展开 + 逐项操作"的一步</strong>（第 16 届题二），<strong>二是"高阶导数信息 → 函数与多项式不等式"的估值思想</strong>（第 17 届题五、第 16 届题六）。而 $o$ 运算与阶的估计是全卷通用语——它不值一整题，但少了它，整题的书写都不严格。练到默写级，性价比极高。</p>
+</div>
+
+<h2>§7 关系网：一个谜题，两本账，三台机器</h2>
+
+<p>把本章的角色按来龙去脉画在一张图上：<span style="color:#b45309">三角形</span>是来源与动机，<span style="color:#1d4ed8">圆角矩形</span>是定义，<span style="color:#15803d">矩形</span>是定理，<span style="color:#7c3aed">六边形</span>是方法动作，<span style="color:#0f766e">椭圆</span>是应用出口。顺着箭头走一遍，就是本章的全部逻辑。</p>
+
+<figure>
+<svg viewBox="0 0 720 540" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Taylor 公式关系网地图">
+  <defs>
+    <marker id="arr6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+
+  <!-- 图例 -->
+  <polygon points="30,16 22,30 38,30" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5"/>
+  <text x="44" y="28" font-size="11.5" fill="#5c554b">来源·动机</text>
+  <rect x="116" y="17" width="22" height="13" rx="6.5" fill="#eef3fe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="144" y="28" font-size="11.5" fill="#5c554b">定义</text>
+  <rect x="196" y="17" width="22" height="13" fill="#ecf8f0" stroke="#15803d" stroke-width="1.5"/>
+  <text x="224" y="28" font-size="11.5" fill="#5c554b">定理</text>
+  <polygon points="274,23.5 280,16 294,16 300,23.5 294,31 280,31" fill="#f4effd" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="306" y="28" font-size="11.5" fill="#5c554b">方法·动作</text>
+  <ellipse cx="394" cy="23.5" rx="12" ry="7" fill="#ecf8f5" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="412" y="28" font-size="11.5" fill="#5c554b">应用·出口</text>
+
+  <!-- 来源三角 ×2 -->
+  <polygon points="110,58 52,128 168,128" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="110" y="100" font-size="12" fill="#7a4a12" text-anchor="middle" font-weight="bold">「≈」的误差</text>
+  <text x="110" y="116" font-size="11" fill="#7a4a12" text-anchor="middle">到底多大？</text>
+  <polygon points="600,58 542,128 658,128" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="600" y="100" font-size="12" fill="#7a4a12" text-anchor="middle" font-weight="bold">微分中值定理</text>
+  <text x="600" y="116" font-size="11" fill="#7a4a12" text-anchor="middle">第 5 章</text>
+
+  <!-- 来源 → 两本账 -->
+  <line x1="150" y1="128" x2="185" y2="161" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr6)"/>
+  <text x="118" y="150" font-size="11" fill="#5c554b" text-anchor="middle">逼出两本账</text>
+  <line x1="570" y1="128" x2="540" y2="161" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr6)"/>
+  <text x="592" y="150" font-size="11" fill="#5c554b" text-anchor="middle">n = 0 即中值定理</text>
+
+  <!-- 定义（圆角矩形）与定理（矩形） -->
+  <rect x="70" y="165" width="240" height="66" rx="33" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="190" y="192" font-size="14" fill="#1d4ed8" text-anchor="middle" font-weight="bold">Taylor 公式 · Peano 余项</text>
+  <text x="190" y="214" font-size="11" fill="#1d4ed8" text-anchor="middle">R_n = o((x−a)ⁿ) · 局部账</text>
+  <rect x="410" y="165" width="240" height="66" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="530" y="192" font-size="13.5" fill="#15803d" text-anchor="middle" font-weight="bold">Taylor 定理 · Lagrange 余项</text>
+  <text x="530" y="214" font-size="11" fill="#15803d" text-anchor="middle">R_n = f⁽ⁿ⁺¹⁾(ξ)(x−a)ⁿ⁺¹/(n+1)! · 全局账</text>
+
+  <!-- 两本账 → 三动作 -->
+  <line x1="185" y1="231" x2="155" y2="301" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr6)"/>
+  <text x="128" y="272" font-size="11" fill="#5c554b" text-anchor="middle">局部账</text>
+  <polyline points="230,231 230,275 565,275 565,301" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr6)"/>
+  <text x="400" y="268" font-size="11" fill="#5c554b" text-anchor="middle">o 记号的家</text>
+  <line x1="520" y1="231" x2="400" y2="301" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr6)"/>
+  <text x="492" y="260" font-size="11" fill="#5c554b" text-anchor="middle">ξ 定号</text>
+
+  <!-- 三动作（六边形） -->
+  <polygon points="75,335 100,307 200,307 225,335 200,363 100,363" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="150" y="331" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">定阶</text>
+  <text x="150" y="349" font-size="10.5" fill="#6a55a3" text-anchor="middle">看分母 · 看目标</text>
+  <polygon points="290,335 315,307 415,307 440,335 415,363 315,363" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="365" y="331" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">余项定号</text>
+  <text x="365" y="349" font-size="10.5" fill="#6a55a3" text-anchor="middle">展到位·ξ 定位·定号</text>
+  <polygon points="505,335 530,307 630,307 655,335 630,363 530,363" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="580" y="331" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">o 运算</text>
+  <text x="580" y="349" font-size="10.5" fill="#6a55a3" text-anchor="middle">账本合并规则</text>
+
+  <!-- 动作 → 应用 -->
+  <line x1="140" y1="363" x2="105" y2="446" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr6)"/>
+  <polyline points="580,363 580,415 100,415 100,446" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr6)"/>
+  <text x="330" y="408" font-size="11" fill="#5c554b" text-anchor="middle">极限的严格书写</text>
+  <line x1="350" y1="363" x2="292" y2="446" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr6)"/>
+  <line x1="395" y1="363" x2="455" y2="446" stroke="#8a8175" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arr6)"/>
+  <text x="448" y="402" font-size="11" fill="#5c554b" text-anchor="middle">余项 → 0</text>
+  <line x1="430" y1="363" x2="625" y2="446" stroke="#8a8175" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arr6)"/>
+  <text x="560" y="392" font-size="11" fill="#5c554b" text-anchor="middle">二阶展开</text>
+
+  <!-- 四应用（椭圆） -->
+  <ellipse cx="100" cy="480" rx="88" ry="28" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="100" y="476" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">极限计算</text>
+  <text x="100" y="492" font-size="10.5" fill="#3d7a70" text-anchor="middle">0/0 的严格化</text>
+  <ellipse cx="280" cy="480" rx="92" ry="28" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="280" y="476" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">不等式证明</text>
+  <text x="280" y="492" font-size="10.5" fill="#3d7a70" text-anchor="middle">多项式夹逼</text>
+  <ellipse cx="465" cy="480" rx="100" ry="28" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="465" y="476" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">幂级数（第 9 章）</text>
+  <text x="465" y="492" font-size="10.5" fill="#3d7a70" text-anchor="middle">n→∞ · 逐项操作</text>
+  <ellipse cx="648" cy="480" rx="70" ry="28" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="648" y="476" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">多元极值</text>
+  <text x="648" y="492" font-size="10.5" fill="#3d7a70" text-anchor="middle">Hessian 判别</text>
+</svg>
+<figcaption>本章地图：一个"≈"的追问逼出两本账，两本账驱动三台机器，分别通向极限、不等式、级数与多元。</figcaption>
+</figure>
+
+<div class="net box" data-tag="画面感锚点（记这些，不记条文）">
+  <table>
+    <tr><th>角色</th><th>一句话画面</th><th>擅长场景</th></tr>
+    <tr><td>Taylor 多项式</td><td>与 $f$ 在 $a$ 点 $n$ 阶相切的多项式，用 $n+1$ 个导数值配出来</td><td>一切的包装——但包装不是本体</td></tr>
+    <tr><td>Peano 余项</td><td>局部账：只承诺 $x\to a$ 时误差比 $(x-a)^n$ 高阶</td><td>极限、阶的估计</td></tr>
+    <tr><td>Lagrange 余项</td><td>全局账：区间上每个 $x$ 都有一笔 $\xi$ 账，被 $(n+1)!$ 压住</td><td>不等式、误差界</td></tr>
+    <tr><td>定阶</td><td>看分母下菜碟：分母几次，展到 $o(x^{})$ 几次</td><td>极限题动笔之前</td></tr>
+    <tr><td>余项定号</td><td>多项式留下，余项签字：展到位、$\xi$ 定位、再定号</td><td>函数 vs 多项式的不等式</td></tr>
+    <tr><td>o 运算</td><td>账本合并：$o(x^3)+o(x^3)=o(x^3)$，但 $o(x^3)-o(x^3)\ne0$</td><td>极限书写的每一步</td></tr>
+    <tr><td>应用出口</td><td>极限严格化 / 不等式生产线 / 幂级数地基 / Hessian 判别</td><td>第 9、10 章的接口</td></tr>
+  </table>
+  <p><strong>和你已学知识的焊接点</strong>：① 第 5 章——Lagrange 中值定理就是 $n=0$ 的 Taylor，Lagrange 余项的证明用的还是 Rolle + 辅助函数那台机床；② 第 2 章——洛必达法则是 Peano 余项的推论（$\frac00$ 型反复求导，本质是在逐阶比较系数），$o$ 记号的家在那里；③ 第 9 章——令 $n\to\infty$ 就是幂级数，§1 的 $e^{-1/x^2}$ 预告了一个惊悚事实：Taylor <strong>级数</strong>不一定收敛到 $f$ 本身，余项趋于 $0$ 才是收敛的判据；④ 第 17 届题五——$\sup f''=2$ 被翻译成 $F''\ge0$，正是 Lagrange 余项"f^{(n+1)} 在区间上定号"的凸性外壳。</p>
+</div>
+
+<h2>§8 计算示范：先看真人怎么想，再看卷面怎么写</h2>
+
+<p>两道例题覆盖本章两条生产线：例 1 是"极限严格化"（Peano 账 + o 运算），例 2 是"不等式证明"（Lagrange 账 + 余项定号）。</p>
+
+<h3>例 1 · Taylor 求极限（约 6 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>求 $\lim\limits_{x\to0}\dfrac{e^x\sin x-x(1+x)}{x^3}$ 的具体值——这是求值型题目，拆目标总表不管骨架，但它要求<strong>每一步等式都能交代</strong>：不许出现"$\approx$"。$\frac00$ 型，三个候选工具：洛必达 / 等价替换 / Taylor。等价替换在"差"里禁用（$e^x\sin x$ 与 $x(1+x)$ 的主部都是 $x+x^2$，替换了主部就同归于尽，见 T6）；洛必达对 $e^x\sin x$ 连求三次导，乘法规则项数爆炸，能算但蠢；Taylor 是一次结清的机器。骨架：<strong>展开 → 合并 → 比阶</strong>。</p>
+  <p><span class="stage">【盘点】</span>分母 $x^3$——这是<strong>精度预算</strong>（动作一）：分子必须精确到 $o(x^3)$。库存展开：$e^x=1+x+\frac{x^2}{2}+\frac{x^3}{6}+o(x^3)$；$\sin x=x-\frac{x^3}{6}+o(x^3)$。注意 $\sin x$ 的 $x^2$ 格子系数是 $0$——定阶时"缺席的项"也要算格子，不能当它不存在。</p>
+  <p><span class="stage">【会师】</span>乘法分配，凡是总次数超过 $3$ 的项一律入账 $o(x^3)$——这是<strong>工具二 · 误差预算</strong>的 $o$ 版：</p>
+  <div class="scratch">
+    <p>$1\cdot x=x$；　$x\cdot x=x^2$；　$\frac{x^2}{2}\cdot x=\frac{x^3}{2}$；　$1\cdot\left(-\frac{x^3}{6}\right)=-\frac{x^3}{6}$；</p>
+    <p>其余搭配（$x\cdot x^3$、$\frac{x^3}{6}\cdot x$、$o(x^3)$ 乘任何 $\ge1$ 次的项）全部 $\ge4$ 次 $\Rightarrow o(x^3)$。</p>
+    <p>合计：$e^x\sin x=x+x^2+\left(\frac12-\frac16\right)x^3+o(x^3)=x+x^2+\frac{x^3}{3}+o(x^3)$。</p>
+  </div>
+  <p>减去 $x(1+x)=x+x^2$，主部恰好消去——消不去极限就是 $\infty$，消去是题目设计好的。剩 $\frac{x^3}{3}+o(x^3)$，除以 $x^3$ 取极限得 $\frac13$。</p>
+  <p><span class="stage">【定型】</span>卷面三行：两行展开、一行合并、一行极限。每个 $o$ 都顶着 $x^3$，全程无"$\approx$"。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 定阶 + o 吸收</strong>：分母 $x^k$ ⟹ 每个因子展到 $o(x^k)$；合并时总次数超过 $k$ 的项一律入账 $o(x^k)$——<strong>超过预算的项，一眼都不再看</strong>。若只把 $e^x$ 展到 $o(x^2)$、$\sin x$ 展到 $o(x)$，乘积的 $x^3$ 系数就被污染，这是"展不够"；展到 $o(x^5)$ 则是浪费弹药。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 1</strong>　求极限 $\lim\limits_{x\to0}\dfrac{e^x\sin x-x(1+x)}{x^3}$。</p>
+  <hr>
+  <p class="proof-line"><strong>解</strong>　分母为 $x^3$，将两因子在 $0$ 点展开到 $o(x^3)$（$x\to0$）：
+  $$e^x=1+x+\frac{x^2}{2}+\frac{x^3}{6}+o(x^3),\qquad \sin x=x-\frac{x^3}{6}+o(x^3).$$<span class="step-score">（2 分）</span></p>
+  <p class="proof-line">相乘，高于三次的项并入 $o(x^3)$：
+  $$e^x\sin x=x+x^2+\left(\frac12-\frac16\right)x^3+o(x^3)=x+x^2+\frac{x^3}{3}+o(x^3).$$<span class="step-score">（4 分）</span></p>
+  <p class="proof-line">于是 $e^x\sin x-x(1+x)=\dfrac{x^3}{3}+o(x^3)$，故
+  $$\lim_{x\to0}\frac{e^x\sin x-x(1+x)}{x^3}=\lim_{x\to0}\left(\frac13+\frac{o(x^3)}{x^3}\right)=\frac13.$$<span class="step-score">（6 分）</span></p>
+  <p class="aside">书写点评：两行展开各占 1 分——展开式本身就是分点；合并 2 分，结论 2 分。若用 $\sin x\sim x$、$e^x\sim1+x$ 替换，分子变 $0$，判 $\frac00$ 后写"极限为 $0$"——主部被误杀，整题归零。全程每个 $o$ 顶着 $x^3$，就是严格书写的样子。</p>
+</div>
+
+<h3>例 2 · Taylor + Lagrange 余项证双边不等式（约 8 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>要证 $x>0$ 时
+  $$x-\frac{x^2}{2}+\frac{x^3}{3}-\frac{x^4}{4}&lt;\ln(1+x)&lt;x-\frac{x^2}{2}+\frac{x^3}{3}.$$
+  结论是 $P\land Q$（两条都要）——查拆目标总表：分两段各证一半；每半又是 $\forall x>0$ 型，卷面开局"任取 $x>0$"。每半的内核是"函数 $-$ 多项式定号"——识别表反射：<strong>Taylor + Lagrange 余项定号</strong>（动作二）。</p>
+  <p><span class="stage">【盘点】</span>$\ln(1+t)$ 的导数库存：$f^{(k)}(t)=(-1)^{k-1}\dfrac{(k-1)!}{(1+t)^k}$（$k\ge1$），在 $t>-1$ 上<strong>符号交替</strong>——这正是"截断交替夹逼"的来源。右边的 $x-\frac{x^2}{2}+\frac{x^3}{3}$ 恰是 $3$ 阶 Taylor 多项式，左边的到 $4$ 阶——<strong>题目把"展到几阶"直接写在脸上</strong>：右半 $n=3$，左半 $n=4$。</p>
+  <p><span class="stage">【会师 · 右半】</span>倒推链：要 $\ln(1+x)-T_3(x)&lt;0$ ⟸ $R_3(x)&lt;0$ ⟸ $R_3(x)=\dfrac{f^{(4)}(\xi_1)}{4!}x^4=-\dfrac{x^4}{4(1+\xi_1)^4}$ ⟸ $f^{(4)}(t)=-\dfrac{6}{(1+t)^4}&lt;0$（$t>-1$）且 $x^4>0$。链条闭合，每环都是库存。</p>
+  <p><span class="stage">【会师 · 左半】</span>同一条链多展一阶：要 $\ln(1+x)-T_4(x)>0$ ⟸ $R_4(x)=\dfrac{f^{(5)}(\xi_2)}{5!}x^5=\dfrac{x^5}{5(1+\xi_2)^5}>0$ ⟸ $f^{(5)}(t)=\dfrac{24}{(1+t)^5}>0$。</p>
+  <p><span class="stage">【定型】</span>两半平行书写，各三行：展开带余项 → 写明 $\xi\in(0,x)$ → 定号收束。倒推痕迹删除。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 余项定号三步</strong>：① 把"函数 $-$ 多项式"整体认作 $R_n$；② 写出 Lagrange 形并标出 $\xi$ 的区间；③ 在该区间上判 $f^{(n+1)}$ 的符号。九个字：<strong>展到位，$\xi$ 定位，再定号</strong>。本题还揭示了 $\ln(1+x)$ 的截断规律（$x>0$）：截到奇次末项是高估，截到偶次末项是低估——余项符号交替所致。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 2</strong>　证明：当 $x>0$ 时，
+  $$x-\frac{x^2}{2}+\frac{x^3}{3}-\frac{x^4}{4}&lt;\ln(1+x)&lt;x-\frac{x^2}{2}+\frac{x^3}{3}.$$</p>
+  <hr>
+  <p class="proof-line"><strong>证明</strong>　设 $f(t)=\ln(1+t)$，则 $f^{(k)}(t)=(-1)^{k-1}\dfrac{(k-1)!}{(1+t)^k}$（$k\ge1$）。任取 $x>0$。<span class="step-score">（1 分）</span></p>
+  <p class="proof-line"><strong>（右半）</strong>由带 Lagrange 余项的 Taylor 公式（$n=3$，$a=0$），存在 $\xi_1\in(0,x)$ 使
+  $$\ln(1+x)=x-\frac{x^2}{2}+\frac{x^3}{3}+\frac{f^{(4)}(\xi_1)}{4!}x^4=x-\frac{x^2}{2}+\frac{x^3}{3}-\frac{x^4}{4(1+\xi_1)^4}.$$<span class="step-score">（3 分）</span></p>
+  <p class="proof-line">因 $\xi_1>0$，有 $1+\xi_1>0$，末项 $&lt;0$，故 $\ln(1+x)&lt;x-\dfrac{x^2}{2}+\dfrac{x^3}{3}$。<span class="step-score">（4 分）</span></p>
+  <p class="proof-line"><strong>（左半）</strong>同理（$n=4$），存在 $\xi_2\in(0,x)$ 使
+  $$\ln(1+x)=x-\frac{x^2}{2}+\frac{x^3}{3}-\frac{x^4}{4}+\frac{f^{(5)}(\xi_2)}{5!}x^5=x-\frac{x^2}{2}+\frac{x^3}{3}-\frac{x^4}{4}+\frac{x^5}{5(1+\xi_2)^5}.$$<span class="step-score">（7 分）</span></p>
+  <p class="proof-line">末项 $>0$，故 $\ln(1+x)>x-\dfrac{x^2}{2}+\dfrac{x^3}{3}-\dfrac{x^4}{4}$。两半合起来即所证。$\square$<span class="step-score">（8 分）</span></p>
+  <p class="aside">书写点评：$\xi$ 的范围必须写明——正因为它在 $(0,x)$ 内，$1+\xi$ 才定正号；只写"由 Taylor 公式显然成立"，每半至少扣 2 分。顺带说一句：$x>0$ 不是本质限制的一半——右半对一切 $x>-1$ 且 $x\ne0$ 都成立（$x^4>0$ 且 $1+\xi_1>0$），左半则依赖 $x^5>0$。<strong>偶数阶余项全体成立、奇数阶余项只有半边成立</strong>，这是余项定号法的常见细节。</p>
+</div>
+
+<h2>§9 配套题目</h2>
+
+<p>铁律：<strong>先写在纸上，写到写不动再展开答案</strong>。模仿题照例 1、例 2 的卷面格式写；变式题先问自己"展到几阶、余项谁定号"。</p>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 1</span>求极限 $\lim\limits_{x\to0}\dfrac{x-\sin x}{x^3}$。</p>
+  <details class="answer">
+    <summary>参考答案（约 4 分书写量）</summary>
+    <p>分母为 $x^3$，把 $\sin x$ 在 $0$ 点展开到 $o(x^3)$（$x\to0$）：
+    $$\sin x=x-\frac{x^3}{6}+o(x^3).$$（2 分）</p>
+    <p>于是 $x-\sin x=\dfrac{x^3}{6}+o(x^3)$，故
+    $$\lim_{x\to0}\frac{x-\sin x}{x^3}=\lim_{x\to0}\left(\frac16+\frac{o(x^3)}{x^3}\right)=\frac16.$$（4 分）</p>
+    <p><strong>易错点</strong>：① 用 $\sin x\sim x$ 替换得 $\frac00$ 后写 $0$——主部误杀，归零；② 只展到 $o(x^2)$（$\sin x=x+o(x^2)$），则 $x-\sin x=o(x^2)$，除以 $x^3$ 无法判——展不够。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 2</span>证明：当 $x>0$ 时，$e^x>1+x+\dfrac{x^2}{2}+\dfrac{x^3}{6}$。</p>
+  <details class="answer">
+    <summary>参考答案（约 4 分书写量）</summary>
+    <p>设 $f(t)=e^t$，则 $f^{(k)}(t)=e^t$。任取 $x>0$，由带 Lagrange 余项的 Taylor 公式（$n=3$，$a=0$），存在 $\xi\in(0,x)$ 使
+    $$e^x=1+x+\frac{x^2}{2}+\frac{x^3}{6}+\frac{e^\xi}{4!}x^4.$$（3 分）</p>
+    <p>因 $e^\xi>0$ 且 $x^4>0$，余项 $R_3(x)=\dfrac{e^\xi}{24}x^4>0$，故 $e^x>1+x+\dfrac{x^2}{2}+\dfrac{x^3}{6}$。$\square$（4 分）</p>
+    <p><strong>点评</strong>：注意 $x^4>0$ 对一切 $x\ne0$ 成立——本不等式其实对一切 $x\ne0$ 成立。对比：$e^x\ge1+x+\frac{x^2}{2}$ 只在 $x\ge0$ 成立（余项 $\frac{e^\xi}{6}x^3$ 随 $x^3$ 变号）。<strong>偶数阶余项全体成立、奇数阶余项只有半边成立</strong>。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 1</span>求极限 $\lim\limits_{x\to0}\dfrac{\cos x-e^{-x^2/2}}{x^4}$。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：新动作是<strong>复合展开</strong>——$e^{-x^2/2}$ 没有现成表行，用换元 $u=-\frac{x^2}{2}$ 套 $e^u$ 的展开，并交代 $o(u^2)=o(x^4)$。</p>
+    <p><strong>解</strong>　分母为 $x^4$，两边展到 $o(x^4)$（$x\to0$）：
+    $$\cos x=1-\frac{x^2}{2}+\frac{x^4}{24}+o(x^4).$$（2 分）</p>
+    <p>令 $u=-\dfrac{x^2}{2}$，则 $x\to0$ 时 $u\to0$，由 $e^u=1+u+\dfrac{u^2}{2}+o(u^2)$ 得
+    $$e^{-x^2/2}=1-\frac{x^2}{2}+\frac{x^4}{8}+o(x^4)$$
+    （$o(u^2)=o(x^4)$，因为 $\frac{u^2}{x^4}\to\frac14$）。（5 分）</p>
+    <p>相减：$\cos x-e^{-x^2/2}=\left(\dfrac1{24}-\dfrac18\right)x^4+o(x^4)=-\dfrac{x^4}{12}+o(x^4)$，故极限 $=-\dfrac1{12}$。（7 分）</p>
+    <p><strong>易错点</strong>：只展到 $x^2$——两边主部 $1-\frac{x^2}{2}$ 相同，全消后剩下的都是账，精度不够；分母 $x^4$ 就是逼你展到 $x^4$ 的。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 2</span>证明：当 $x>0$ 时，$\sqrt{1+x}&lt;1+\dfrac{x}{2}-\dfrac{x^2}{8}+\dfrac{x^3}{16}$。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：组合两个动作——先认出右边是 $(1+x)^{1/2}$ 的 $3$ 阶 Taylor 多项式（二项式系数要算对），再余项定号。</p>
+    <p><strong>证明</strong>　设 $f(t)=(1+t)^{1/2}$，则
+    $$f'(t)=\frac12(1+t)^{-1/2},\ f''(t)=-\frac14(1+t)^{-3/2},\ f'''(t)=\frac38(1+t)^{-5/2},\ f^{(4)}(t)=-\frac{15}{16}(1+t)^{-7/2}.$$
+    故 $f$ 在 $0$ 点的 $3$ 阶 Taylor 多项式为 $1+\frac{x}{2}-\frac{x^2}{8}+\frac{x^3}{16}$（即右边）。任取 $x>0$，由 Lagrange 余项（$n=3$），存在 $\xi\in(0,x)$ 使
+    $$\sqrt{1+x}=1+\frac{x}{2}-\frac{x^2}{8}+\frac{x^3}{16}+\frac{f^{(4)}(\xi)}{4!}x^4=1+\frac{x}{2}-\frac{x^2}{8}+\frac{x^3}{16}-\frac{5x^4}{128(1+\xi)^{7/2}}.$$
+    因 $\xi>0$，末项 $&lt;0$，故 $\sqrt{1+x}&lt;1+\dfrac{x}{2}-\dfrac{x^2}{8}+\dfrac{x^3}{16}$。$\square$</p>
+    <p><strong>点评</strong>：同法可得下界 $\sqrt{1+x}>1+\frac{x}{2}-\frac{x^2}{8}$（$n=2$，$R_2=\frac{x^3}{16(1+\xi)^{5/2}}>0$）。$\sqrt{1+x}$ 被两个多项式夹住——$x$ 小时这个夹逼非常紧，是数值估计的常用武器。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv3">真题节选</span><strong>（第 16 届题二，15 分）</strong>设 $s\ge0$，
+  $$\varphi(s)=\int_0^{+\infty}\frac{\ln(1+sx^2)}{x(1+x^2)}\,dx.$$
+  求 $\varphi(1)$ 和 $\varphi(2)$。</p>
+  <p>本题是"含参反常积分 + 一致收敛 + 积分号下求导"的综合题（那是第 8 章的货），但它的<strong>咽喉一步</strong>是本章的：官方解答在第 4 步把 $-\ln(1-s)$ 展成幂级数再逐项积分。先回答三个梯子问题（写在纸上）：</p>
+  <p>（i）用本章展开表把 $-\ln(1-s)$ 在 $s\in[0,1)$ 上展开（把 $x$ 换成 $-s$）；展开后 $\dfrac{-\ln(1-s)}{2s}$ 长什么样？<br>
+  （ii）逐项积分 $\displaystyle\int_0^1 s^{n-1}\,ds$ 等于什么？这里"先逐项积、再求和"为什么合法（提示：各项非负，部分和单调递增）？<br>
+  （iii）已知 $\zeta(2)=\sum\limits_{n=1}^\infty\frac1{n^2}=\dfrac{\pi^2}{6}$。验证 $\sum\limits_{n=1}^\infty\frac1{2n^2}=\dfrac{\pi^2}{12}$，以及奇数项平方倒数和 $\sum\limits_{k=0}^\infty\frac1{(2k+1)^2}=\dfrac{\pi^2}{8}$。</p>
+  <details class="answer">
+    <summary>梯子参考答案</summary>
+    <p>（i）$-\ln(1-s)=\sum\limits_{n=1}^\infty\dfrac{s^n}{n}$（$0\le s&lt;1$，本章展开表第 4 行换元）；除以 $2s$：$\dfrac{-\ln(1-s)}{2s}=\sum\limits_{n=1}^\infty\dfrac{s^{n-1}}{2n}$。</p>
+    <p>（ii）$\displaystyle\int_0^1 s^{n-1}\,ds=\frac1n$。合法性：各项非负，部分和单调递增且以可积的和函数为极限，由非负项级数的逐项积分定理（单调收敛）可逐项积分——这一步的完整合法化是第 9 章的内容，卷面上写明依据即可。</p>
+    <p>（iii）$\sum\frac1{2n^2}=\frac12\zeta(2)=\frac{\pi^2}{12}$；奇数项和 $=\zeta(2)-\sum\frac1{(2k)^2}=\zeta(2)-\frac14\zeta(2)=\frac34\cdot\frac{\pi^2}{6}=\frac{\pi^2}{8}$。</p>
+  </details>
+  <details class="answer">
+    <summary>官方解答节选（转录自第 16 届官方参考答案，含参积分部分略）</summary>
+    <p>（前两步：由 $\ln(1+x)\le C\sqrt x$ 得被积函数 $\le\frac{C\sqrt s}{1+x^2}$，广义积分关于 $s\in[0,+\infty)$ 内闭一致收敛，$\varphi$ 连续；形式求导所得积分内闭一致收敛，故可积分号下求导。）（4 分）</p>
+    <p>部分分式：
+    $$\varphi'(s)=\frac{1}{1-s}\int_0^{+\infty}\!\left(\frac{x}{1+x^2}-\frac{sx}{1+sx^2}\right)dx=\frac{1}{2(1-s)}\ln\frac{1+x^2}{1+sx^2}\Big|_0^{+\infty}=-\frac{\ln s}{2(1-s)}$$
+    （$s=1$ 处理解为极限）。（8 分）</p>
+    <p>结合 $\varphi(0)=0$：$\varphi(1)=-\displaystyle\int_0^1\frac{\ln s}{2(1-s)}\,ds=-\int_0^1\frac{\ln(1-s)}{2s}\,ds$（换元）；<strong>展开 $-\ln(1-s)=\sum\limits_{n=1}^\infty\frac{s^n}{n}$，逐项积分取极限</strong>得
+    $$\varphi(1)=\sum_{n=1}^\infty\frac{1}{2n^2}=\frac{\pi^2}{12}.$$（12 分）</p>
+    <p>同理 $\varphi(2)=-\displaystyle\int_{-1}^1\frac{\ln(1-s)}{2s}\,ds=\sum_{n=0}^\infty\frac{1}{(2n+1)^2}=\frac{\pi^2}{8}$。（15 分）</p>
+    <p><strong>复盘</strong>：本题 15 分里，本章直接贡献的是"展开 $-\ln(1-s)=\sum\frac{s^n}{n}$"这关键一步——没有它，$\varphi'(s)$ 的原函数根本积不出来（它不是初等函数）。这正是 §6 说的规律：<strong>Taylor 在真题中多以"展开 + 逐项操作"的一步出现</strong>——展开是本章的动作，逐项操作的合法化是第 9 章的动作，两章在真题里就是这样接力的。<em>（题目与解答转录自第 16 届官方 PDF，见 <a href="真题索引/第16届_2024.md">真题索引</a>。）</em></p>
+  </details>
+</div>
+
+<h2>§9.5 熟练度训练场</h2>
+
+<p>理解只是入场券，<strong>考场上拼的是基本动作的速度</strong>。两种训练，每天 10 分钟：</p>
+
+<h3>训练一 · 翻卡快测（目标：每卡 10 秒内出答案）</h3>
+<div class="quiz" data-quiz="ch06-drill"></div>
+
+<h3>训练二 · 计时默写（写在纸上，掐表）</h3>
+<div class="calc box" data-tag="默写清单">
+  <p>① <strong>3 分钟</strong>：默写六个基本展开式（$e^x$、$\sin x$、$\cos x$、$\ln(1+x)$、$(1+x)^\alpha$、$\frac1{1-x}$）——系数、符号、$o$ 的阶，一个不许错；</p>
+  <p>② <strong>90 秒</strong>：默写两种余项的 Taylor 公式完整陈述（条件 + 结论 + $\xi$ 的位置），并说一句话各自主场；</p>
+  <p>③ <strong>2 分钟</strong>：默写例 1 的解题骨架（定阶 → 两行展开 → 乘法合并 → $o$ 吸收 → 极限 $\frac13$），关键系数 $\frac12-\frac16=\frac13$ 要在。</p>
+  <p><strong>过关标准</strong>：连续两天全对才算过。做不到就回到对应小节重读，再默。</p>
+</div>
+
+<h2>§10 六方向自测卡</h2>
+
+<div class="selftest">
+  <h3>合上书，拿张白纸，默写以下六项</h3>
+  <div class="st-item">
+    <p class="st-q"><em>=（它是什么）</em>　写出 Peano 与 Lagrange 两种余项的 Taylor 公式（条件 + 结论），各配一句大白话。</p>
+    <details><summary>对照</summary><p>Peano：$a$ 点 $n$ 阶可导 ⟹ $f(x)=T_n(x)+o((x-a)^n)$（$x\to a$）——"局部账：误差比分母的 $n$ 次方还高阶"。Lagrange：区间 $n+1$ 阶可导 ⟹ $R_n(x)=\frac{f^{(n+1)}(\xi)}{(n+1)!}(x-a)^{n+1}$，$\xi$ 介于 $a,x$ 之间——"全局账：每个 $x$ 配一个中值点，被 $(n+1)!$ 压住"。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>←（什么带来它）</em>　Lagrange 余项与第 5 章什么定理是同一件事？Peano 余项证明的最后一步用的是什么？</p>
+    <details><summary>对照</summary><p>$n=0$ 的 Lagrange 余项就是 Lagrange 中值定理 $f(x)=f(a)+f'(\xi)(x-a)$；证明用 Rolle + 辅助函数。Peano 余项证明：$n-1$ 次洛必达 + 一步 $f^{(n)}(a)$ 的导数定义。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>→（它带来什么）</em>　说出 Taylor 公式的四条主要出口。</p>
+    <details><summary>对照</summary><p>① 极限严格化（定阶 + $o$ 运算，等价替换的合法化）；② 不等式生产线（Lagrange 余项定号）；③ 幂级数地基（$n\to\infty$，余项 $\to0$ 即收敛，第 9 章）；④ 多元极值判别（二阶展开 + Hessian 定号）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>∈（实例）</em>　默写三个实例：一个极限、一个单边不等式、一个双边不等式（含结论数值/结论式）。</p>
+    <details><summary>对照</summary><p>$\lim\limits_{x\to0}\frac{e^x\sin x-x(1+x)}{x^3}=\frac13$；$x>0$ 时 $e^x>1+x+\frac{x^2}{2}$（$R_2=\frac{e^\xi}{6}x^3>0$）；$x>0$ 时 $x-\frac{x^2}{2}+\frac{x^3}{3}-\frac{x^4}{4}&lt;\ln(1+x)&lt;x-\frac{x^2}{2}+\frac{x^3}{3}$。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>≠（区分）</em>　Peano 与 Lagrange 的三处不同；"$o(x^3)-o(x^3)=0$"为什么错？</p>
+    <details><summary>对照</summary><p>条件（一点 $n$ 阶 vs 区间 $n+1$ 阶）、信息性质（局部定性 vs 全局定量）、主场（极限 vs 不等式）。$o(x^3)$ 是一类函数不是一个数：$x^4$ 与 $x^5$ 都是 $o(x^3)$，差 $x^4-x^5\ne0$，只是 $o(x^3)$。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>（为何要有它）</em>　等价无穷小为什么不够用？$e^{-1/x^2}$ 这个函数警告了我们什么？</p>
+    <details><summary>对照</summary><p>等价替换只保留主部，加减中主部相消后它手里没有"下一项"，必误杀。$e^{-1/x^2}$（$0$ 点各阶导数全为 $0$）的 Taylor 多项式全是零多项式却不是零函数——多项式 alone 锁不住函数，<strong>余项的可控性才是 Taylor 定理的内容</strong>；并预告 Taylor 级数不必收敛到 $f$（第 9 章）。</p></details>
+  </div>
+</div>
+
+<div class="net box" data-tag="间隔复习安排">
+  <p><strong>1 天后</strong>：重做六方向自测卡（不翻书）+ 翻卡快测第二轮；<strong>3 天后</strong>：重做变式 1、变式 2 与真题节选的梯子问题 + 计时默写①②；<strong>1 周后</strong>：默写常用展开表全文 + 例 2 卷面格式，确认翻卡全部「会了」。</p>
+  <p><strong>与前后章的联结</strong>：本章是<strong>第 9 章</strong>（级数与幂级数）的直接地基——$n\to\infty$ 时 Taylor 公式变 Taylor 级数，"余项是否趋于 $0$"是收敛判据，第 16 届题二的"展开 + 逐项积分"在那里合法化；<strong>第 8 章</strong>（含参变量积分）是第 16 届题二的完整现场；<strong>第 10 章</strong>（多元微积分）里二阶 Taylor + Hessian 是极值判别的标准工具（第 15 届题二的驻点就在等它）。</p>
+</div>
+
+<div class="chapnav">
+  <span><a href="ch05.html">← 第 5 章 · 微分中值定理家族</a></span>
+  <span><a href="index.html">首页</a></span>
+  <span><a href="ch07.html">第 7 章 · Riemann 可积性：Darboux 上下和与积分不等式 →</a></span>
+</div>
+
+</div>
+
+<script src="assets/quiz.js"></script>
+<script>
+/* §9.5 翻卡数据 */
+registerQuiz("ch06-drill", [
+  { q: "默写 $e^x$ 在 $0$ 点的展开（到 $o(x^n)$）？", a: "$e^x = 1 + x + \\frac{x^2}{2!} + \\frac{x^3}{3!} + \\cdots + \\frac{x^n}{n!} + o(x^n)$。各阶导数都是 $e^x$，在 $0$ 处全为 $1$。" },
+  { q: "默写 $\\sin x$ 的展开？", a: "$\\sin x = x - \\frac{x^3}{3!} + \\frac{x^5}{5!} - \\cdots + (-1)^n\\frac{x^{2n+1}}{(2n+1)!} + o(x^{2n+2})$。奇函数只有奇次项。" },
+  { q: "默写 $\\cos x$ 的展开？", a: "$\\cos x = 1 - \\frac{x^2}{2!} + \\frac{x^4}{4!} - \\cdots + (-1)^n\\frac{x^{2n}}{(2n)!} + o(x^{2n+1})$。偶函数只有偶次项。" },
+  { q: "默写 $\\ln(1+x)$ 的展开？", a: "$\\ln(1+x) = x - \\frac{x^2}{2} + \\frac{x^3}{3} - \\cdots + (-1)^{n-1}\\frac{x^n}{n} + o(x^n)$。没有阶乘，符号交替。" },
+  { q: "默写 $(1+x)^\\alpha$ 的展开？", a: "$1 + \\alpha x + \\frac{\\alpha(\\alpha-1)}{2!}x^2 + \\cdots + \\binom{\\alpha}{n}x^n + o(x^n)$。$\\alpha$ 为非负整数时到 $x^\\alpha$ 截断。" },
+  { q: "默写 $\\frac{1}{1-x}$ 的展开？", a: "$1 + x + x^2 + \\cdots + x^n + o(x^n)$。等比，一切展开的「祖师」。" },
+  { q: "极限题该展到几阶？", a: "分母 $x^k$ ⟹ 每个因子展到 $o(x^k)$；不等式展到「余项能定号」的那阶（目标多项式到几次就 $n=$ 几次）。" },
+  { q: "Peano 与 Lagrange 各自的主场？", a: "Peano = 局部账（$x\\to a$：极限、阶估计）；Lagrange = 全局账（区间上：不等式、误差界）。极限用 Peano，不等式用 Lagrange。" },
+  { q: "$o(x^3)-o(x^3)=0$ 对吗？$x^2\\cdot o(x)$、$o(x^3)+o(x^3)$ 各等于什么？", a: "不对——只是 $o(x^3)$（$o$ 是一类函数不是一个数）。$x^2\\cdot o(x)=o(x^3)$；$o(x^3)+o(x^3)=o(x^3)$。" },
+  { q: "Lagrange 余项 $n=0$ 时是哪个定理？", a: "Lagrange 中值定理 $f(x)=f(a)+f'(\\xi)(x-a)$——第 5 章老朋友是 Taylor 的 $0$ 阶特例。" }
+]);
+</script>
+
+<script>
+/* §3.1 Taylor 逼近探索器 */
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  var svg = document.getElementById("tay-svg");
+  var out = document.getElementById("tay-out");
+  var nS = document.getElementById("tay-n");
+  var aS = document.getElementById("tay-a");
+  var X0 = -6.6, X1 = 6.6, Y0 = -1.9, Y1 = 1.9, W = 720, H = 300;
+  function px(x) { return (x - X0) / (X1 - X0) * W; }
+  function py(y) { return H - (y - Y0) / (Y1 - Y0) * H; }
+  function mk(tag, attrs) {
+    var el = document.createElementNS(NS, tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    svg.appendChild(el);
+    return el;
+  }
+  function txt(x, y, s, attrs) {
+    var t = mk("text", attrs || {});
+    t.setAttribute("x", x); t.setAttribute("y", y);
+    t.textContent = s;
+    return t;
+  }
+  function fact(k) { var r = 1; for (var i = 2; i <= k; i++) r *= i; return r; }
+  /* 静态：坐标轴与 sin 曲线 */
+  mk("line", { x1: 0, y1: py(0), x2: W - 14, y2: py(0), stroke: "#2b2620", "stroke-width": 1.4 });
+  mk("polygon", { points: (W - 4) + "," + py(0) + " " + (W - 16) + "," + (py(0) - 5) + " " + (W - 16) + "," + (py(0) + 5), fill: "#2b2620" });
+  [[-6, "−6"], [-3, "−3"], [3, "3"], [6, "6"]].forEach(function (tk) {
+    mk("line", { x1: px(tk[0]), y1: py(0) - 5, x2: px(tk[0]), y2: py(0) + 5, stroke: "#2b2620", "stroke-width": 1.3 });
+    txt(px(tk[0]), py(0) + 20, tk[1], { "font-size": 12, fill: "#2b2620", "text-anchor": "middle" });
+  });
+  [[-1, "−1"], [1, "1"]].forEach(function (tk) {
+    mk("line", { x1: px(-6.6) + 2, y1: py(tk[0]), x2: px(-6.6) + 12, y2: py(tk[0]), stroke: "#2b2620", "stroke-width": 1.3 });
+    txt(px(-6.6) + 16, py(tk[0]) + 4, tk[1], { "font-size": 12, fill: "#2b2620" });
+  });
+  var d = "";
+  for (var i = 0; i <= 300; i++) {
+    var x = X0 + (X1 - X0) * i / 300;
+    d += (i === 0 ? "M" : "L") + px(x).toFixed(1) + "," + py(Math.sin(x)).toFixed(1);
+  }
+  mk("path", { d: d, fill: "none", stroke: "#1d4ed8", "stroke-width": 2.6 });
+  txt(px(5.0), py(1.35), "sin x", { "font-size": 13, fill: "#1d4ed8", "font-weight": "bold" });
+  /* 动态元素 */
+  var band = mk("path", { fill: "#b45309", opacity: 0.16, stroke: "none" });
+  var poly = mk("path", { fill: "none", stroke: "#be123c", "stroke-width": 2.4 });
+  var dotA = mk("circle", { r: 5, fill: "#be123c", stroke: "#ffffff", "stroke-width": 1.5 });
+  var labA = txt(0, 0, "", { "font-size": 13, fill: "#be123c", "font-weight": "bold" });
+
+  function coeffs(a, n) {
+    var c = [];
+    for (var k = 0; k <= n; k++) {
+      var m = k % 4;
+      var b = m === 0 ? Math.sin(a) : m === 1 ? Math.cos(a) : m === 2 ? -Math.sin(a) : -Math.cos(a);
+      c.push(b / fact(k));
+    }
+    return c;
+  }
+  function Tv(c, a, x) {
+    var s = 0, u = 1;
+    for (var k = 0; k < c.length; k++) { s += c[k] * u; u *= (x - a); }
+    return s;
+  }
+  function clampP(y) { return Math.max(-8, Math.min(8, y)); }
+  function clampB(y) { return Math.max(-2.2, Math.min(2.2, y)); }
+
+  function update() {
+    var n = parseInt(nS.value, 10), a = parseFloat(aS.value);
+    var c = coeffs(a, n);
+    var fb = fact(n + 1);
+    var i2, x2, e2, t2;
+    /* Taylor 多项式曲线 */
+    var dp = "";
+    for (i2 = 0; i2 <= 300; i2++) {
+      x2 = X0 + (X1 - X0) * i2 / 300;
+      dp += (i2 === 0 ? "M" : "L") + px(x2).toFixed(1) + "," + py(clampP(Tv(c, a, x2))).toFixed(1);
+    }
+    poly.setAttribute("d", dp);
+    /* Lagrange 误差带 T_n ± |x−a|^{n+1}/(n+1)!（M=1） */
+    var NPT = 180;
+    var db = "";
+    for (i2 = 0; i2 <= NPT; i2++) {
+      x2 = X0 + (X1 - X0) * i2 / NPT;
+      e2 = Math.pow(Math.abs(x2 - a), n + 1) / fb;
+      db += (i2 === 0 ? "M" : "L") + px(x2).toFixed(1) + "," + py(clampB(Tv(c, a, x2) + e2)).toFixed(1);
+    }
+    for (i2 = NPT; i2 >= 0; i2--) {
+      x2 = X0 + (X1 - X0) * i2 / NPT;
+      e2 = Math.pow(Math.abs(x2 - a), n + 1) / fb;
+      db += "L" + px(x2).toFixed(1) + "," + py(clampB(Tv(c, a, x2) - e2)).toFixed(1);
+    }
+    band.setAttribute("d", db + "Z");
+    dotA.setAttribute("cx", px(a)); dotA.setAttribute("cy", py(Math.sin(a)));
+    labA.setAttribute("x", Math.min(px(a) + 10, 640)); labA.setAttribute("y", py(Math.sin(a)) - 12);
+    labA.textContent = "a = " + a.toFixed(2);
+    /* 数据反馈 */
+    var maxErr = 0, maxB = 0;
+    for (i2 = 0; i2 <= 200; i2++) {
+      x2 = X0 + (X1 - X0) * i2 / 200;
+      var er = Math.abs(Math.sin(x2) - Tv(c, a, x2));
+      if (er > maxErr) maxErr = er;
+      var bb = Math.pow(Math.abs(x2 - a), n + 1) / fb;
+      if (bb > maxB) maxB = bb;
+    }
+    var x1u = a + 1 <= X1 ? a + 1 : a - 1;
+    var e1u = Math.abs(Math.sin(x1u) - Tv(c, a, x1u));
+    var b1u = 1 / fb;
+    function fe(v) { return v >= 0.01 ? v.toFixed(4) : v.toExponential(2); }
+    var note;
+    if (n === 0) note = "n = 0：T₀ = sin a 是常数，误差带 |x−a| 正是微分中值定理 |sin x − sin a| ≤ |x−a|（第 5 章）。";
+    else if (n === 1) note = "n = 1：T₁ 就是 a 点的切线——一阶咬合。";
+    else if (n <= 3) note = "加一阶，多项式从 a 点向两侧多咬一截。";
+    else note = "n ≥ 4：±π 内基本咬死；窗口边缘照样跑飞——「局部」二字始终有效。";
+    out.innerHTML = "n = " + n + "，a = " + a.toFixed(2) +
+      "　|　窗口内最大真实误差 ≈ <strong>" + fe(maxErr) + "</strong>，Lagrange 上界（M = 1）≈ " + fe(maxB) + "（永远兜得住）<br>" +
+      "离 a 一个单位处真实误差 ≈ " + fe(e1u) + "，该处上界 1/" + fb + " ≈ " + fe(b1u) + " —— 越靠近 a 咬得越死。<br><strong>" + note + "</strong>";
+  }
+  nS.addEventListener("input", update);
+  aS.addEventListener("input", update);
+  update();
+})();
+</script>
+
+</body>
+</html>

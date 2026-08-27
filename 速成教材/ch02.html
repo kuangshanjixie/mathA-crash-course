@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数分第 2 章 · 极限的严格语言：ε-N / ε-δ 与一致连续 —— 数学A速成讲义</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+<div class="wrap">
+
+<div class="bookbar">
+  <span><a href="index.html">← 返回首页</a></span>
+  <span>卷一 · 数学分析 · 第 2 章</span>
+</div>
+
+<div class="chapter-kicker">CHAPTER 2 · 数学分析</div>
+<h1>极限的严格语言：ε-N / ε-δ 与一致连续</h1>
+
+<div class="exam box" data-tag="本章导览">
+  <p><strong>这一章在整张卷子上的位置</strong>：ε-N / ε-δ 是数分证明的<strong>语法</strong>——它很少单独成题，但卷面上每一个"取 $N$ 使……""取 $\delta$ 使……"都是它在出场（第 15 届题六"取 $N$ 使 $3-\delta&lt;x_n&lt;3$"；第 12 届题六的 ε–‖P‖ 语言）。而本章的下半场<strong>一致连续</strong>是会直接出大题的硬考点：第 14 届题六，一道 20 分题，正面证一致连续、反面证非一致连续，全考。拿下本章 ≈ <strong>20 分大题的入场券 + 各题 2–5 分的步骤分</strong>。</p>
+  <p><strong>学完你能</strong>：① 默写 ε-N、ε-δ、一致连续三个定义并逐符号朗读；② 用倒推法自己找出卷面上那个 $N$ 和 $\delta$；③ 会写"极限不存在 / 不一致连续"的量词否定（工具四）；④ 用点列判定法证不一致连续；⑤ 说清点点连续与一致连续的全部差别，复述 Cantor 定理的证明骨架。</p>
+  <p><strong>前置</strong>：第 0.5 章的<strong>量词顺序通则</strong>与工具一（倒推法）、四（量词否定）、五（生成序列）；第 1 章的确界语言。本章是它们第一次大规模上岗。</p>
+</div>
+
+<h2>§1 开场谜题：0.999… 等于 1 吗</h2>
+
+<div class="hook box" data-tag="开场谜题">
+  <p>这个问题能吵起来：有人说"0.999… 永远比 1 差那么一点点"，有人说"它就是 1"。两边都能说出一堆道理，但<strong>没有裁判</strong>——因为"等于"是什么意思、"接近"是什么意思，谁也没说清楚过。</p>
+  <p>把 0.999… 写成一列数，事情就开始明朗：</p>
+  <p>$$0.9,\ \ 0.99,\ \ 0.999,\ \ 0.9999,\ \ \dots$$</p>
+  <p>它与 $1$ 的误差是 $0.1,\ 0.01,\ 0.001,\ \dots$——"越来越接近"这句日常话，翻译成<strong>可以裁决</strong>的话只有一句：<strong>你随便划一条误差线 $\varepsilon$，多小都行；我都能指出从第几项起，所有项都进了线内，而且永远不再出来。</strong></p>
+  <p>这句话就是本章的第一件武器：<strong>ε-N 定义</strong>——"接近"的裁判书。从此 $0.999\ldots=1$ 不靠嘴硬：它被<strong>定义</strong>为这个数列的极限，等号是定义和裁判共同签发的。你高数里所有"$\lim$"的算法能合法存在，全靠这本裁判书兜底。</p>
+  <p>再挠第二个痒处。看函数 $f(x)=\frac1x$，区间 $(0,1)$。它在每一点都连续——但请注意，"连续"是<strong>逐点验收</strong>的：要让函数值晃动小于 $0.1$，在 $x_0=1$ 附近，自变量晃动 $\delta=0.05$ 就够；在 $x_0=0.01$ 附近，$\delta$ 得压到 $0.00001$ 以下。越靠近 $0$，能用的尺子越短，而且<strong>没有最短</strong>。</p>
+  <p>问：存在一把在<strong>整个区间上通用</strong>的尺子吗？——每点各发一把尺子（点点连续）与一把尺子量全区间（一致连续），差别只在量词的一个先后顺序上，而第 14 届题六整整 20 分考的就是这个差别。</p>
+</div>
+
+<h2>§2 先看见它：管子与盒子</h2>
+
+<div class="vision box" data-tag="直觉与图像">
+  <p>ε-N 的图像是一根<strong>管子</strong>：以 $L$ 为中心、半宽 $\varepsilon$ 的水平管道。"$x_n\to L$"说的是：任给一根管子（多细都行），数列从某项起全部钻进管内、不再出来。管外只允许有有限项——它们被门槛 $N$ 拦在过去。</p>
+</div>
+
+<figure>
+<svg viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ε-N：数列最终进入管子不再出来">
+  <!-- 管子 (L-ε, L+ε)，L=2，ε=0.6，y 比例：y=0→150，y=4→30 -->
+  <rect x="54" y="72" width="646" height="36" fill="#fdeef2"/>
+  <line x1="54" y1="72" x2="700" y2="72" stroke="#be123c" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <line x1="54" y1="108" x2="700" y2="108" stroke="#be123c" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <line x1="54" y1="90" x2="700" y2="90" stroke="#be123c" stroke-width="2"/>
+  <text x="705" y="76" font-size="12" fill="#be123c">L+ε</text>
+  <text x="705" y="94" font-size="13" fill="#be123c" font-weight="bold">L</text>
+  <text x="705" y="112" font-size="12" fill="#be123c">L−ε</text>
+  <!-- n 轴 -->
+  <line x1="54" y1="168" x2="700" y2="168" stroke="#2b2620" stroke-width="2"/>
+  <polygon points="710,168 698,163 698,173" fill="#2b2620"/>
+  <text x="704" y="188" font-size="13" fill="#2b2620">n</text>
+  <!-- N=5 门槛 -->
+  <line x1="184" y1="60" x2="184" y2="168" stroke="#b45309" stroke-width="2" stroke-dasharray="5 4"/>
+  <text x="184" y="52" font-size="13" fill="#b45309" text-anchor="middle" font-weight="bold">N</text>
+  <text x="184" y="186" font-size="11.5" fill="#b45309" text-anchor="middle">门槛：此后全部进管</text>
+  <!-- 点 x_n = 2 + 4(-1)^n/(n+2)，n=1..24，xpix = 80 + (n-1)*26 -->
+  <circle cx="80" cy="130" r="4.5" fill="#be123c"/>
+  <circle cx="106" cy="60" r="4.5" fill="#be123c"/>
+  <circle cx="132" cy="114" r="4.5" fill="#be123c"/>
+  <circle cx="158" cy="70" r="4.5" fill="#be123c"/>
+  <circle cx="184" cy="107.1" r="4.5" fill="#1d4ed8"/>
+  <circle cx="210" cy="75" r="4.5" fill="#1d4ed8"/>
+  <circle cx="236" cy="103.3" r="4.5" fill="#1d4ed8"/>
+  <circle cx="262" cy="78" r="4.5" fill="#1d4ed8"/>
+  <circle cx="288" cy="100.9" r="4.5" fill="#1d4ed8"/>
+  <circle cx="314" cy="80" r="4.5" fill="#1d4ed8"/>
+  <circle cx="340" cy="99.2" r="4.5" fill="#1d4ed8"/>
+  <circle cx="366" cy="81.4" r="4.5" fill="#1d4ed8"/>
+  <circle cx="392" cy="98" r="4" fill="#1d4ed8"/>
+  <circle cx="418" cy="82.5" r="4" fill="#1d4ed8"/>
+  <circle cx="444" cy="97.1" r="4" fill="#1d4ed8"/>
+  <circle cx="470" cy="83.3" r="4" fill="#1d4ed8"/>
+  <circle cx="496" cy="96.3" r="3.5" fill="#1d4ed8"/>
+  <circle cx="522" cy="84" r="3.5" fill="#1d4ed8"/>
+  <circle cx="548" cy="95.7" r="3.5" fill="#1d4ed8"/>
+  <circle cx="574" cy="84.6" r="3.5" fill="#1d4ed8"/>
+  <circle cx="600" cy="95.2" r="3" fill="#1d4ed8"/>
+  <circle cx="626" cy="85.2" r="3" fill="#1d4ed8"/>
+  <circle cx="652" cy="94.8" r="3" fill="#1d4ed8"/>
+  <circle cx="678" cy="85.4" r="3" fill="#1d4ed8"/>
+  <text x="120" y="40" font-size="12.5" fill="#be123c">管外只能有有限项（红）</text>
+  <text x="430" y="130" font-size="12.5" fill="#1d4ed8">N 之后：全部进管，不再出来（蓝）</text>
+</svg>
+<figcaption>ε-N 的全部含义：任你给管子半宽 $\varepsilon$，总存在门槛 $N$，第 $N$ 项之后全进管子。</figcaption>
+</figure>
+
+<div class="vision box" data-tag="直觉与图像 · 下半场">
+  <p>一致连续的图像是一个<strong>盒子</strong>：以 $(x_0,f(x_0))$ 为中心、宽 $2\delta$、高 $2\varepsilon$ 的矩形。$f$ 在 $x_0$ 连续 = 盒子左右开口内的曲线，全部从盒子的<strong>左右壁</strong>穿出（不许从上下沿冲出）。点点连续允许盒子的宽度随位置变化；<strong>一致连续要求：固定高度后，同一个宽度在区间处处都行。</strong></p>
+</div>
+
+<figure>
+<svg viewBox="0 0 720 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="同一个 ε，不同位置所需的 δ 天差地别">
+  <!-- 窗口 x∈[0,3.2]，y∈[0,5.5]；xpix=60+x/3.2*620，ypix=300-y/5.5*270 -->
+  <line x1="60" y1="300" x2="700" y2="300" stroke="#2b2620" stroke-width="2"/>
+  <polygon points="710,300 698,295 698,305" fill="#2b2620"/>
+  <line x1="60" y1="300" x2="60" y2="16" stroke="#2b2620" stroke-width="2"/>
+  <polygon points="60,8 55,20 65,20" fill="#2b2620"/>
+  <text x="706" y="322" font-size="13" fill="#2b2620">x</text>
+  <text x="42" y="24" font-size="13" fill="#2b2620">y</text>
+  <!-- 刻度 1,2,3 -->
+  <line x1="253.75" y1="294" x2="253.75" y2="306" stroke="#2b2620" stroke-width="2"/>
+  <text x="253.75" y="322" font-size="12" fill="#2b2620" text-anchor="middle">1</text>
+  <line x1="447.5" y1="294" x2="447.5" y2="306" stroke="#2b2620" stroke-width="2"/>
+  <text x="447.5" y="322" font-size="12" fill="#2b2620" text-anchor="middle">2</text>
+  <line x1="641.25" y1="294" x2="641.25" y2="306" stroke="#2b2620" stroke-width="2"/>
+  <text x="641.25" y="322" font-size="12" fill="#2b2620" text-anchor="middle">3</text>
+  <!-- 曲线 y=1/x，x 从 0.19(y=5.26) 到 3.2(y=0.3125) -->
+  <path d="M 96.9 41.7 C 150 90 220 140 300 175 C 380 208 480 235 680 284.7" fill="none" stroke="#0f766e" stroke-width="2.5"/>
+  <text x="520" y="230" font-size="13" fill="#0f766e">y = 1/x</text>
+  <!-- 大盒子：x0=2，f=0.5，半宽 1，半高 0.5：x∈[1,3]→px[253.75,641.25]，y∈[0,1]→py[251,300] -->
+  <rect x="253.75" y="251" width="387.5" height="49" fill="#f4effd" opacity="0.55" stroke="#7c3aed" stroke-width="2" stroke-dasharray="7 5"/>
+  <circle cx="447.5" cy="275.5" r="5" fill="#7c3aed"/>
+  <text x="447.5" y="240" font-size="12.5" fill="#7c3aed" text-anchor="middle">x₀ = 2：δ 可以到 1，盒子很宽</text>
+  <!-- 小盒子：x0=0.35，f=2.857，半宽 0.05，半高 0.5：x∈[0.30,0.40]→px[118.1,137.5]，y∈[2.357,3.357]→py[184.4,135.3] -->
+  <rect x="118.1" y="135.3" width="19.4" height="49.1" fill="#fdeef2" opacity="0.75" stroke="#be123c" stroke-width="2" stroke-dasharray="4 3"/>
+  <circle cx="127.8" cy="159.9" r="5" fill="#be123c"/>
+  <text x="150" y="120" font-size="12.5" fill="#be123c">x₀ = 0.35：同样的 ε，δ 必须 ≈ 0.05</text>
+  <text x="150" y="106" font-size="12.5" fill="#be123c">（窄 20 倍；x₀→0 时 δ→0）</text>
+</svg>
+<figcaption>同一个 $\varepsilon$：平缓处盒子可以很宽，陡峭处盒子必须极窄。$x_0$ 越靠近 $0$，$\delta$ 被压得越小——没有最窄，就没有"一把尺子量全区间"。</figcaption>
+</figure>
+
+<p>两张图合起来就是本章的全部直觉：<strong>管子</strong>把"接近"变成可裁决的验收；<strong>盒子</strong>把"连续"变成可比较的尺子——而问题只剩下一个：尺子要不要随位置变形？</p>
+
+<h2>§3 精确定义一：数列极限的 ε-N</h2>
+
+<div class="def">
+  <p class="def-title">定义（数列极限，ε-N）</p>
+  <p>称数列 $\{x_n\}$ <strong>收敛于</strong> $L$，记 $\lim\limits_{n\to\infty}x_n=L$（或 $x_n\to L$），如果：</p>
+  <p>$$\forall\varepsilon>0,\ \ \exists N\in\mathbb{N},\ \ \forall n\ge N:\ \ |x_n-L|&lt;\varepsilon.$$</p>
+</div>
+
+<div class="symbol box" data-tag="逐符号朗读">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$\forall\varepsilon>0$</td><td>"随便给一条正的误差线，多小都行"</td><td>裁判出题：考验必须<strong>任意</strong>严格——只对 $\varepsilon=0.1$ 成立不算数</td></tr>
+    <tr><td>$\exists N$</td><td>"我能交出一个门槛 $N$"</td><td>你交答卷：$N$ <strong>可以依赖 $\varepsilon$</strong>（量词顺序通则，ch0m §2）——$\varepsilon$ 越小，$N$ 通常越大</td></tr>
+    <tr><td>$\forall n\ge N,\ |x_n-L|&lt;\varepsilon$</td><td>"门槛之后的<strong>每一项</strong>，与 $L$ 的误差都小于 $\varepsilon$"</td><td>验收：进管之后一个都不许出来——管外只允许有限项</td></tr>
+  </table>
+  <p>整条量词链读作一句话：<strong>误差最终任意小，且不再反弹。</strong>$\forall\varepsilon\,\exists N$ 的搭档方式和第 1 章 sup 的 $\forall\varepsilon\,\exists x$ 是同一个句型：后面那个存在量必须允许依赖前面的任意量。</p>
+</div>
+
+<div class="think">
+  <p>别急着往下翻。<strong>拿张纸，用工具四（量词否定：$\forall\leftrightarrow\exists$ 互换、结论取反）写出"$x_n$ 不收敛于 $L$"的完整量词式</strong>，再配一句大白话。写完再展开对照。</p>
+  <details class="answer">
+    <summary>对照：极限不存在的写法</summary>
+    <p>$$x_n\not\to L \iff \exists\varepsilon_0>0,\ \forall N\in\mathbb{N},\ \exists n\ge N:\ \ |x_n-L|\ge\varepsilon_0.$$</p>
+    <p>大白话：<strong>有一条误差线 $\varepsilon_0$ 它永远跨不过</strong>——无论门槛 $N$ 放得多远，总有掉队的项躺在管子外。注意链式反应：$\forall\varepsilon$ 变 $\exists\varepsilon_0$（只要找到一条跨不过的线），$\exists N$ 变 $\forall N$（门槛怎么放都没用），$\forall n$ 变 $\exists n$（总能揪出一个坏项），$&lt;$ 取反成 $\ge$。</p>
+  </details>
+</div>
+
+<h3>3.1 否定式升格：它本身就是一件武器</h3>
+
+<p>上面那个否定式不是练习，是卷面武器。两个升级说明：</p>
+<ul>
+  <li><strong>"$x_n$ 不收敛于 $L$"≠"$\{x_n\}$ 发散"</strong>。前者只对这一个 $L$ 失效（$\exists\varepsilon_0\,\forall N\,\exists n$）；后者要对<strong>每个</strong> $L$ 都失效，外面再套一层 $\forall L$。审题先分清要证哪一句。</li>
+  <li><strong>小例</strong>：证 $x_n=(-1)^n$ 不收敛于 $1$。取 $\varepsilon_0=1$：任给 $N$，取奇数 $n\ge N$，则 $|x_n-1|=|-1-1|=2\ge1=\varepsilon_0$。三行证完——否定式把"不收敛"从感觉变成了可执行的构造。</li>
+</ul>
+
+<h2>§3 精确定义二：ε-δ、点点连续与一致连续</h2>
+
+<h3>3.2 从数列到函数：ε-δ 与点点连续</h3>
+
+<div class="def">
+  <p class="def-title">定义（函数极限与点点连续，ε-δ）</p>
+  <p>$$\lim_{x\to x_0}f(x)=A \iff \forall\varepsilon>0,\ \exists\delta>0,\ \forall x:\ 0&lt;|x-x_0|&lt;\delta\ \Longrightarrow\ |f(x)-A|&lt;\varepsilon.$$</p>
+  <p>称 $f$ 在 $x_0$ <strong>连续</strong>，如果 $\lim\limits_{x\to x_0}f(x)=f(x_0)$，即：</p>
+  <p>$$\forall\varepsilon>0,\ \exists\delta>0,\ \forall x\in I:\ |x-x_0|&lt;\delta\ \Longrightarrow\ |f(x)-f(x_0)|&lt;\varepsilon.$$</p>
+  <p>称 $f$ 在区间 $I$ 上连续，如果 $f$ 在 $I$ 的<strong>每一点</strong>连续。</p>
+</div>
+
+<div class="symbol box" data-tag="逐符号朗读（只读新增的部分）">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$0&lt;|x-x_0|&lt;\delta$</td><td>"$x$ 落在 $x_0$ 的 $\delta$ 去心邻域里"</td><td>极限只管 $x_0$ <strong>附近</strong>，不管 $x_0$ 本身——$f(x_0)$ 可以不存在（求极限）；连续才把 $x_0$ 本人拉进来（$A=f(x_0)$）</td></tr>
+    <tr><td>$\exists\delta>0$（在 $\forall\varepsilon$ 之后）</td><td>"我能交出半宽 $\delta$"</td><td>和 $N$ 一样靠倒推找；但注意它<strong>还可以依赖 $x_0$</strong>——因为 $x_0$ 在它前面被固定了</td></tr>
+  </table>
+  <p>关键观察："在 $I$ 上连续"展开写是 $\forall x_0\in I\ \forall\varepsilon>0\ \exists\delta>0\ \cdots$——<strong>$\delta$ 排在 $x_0$ 后面，所以每点各发一把尺子</strong>，记 $\delta=\delta(\varepsilon,x_0)$。以 $f(x)=\frac1x$ 为例：在 $x_0$ 处要 $|f(x)-f(x_0)|&lt;\varepsilon$，需要 $|x-x_0|&lt;\varepsilon\,x x_0$，能用的 $\delta$ 大约是 $\varepsilon x_0^2$——$x_0$ 越小尺子越短。这就是开场谜题里"没有最短"的来源。</p>
+</div>
+
+<h3>3.3 一致连续：一把尺子量全区间</h3>
+
+<div class="def">
+  <p class="def-title">定义（一致连续 uniform continuity）</p>
+  <p>称 $f$ 在区间 $I$ 上<strong>一致连续</strong>，如果：</p>
+  <p>$$\forall\varepsilon>0,\ \exists\delta>0,\ \forall x,y\in I:\ |x-y|&lt;\delta\ \Longrightarrow\ |f(x)-f(y)|&lt;\varepsilon.$$</p>
+</div>
+
+<div class="symbol box" data-tag="量词对比表：唯一的差别是顺序">
+  <table>
+    <tr><th></th><th>点点连续（在 $I$ 上）</th><th>一致连续</th></tr>
+    <tr><td>量词链</td><td>$\forall x_0\in I\ \forall\varepsilon>0\ \exists\delta>0\ \forall x\in I$</td><td>$\forall\varepsilon>0\ \exists\delta>0\ \forall x,y\in I$</td></tr>
+    <tr><td>$\delta$ 依赖谁</td><td>$\varepsilon$ <strong>和 $x_0$</strong></td><td>只依赖 $\varepsilon$（与位置无关）</td></tr>
+    <tr><td>画面</td><td>每点各发一把尺子，可随地变形</td><td>一把尺子量全区间</td></tr>
+    <tr><td>强弱</td><td>弱（必要条件）</td><td>强：一致连续 $\Longrightarrow$ 点点连续（取 $y=x_0$ 即得）</td></tr>
+  </table>
+  <p>唯一的差别就是 $\exists\delta$ 与 $\forall x_0$ 的<strong>先后顺序</strong>。回到 ch0m §2 的量词顺序通则：$\exists$ 在 $\forall$ <strong>之前</strong>，意味着存在一个不依赖后面变量的统一选择——一致连续的全部难度与全部价值都在这四个字上：<strong>统一选择</strong>。</p>
+</div>
+
+<h3>3.4 亲手摸一摸 δ 盒子（交互）</h3>
+
+<div class="widget" id="uc-widget">
+  <p class="w-title">▶ δ 盒子探索器：一把尺子能不能量全区间</p>
+  <p class="w-row"><strong style="color:#be123c">红点</strong>是你选的位置 $(x_0,f(x_0))$；<strong style="color:#7c3aed">虚线盒子</strong>宽 $2\delta$、高 $2\varepsilon$。"盒子兜住" = 左右开口内的曲线全部从盒子的左右壁穿出，不从上下沿冲出（即 $|x-x_0|&lt;\delta$ 时 $|f(x)-f(x_0)|&lt;\varepsilon$）。横轴下方的小圆点扫描全区间：<strong style="color:#15803d">绿</strong> = 这把 $\delta$ 在该处兜得住，<strong style="color:#be123c">红</strong> = 兜不住。</p>
+  <div class="w-row"><label>函数与区间</label>
+  <select id="ucw-f">
+    <option value="inv">f(x) = 1/x，区间 (0, 3]</option>
+    <option value="sqrt">f(x) = √x，区间 [0, 3]</option>
+  </select></div>
+  <div class="w-row"><label>位置 x₀（拖向 0，盯住反馈里「本点能用的 δ」）</label>
+  <input type="range" id="ucw-x0" min="0.08" max="3" step="0.01" value="0.8"></div>
+  <div class="w-row"><label>δ（盒子半宽——你手里的尺子）</label>
+  <input type="range" id="ucw-d" min="0.005" max="0.6" step="0.005" value="0.1"></div>
+  <div class="w-row"><label>ε（盒子半高——验收标准）</label>
+  <input type="range" id="ucw-e" min="0.1" max="1" step="0.05" value="0.5"></div>
+  <svg id="ucw-svg" viewBox="0 0 720 385" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div class="w-verdict" id="ucw-out">加载中……（需要启用 JavaScript）</div>
+  <p class="w-row" style="font-size:0.88em;color:#5c554b">玩出这三个体验再往下走：<strong>①</strong> 选 $\frac1x$、$\varepsilon=0.5$：把 $x_0$ 从 $2$ 拖向 $0.1$，看"本点能用的 $\delta$"按 $x_0^2$ 的速度缩向 $0$——$\delta$ 被迫依赖位置；<strong>②</strong> 还是 $\frac1x$：把 $\delta$ 拖到最小，横轴下的红色地带永远盘踞在 $0$ 附近——不存在一把量全区间的尺子（不一致连续）；<strong>③</strong> 切到 $\sqrt{x}$：把 $\delta$ 拖到 $0.25\,(=\varepsilon^2)$ 以下，红色全消——最紧处在 $x_0=0$，但 $\delta$ 不必再小：一把尺子存在（一致连续）。</p>
+</div>
+
+<h3>3.5 不一致连续怎么证：点列判定法</h3>
+
+<p>先对一致连续定义做工具四（量词否定）：</p>
+<p>$$f\text{ 在 }I\text{ 上不一致连续} \iff \exists\varepsilon_0>0,\ \forall\delta>0,\ \exists x,y\in I:\ |x-y|&lt;\delta\ \text{且}\ |f(x)-f(y)|\ge\varepsilon_0.$$</p>
+<p>再对这个 $\forall\delta$ 用工具五（生成序列）：取 $\delta=\frac1n$，逐个生成一对对点。于是得到卷面最好用的判定法：</p>
+
+<div class="def">
+  <p class="def-title">点列判定法（不一致连续 ⟺ 存在"贴面舞"点列）</p>
+  <p>$f$ 在 $I$ 上不一致连续 $\iff$ 存在 $\varepsilon_0>0$ 与两列点 $\{x_n\},\{y_n\}\subset I$，使
+  $$x_n-y_n\to 0,\qquad |f(x_n)-f(y_n)|\ge\varepsilon_0\ (\forall n).$$</p>
+  <p>画面：两列点越贴越近，函数值却始终保持着一条跨不过的缝——尺子再窄也兜不住。</p>
+</div>
+
+<div class="calc box" data-tag="两个招牌反例（背下来）">
+  <p><strong>① $f(x)=\frac1x$ 在 $(0,1)$ 上不一致连续</strong>：去最失控的地方（$0$ 附近）取样——取 $x_n=\frac1n,\ y_n=\frac1{2n}$，则 $x_n-y_n=\frac1{2n}\to0$，而 $|f(x_n)-f(y_n)|=n\to+\infty$。</p>
+  <p><strong>② $f(x)=x^2$ 在 $\mathbb{R}$ 上不一致连续</strong>：失控发生在无穷远处——取 $x_n=n+\frac1n,\ y_n=n$，则 $x_n-y_n=\frac1n\to0$，而 $|f(x_n)-f(y_n)|=2+\frac1{n^2}\ge2$。</p>
+  <p>取点列的直觉只有一句：<strong>函数在哪里越来越失控（斜率无界处、无穷远处），就去哪里取样。</strong></p>
+</div>
+
+<h3>3.6 Cantor 定理：闭区间把碎尺子熔成一把</h3>
+
+<div class="def">
+  <p class="def-title">Cantor 定理（一致连续性定理）</p>
+  <p>若 $f$ 在<strong>闭区间</strong> $[a,b]$ 上连续，则 $f$ 在 $[a,b]$ 上一致连续。</p>
+</div>
+
+<p>意义：点点连续只是局部性质（每点各自验收），一致连续是整体性质（全区间一把尺子）。Cantor 定理说：<strong>闭区间能把局部免费升级为整体</strong>——这是"局部 ⟹ 整体"在本书的第一次登场，后面 Riemann 可积性（第 7 章）就靠它。开区间、无穷区间没有这项保护：$\frac1x$ 在 $(0,1)$、$x^2$ 在 $\mathbb{R}$ 就是两个漏网之鱼。</p>
+
+<div class="calc box" data-tag="证明骨架（B-W 子列思想，四步）">
+  <p><strong>第 1 步（工具四）</strong>：反证。设 $f$ 在 $[a,b]$ 上不一致连续，定义取反得 $\varepsilon_0>0$：对任意 $\delta>0$ 都有距离 $&lt;\delta$ 而函数值差 $\ge\varepsilon_0$ 的点对。</p>
+  <p><strong>第 2 步（工具五）</strong>：取 $\delta=\frac1n$，生成两列点 $x_n,y_n\in[a,b]$，$|x_n-y_n|&lt;\frac1n$，$|f(x_n)-f(y_n)|\ge\varepsilon_0$。</p>
+  <p><strong>第 3 步（B-W 子列，第 1 章地图）</strong>：$\{x_n\}$ 有界，抽收敛子列 $x_{n_k}\to c$；$[a,b]$ 是闭区间保证 $c\in[a,b]$。由 $|x_{n_k}-y_{n_k}|&lt;\frac1{n_k}$，夹逼得 $y_{n_k}\to c$。</p>
+  <p><strong>第 4 步（连续性传值）</strong>：$f$ 在 $c$ 连续 $\Rightarrow f(x_{n_k})\to f(c)$ 且 $f(y_{n_k})\to f(c)$，故 $|f(x_{n_k})-f(y_{n_k})|\to0$，与恒 $\ge\varepsilon_0$ 矛盾。$\square$</p>
+  <p>数一遍：否定式、生成序列、B-W、点点连续——四个库存各用一次。<strong>闭区间给出的全部本钱就是 B-W（以及等价的有限覆盖）：能把"任意取的点列"逼出一个收敛子列。</strong></p>
+</div>
+
+<h3>3.7 振幅语言：把 ∀ε∃δ 打包成一个函数</h3>
+
+<div class="def">
+  <p class="def-title">连续模（振幅函数）</p>
+  <p>$$\omega_f(\delta):=\sup\bigl\{|f(x)-f(y)|:\ x,y\in I,\ |x-y|\le\delta\bigr\}.$$</p>
+  <p><strong>命题</strong>：$f$ 在 $I$ 上一致连续 $\iff$ $\lim\limits_{\delta\to0^+}\omega_f(\delta)=0$。</p>
+</div>
+
+<p>$\omega_f(\delta)$ 就是"半宽 $\delta$ 的盒子在全区间可能漏出的最大高度"——它把 $\forall\varepsilon\,\exists\delta$ 的整段量词链压缩成<strong>一个普通函数的极限</strong>。三个算例：$\frac1x$ 在 $(0,1)$：$\omega(\delta)=+\infty$（对每个 $\delta>0$！）；$x^2$ 在 $[0,2]$：$\omega(\delta)=4\delta-\delta^2\to0$；$\sqrt{x}$ 在 $[0,1]$：$\omega(\delta)=\sqrt{\delta}\to0$。这个"振幅"和第 7 章 Darboux 上下和里的 $\sup-\inf$ 是同一件货——一致连续就是靠振幅语言焊接进积分理论的。</p>
+
+<h2>§4 翻译轨：三个标准动作 + 一间练功房</h2>
+
+<p>极限语言在卷面上只有三种打法。练成反射，本章就毕业了。</p>
+
+<div class="trans box" data-tag="动作一：证 x_n → L（倒推找 N）">
+  <p><strong>题面</strong>："用定义证明 $\lim x_n=L$" / "求极限并论证"。</p>
+  <p><strong>翻译</strong>：目标是 $\forall\varepsilon\,\exists N\,\forall n\ge N$ 型，骨架固定：任取 $\varepsilon>0$ → 构造 $N$（可依赖 $\varepsilon$）→ 任取 $n\ge N$ 验证。</p>
+  <p><strong>执行三件套</strong>：① 化简 $|x_n-L|$；② <strong>放大</strong>成简单尾巴 $g(n)$（如 $\frac5{n+3}&lt;\frac5n$）——放大合法，因为考验任意严格，你用更严的标准通过也算通过；③ 草稿纸上解 $g(n)&lt;\varepsilon$ 得 $N$，回卷面正着写。</p>
+  <p><strong>值多少分</strong>：写出定义框架 1–2 分；$N$ 的具体给出 + 验证 3–4 分。只写"显然趋于 $L$"归零。完整示范见 §8 例 1。</p>
+</div>
+
+<div class="trans box" data-tag="动作二：证一致连续（δ 不许含 x）">
+  <p><strong>题面</strong>："证明 $f$ 在 $I$ 上一致连续"。</p>
+  <p><strong>翻译</strong>：目标是 $\forall\varepsilon\,\exists\delta\,\forall x,y$ 型——$\exists\delta$ 在 $\forall x,y$ <strong>之前</strong>，所以 $\delta$ 里只许出现 $\varepsilon$ 和区间参数（如端点 $a$），<strong>不许出现 $x,y$</strong>。这是量词顺序通则（ch0m §2）直接决定的，不是技巧。</p>
+  <p><strong>执行</strong>：估出 $|f(x)-f(y)|\le K\cdot|x-y|^\gamma$ 型不等式（Lipschitz 或 Hölder 型），取 $\delta=\bigl(\frac{\varepsilon}{K}\bigr)^{1/\gamma}$。若 $I$ 是闭区间且 $f$ 连续，一句话调用 Cantor 定理。</p>
+  <p><strong>反面</strong>：证<strong>不一致</strong>连续用点列判定法（§3.5）：去函数最失控的地方取 $x_n-y_n\to0$ 而 $|f(x_n)-f(y_n)|\ge\varepsilon_0$。完整示范见 §8 例 2。</p>
+</div>
+
+<div class="trans box" data-tag="动作三：真题原句长这样">
+  <p><strong>第 15 届题六（法 III）</strong>："由 $f$ 连续可导，存在 $\delta>0$ 使 $x\in(3-\delta,3+\delta)$ 时 $f'(x)>1$；取 $N$ 使 $n\ge N$ 时 $3-\delta&lt;x_n&lt;3$。"</p>
+  <p><strong>翻译</strong>：这句"取 $N$ 使……"就是 ε-N 定义被<strong>当库存取货</strong>：已知 $x_n\to3$，把定义里的 $\varepsilon$ 代入成这里需要的 $\delta$，定义立刻吐出 $N$。极限定义不是只能用来"证极限"——它是一张取货窗口：手里有收敛，随时能换"最终进入任意邻域"。</p>
+  <p>同类口音：第 12 届题六的"对任何 $\varepsilon>0$，有 $m$ 使 $s(f;P_m)\ge L-\varepsilon$"——下极限语言的同款取货。</p>
+</div>
+
+<h3>4.4 翻译练功房：像学语言一样，大量互译</h3>
+
+<p>下面 8 句，先全部写在纸上再逐条展开对照。每条不超过 1 分钟。</p>
+
+<div class="trans box" data-tag="互译 8 句">
+  <p><strong>T1</strong>　自然→符号："数列 $x_n$ 收敛于 $L$。"</p>
+  <details class="answer"><summary>对照</summary><p>$\forall\varepsilon>0,\ \exists N,\ \forall n\ge N:\ |x_n-L|&lt;\varepsilon$。<strong>易错</strong>：把 $\exists N$ 写到 $\forall\varepsilon$ 前面——那变成"同一个 $N$ 对付所有 $\varepsilon$"，是"$x_n$ 最终恒等于 $L$"，强得多也错得多。</p></details>
+  <p><strong>T2</strong>　判断（说理由）："$\exists N,\ \forall\varepsilon>0,\ \forall n\ge N:\ |x_n-L|&lt;\varepsilon$" 这句话是什么意思？</p>
+  <details class="answer"><summary>对照</summary><p>它说存在一个门槛 $N$，其后的项对<strong>任意</strong> $\varepsilon$ 都满足 $|x_n-L|&lt;\varepsilon$——只能是 $x_n=L$（$n\ge N$）。即"数列最终恒为 $L$"。量词一换序，意思全变：这是 T1 的反面对照组。</p></details>
+  <p><strong>T3</strong>　自然→符号："$x_n$ 不收敛于 $L$。"</p>
+  <details class="answer"><summary>对照</summary><p>$\exists\varepsilon_0>0,\ \forall N,\ \exists n\ge N:\ |x_n-L|\ge\varepsilon_0$。<strong>关键</strong>：工具四的机械操作——$\forall\leftrightarrow\exists$ 逐级互换，$&lt;$ 取反为 $\ge$。不收敛只要<strong>一条</strong>跨不过的误差线。</p></details>
+  <p><strong>T4</strong>　符号→自然："$\forall\varepsilon>0,\ \exists\delta>0,\ \forall x,y\in I:\ |x-y|&lt;\delta\Rightarrow|f(x)-f(y)|&lt;\varepsilon$。"</p>
+  <details class="answer"><summary>对照</summary><p>"$f$ 在 $I$ 上一致连续"——任给验收标准 $\varepsilon$，存在一把全区间通用的尺子 $\delta$：任意两点距离小于 $\delta$，函数值差就小于 $\varepsilon$。</p></details>
+  <p><strong>T5</strong>　判断（说理由）："$f$ 在 $(0,1)$ 上连续，所以 $f$ 在 $(0,1)$ 上一致连续。"对吗？</p>
+  <details class="answer"><summary>对照</summary><p>错。Cantor 定理只保<strong>闭区间</strong>。反例：$f(x)=\frac1x$ 在 $(0,1)$ 上点点连续，但 $x_n=\frac1n,\ y_n=\frac1{2n}$ 贴上后函数值差 $n\to\infty$，不一致连续。开区间的端点失控，Cantor 管不着。</p></details>
+  <p><strong>T6</strong>　自然→符号："$f$ 在 $I$ 上不一致连续。"</p>
+  <details class="answer"><summary>对照</summary><p>$\exists\varepsilon_0>0,\ \forall\delta>0,\ \exists x,y\in I:\ |x-y|&lt;\delta$ 且 $|f(x)-f(y)|\ge\varepsilon_0$。再取 $\delta=\frac1n$ 就是点列判定法（工具五）。</p></details>
+  <p><strong>T7</strong>　判断（说理由）："一致连续的函数一定有界。"对吗？</p>
+  <details class="answer"><summary>对照</summary><p>在<strong>有限区间</strong>上对（固定 $\delta$，把区间切成有限段，各段函数值差受控，拼出有界）；在 $\mathbb{R}$ 上错：$f(x)=x$ 一致连续（$\delta=\varepsilon$）却无上界。<strong>一致连续控制的是振幅，不是身高。</strong></p></details>
+  <p><strong>T8</strong>　互译追问："$f$ 在 $x_0$ 连续"的 $\delta$ 与"$f$ 在 $I$ 一致连续"的 $\delta$ 差在哪？用 $\frac1x$ 在 $x_0=1$ 与 $x_0=0.01$ 处举例。</p>
+  <details class="answer"><summary>对照</summary><p>前者可依赖 $x_0$（每点一把尺子），后者不依赖位置（一把量全）。$\frac1x$ 处能用的 $\delta\approx\varepsilon x_0^2$：$x_0=1$ 时约 $\varepsilon$，$x_0=0.01$ 时约 $10^{-4}\varepsilon$——随 $x_0\to0$ 缩到 $0$，所以 $(0,1)$ 上统一尺子不存在。</p></details>
+</div>
+
+<h2>§5 类型识别：什么信号在召唤极限语言</h2>
+
+<div class="recog box" data-tag="识别反射表">
+  <table>
+    <tr><th>题面信号</th><th>反射</th></tr>
+    <tr><td>"用定义证明 $\lim x_n=L$ / 求极限并论证"</td><td>ε-N + 倒推法三件套（化简 → 放大 → 解 $N$）</td></tr>
+    <tr><td>"证明极限不存在 / 发散 / 不等于 $L$"</td><td>工具四量词否定：$\exists\varepsilon_0\,\forall N\,\exists n\ge N$；或找两个子列极限不同</td></tr>
+    <tr><td>结论里出现"一致连续"</td><td>估 $|f(x)-f(y)|\le K|x-y|^\gamma$ 出 $\delta(\varepsilon)$；闭区间 + 连续则直接喊 Cantor</td></tr>
+    <tr><td>结论里出现"不一致连续 / 非一致连续"</td><td>点列判定法：去最失控处取 $x_n-y_n\to0$，$|f(x_n)-f(y_n)|\ge\varepsilon_0$</td></tr>
+    <tr><td>条件里"$f$ 在 $[a,b]$ 上连续"</td><td>库存白加一条：一致连续（Cantor）——振幅一致可控</td></tr>
+    <tr><td>"$F(x)=\int_0^x\cdots$ 变限/含参积分"问连续性</td><td>$|F(y)-F(x)|\le M|y-x|$ 或 Hölder 型估计（第 14 届题六的打法）</td></tr>
+    <tr><td>"Riemann 和 / 振幅 $\sup-\inf$ / Darboux"</td><td>振幅语言 $\omega(\delta)$——第 7 章接口，地基就是本章</td></tr>
+    <tr><td>解答里需要"取 $N$ 使……""取 $\delta$ 使……"</td><td>倒推法：草稿纸解出，卷面正写，倒推痕迹删除</td></tr>
+  </table>
+</div>
+
+<h2>§6 考法定位：它藏在哪里、值多少分</h2>
+
+<div class="exam box" data-tag="考法定位">
+  <table>
+    <tr><th>出处</th><th>题号</th><th>本章扮演什么角色</th><th>分值权重</th></tr>
+    <tr><td>第 14 届（2022）</td><td>题六</td><td>一致连续是<strong>结论本身</strong>：(1) 证变限积分 $F$ 一致连续（估出 $\frac{4M}{1+\alpha}\delta^{1+\alpha}$）；(2) 证 $F$ 非一致连续（"一致连续 ⟹ 线性增长"判别 + 反证构造）</td><td>20 分（直接）</td></tr>
+    <tr><td>第 14 届（2022）</td><td>题五</td><td>扰动取样点的 Riemann 和：官方解答全程用"小区间振幅 $\sup-\inf$"做估计——一致连续与 $\omega(\delta)$ 语言是这类估计的隐形地基</td><td>15 分题的估计骨架</td></tr>
+    <tr><td>第 15 届（2023）</td><td>题六（法 III）</td><td>"取 $N$ 使 $n\ge N$ 时 $3-\delta&lt;x_n&lt;3$"：把 $x_n\to3$ 的 ε-N 定义当取货窗口</td><td>20 分题的关键步骤</td></tr>
+    <tr><td>第 12 届（2020）</td><td>题六(2)</td><td>ε–‖P‖ 极限语言：$\lim\limits_{\|P\|\to0^+}s(f;P)$ 的严格上、下极限论证</td><td>20 分题的收尾约 6 分</td></tr>
+  </table>
+  <p><strong>规律</strong>：ε-N / ε-δ 是"语法"——很少单独成题，但量词链写错整段归零；而<strong>一致连续是直接出 20 分大题的硬考点，且两面都要会</strong>：正面估出 $\delta(\varepsilon)$（动作二），反面点列判定或"线性增长"判别（动作二的反面）。备考性价比极高。</p>
+</div>
+
+<h2>§7 关系网：一条语法链，三个出口</h2>
+
+<p>本章地图：<span style="color:#b45309">三角形</span>是来源与动机，<span style="color:#1d4ed8">圆角矩形</span>是公理与定义，<span style="color:#15803d">矩形</span>是定理，<span style="color:#7c3aed">六边形</span>是方法动作，<span style="color:#0f766e">椭圆</span>是应用出口。主链只有一条：裁判需求逼出 ε-N，ε-N 搬到函数成 ε-δ，逐点发尺子成点点连续，$\delta$ 甩掉 $x_0$ 成一致连续——然后兵分三路出口。</p>
+
+<figure>
+<svg viewBox="0 0 720 630" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="极限语言关系网地图">
+  <defs>
+    <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+
+  <!-- 图例 -->
+  <polygon points="30,16 22,30 38,30" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5"/>
+  <text x="44" y="28" font-size="11.5" fill="#5c554b">来源·动机</text>
+  <rect x="116" y="17" width="22" height="13" rx="6.5" fill="#eef3fe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="144" y="28" font-size="11.5" fill="#5c554b">公理·定义</text>
+  <rect x="222" y="17" width="22" height="13" fill="#ecf8f0" stroke="#15803d" stroke-width="1.5"/>
+  <text x="250" y="28" font-size="11.5" fill="#5c554b">定理</text>
+  <polygon points="300,23.5 306,16 320,16 326,23.5 320,31 306,31" fill="#f4effd" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="332" y="28" font-size="11.5" fill="#5c554b">方法·动作</text>
+  <ellipse cx="420" cy="23.5" rx="12" ry="7" fill="#ecf8f5" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="438" y="28" font-size="11.5" fill="#5c554b">应用·出口</text>
+
+  <!-- 来源三角 -->
+  <polygon points="105,52 53,116 157,116" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="105" y="90" font-size="12" fill="#7a4a12" text-anchor="middle" font-weight="bold">「越来越接近」</text>
+  <text x="105" y="106" font-size="11" fill="#7a4a12" text-anchor="middle">需要裁判</text>
+  <line x1="163" y1="84" x2="232" y2="84" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="197" y="74" font-size="11" fill="#5c554b" text-anchor="middle">逼出来的语言</text>
+
+  <!-- 主链：ε-N → ε-δ → 点点连续 → 一致连续 -->
+  <rect x="240" y="56" width="220" height="58" rx="29" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="350" y="82" font-size="15" fill="#1d4ed8" text-anchor="middle" font-weight="bold">ε-N 定义</text>
+  <text x="350" y="101" font-size="11.5" fill="#1d4ed8" text-anchor="middle">∀ε ∃N ∀n≥N：极限的裁判书</text>
+
+  <line x1="350" y1="114" x2="350" y2="152" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="358" y="137" font-size="11" fill="#5c554b">搬到函数上</text>
+
+  <rect x="240" y="160" width="220" height="48" rx="24" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="350" y="181" font-size="14" fill="#1d4ed8" text-anchor="middle" font-weight="bold">ε-δ 定义</text>
+  <text x="350" y="198" font-size="11" fill="#1d4ed8" text-anchor="middle">函数极限 lim f(x) = A</text>
+
+  <line x1="350" y1="208" x2="350" y2="244" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="358" y="230" font-size="11" fill="#5c554b">令 A = f(x₀)</text>
+
+  <rect x="240" y="252" width="220" height="48" rx="24" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="350" y="273" font-size="14" fill="#1d4ed8" text-anchor="middle" font-weight="bold">点点连续</text>
+  <text x="350" y="290" font-size="11" fill="#1d4ed8" text-anchor="middle">每点一把尺子 δ(ε, x₀)</text>
+
+  <line x1="350" y1="300" x2="350" y2="336" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="358" y="322" font-size="11" fill="#5c554b">δ 甩掉 x₀（量词换位）</text>
+
+  <rect x="240" y="344" width="220" height="48" rx="24" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2.5"/>
+  <text x="350" y="365" font-size="14" fill="#1d4ed8" text-anchor="middle" font-weight="bold">一致连续</text>
+  <text x="350" y="382" font-size="11" fill="#1d4ed8" text-anchor="middle">一把尺子量全区间 δ(ε)</text>
+
+  <!-- 六边形：倒推找 N -->
+  <polygon points="75,184 100,156 200,156 225,184 200,212 100,212" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="150" y="180" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">倒推找 N</text>
+  <text x="150" y="196" font-size="10.5" fill="#6a55a3" text-anchor="middle">（工具一）</text>
+  <line x1="280" y1="114" x2="170" y2="152" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="225" y="126" font-size="11" fill="#5c554b" text-anchor="middle">第一个标准动作</text>
+
+  <!-- 六边形：点列判定法 -->
+  <polygon points="75,368 100,340 200,340 225,368 200,396 100,396" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="150" y="364" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">点列判定法</text>
+  <text x="150" y="380" font-size="10.5" fill="#6a55a3" text-anchor="middle">工具四 + 五</text>
+  <line x1="240" y1="368" x2="227" y2="368" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+  <!-- Cantor 定理 -->
+  <rect x="500" y="252" width="160" height="48" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="580" y="273" font-size="13" fill="#15803d" text-anchor="middle" font-weight="bold">Cantor 定理</text>
+  <text x="580" y="290" font-size="10.5" fill="#4a7c59" text-anchor="middle">闭区间上连续 ⟹ 一致连续</text>
+  <line x1="460" y1="276" x2="492" y2="276" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="476" y="266" font-size="10.5" fill="#5c554b" text-anchor="middle">闭区间加持</text>
+  <polyline points="580,300 580,368 468,368" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="510" y="352" font-size="10.5" fill="#5c554b" text-anchor="middle">免费升级</text>
+
+  <!-- 六边形：振幅 ω(δ) -->
+  <polygon points="165,470 190,442 290,442 315,470 290,498 190,498" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="240" y="466" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">振幅 ω(δ)</text>
+  <text x="240" y="482" font-size="10.5" fill="#6a55a3" text-anchor="middle">→0 即一致连续</text>
+  <line x1="290" y1="392" x2="260" y2="438" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="296" y="420" font-size="10.5" fill="#5c554b">打包成函数</text>
+
+  <!-- 矩形：线性增长引理 -->
+  <rect x="400" y="445" width="160" height="50" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="480" y="466" font-size="12" fill="#15803d" text-anchor="middle" font-weight="bold">一致连续 ⟹ 线性增长</text>
+  <text x="480" y="483" font-size="10.5" fill="#4a7c59" text-anchor="middle">（第 14 届题六的引理）</text>
+  <line x1="450" y1="392" x2="480" y2="437" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="492" y="420" font-size="10.5" fill="#5c554b">δ 分段累加</text>
+
+  <!-- 出口箭头 -->
+  <polyline points="260,114 260,130 60,130 60,556" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="66" y="300" font-size="10.5" fill="#5c554b">ε-N 的主场</text>
+  <polyline points="240,498 240,530 300,530 300,553" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="246" y="524" font-size="10.5" fill="#5c554b">同一个振幅</text>
+  <polyline points="460,376 580,376 580,545 558,556" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="520" y="368" font-size="10.5" fill="#5c554b" text-anchor="middle">通往一致收敛</text>
+  <polyline points="560,470 655,470 655,553" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="608" y="462" font-size="10.5" fill="#5c554b">判别法上场</text>
+
+  <!-- 出口椭圆 -->
+  <ellipse cx="110" cy="585" rx="95" ry="28" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="110" y="581" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">第 3 章 · 递推数列</text>
+  <text x="110" y="597" font-size="10.5" fill="#3d7a70" text-anchor="middle">单调有界 + ε-N</text>
+  <ellipse cx="320" cy="585" rx="105" ry="28" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="320" y="581" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">第 7 章 · Riemann 可积</text>
+  <text x="320" y="597" font-size="10.5" fill="#3d7a70" text-anchor="middle">Darboux 振幅估计</text>
+  <ellipse cx="520" cy="585" rx="95" ry="28" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="520" y="581" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">第 8 章 · 一致收敛</text>
+  <text x="520" y="597" font-size="10.5" fill="#3d7a70" text-anchor="middle">量词顺序下一站</text>
+  <ellipse cx="655" cy="585" rx="62" ry="28" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="655" y="581" font-size="11.5" fill="#0f766e" text-anchor="middle" font-weight="bold">第14届题六</text>
+  <text x="655" y="597" font-size="10.5" fill="#3d7a70" text-anchor="middle">20 分出口</text>
+</svg>
+<figcaption>本章地图：一个裁判需求长出一条定义链，三件方法兵器挂在链上，四个出口通向后面各章与真题。</figcaption>
+</figure>
+
+<div class="net box" data-tag="画面感锚点（记这些，不记条文）">
+  <table>
+    <tr><th>角色</th><th>一句话画面</th><th>擅长场景</th></tr>
+    <tr><td>ε-N 定义</td><td>给误差线 ε，交门槛 N，门后全进管子</td><td>一切极限论证的开局与取货窗口</td></tr>
+    <tr><td>ε-δ 定义</td><td>把管子横放在函数图像上</td><td>函数极限、连续性的严格化</td></tr>
+    <tr><td>点点连续</td><td>每点各发一把尺子，尺子随地变形</td><td>局部性质：逐点验收</td></tr>
+    <tr><td>一致连续</td><td>一把尺子量全区间</td><td>整体性质：积分、整体估计的入场券</td></tr>
+    <tr><td>Cantor 定理</td><td>闭区间把碎尺子熔成一把</td><td>局部 ⟹ 整体的第一范例</td></tr>
+    <tr><td>点列判定法</td><td>去最失控的地方取两列"贴面舞"点</td><td>证不一致连续（第 14 届题六(2) 的同类）</td></tr>
+    <tr><td>振幅 ω(δ)</td><td>把所有盒子的最大漏高打包成一个数</td><td>第 7 章 Darboux 上下和的同一件货</td></tr>
+    <tr><td>线性增长引理</td><td>一致连续不许跑太快</td><td>判非一致连续的重火力（第 14 届题六）</td></tr>
+  </table>
+  <p><strong>和你已学知识的焊接点</strong>：高数里所有"$\lim$"的直觉算法（四则、夹逼、洛必达的前提）全靠 ε-N 兜底；第 1 章的倒推法在本章转正为主角（找 $N$、找 $\delta$ 都是它）；B-W 子列（第 1 章地图里的面孔）是 Cantor 证明的发动机；第 14 届题六证明：真题会把"一致连续"直接当结论出，20 分。</p>
+</div>
+
+<h2>§8 计算示范：先看真人怎么想，再看卷面怎么写</h2>
+
+<p>两道例题仍然分两层：<strong>按总纲拆解</strong>（程序怎么跑，工具从哪来）+ <strong>卷面书写</strong>（分步给分格式）。</p>
+
+<h3>例 1 · 用 ε-N 证具体极限（约 6 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>"$x_n\to2$"是 $\forall\varepsilon\,\exists N\,\forall n\ge N$ 型——查拆目标总表"$x_n\to L$"行，骨架直接给出：任取 $\varepsilon$ → 构造 $N$（可依赖 $\varepsilon$）→ 任取 $n\ge N$ 验证。这个骨架不需要灵感，是结论的逻辑形态决定的。</p>
+  <p><span class="stage">【盘点】</span>$x_n=\frac{2n+1}{n+3}$ 的产出清单：误差有显式公式 $|x_n-2|=\frac5{n+3}$——全部原料就这一条。</p>
+  <p><span class="stage">【会师】</span>$\exists N$ 用构造，构造靠<strong>工具一 · 倒推</strong>：</p>
+  <div class="scratch">
+    <p>目标：$\dfrac5{n+3}&lt;\varepsilon \iff n+3>\dfrac5\varepsilon \iff n>\dfrac5\varepsilon-3$。能解，但难看。</p>
+    <p>更舒服的路线：先<strong>放大</strong> $\dfrac5{n+3}&lt;\dfrac5n$，再要 $\dfrac5n&lt;\varepsilon \iff n>\dfrac5\varepsilon$。</p>
+    <p>放大为什么合法？$\forall\varepsilon$ 的考验任意严格——我用更严的标准（$\frac5n$ 比 $\frac5{n+3}$ 大）通过，原标准自动通过。代价只是 $N$ 稍大，无妨。</p>
+  </div>
+  <p><span class="stage">【定型】</span>卷面从"任取 $\varepsilon>0$，取 $N>\frac5\varepsilon$"写起——倒推过程<strong>一个字都不留</strong>。那个仿佛天上掉下来的 $\frac5\varepsilon$，是程序第 4 步的产物。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 倒推找 N 三件套</strong>：化简 $|x_n-L|$ → 放大成简单尾巴 $g(n)$ → 解 $g(n)&lt;\varepsilon$ 得 $N$。卷面上一切"取 $N>\cdots$"都是这条流水线的产品；放缩的目标永远是"好解"，不是"精确"。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 1</strong>　用定义证明：$\lim\limits_{n\to\infty}\dfrac{2n+1}{n+3}=2$。</p>
+  <hr>
+  <p class="proof-line"><strong>证明</strong>　任取 $\varepsilon>0$。<span class="step-score">（1 分）</span></p>
+  <p class="proof-line">取正整数 $N>\dfrac5\varepsilon$。当 $n\ge N$ 时，
+  $$\left|\frac{2n+1}{n+3}-2\right|=\frac{5}{n+3}&lt;\frac{5}{n}\le\frac{5}{N}&lt;\varepsilon.$$
+  <span class="step-score">（5 分）</span></p>
+  <p class="proof-line">由 ε-N 定义，$\lim\limits_{n\to\infty}\dfrac{2n+1}{n+3}=2$。$\square$<span class="step-score">（6 分）</span></p>
+  <p class="aside">书写点评：核心分点 = "任取 $\varepsilon$、给出具体的 $N$、验证不等式"三个动作齐备。验证链里 $\frac5{n+3}&lt;\frac5n$ 这步放缩必须写出来——跳掉它，$\frac5{n+3}&lt;\varepsilon$ 就没有直接依据，阅卷人可按跳步扣分。</p>
+</div>
+
+<h3>例 2 · 一致连续与不一致连续（约 10 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>(a) "$f$ 在 $[a,+\infty)$ 一致连续"是 $\forall\varepsilon\,\exists\delta\,\forall x,y$ 型——<strong>量词顺序通则</strong>：$\exists\delta$ 在 $\forall x,y$ 之前，$\delta$ 只许依赖 $\varepsilon$ 与区间参数 $a$，<strong>不许含 $x,y$</strong>。这是本小问的命门。(b) "不一致连续"是否定型结论——查总表"不存在/否定句"行：<strong>工具四</strong>取反，得 $\exists\varepsilon_0\,\forall\delta\,\exists x,y$ 型，两个 $\exists$ 都靠构造。</p>
+  <p><span class="stage">【盘点】</span>$f(x)=\frac1x$ 的产出清单：$\left|\frac1x-\frac1y\right|=\frac{|x-y|}{xy}$——估计的全部原料。另有：$x,y\ge a \Rightarrow xy\ge a^2$（<strong>分母有正下界</strong>——这就是 $[a,+\infty)$ 与 $(0,1)$ 的全部差别）；$x\to0^+$ 时 $f'(x)=-\frac1{x^2}$ 无界（失控方向，供 (b) 取样用）。</p>
+  <p><span class="stage">【会师 (a)】</span>倒推链：要 $\frac{|x-y|}{xy}&lt;\varepsilon$ $\Longleftarrow$（用 $xy\ge a^2$ 放大）只需 $\frac{|x-y|}{a^2}&lt;\varepsilon$ $\Longleftarrow$ $|x-y|&lt;a^2\varepsilon$。取 $\delta=a^2\varepsilon$——里面只有 $a$ 和 $\varepsilon$，<strong>合规</strong>。链条闭合，工具一。</p>
+  <p><span class="stage">【会师 (b)】</span>否定式要求：对任意 $\delta>0$ 找一对点，距离 $&lt;\delta$ 而函数值差 $\ge\varepsilon_0$。直觉（工具三）：去最失控的地方取样——$x\to0$ 处 $\frac1x$ 斜率无界。试 $x_n=\frac1n,\ y_n=\frac1{2n}$：距离 $\frac1{2n}\to0$ 可以任意小；函数值差 $|n-2n|=n$ 任意大，取 $\varepsilon_0=1$ 绰绰有余。这正是工具五（取 $\delta=\frac1n$ 生成序列）落地后的样子。</p>
+  <p><span class="stage">【定型】</span>(a) 卷面正着写：任取 $\varepsilon$，取 $\delta=a^2\varepsilon$，验证——$a^2$ 的来历（倒推）删除。(b) 先报 $\varepsilon_0=1$，再对任意 $\delta$ 报出 $n$ 的取法，验证两条（距离 $&lt;\delta$、函数值差 $\ge1$）。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 一致连续两面打法</strong>：证一致连续——估出 $|f(x)-f(y)|\le K|x-y|$ 型不等式，$\delta$ 只许含 $\varepsilon$ 与区间参数；证不一致连续——去函数"最失控"的地方（斜率无界处、无穷远处）取贴面点列。哪面上场，看结论是肯定句还是否定句。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 2</strong>　设 $a>0$。证明：(a) $f(x)=\dfrac1x$ 在 $[a,+\infty)$ 上一致连续；(b) $f(x)=\dfrac1x$ 在 $(0,1)$ 上不一致连续。</p>
+  <hr>
+  <p class="proof-line"><strong>(a)</strong>　任取 $\varepsilon>0$，取 $\delta=a^2\varepsilon>0$。<span class="step-score">（2 分）</span></p>
+  <p class="proof-line">对任意 $x,y\in[a,+\infty)$ 且 $|x-y|&lt;\delta$，由 $xy\ge a^2$，
+  $$\left|\frac1x-\frac1y\right|=\frac{|x-y|}{xy}\le\frac{|x-y|}{a^2}&lt;\frac{\delta}{a^2}=\varepsilon.$$
+  $\delta=a^2\varepsilon$ 不依赖 $x,y$，由定义 $f$ 在 $[a,+\infty)$ 上一致连续。<span class="step-score">（5 分）</span></p>
+  <p class="proof-line"><strong>(b)</strong>　取 $\varepsilon_0=1$。任取 $\delta>0$，取正整数 $n>\max\left\{2,\dfrac1{2\delta}\right\}$，令 $x_n=\dfrac1n,\ y_n=\dfrac1{2n}$，则 $x_n,y_n\in(0,1)$ 且
+  $$|x_n-y_n|=\frac1{2n}&lt;\delta,$$
+  <span class="step-score">（8 分）</span></p>
+  <p class="proof-line">而
+  $$|f(x_n)-f(y_n)|=|n-2n|=n\ge1=\varepsilon_0.$$
+  <span class="step-score">（9 分）</span></p>
+  <p class="proof-line">由一致连续定义的否定，$f$ 在 $(0,1)$ 上不一致连续。$\square$<span class="step-score">（10 分）</span></p>
+  <p class="aside">书写点评：(a) 的分点是"$\delta$ 的给出 + 放缩验证 + 一句'$\delta$ 不依赖 $x,y$'点题"——最后这句不点题，阅卷人不知道你懂没懂一致连续和点点连续的区别。(b) 的分点是"$\varepsilon_0$ 报出 + 对任意 $\delta$ 构造点对 + 两条验证"。$n$ 同时满足 $n\ge2$（保证 $y_n\in(0,1)$）与 $\frac1{2n}&lt;\delta$ 两个要求，取 $\max$ 是标准写法。</p>
+</div>
+
+<h2>§9 配套题目</h2>
+
+<p>铁律：<strong>先写在纸上，写到写不动再展开答案</strong>。模仿题照例 1、例 2 的卷面格式写；变式题先问自己"这是哪个动作、点列该去哪里取样"。</p>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 1</span>用定义证明：$\lim\limits_{n\to\infty}\dfrac{n+1}{2n+3}=\dfrac12$。</p>
+  <details class="answer">
+    <summary>参考答案（约 6 分书写量）</summary>
+    <p>任取 $\varepsilon>0$。取正整数 $N>\dfrac1{4\varepsilon}$（2 分）。当 $n\ge N$ 时，
+    $$\left|\frac{n+1}{2n+3}-\frac12\right|=\frac{|2n+2-2n-3|}{2(2n+3)}=\frac1{4n+6}&lt;\frac1{4n}\le\frac1{4N}&lt;\varepsilon,$$
+    （5 分）。由 ε-N 定义，极限为 $\frac12$（6 分）。</p>
+    <p><strong>自查</strong>：你的 $N$ 是倒推出来的吗？目标 $\frac1{4n+6}&lt;\varepsilon$ 先放大成 $\frac1{4n}&lt;\varepsilon$ 再解——与例 1 同构。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 2</span>用定义证明：$f(x)=x^2$ 在 $[0,2]$ 上一致连续。</p>
+  <details class="answer">
+    <summary>参考答案（约 6 分书写量）</summary>
+    <p>任取 $\varepsilon>0$，取 $\delta=\dfrac{\varepsilon}{4}$（2 分）。对任意 $x,y\in[0,2]$ 且 $|x-y|&lt;\delta$，
+    $$|x^2-y^2|=(x+y)\,|x-y|\le4|x-y|&lt;4\delta=\varepsilon,$$
+    （5 分）。$\delta$ 不依赖 $x,y$，故 $f$ 在 $[0,2]$ 上一致连续（6 分）。</p>
+    <p><strong>易错点</strong>：放缩 $(x+y)\le4$ 必须用区间 $[0,2]$——这题搬到 $\mathbb{R}$ 上就证不了（见变式 1）。另：本题也可一句话调用 Cantor 定理，但定义法是你必须会的基本功。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 1</span>证明：$f(x)=x^2$ 在 $\mathbb{R}$ 上不一致连续。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：$x^2$ 的斜率 $2x$ 在无穷远处无界——去无穷远取样。模仿 §3.5 招牌反例②。</p>
+    <p><strong>证明</strong>：取 $\varepsilon_0=2$。任取 $\delta>0$，取正整数 $n>\dfrac1\delta$，令 $x_n=n+\dfrac1n,\ y_n=n$，则
+    $$|x_n-y_n|=\frac1n&lt;\delta,\qquad |f(x_n)-f(y_n)|=\left(n+\frac1n\right)^2-n^2=2+\frac1{n^2}\ge2=\varepsilon_0.$$
+    由一致连续定义的否定，$f$ 在 $\mathbb{R}$ 上不一致连续。$\square$</p>
+    <p><strong>点评</strong>：同一个 $x^2$，在 $[0,2]$ 上一致连续、在 $\mathbb{R}$ 上不一致连续——一致连续是"函数 + 区间"的联合性质，单说"$f$ 一致连续"而不报区间，是不完整的。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 2</span>证明：$f(x)=\sqrt{x}$ 在 $[0,+\infty)$ 上一致连续。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：先证关键不等式 $|\sqrt{x}-\sqrt{y}|\le\sqrt{|x-y|}$（$x,y\ge0$）：不妨设 $x\ge y\ge0$，则
+    $$(\sqrt{x}-\sqrt{y})^2=x+y-2\sqrt{xy}\le x+y-2y=x-y.$$
+    平方根两边都是单调的，开方即得。</p>
+    <p><strong>证明</strong>：任取 $\varepsilon>0$，取 $\delta=\varepsilon^2$。对任意 $x,y\ge0$ 且 $|x-y|&lt;\delta$，
+    $$|\sqrt{x}-\sqrt{y}|\le\sqrt{|x-y|}&lt;\sqrt{\delta}=\varepsilon.$$
+    $\delta=\varepsilon^2$ 不依赖 $x,y$，故 $\sqrt{x}$ 在 $[0,+\infty)$ 上一致连续。$\square$</p>
+    <p><strong>点评</strong>：这是 Hölder 型估计（$\gamma=\frac12$）的第一次登场——第 14 届题六(1) 官方解答估出的 $\frac{4M}{1+\alpha}\delta^{1+\alpha}$ 就是同一族（$\gamma=1+\alpha$）。widget 里 $\sqrt{x}$ 全区间绿灯，图像依据就在这里。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv3">真题节选</span><strong>（第 14 届题六，20 分）</strong>设 $f$ 在 $[0,+\infty)$ 的任意闭区间上 Riemann 可积。对于 $x\ge0$，定义
+  $$F(x)=\int_0^x t^{\alpha}f(t+x)\,dt.$$
+  (1) 若 $\alpha\in(-1,0)$ 且 $\lim\limits_{x\to+\infty}f(x)=A$，证明：$F$ 在 $[0,+\infty)$ 上一致连续。<br>
+  (2) 若 $\alpha\in(0,1)$，$f$ 以 $T>0$ 为周期，$\displaystyle\int_0^3 f(t)\,dt=2022$。证明：$F$ 在 $[0,+\infty)$ 上非一致连续。</p>
+  <p>这是本章的正面战场：一致连续与非一致连续各证一次。先回答三个梯子问题（写在纸上）：</p>
+  <p>（i）把第 (1) 问的结论翻译成量词链。官方实际证了更强的一型估计 $|F(y)-F(x)|\le C|y-x|^{1+\alpha}$——为什么这种 Hölder 型估计一成立，一致连续立刻到手？$\delta$ 该取什么？<br>
+  （ii）第 (1) 问的条件 $\lim\limits_{x\to+\infty}f(x)=A$ 起了什么作用？（提示：官方解答第一行是"记 $M=\sup|f|$"——$f$ 的界从哪里来？）<br>
+  （iii）第 (2) 问的引理"一致连续 ⟹ 线性增长"怎么用一致连续的定义证？为什么"$F$ 增长超过线性"就能判非一致连续？</p>
+  <details class="answer">
+    <summary>梯子参考答案</summary>
+    <p>（i）$\forall\varepsilon>0,\ \exists\delta>0,\ \forall x,y\ge0:\ |x-y|&lt;\delta\Rightarrow|F(x)-F(y)|&lt;\varepsilon$。若 $|F(y)-F(x)|\le C|y-x|^\gamma$（$\gamma>0$），取 $\delta=\bigl(\frac{\varepsilon}{C}\bigr)^{1/\gamma}$ 即满足定义——$\delta$ 只依赖 $\varepsilon$，不依赖位置。本章动作二的重火力版；本题 $\gamma=1+\alpha\in(0,1)$。</p>
+    <p>（ii）极限定义的第一份产出是<strong>有界性</strong>：由 $\lim f=A$，取 $\varepsilon=1$，存在 $X$ 使 $x>X$ 时 $|f(x)|\le|A|+1$；$[0,X]$ 上 $f$ Riemann 可积故有界。两段拼出 $|f|\le M$（$x\ge0$）。这就是 ε-N 语言被当库存取了一次货。</p>
+    <p>（iii）设 $g$ 在 $[0,+\infty)$ 一致连续：对 $\varepsilon_0=1$ 取 $\delta_0>0$。任意 $x>0$，把 $[0,x]$ 切成步长 $&lt;\delta_0$ 的小段，段数不超过 $\frac{x}{\delta_0}+1$，每段函数值差 $\le1$，累加得 $|g(x)|\le|g(0)|+\frac{x}{\delta_0}+1$——线性增长。其逆否命题：增长超过线性 ⟹ 不一致连续。官方随后用分部积分证出 $|F(x)|\ge\frac{|A|}{1+\alpha}x^{1+\alpha}-2Mx^{\alpha}$（$A\ne0$ 情形），$1+\alpha>1$ 超线性，矛盾。</p>
+  </details>
+  <details class="answer">
+    <summary>官方解答骨架（转录自官方参考答案）</summary>
+    <p><strong>(1)</strong>　$f$ 有界，记 $M=\sup\limits_{x\ge0}|f(x)|$。对 $y>x\ge0$，记 $\delta=y-x$，分段换元估计：
+    $$|F(y)-F(x)|\le 2M\int_x^{x+\delta}t^\alpha dt+M\int_0^\delta t^\alpha dt+\left|\int_0^x t^\alpha f(t+x+\delta)\,dt-\int_\delta^{x+\delta}t^\alpha f(t+x)\,dt\right|$$
+    $$\le 3M\int_0^\delta t^\alpha dt+M\int_0^x\bigl(t^\alpha-(t+\delta)^\alpha\bigr)\,dt=\frac{3M}{1+\alpha}\delta^{1+\alpha}+\frac{M}{1+\alpha}\Bigl(x^{1+\alpha}-(x+\delta)^{1+\alpha}+\delta^{1+\alpha}\Bigr)\le\frac{4M}{1+\alpha}\delta^{1+\alpha},$$
+    即 $|F(y)-F(x)|\le\frac{4M}{1+\alpha}|y-x|^{1+\alpha}$，故 $F$ 一致连续。<span class="step-score">（14 分）</span></p>
+    <p><strong>(2)</strong>　引理：$[0,+\infty)$ 上一致连续的函数必线性增长，$|g(x)|\le C_1+C_2x$（由 $|g(x)-g(y)|\le1$（$0\le y-x&lt;\delta_0$）分段累加：$|g(x)|\le|g(0)|+\bigl[\frac{x}{\delta_0}\bigr]+1$）。</p>
+    <p>记 $A=\frac1T\int_0^T f(t)\,dt$，$G(x)=\int_0^x\bigl(f(t)-A\bigr)\,dt$，则 $G(T)=G(0)=0$，$G$ 以 $T$ 为周期故有界，记 $M=\max\limits_{[0,T]}|G|$。若 $A\ne0$：分部积分得
+    $$\left|\int_0^x t^\alpha f(t+x)\,dt\right|\ge\frac{|A|}{1+\alpha}x^{1+\alpha}-\left|x^\alpha G(2x)-\alpha\int_0^x t^{\alpha-1}G(t+x)\,dt\right|\ge\frac{|A|}{1+\alpha}x^{1+\alpha}-2Mx^\alpha,$$
+    即 $F$ 非线性增长，从而非一致连续。<span class="step-score">（16 分）</span></p>
+    <p>若 $A=0$：$F(x)=x^\alpha G(2x)-\alpha\int_0^x t^{\alpha-1}G(t+x)\,dt$，后一项由 (1) 的方法一致连续，只需证 $H(x)=x^\alpha G(2x)$ 非一致连续。由 $G(3)=2022\ne G(0)=0$ 知 $G$ 不恒为常数；对任意 $\delta>0$ 取 $s\in(0,\delta)$、$X\ge0$ 使 $G(2X+2s)\ne G(2X)$，则
+    $$|H(X+s+nT)-H(X+nT)|\ge(X+nT)^\alpha\,\bigl|G(2X+2s)-G(2X)\bigr|-Ms^\alpha\to+\infty\quad(n\to\infty),$$
+    故 $H$、从而 $F$ 非一致连续。<span class="step-score">（20 分）</span></p>
+    <p><strong>复盘</strong>：本题两面都是本章动作的放大版——(1) 证一致连续靠估出 $\delta(\varepsilon)$：Hölder 型 $\frac{4M}{1+\alpha}\delta^{1+\alpha}$ 就是变式 2 里 $\delta=\varepsilon^2$ 的同族打法（动作二）；(2) 判非一致连续先走量词否定（工具四），引理"一致连续 ⟹ 线性增长"的证明本身就是 ε-δ 定义的分段累加；$A=0$ 情形的 $nT$ 平移放大，则是点列判定法在积分上的远房亲戚。全题第一行"$M=\sup|f|$"同时用了第 1 章确界语言和本章的极限 ⟹ 有界。<em>（题目与解答骨架转录自第 14 届官方 PDF，见 <a href="真题索引/第14届_2022.md">真题索引</a>。）</em></p>
+  </details>
+</div>
+
+<h2>§9.5 熟练度训练场</h2>
+
+<p>极限语言是全书用得最勤的语法，<strong>必须练到不假思索</strong>。两种训练，每天 10 分钟：</p>
+
+<h3>训练一 · 翻卡快测（目标：每卡 10 秒内出答案）</h3>
+<div class="quiz" data-quiz="ch02-drill"></div>
+
+<h3>训练二 · 计时默写（写在纸上，掐表）</h3>
+<div class="calc box" data-tag="默写清单">
+  <p>① <strong>60 秒</strong>：默写 ε-N 定义（$x_n\to L$）与它的否定式（$x_n\not\to L$）两条量词链，一字不差；</p>
+  <p>② <strong>60 秒</strong>：默写一致连续定义与点点连续（在区间上）定义，并用一句话指出量词顺序的差别（$\exists\delta$ 与 $\forall x_0$ 谁在前）；</p>
+  <p>③ <strong>2 分钟</strong>：默写不一致连续的点列判定法，并完整写出"$\frac1x$ 在 $(0,1)$ 上不一致连续"的证明（含 $\varepsilon_0$、点列构造、两条验证）。</p>
+  <p><strong>过关标准</strong>：连续两天全对才算过。做不到就回到 §3 对应小节重读，再默。</p>
+</div>
+
+<h2>§10 六方向自测卡</h2>
+
+<div class="selftest">
+  <h3>合上书，拿张白纸，默写以下六项</h3>
+  <div class="st-item">
+    <p class="st-q"><em>=（它是什么）</em>　写出 ε-N 定义与一致连续定义，各配一句大白话。</p>
+    <details><summary>对照</summary><p>$\forall\varepsilon>0\,\exists N\,\forall n\ge N:\ |x_n-L|&lt;\varepsilon$（任给误差线，总有门槛，门后全进管）；$\forall\varepsilon>0\,\exists\delta>0\,\forall x,y\in I:\ |x-y|&lt;\delta\Rightarrow|f(x)-f(y)|&lt;\varepsilon$（一把尺子量全区间）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>←（什么带来它）</em>　为什么"越来越接近"不能当定义用？一致连续又是被哪条元规则逼出来的？</p>
+    <details><summary>对照</summary><p>"接近"没有裁判，无法裁决也无法推理——ε-N 把它变成可验收的量词链（0.999…=1 由此合法）。一致连续由量词顺序通则逼出：$\exists\delta$ 提到 $\forall x_0$ 之前，就是要求存在不依赖位置的统一选择。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>→（它带来什么）</em>　说出从本章出发的三条推论链。</p>
+    <details><summary>对照</summary><p>① ε-N → 极限四则/夹逼/单调有界定理（第 3 章）；② 点点连续 + 闭区间 → Cantor 定理 → 振幅一致可控 → Riemann 可积（第 7 章）；③ 一致连续的量词结构（统一选择）→ 一致收敛（第 8 章）；另：极限 ⟹ 有界是各届真题的常驻第一步。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>∈（实例）</em>　默写三个实例：一个 ε-N 证明、一个一致连续、一个不一致连续。</p>
+    <details><summary>对照</summary><p>$\frac{2n+1}{n+3}\to2$（$N>\frac5\varepsilon$）；$\frac1x$ 在 $[a,+\infty)$（$\delta=a^2\varepsilon$）或 $\sqrt{x}$ 在 $[0,+\infty)$（$\delta=\varepsilon^2$）；$\frac1x$ 在 $(0,1)$（$x_n=\frac1n,\ y_n=\frac1{2n}$）或 $x^2$ 在 $\mathbb{R}$（$x_n=n+\frac1n,\ y_n=n$）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>≠（区分）</em>　点点连续与一致连续的三处不同；"不收敛于 $L$"与"发散"的不同。</p>
+    <details><summary>对照</summary><p>量词顺序（$\exists\delta$ 在 $\forall x_0$ 后/前）；$\delta$ 依赖（$\varepsilon,x_0$ / 仅 $\varepsilon$）；强度（局部/整体，闭区间上由 Cantor 拉平）。$x_n\not\to L$ 只对这一个 $L$ 失效（$\exists\varepsilon_0\forall N\exists n$）；发散要对每个 $L$ 都失效（外套 $\forall L$）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>（为何要有它）</em>　点点连续不够用时发生了什么？没有一致连续，哪个后面的理论立不起来？</p>
+    <details><summary>对照</summary><p>积分需要"全区间振幅一致地小"——这是整体性质，点点连续（局部性质）给不了；$\frac1x$ 在 $(0,1)$ 上点点连续却振幅失控，正是缺口的样品。没有一致连续（与 Cantor 定理），"连续 ⟹ 可积"证不了，Darboux 估计无从谈起；第 8 章一致收敛更是同一个量词结构的直系后代。</p></details>
+  </div>
+</div>
+
+<div class="net box" data-tag="间隔复习安排">
+  <p><strong>1 天后</strong>：重做六方向自测卡（不翻书）+ 翻卡快测第二轮；<strong>3 天后</strong>：重做变式 1、变式 2 与真题节选的梯子问题 + 计时默写②③；<strong>1 周后</strong>：把 §4 动作二的"两面打法"默写一遍，确认翻卡全部"会了"。</p>
+  <p>本章是<strong>数分第 8 章</strong>（一致收敛——同一个"统一选择"量词结构）和<strong>数分第 7 章</strong>（Riemann 可积性——Darboux 振幅估计）的直接地基；第 3 章递推数列里每一个"取 $N$ 使……"也都是本章 ε-N 的回声。</p>
+</div>
+
+<div class="chapnav">
+  <span><a href="ch01.html">← 第 1 章 · 天花板定理</a></span>
+  <span><a href="index.html">首页</a></span>
+  <span><a href="ch03.html">第 3 章 · 递推数列与单调有界：从 e 到不动点 →</a></span>
+</div>
+
+</div>
+
+<script src="assets/quiz.js"></script>
+<script>
+/* §9.5 翻卡数据 */
+registerQuiz("ch02-drill", [
+  { q: "默写 $x_n\\to L$ 的 ε-N 定义。", a: "$\\forall\\varepsilon>0\\ \\exists N\\ \\forall n\\ge N:\\ |x_n-L|&lt;\\varepsilon$。$N$ 可依赖 $\\varepsilon$，$\\varepsilon$ 越小 $N$ 越大。" },
+  { q: "卷面上「取 $N>\\frac5\\varepsilon$」是怎么来的？", a: "倒推法三件套：化简 $|x_n-L|$ → 放大成简单尾巴 $g(n)$ → 解 $g(n)&lt;\\varepsilon$ 得 $N$，回卷面正着写。" },
+  { q: "写出「$x_n$ 不收敛于 $L$」的量词式。", a: "$\\exists\\varepsilon_0>0\\ \\forall N\\ \\exists n\\ge N:\\ |x_n-L|\\ge\\varepsilon_0$（工具四：∀↔∃ 互换，结论取反）。" },
+  { q: "点点连续与一致连续的定义差在哪？", a: "只差量词顺序：点点连续 $\\forall x_0\\,\\forall\\varepsilon\\,\\exists\\delta$（$\\delta$ 可依赖 $x_0$）；一致连续 $\\forall\\varepsilon\\,\\exists\\delta\\,\\forall x,y$（$\\delta$ 不依赖位置）。" },
+  { q: "证 $f$ 不一致连续的标准动作？", a: "点列判定法：造 $x_n,y_n\\in I$，$x_n-y_n\\to0$ 但 $|f(x_n)-f(y_n)|\\ge\\varepsilon_0$。去函数最失控处取样。" },
+  { q: "$\\frac1x$ 在 $(0,1)$ 上的反例点列？", a: "$x_n=\\frac1n,\\ y_n=\\frac1{2n}$：距离 $\\frac1{2n}\\to0$，函数值差 $=n\\to+\\infty$。" },
+  { q: "$x^2$ 在 $\\mathbb{R}$ 上的反例点列？", a: "$x_n=n+\\frac1n,\\ y_n=n$：距离 $\\frac1n\\to0$，函数值差 $=2+\\frac1{n^2}\\ge2$。" },
+  { q: "Cantor 定理（陈述 + 证明发动机）？", a: "$f$ 在闭区间 $[a,b]$ 连续 ⟹ 一致连续。证明：否定式 + 取 $\\delta=\\frac1n$ 生成点列 + B-W 抽子列 + 连续性传值得矛盾。" },
+  { q: "振幅语言：一致连续 ⟺ ？", a: "$\\omega_f(\\delta)=\\sup_{|x-y|\\le\\delta}|f(x)-f(y)|\\to0\\ (\\delta\\to0^+)$。第 7 章 Darboux 振幅的同一件货。" },
+  { q: "$\\sqrt{x}$ 在 $[0,+\\infty)$ 一致连续，$\\delta$ 取什么？", a: "$\\delta=\\varepsilon^2$（用 $|\\sqrt{x}-\\sqrt{y}|\\le\\sqrt{|x-y|}$）——一把尺子量全半轴。" }
+]);
+</script>
+
+<script>
+/* §3.4 δ 盒子探索器 */
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  var svg = document.getElementById("ucw-svg");
+  var out = document.getElementById("ucw-out");
+  var fSel = document.getElementById("ucw-f");
+  var xS = document.getElementById("ucw-x0");
+  var dS = document.getElementById("ucw-d");
+  var eS = document.getElementById("ucw-e");
+
+  var FUNS = {
+    inv: {
+      f: function (x) { return 1 / x; },
+      lo: 0, hi: 3, ymin: 0, ymax: 12,
+      name: "1/x", domLo: 0, curveLo: 0.084,
+      ticksY: [2, 4, 6, 8, 10, 12], x0min: 0.08, x0init: 0.8
+    },
+    sqrt: {
+      f: Math.sqrt,
+      lo: 0, hi: 3, ymin: 0, ymax: 2,
+      name: "√x", domLo: 0, curveLo: 0,
+      ticksY: [0.5, 1, 1.5, 2], x0min: 0, x0init: 0.2
+    }
+  };
+  var X0 = 55, Y0 = 320, PW = 645, PH = 295;
+  function xp(F, x) { return X0 + (x - F.lo) / (F.hi - F.lo) * PW; }
+  function yp(F, y) { return Y0 - (y - F.ymin) / (F.ymax - F.ymin) * PH; }
+
+  /* dev(x0,d) = sup{|f(x)-f(x0)| : |x-x0|<=d, x 在区间内}；单调函数在端点取到 */
+  function dev(F, x0, d) {
+    var l = x0 - d, r = Math.min(x0 + d, F.hi);
+    var f0 = F.f(x0);
+    if (F === FUNS.inv && l <= 0) return Infinity; /* 区间含任意接近 0 的点，函数无界 */
+    if (l < F.lo) l = F.lo; /* 钳到定义域左端点（如 √x 的 0） */
+    var dl = l < x0 ? Math.abs(F.f(l) - f0) : 0;
+    var dr = r > x0 ? Math.abs(F.f(r) - f0) : 0;
+    return Math.max(dl, dr);
+  }
+
+  /* δ*(x0)：本点能用的最大半宽（dev 关于 d 递增，二分） */
+  function dStar(F, x0, eps) {
+    if (dev(F, x0, 2) <= eps) return 2;
+    var a = 1e-5, b = 2;
+    for (var i = 0; i < 50; i++) {
+      var m = (a + b) / 2;
+      if (dev(F, x0, m) <= eps) a = m; else b = m;
+    }
+    return a;
+  }
+
+  function fmt(v) {
+    if (!isFinite(v)) return "∞";
+    if (v === 0) return "0";
+    if (v >= 1) return v.toFixed(2);
+    if (v >= 0.01) return v.toFixed(3);
+    return v.toFixed(5);
+  }
+
+  function mk(tag, attrs, parent) {
+    var el = document.createElementNS(NS, tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    parent.appendChild(el);
+    return el;
+  }
+  function mkText(x, y, str, attrs, parent) {
+    var t = mk("text", attrs || {}, parent);
+    t.setAttribute("x", x); t.setAttribute("y", y);
+    t.textContent = str;
+    return t;
+  }
+
+  var gDyn = null;
+  function rebuildStatic() {
+    var F = FUNS[fSel.value];
+    svg.innerHTML = "";
+    /* 坐标轴 */
+    mk("line", { x1: X0, y1: Y0, x2: X0 + PW + 15, y2: Y0, stroke: "#2b2620", "stroke-width": 2 }, svg);
+    mk("polygon", { points: (X0 + PW + 25) + "," + Y0 + " " + (X0 + PW + 13) + "," + (Y0 - 5) + " " + (X0 + PW + 13) + "," + (Y0 + 5), fill: "#2b2620" }, svg);
+    mk("line", { x1: X0, y1: Y0, x2: X0, y2: 15, stroke: "#2b2620", "stroke-width": 2 }, svg);
+    mk("polygon", { points: X0 + ",7 " + (X0 - 5) + ",19 " + (X0 + 5) + ",19", fill: "#2b2620" }, svg);
+    mkText(X0 + PW + 22, Y0 + 20, "x", { "font-size": 13, fill: "#2b2620" }, svg);
+    mkText(X0 - 16, 14, "y", { "font-size": 13, fill: "#2b2620" }, svg);
+    [1, 2, 3].forEach(function (v) {
+      mk("line", { x1: xp(F, v), y1: Y0 - 6, x2: xp(F, v), y2: Y0 + 6, stroke: "#2b2620", "stroke-width": 2 }, svg);
+      mkText(xp(F, v), Y0 + 22, String(v), { "font-size": 12, fill: "#2b2620", "text-anchor": "middle" }, svg);
+    });
+    F.ticksY.forEach(function (v) {
+      mk("line", { x1: X0 - 6, y1: yp(F, v), x2: X0 + 6, y2: yp(F, v), stroke: "#2b2620", "stroke-width": 1.5 }, svg);
+      mkText(X0 - 10, yp(F, v) + 4, String(v), { "font-size": 11, fill: "#2b2620", "text-anchor": "end" }, svg);
+    });
+    /* 曲线 */
+    var dstr = "";
+    var N = 240;
+    for (var i = 0; i <= N; i++) {
+      var x = F.curveLo + (F.hi - F.curveLo) * i / N;
+      var y = Math.min(F.f(x), F.ymax);
+      dstr += (i === 0 ? "M" : "L") + xp(F, x).toFixed(1) + " " + yp(F, y).toFixed(1) + " ";
+    }
+    mk("path", { d: dstr, fill: "none", stroke: "#0f766e", "stroke-width": 2.5 }, svg);
+    mkText(xp(F, 2.2), yp(F, Math.min(F.f(2.2), F.ymax)) - 12, "y = " + F.name, { "font-size": 13, fill: "#0f766e" }, svg);
+    mkText(X0 + 4, Y0 + 46, "全局扫描：这把 δ 在各位置是否兜住", { "font-size": 10.5, fill: "#5c554b" }, svg);
+    gDyn = mk("g", {}, svg);
+  }
+
+  function update() {
+    var F = FUNS[fSel.value];
+    var x0 = parseFloat(xS.value), d = parseFloat(dS.value), eps = parseFloat(eS.value);
+    gDyn.innerHTML = "";
+    var f0 = Math.min(F.f(x0), F.ymax);
+    /* δ 盒子（画到窗口内） */
+    var bx1 = xp(F, Math.max(x0 - d, F.lo)), bx2 = xp(F, Math.min(x0 + d, F.hi));
+    var by1 = yp(F, Math.min(f0 + eps, F.ymax)), by2 = yp(F, Math.max(f0 - eps, F.ymin));
+    mk("rect", { x: bx1, y: by1, width: Math.max(bx2 - bx1, 0.5), height: Math.max(by2 - by1, 0.5),
+      fill: "#f4effd", opacity: 0.6, stroke: "#7c3aed", "stroke-width": 2, "stroke-dasharray": "7 5" }, gDyn);
+    mk("circle", { cx: xp(F, x0), cy: yp(F, f0), r: 5.5, fill: "#be123c" }, gDyn);
+    mkText(xp(F, x0), yp(F, f0) - 12, "x₀ = " + x0.toFixed(2), { "font-size": 12, fill: "#be123c", "text-anchor": "middle" }, gDyn);
+
+    /* 本点检验 */
+    var dv = dev(F, x0, d);
+    var localOk = dv <= eps + 1e-12;
+    var star = dStar(F, x0, eps);
+
+    /* 全局扫描 + 横轴下的刻度点（i 从 0 起，左端点也要采到：√x 的最紧处正是 x₀=0） */
+    var GN = 150, gridLo = (F === FUNS.inv) ? 0.02 : 0;
+    var fails = 0, worstX = gridLo, worstDev = -1, minStar = Infinity, minStarX = gridLo;
+    for (var i = 0; i <= GN; i++) {
+      var gx = gridLo + (F.hi - gridLo) * i / GN;
+      var gdv = dev(F, gx, d);
+      if (gdv > eps + 1e-12) fails++;
+      if (gdv > worstDev) { worstDev = gdv; worstX = gx; }
+      var gs = dStar(F, gx, eps);
+      if (gs < minStar) { minStar = gs; minStarX = gx; }
+    }
+    var TN = 60;
+    for (var j = 0; j <= TN; j++) {
+      var tx = gridLo + (F.hi - gridLo) * j / TN;
+      var ok = dev(F, tx, d) <= eps + 1e-12;
+      mk("circle", { cx: xp(F, tx), cy: Y0 + 34, r: 3.2, fill: ok ? "#15803d" : "#be123c" }, gDyn);
+    }
+
+    var line1 = localOk
+      ? '<span class="ok">✓ 本点：|x−x₀|&lt;δ 内函数值最大偏差 ≈ ' + fmt(dv) + '，盒子兜住了</span>'
+      : '<span class="no">✗ 本点：最大偏差 ' + (isFinite(dv) ? "≈ " + fmt(dv) : "∞（0 在开口内，函数无界）") + ' 超过 ε=' + eps.toFixed(2) + '，曲线从上下沿冲出</span>';
+    var line2 = "本点能用的最宽尺子 δ* ≈ " + fmt(star) + "；全局最紧处在 x ≈ " + fmt(minStarX) + "，那里 δ* ≈ " + fmt(minStar) + "。";
+    var line3 = fails === 0
+      ? '<span class="ok">✓ 全局：这把 δ 在扫描网格上处处兜住——它有机会做全区间统一的尺子</span>'
+      : '<span class="no">✗ 全局：这把 δ 在 ' + fails + ' / ' + (GN + 1) + ' 个采样处兜不住（最差在 x ≈ ' + fmt(worstX) + '）——尺子还得更窄</span>';
+    out.innerHTML = line1 + "<br>" + line2 + "<br>" + line3;
+  }
+
+  fSel.addEventListener("change", function () {
+    var F = FUNS[fSel.value];
+    xS.min = F.x0min; xS.value = F.x0init;
+    rebuildStatic();
+    update();
+  });
+  xS.addEventListener("input", update);
+  dS.addEventListener("input", update);
+  eS.addEventListener("input", update);
+  rebuildStatic();
+  update();
+})();
+</script>
+
+</body>
+</html>

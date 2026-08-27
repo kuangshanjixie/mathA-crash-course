@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>解几第 4 章 · 旋转曲面与直纹面：直钢丝焊出的双曲面 —— 数学A速成讲义</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+<div class="wrap">
+
+<div class="bookbar">
+  <span><a href="index.html">← 返回首页</a></span>
+  <span>卷三 · 解析几何 · 第 4 章</span>
+</div>
+
+<div class="chapter-kicker">CHAPTER 4 · 解析几何</div>
+<h1>旋转曲面与直纹面：直钢丝焊出的双曲面</h1>
+
+<div class="exam box" data-tag="本章导览">
+  <p><strong>这一章在整张卷子上的位置</strong>：解析几何在初赛卷面上雷打不动占 <strong>1 题（题一，15 分）</strong>。翻最近几届：第 11 届题一（动球轨迹 ⟹ 旋转椭球面）、第 13 届题一（直线绕 $z$ 轴旋转的曲面分类）、第 14 届题一（单叶双曲面的直母线夹角）、第 15 届题一（球心轨迹 ⟹ 抛物柱面）——<strong>旋转曲面与直纹面家族直接坐镇其中四届</strong>；第 16 届题一的切锥面也是近亲。本章的三个核心动作，正好对应题一的三种主流考法，价值就是整个 15 分。</p>
+  <p><strong>学完你能</strong>：① 默写旋转曲面生成法则，并用"到轴距离守恒"从头推导（不死代公式）；② 看方程报曲面名（母线 → 曲面对照表反射）；③ 用纬圆法 + 公垂线建系完成"直线绕轴"的完整分类（第 13 届型）；④ 用因式分解法求单叶双曲面、马鞍面的直母线（第 14 届型）；⑤ 用对称性化归把空间轨迹题降为平面问题（第 11 届型）。</p>
+  <p><strong>前置</strong>：本卷第 1 章（向量法：直线参数方程、混合积判共面）、第 2 章（二次曲面标准形认脸）。</p>
+</div>
+
+<h2>§1 开场谜题：弯的面，直的骨</h2>
+
+<div class="hook box" data-tag="开场谜题">
+  <p>发电厂的冷却塔——那个腰部收细、两头张开的大烟囱——是一个<strong>单叶双曲面</strong>。它不是用弯模板浇出来的，而是用<strong>直钢筋</strong>扎出来的：塔身上铺满两族直线，每根钢筋都是直的，焊起来却是一个腰会收细的弯曲面。</p>
+  <p>更反直觉的还在后面。拿一支铅笔（直的），再架一根筷子当 $z$ 轴——让铅笔与这根轴保持<strong>异面</strong>（不相交、不平行），绕轴匀速转一圈。铅笔扫出一个曲面：它不是别的，<strong>正是单叶双曲面</strong>。直的线扫出弯的面；弯的面又能拆回一把直的线。</p>
+  <p>"弯的曲面由直的线织成"——这就是直纹面家族的全部魔力，也是本章的出发点。</p>
+  <p>把这个问题问到考场上，就是两件事：<strong>给你一条线和一根轴，转出来的曲面叫什么、方程是什么</strong>（2021 年第 13 届题一原题，15 分，还要求你完整分类：圆柱、圆锥、单叶双曲面，外加两种退化情形）；<strong>反过来，给你一个弯曲面，把藏在它身上的直线找出来</strong>（2022 年第 14 届题一：求单叶双曲面 $x^2+y^2-z^2=1$ 上过点 $(1,1,1)$ 的两条直线的夹角，15 分）。</p>
+  <p>要拿下这两件事，需要两套功夫：<strong>旋转曲面的生成法则</strong>（弯面怎么由母线转出来）和<strong>直纹面的因式分解法</strong>（弯面怎么拆回直线）。先从"转"开始。</p>
+</div>
+
+<h2>§2 先看见它：腰圆、纬圆与两族直线</h2>
+
+<div class="vision box" data-tag="直觉与图像">
+  <p>盯着一个旋转面看，先看见两样东西：<strong>一圈一圈的纬圆</strong>——母线上每个点到轴的距离，就是它扫出的那一圈纬圆的半径；<strong>腰部</strong>——母线上离轴最近的点，转出最小的那圈纬圆（腰圆）。单叶双曲面的全部形状信息就一句话：腰圆半径 $d$，往两头半径按 $\sqrt{d^2+(\text{比例}\cdot z)^2}$ 张开。</p>
+  <p>再贴上曲面看细节：表面上那些交叉的<strong>直线</strong>不是装饰——它们整条躺在曲面上。一条与轴异面的直线绕轴旋转，每一个瞬间的位置都是曲面上的一条直线；转满一圈，直线扫过整个曲面。这就是"直钢丝焊弯面"的精确含义。</p>
+</div>
+
+<figure>
+<svg viewBox="0 0 720 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="单叶双曲面：纬圆、腰圆与两族直母线">
+  <!-- 轴 -->
+  <line x1="360" y1="30" x2="360" y2="272" stroke="#2b2620" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="372" y="42" font-size="13" fill="#2b2620">z（旋转轴）</text>
+  <!-- 中间纬圆（浅） -->
+  <ellipse cx="360" cy="101" rx="88" ry="17" fill="none" stroke="#b9d7d2" stroke-width="1.2"/>
+  <ellipse cx="360" cy="199" rx="88" ry="17" fill="none" stroke="#b9d7d2" stroke-width="1.2"/>
+  <!-- 顶底纬圆 -->
+  <ellipse cx="360" cy="62" rx="118" ry="24" fill="none" stroke="#0f766e" stroke-width="1.5"/>
+  <ellipse cx="360" cy="238" rx="118" ry="24" fill="none" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="494" y="58" font-size="12.5" fill="#0f766e">纬圆</text>
+  <!-- 腰圆 -->
+  <ellipse cx="360" cy="150" rx="70" ry="14" fill="none" stroke="#be123c" stroke-width="2"/>
+  <text x="446" y="153" font-size="12.5" fill="#be123c" font-weight="bold">腰圆（半径 d，最细的纬圆）</text>
+  <!-- 轮廓经线（双曲线） -->
+  <path d="M 242,62 C 312,105 312,195 242,238" fill="none" stroke="#2b2620" stroke-width="1.8"/>
+  <path d="M 478,62 C 408,105 408,195 478,238" fill="none" stroke="#2b2620" stroke-width="1.8"/>
+  <text x="160" y="153" font-size="12.5" fill="#2b2620">经线（双曲线）</text>
+  <!-- 两族直母线 -->
+  <line x1="262" y1="68" x2="430" y2="236" stroke="#be123c" stroke-width="2.2"/>
+  <line x1="458" y1="68" x2="290" y2="236" stroke="#1d4ed8" stroke-width="2.2"/>
+  <text x="262" y="56" font-size="12.5" fill="#be123c" font-weight="bold">直母线 · 族一</text>
+  <text x="458" y="56" font-size="12.5" fill="#1d4ed8" font-weight="bold" text-anchor="end">直母线 · 族二</text>
+  <text x="360" y="290" font-size="12" fill="#5c554b" text-anchor="middle">红蓝两族直线整条躺在曲面上，交叉穿过腰部前方——弯的面，直的骨</text>
+</svg>
+<figcaption>单叶双曲面：纬圆向两头张开，腰圆收细；两族直母线整条躺在面上。冷却塔用直钢筋扎出弯曲面，靠的就是这两族线。</figcaption>
+</figure>
+
+<p>注意图里的一个张力：<strong>经线（子午线）是双曲线——弯的；直母线是直线——直的</strong>。同一个曲面，竖着切是双曲线，斜着看是直线族。本章 §3.4 会把"斜着的直线族"用一个代数动作（因式分解）全部抓出来。</p>
+
+<h2>§3 精确定义：生成法则与逐符号朗读</h2>
+
+<div class="def">
+  <p class="def-title">定义（旋转曲面：母线、轴、纬圆）</p>
+  <p>空间曲线 $\Gamma$ 绕定直线 $\ell$ 旋转一周，$\Gamma$ 上每一点 $P$ 扫出一个圆——圆心在 $\ell$ 上、圆面垂直于 $\ell$、半径等于 $P$ 到 $\ell$ 的距离——称为<strong>纬圆</strong>。所有纬圆的并集称为 $\Gamma$ 绕 $\ell$ 的<strong>旋转曲面</strong>；$\Gamma$ 称为<strong>母线</strong>，$\ell$ 称为<strong>（旋转）轴</strong>，母线转到任一位置所在的曲线称为<strong>经线（子午线）</strong>。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">生成法则（坐标版）</p>
+  <p>设母线 $\Gamma$ 在 $xz$ 平面上，方程为 $f(x,z)=0$。则 $\Gamma$ 绕 $z$ 轴的旋转曲面方程为
+  $$f\bigl(\pm\sqrt{x^2+y^2},\ z\bigr)=0,$$
+  即：<strong>把 $x$ 换成 $\pm\sqrt{x^2+y^2}$，$z$ 原样不动</strong>。</p>
+</div>
+
+<p><strong>为什么成立——逐句推导（到轴距离守恒）</strong>：</p>
+<p>① 点 $M(x,y,z)$ 在旋转面上 $\iff$ 存在母线上一点 $M_0(x_0,0,z_0)$，绕 $z$ 轴转某个角度 $\theta$ 后到达 $M$。这是定义直译。</p>
+<p>② 绕 $z$ 轴的旋转保持两件事不变：<strong>高度</strong>（$z$ 坐标）和<strong>到 $z$ 轴的距离</strong>。旋转是在水平面内绕轴画圆，圆上每点高度相同、到轴距离相同。</p>
+<p>③ 于是 $z=z_0$，且 $\sqrt{x^2+y^2}=\sqrt{x_0^2+0^2}=|x_0|$，即 $x_0=\pm\sqrt{x^2+y^2}$（$\pm$ 对应母线在轴左/右侧的点）。</p>
+<p>④ 代回 $f(x_0,z_0)=0$，得 $f\bigl(\pm\sqrt{x^2+y^2},z\bigr)=0$。反过来，满足此方程的点按③取 $M_0$ 即可转回来——两个方向的包含都成立，所以这就是曲面的方程。</p>
+
+<div class="symbol box" data-tag="逐符号朗读">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$f(x,z)=0$（$xz$ 平面）</td><td>"母线躺在 $xz$ 平面里，由 $x,z$ 的一个方程给出"</td><td>出厂设置：母线与轴（$z$ 轴）同在一个坐标面里</td></tr>
+    <tr><td>$x\to\pm\sqrt{x^2+y^2}$</td><td>"把 $x$ 换成到 $z$ 轴的距离（带正负号）"</td><td>守恒量①：旋转不改变到轴距离，$|x_0|=\sqrt{x^2+y^2}$</td></tr>
+    <tr><td>$z$ 不动</td><td>"$z$ 原样照抄"</td><td>守恒量②：旋转在同一水平面内进行，高度不变</td></tr>
+    <tr><td>绕别的轴</td><td>"绕 $x$ 轴：$z$ 换成 $\pm\sqrt{y^2+z^2}$，$x$ 不动"</td><td>口诀：<strong>绕谁谁不动</strong>，另一个变量换成"到轴距离"</td></tr>
+  </table>
+  <p>卷面纪律：口诀是给你 10 秒自检用的，<strong>不许直接套</strong>。得分写法是把②③两个守恒写出来再消参——第 13 届题一官方解答的主体就是这个写法（那里的名字叫"纬圆法"）。</p>
+</div>
+
+<div class="think">
+  <p>别急着往下翻。<strong>拿张纸，自己推一遍"绕 $y$ 轴"的版本</strong>：$xy$ 平面上的曲线 $g(x,y)=0$ 绕 $y$ 轴旋转，曲面方程长什么样？推完拿 $g(x,y)=y-x^2$（抛物线 $y=x^2$）检验你的法则。写完再展开对照。</p>
+  <details class="answer">
+    <summary>对照：绕 y 轴的生成法则</summary>
+    <p>守恒量：$y$ 不动；到 $y$ 轴的距离 $\sqrt{x^2+z^2}=|x_0|$。故
+    $$g\bigl(\pm\sqrt{x^2+z^2},\ y\bigr)=0.$$</p>
+    <p>检验：$y=x^2$ 绕 $y$ 轴 $\Rightarrow x^2+z^2=y$（$y\ge0$）——旋转抛物面，开口朝 $+y$。合理：抛物线绕自己的对称轴转，转出一个"碗"。</p>
+  </details>
+</div>
+
+<h3>3.1 亲手转一转：旋转曲面生成器（交互）</h3>
+
+<div class="widget" id="rotsurf-widget">
+  <p class="w-title">▶ 旋转曲面生成器：左边选母线，右边看它绕 z 轴扫出的曲面</p>
+  <p class="w-row">左图是子午面（母线 $\Gamma$ 与轴同屏，虚线是关于轴的镜像）；右图是绕 $z$ 轴的扫掠现场：一圈圈<strong style="color:#0f766e">纬圆</strong>（浅色半圈在背面），<strong style="color:#b45309">橙线</strong>是母线当前转到的位置。</p>
+  <div class="w-row">母曲线：　
+    <label><input type="radio" name="rsw-curve" value="line" checked> 直线</label>　
+    <label><input type="radio" name="rsw-curve" value="parabola"> 抛物线</label>　
+    <label><input type="radio" name="rsw-curve" value="hyperbola"> 双曲线</label>　
+    <label><input type="radio" name="rsw-curve" value="poly"> 折线（花瓶）</label>
+  </div>
+  <div class="w-row"><label id="rsw-klabel"></label>
+  <input type="range" id="rsw-k" min="-1" max="1" step="0.05" value="0.5"></div>
+  <div class="w-row"><label>旋转进度 φ（从 0° 拖到 360°，看曲面一圈圈扫出来）</label>
+  <input type="range" id="rsw-p" min="0" max="1" step="0.005" value="0.55"></div>
+  <svg id="rsw-svg" viewBox="0 0 720 330" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div class="w-verdict" id="rsw-out">加载中……（需要启用 JavaScript）</div>
+  <p class="w-row" style="font-size:0.88em;color:#5c554b">玩出这三个体验再往下走：<strong>①</strong> 选直线，把 k 拖到 0（圆柱）再拖离 0（圆锥）——亲手摸一次"平行 ⟹ 柱、相交 ⟹ 锥"的分界；<strong>②</strong> 选双曲线，把 c 往小拖，看腰部收细——异面直线绕轴扫出的单叶双曲面就长这样（注意左图子午线是弯的双曲线，而曲面骨架却可以全是直线）；<strong>③</strong> 把旋转进度从 0 拖到 1：曲面 = 母线上每点的纬圆之并，这就是生成法则的几何肉身。</p>
+</div>
+
+<h3>3.2 母线 → 曲面对照表（判型反射）</h3>
+
+<div class="calc box" data-tag="常见母线 → 曲面对照表">
+  <table>
+    <tr><th>母线（坐标面内）</th><th>绕哪根轴</th><th>旋转面方程</th><th>名字</th></tr>
+    <tr><td>圆 $x^2+z^2=r^2$</td><td>$z$ 轴（过圆心）</td><td>$x^2+y^2+z^2=r^2$</td><td>球面</td></tr>
+    <tr><td>圆 $(x-R)^2+z^2=r^2$（$R&gt;r&gt;0$）</td><td>$z$ 轴</td><td>$\bigl(\sqrt{x^2+y^2}-R\bigr)^2+z^2=r^2$</td><td>环面（轮胎）</td></tr>
+    <tr><td>椭圆 $\dfrac{x^2}{a^2}+\dfrac{z^2}{c^2}=1$</td><td>$z$ 轴</td><td>$\dfrac{x^2+y^2}{a^2}+\dfrac{z^2}{c^2}=1$</td><td>旋转椭球面（$a&gt;c$ 扁球，$a&lt;c$ 长球）</td></tr>
+    <tr><td>抛物线 $x^2=2pz$</td><td>$z$ 轴（对称轴）</td><td>$x^2+y^2=2pz$</td><td>旋转抛物面</td></tr>
+    <tr><td>双曲线 $\dfrac{x^2}{a^2}-\dfrac{z^2}{c^2}=1$</td><td>$z$ 轴（<strong>虚轴</strong>）</td><td>$\dfrac{x^2+y^2}{a^2}-\dfrac{z^2}{c^2}=1$</td><td>旋转<strong>单叶</strong>双曲面（腰圆半径 $a$）</td></tr>
+    <tr><td>双曲线 $\dfrac{x^2}{a^2}-\dfrac{z^2}{c^2}=1$</td><td>$x$ 轴（<strong>实轴</strong>）</td><td>$\dfrac{x^2}{a^2}-\dfrac{y^2+z^2}{c^2}=1$</td><td>旋转<strong>双叶</strong>双曲面</td></tr>
+    <tr><td>直线 $x=kz$（与轴相交）</td><td>$z$ 轴</td><td>$x^2+y^2=k^2z^2$</td><td>圆锥面（顶点在原点）</td></tr>
+    <tr><td>直线 $x=a$（与轴平行）</td><td>$z$ 轴</td><td>$x^2+y^2=a^2$</td><td>圆柱面</td></tr>
+    <tr><td>直线（与轴<strong>异面</strong>，距离 $d$）</td><td>$z$ 轴</td><td>$\dfrac{x^2+y^2}{d^2}-\dfrac{b^2}{c^2d^2}z^2=1$</td><td>旋转单叶双曲面（腰 $=d$，§3.3 推导）</td></tr>
+  </table>
+  <p>判型反射第一条：<strong>方程里若有两个变量以平方和捆绑出现（如 $x^2+y^2$），它八成是旋转面，第三个变量（$z$）沿旋转轴</strong>。把 $x^2+y^2$ 打包看成 $z$ 的一元函数，类型立刻现形：$=$ 常数（圆柱）、$=kz^2$（圆锥）、$=kz$（抛物面）、$=Az^2+C$（$C&gt;0$，单叶）。</p>
+</div>
+
+<div class="warn box" data-tag="头号陷阱：绕错轴、认错叶">
+  <p><strong>陷阱一</strong>：换错变量。绕 $z$ 轴是 $x\to\pm\sqrt{x^2+y^2}$、$z$ <strong>不动</strong>；把 $z$ 换掉是初学者第一大错（绕谁谁不动）。</p>
+  <p><strong>陷阱二</strong>：单叶、双叶认反。同一条双曲线 $\frac{x^2}{a^2}-\frac{z^2}{c^2}=1$，绕<strong>虚轴</strong>（$z$ 轴）转得<strong>单叶</strong>（一片，有腰），绕<strong>实轴</strong>（$x$ 轴）转得<strong>双叶</strong>（两片，背对背）。看方程认：两变量平方和减一平方等于 $+1$（$x^2+y^2-z^2=1$）是单叶；一平方减两变量平方和等于 $+1$（$z^2-x^2-y^2=1$）是双叶。</p>
+</div>
+
+<h3>3.3 核心推导：异面直线绕轴扫出什么（第 13 届题一的场景）</h3>
+
+<div class="calc box" data-tag="公垂线建系 + 纬圆法完整推导">
+  <p><strong>建系</strong>：设 $L_1$ 为 $z$ 轴，$L_2$ 为所给直线，两线异面。<strong>取两线的公垂线为 $x$ 轴</strong>——为什么能取？沿 $z$ 轴平移、绕 $z$ 轴旋转都保持 $z$ 轴（整体）不动，也保持"到 $z$ 轴距离"与"高度"不变，所以旋转面方程不变；用这两步把公垂线的垂足移到原点、方向对准 $x$ 轴即可。</p>
+  <p>此时 $L_2$ 过点 $(d,0,0)$（$d&gt;0$ 就是两线距离），方向与 $x$ 轴垂直，故可写为 $(0,b,c)$。参数化：
+  $$L_2:\ (x_0,y_0,z_0)=(d,\ bt,\ ct).$$</p>
+  <p><strong>纬圆两条件</strong>：$M(x,y,z)$ 在旋转面上 $\iff$ 存在 $M_0\in L_2$ 使<br>
+  　同高：$z=z_0=ct$；<br>
+  　等距：$x^2+y^2=x_0^2+y_0^2=d^2+b^2t^2$。</p>
+  <p><strong>消参</strong>（设 $c\ne0$）：$t=\dfrac{z}{c}$，代入等距式：
+  $$x^2+y^2=d^2+\frac{b^2}{c^2}z^2\ \Longleftrightarrow\ \frac{x^2+y^2}{d^2}-\frac{b^2}{c^2d^2}z^2=1.$$
+  ——<strong>旋转单叶双曲面，腰圆半径恰为两线距离 $d$</strong>。</p>
+  <p><strong>退化四情形</strong>（同一张表，第 13 届题一的分类就是它的含参版）：</p>
+  <table>
+    <tr><th>$L_2$ 与轴的位置关系</th><th>扫出的曲面</th></tr>
+    <tr><td>平行（$b=0$，$d&gt;0$）</td><td>圆柱面 $x^2+y^2=d^2$</td></tr>
+    <tr><td>相交（$d=0$，不垂直，$b,c\ne0$）</td><td>圆锥面 $x^2+y^2=\dfrac{b^2}{c^2}z^2$（顶点在交点）</td></tr>
+    <tr><td>异面且不垂直（$d&gt;0$，$b,c\ne0$）</td><td>旋转单叶双曲面（腰圆半径 $d$）</td></tr>
+    <tr><td>垂直且相交（$d=0$，$c=0$）</td><td>平面 $z=0$（整个平面）</td></tr>
+    <tr><td>垂直且异面（$d&gt;0$，$c=0$）</td><td>平面 $z=0$ <strong>挖去</strong>以垂足为心、$d$ 为半径的开圆盘（$x^2+y^2=d^2+b^2t^2\ge d^2$）</td></tr>
+  </table>
+  <p class="aside">直觉检查：直线离轴最近的那一点转出腰圆；若直线与轴相交（$d=0$），腰缩成一个点——顶点，双曲面"勒断"成圆锥；若平行，处处等距——圆筒。这张表请能默写。</p>
+</div>
+
+<h3>3.4 直纹面家族：把弯面拆回直线</h3>
+
+<div class="def">
+  <p class="def-title">定义（直纹面 · 直母线）</p>
+  <p>若曲面能由一族直线铺满——族中每条直线<strong>整条落在曲面上</strong>，且曲面上每一点至少被族中一条直线经过——则称该曲面为<strong>直纹面</strong>，族中每条直线称为一条<strong>直母线</strong>。</p>
+</div>
+
+<p>二次曲面里的直纹面家族：<strong>单叶双曲面（两族直母线）、双曲抛物面/马鞍面（两族）、锥面（一族，全过顶点）、柱面（一族，互相平行）</strong>。球面、椭球面、双叶双曲面、椭圆抛物面上<em>没有</em>直线（有界或凸性禁止）。</p>
+
+<div class="calc box" data-tag="因式分解法：把弯面拆回直线（完整演示）">
+  <p><strong>单叶双曲面</strong> $\dfrac{x^2}{a^2}+\dfrac{y^2}{b^2}-\dfrac{z^2}{c^2}=1$。把平方项按"同名分居两侧"搬开：
+  $$\frac{x^2}{a^2}-\frac{z^2}{c^2}=1-\frac{y^2}{b^2}\ \Longleftrightarrow\ \Bigl(\frac xa-\frac zc\Bigr)\Bigl(\frac xa+\frac zc\Bigr)=\Bigl(1-\frac yb\Bigr)\Bigl(1+\frac yb\Bigr).$$
+  左边是两个<strong>一次式</strong>之积，右边也是——四个一次式交叉配对：
+  $$\text{族一：}\ \frac xa-\frac zc=\lambda\Bigl(1-\frac yb\Bigr),\quad \lambda\Bigl(\frac xa+\frac zc\Bigr)=1+\frac yb;\qquad
+  \text{族二：}\ \frac xa-\frac zc=\mu\Bigl(1+\frac yb\Bigr),\quad \mu\Bigl(\frac xa+\frac zc\Bigr)=1-\frac yb.$$
+  每一族里，两个方程各是一张平面，交线是一条直线；两式相乘恰好还原曲面方程——<strong>所以这条直线整条落在曲面上</strong>（验证一步到位，这正是因式分解法省事的根源）。参数写在一边（不做除法）是为了 $\lambda=0$ 时不漏线；$\lambda\to\infty$ 的极限直线（上式两边同除 $\lambda$ 再取极限）也算族中一员。</p>
+  <p><strong>马鞍面（双曲抛物面）</strong> $z=\dfrac{x^2}{a^2}-\dfrac{y^2}{b^2}$ 同款配方：$\Bigl(\dfrac xa-\dfrac yb\Bigr)\Bigl(\dfrac xa+\dfrac yb\Bigr)=z\cdot 1$：
+  $$\text{族一：}\ \frac xa-\frac yb=\lambda,\quad z=\lambda\Bigl(\frac xa+\frac yb\Bigr);\qquad
+  \text{族二：}\ \frac xa+\frac yb=\mu,\quad z=\mu\Bigl(\frac xa-\frac yb\Bigr).$$</p>
+</div>
+
+<div class="net box" data-tag="直母线的脾气（了解即可）">
+  <p><strong>单叶双曲面</strong>：同族直母线两两异面（永不相交），异族直母线必共面（相交或平行）；过曲面上每一点<strong>恰有两条</strong>直母线，两族各出一条。<strong>马鞍面</strong>：同族互不相交，异族必相交。<strong>锥面、柱面</strong>只有一族，没有"异族"可言。这些事实竞赛里直接用即可，不必会证。</p>
+</div>
+
+<h2>§4 翻译轨：三个标准动作 + 一间练功房</h2>
+
+<p>旋转曲面与直纹面在题一里只有三种用法。练成反射，本章毕业。</p>
+
+<div class="trans box" data-tag="动作一：绕轴旋转 → 纬圆法（两守恒）">
+  <p><strong>题面</strong>："求曲线 $\Gamma$ 绕 $z$ 轴旋转所得旋转曲面的方程。"</p>
+  <p><strong>翻译</strong>：$M(x,y,z)$ 在面上 $\iff$ 存在母点 $M_0\in\Gamma$ 满足<strong>同高</strong>（$z=z_0$）与<strong>等距</strong>（$x^2+y^2=x_0^2+y_0^2$）。操作流程：参数化 $M_0(t)$ → 写出两守恒 → 由同高式反解 $t$ → 代入等距式消参。</p>
+  <p><strong>用在哪一步、值多少分</strong>：第 13 届题一官方解答的第 2–4 步全是这个动作，15 分里占 13 分；凡是"旋转面方程"的题，这一步就是主体分。</p>
+</div>
+
+<div class="trans box" data-tag="动作二：直母线 → 因式分解法">
+  <p><strong>题面</strong>："求过点 $P$ 落在曲面 $S$ 上的直线" / "证明 $S$ 上有直线" / "两条直母线的夹角"。</p>
+  <p><strong>翻译</strong>：两条路——① <strong>因式分解法</strong>（本章主场）：把方程配成"一次×一次 = 一次×一次"，读出两族直母线，代 $P$ 定参数；② <strong>参数代入恒成立法</strong>（第 14 届官方路子）：设方向 $(l,m,n)$，把参数方程代入曲面方程，要求"对一切 $t$ 恒成立" $\Rightarrow$ 各次系数全为零。两条路答案必然相同（第 14 届题一，15 分）。</p>
+</div>
+
+<div class="trans box" data-tag="动作三：轨迹含旋转对称 → 降维">
+  <p><strong>题面</strong>："求动点（动球球心）的轨迹曲面"，且题设构型绕某轴 $\ell$ 旋转不变。</p>
+  <p><strong>翻译</strong>：构型旋转不变 $\Rightarrow$ 轨迹是纬圆之并 $\Rightarrow$ <strong>只需在过 $\ell$ 的截面内解一个平面轨迹题</strong>，再写一句"旋转之"。平面答案（椭圆/抛物线）+ 旋转 = 曲面名 + 特征。</p>
+  <p><strong>第 11 届题一示范</strong>：动球 $B$（球心 $P$，半径 $r$）与 $B_1$ 内切、与 $B_2$ 外切 $\Rightarrow |PO_1|=R_1-r$，$|PO_2|=R_2+r$，故
+  $$|PO_1|+|PO_2|=R_1+R_2=\text{常数}.$$
+  整个构型绕 $\ell=O_1O_2$ 旋转不变 $\Rightarrow$ 在每个过 $\ell$ 的截面内，轨迹是以 $O_1,O_2$ 为焦点的椭圆；旋转之，$S$ 为<strong>旋转椭球面，$O_1,O_2$ 是它的两个焦点</strong>。空间题就此降为高二解析几何。第 15 届题一（球心轨迹为抛物柱面）同理：沿直线 $L$ 平移不变 $\Rightarrow$ 降为垂直截面内的抛物线。</p>
+</div>
+
+<h3>4.4 翻译练功房：像学语言一样，大量互译</h3>
+
+<p>老规矩：<strong>先全部写在纸上，再逐条展开对照</strong>。每条不超过 1 分钟。</p>
+
+<div class="trans box" data-tag="互译 8 句">
+  <p><strong>T1</strong>　判断（说理由）："$xz$ 平面曲线 $f(x,z)=0$ 绕 $z$ 轴旋转，所得曲面方程是把 $z$ 换成 $\pm\sqrt{y^2+z^2}$。"</p>
+  <details class="answer"><summary>对照</summary><p><strong>错</strong>。绕 $z$ 轴时 $z$ 不动，被换掉的是 $x\to\pm\sqrt{x^2+y^2}$。口诀"绕谁谁不动"——换掉的永远不是沿轴的那个变量。</p></details>
+  <p><strong>T2</strong>　自然→符号："点 $M(x,y,z)$ 在 $\Gamma:\,f(x,z)=0$（$xz$ 平面）绕 $z$ 轴的旋转面上。"</p>
+  <details class="answer"><summary>对照</summary><p>$\exists\,M_0(x_0,0,z_0)$ 使 $f(x_0,z_0)=0$，且 $z=z_0$、$x^2+y^2=x_0^2$。两个守恒一个不能少——少一个就是"绕某点转"或"沿轴滑"，不是绕轴转。</p></details>
+  <p><strong>T3</strong>　快认：$x^2+y^2=4z$ 是什么面？怎么转出来的？</p>
+  <details class="answer"><summary>对照</summary><p>旋转抛物面：$x^2+y^2$ 捆绑 ⟹ 轴是 $z$ 轴；母线是 $xz$ 平面里的抛物线 $x^2=4z$ 绕 $z$ 轴。顶点原点，开口 $+z$。</p></details>
+  <p><strong>T4</strong>　快认 + 追问：$\dfrac{x^2}{a^2}-\dfrac{y^2+z^2}{c^2}=1$ 是什么面？哪条母线绕哪根轴转出来的？</p>
+  <details class="answer"><summary>对照</summary><p>旋转<strong>双叶</strong>双曲面：$y^2+z^2$ 捆绑 ⟹ 轴是 $x$ 轴；母线是 $xz$ 平面双曲线 $\frac{x^2}{a^2}-\frac{z^2}{c^2}=1$ 绕<strong>实轴</strong>（$x$ 轴）。<strong>易错</strong>：报成单叶——单叶是"两平方和减一平方"，双叶是"一平方减两平方和"。</p></details>
+  <p><strong>T5</strong>　自然→符号："直线 $L_2$ 与 $z$ 轴 $L_1$ 异面且不垂直。"（$L_i$ 过 $M_i$、方向 $\vec s_i$）</p>
+  <details class="answer"><summary>对照</summary><p>混合积 $\bigl(\vec s_1,\vec s_2,\overrightarrow{M_1M_2}\bigr)\ne0$（不共面）且 $\vec s_1\cdot\vec s_2\ne0$（不垂直）。这是第 13 届题一分类的第一刀：先判共面，再判垂直。</p></details>
+  <p><strong>T6</strong>　计算：$xy$ 平面曲线 $y=x^2$ 绕 $y$ 轴旋转，写出曲面方程并判型。</p>
+  <details class="answer"><summary>对照</summary><p>$x\to\pm\sqrt{x^2+z^2}$（$y$ 不动）：$x^2+z^2=y$（$y\ge0$），旋转抛物面。<strong>易错</strong>：写成 $x^2+y^2=z$——那是把轴看成了 $z$ 轴。</p></details>
+  <p><strong>T7</strong>　判断："单叶双曲面上每一点恰好有两条直母线。"锥面呢？</p>
+  <details class="answer"><summary>对照</summary><p>对：两族各过一条，共两条。锥面只有一族直母线（全过顶点），过锥面上顶点以外一点的直母线只有一条。</p></details>
+  <p><strong>T8</strong>　符号→自然："$(x-z)(x+z)=(1-y)(1+y)$" 这一步在干什么？</p>
+  <details class="answer"><summary>对照</summary><p>把单叶双曲面 $x^2+y^2-z^2=1$ 改写成"一次式之积 = 一次式之积"——因式分解法的核心一步；接下来两组因子交叉配对，两族直母线自己跳出来。</p></details>
+</div>
+
+<h2>§5 类型识别：什么信号在召唤本章</h2>
+
+<div class="recog box" data-tag="识别反射表">
+  <table>
+    <tr><th>题面信号</th><th>反射</th></tr>
+    <tr><td>"绕 … 轴旋转"</td><td>两守恒：沿轴变量不动，另一变量换成 $\pm\sqrt{}$（另两个变量平方和）</td></tr>
+    <tr><td>方程里两变量以平方和捆绑（如 $x^2+y^2$）</td><td>旋转面，第三轴为旋转轴；打包看成轴变量的一元函数判型</td></tr>
+    <tr><td>$x^2+y^2=$ 常数 / $kz^2$ / $kz$ / $Az^2+C$（$C&gt;0$）</td><td>圆柱面 / 圆锥面 / 旋转抛物面 / 旋转单叶双曲面</td></tr>
+    <tr><td>"直线绕（异面）轴旋转"</td><td>公垂线建系 + 混合积判共面；按 §3.3 表分五类（柱/锥/单叶/平面/平面挖盘）</td></tr>
+    <tr><td>"直母线 / 落在曲面上的直线 / 两直线夹角"</td><td>因式分解法；或方向代入"对一切 $t$ 恒成立 ⟹ 各次系数为零"（14 届）</td></tr>
+    <tr><td>"轨迹……构型绕轴旋转不变"</td><td>降维：过轴截面内解平面轨迹，再"旋转之"（11 届）</td></tr>
+    <tr><td>"动球与两定球相切"</td><td>距离和/差为常数 ⟹ 椭球面/双曲面的焦点刻画</td></tr>
+    <tr><td>"马鞍面 $z=\dfrac{x^2}{a^2}-\dfrac{y^2}{b^2}$ 或 $z=kxy$"</td><td>两族直母线，因式分解配方同上</td></tr>
+  </table>
+</div>
+
+<h2>§6 考法定位：它藏在哪里、值多少分</h2>
+
+<div class="exam box" data-tag="考法定位">
+  <table>
+    <tr><th>出处</th><th>题号</th><th>本章内容扮演什么角色</th><th>分值权重</th></tr>
+    <tr><td>第 11 届（2019）</td><td>题一</td><td>动球切两球：旋转椭球面 + 焦点刻画（动作三：对称降维）</td><td>15 分（直接）</td></tr>
+    <tr><td>第 13 届（2021）</td><td>题一</td><td>直线绕 $z$ 轴旋转的曲面分类（动作一 + 公垂线建系 + §3.3 表）</td><td>15 分（直接）</td></tr>
+    <tr><td>第 14 届（2022）</td><td>题一</td><td>单叶双曲面 $x^2+y^2-z^2=1$ 过 $(1,1,1)$ 的两直母线夹角 $60^\circ$（动作二：直纹性）</td><td>15 分（直接）</td></tr>
+    <tr><td>第 15 届（2023）</td><td>题一</td><td>球心轨迹为抛物柱面（降维 + 柱面判型）</td><td>15 分（近亲）</td></tr>
+    <tr><td>第 16 届（2024）</td><td>题一</td><td>双叶双曲面的切锥面（锥面也是直纹面；第 3 章主场）</td><td>15 分（近亲）</td></tr>
+  </table>
+  <p><strong>规律</strong>：解析几何题一雷打不动 15 分，近六届里四届半落在"二次曲面的脸"上，其中<strong>旋转曲面与直纹面是最粗的一条线</strong>——第 13 届考"生成"（转出来），第 14 届考"拆回"（找直线），第 11 届考"降维"（对称化归），本章三节核心正好一一对应。第 12、17 届题一（球极投影、体积重心坐标）属第 1 章向量法主场——题一永远 15 分，跑不出这几张脸。</p>
+</div>
+
+<h2>§7 关系网：一根钢丝串起三张脸</h2>
+
+<p>本章所有角色的来龙去脉画在下面：<span style="color:#b45309">三角形</span>是来源动机，<span style="color:#1d4ed8">圆角矩形</span>是定义法则，<span style="color:#15803d">矩形</span>是定理工具，<span style="color:#7c3aed">六边形</span>是方法动作，<span style="color:#0f766e">椭圆</span>是应用出口。顺着箭头走一遍，就是本章的全部逻辑。</p>
+
+<figure>
+<svg viewBox="0 0 720 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="旋转曲面与直纹面关系网地图">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+
+  <!-- 图例 -->
+  <polygon points="30,16 22,30 38,30" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5"/>
+  <text x="44" y="28" font-size="11.5" fill="#5c554b">来源·动机</text>
+  <rect x="116" y="17" width="22" height="13" rx="6.5" fill="#eef3fe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="144" y="28" font-size="11.5" fill="#5c554b">定义·法则</text>
+  <rect x="222" y="17" width="22" height="13" fill="#ecf8f0" stroke="#15803d" stroke-width="1.5"/>
+  <text x="250" y="28" font-size="11.5" fill="#5c554b">定理·工具</text>
+  <polygon points="300,23.5 306,16 320,16 326,23.5 320,31 306,31" fill="#f4effd" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="332" y="28" font-size="11.5" fill="#5c554b">方法·动作</text>
+  <ellipse cx="420" cy="23.5" rx="12" ry="7" fill="#ecf8f5" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="438" y="28" font-size="11.5" fill="#5c554b">应用·出口</text>
+
+  <!-- 来源三角 -->
+  <polygon points="110,52 58,116 162,116" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="110" y="90" font-size="12.5" fill="#7a4a12" text-anchor="middle" font-weight="bold">直钢丝</text>
+  <text x="110" y="106" font-size="11" fill="#7a4a12" text-anchor="middle">焊出弯面</text>
+
+  <!-- 来源 → 法则 -->
+  <line x1="168" y1="85" x2="232" y2="85" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="200" y="72" font-size="11" fill="#5c554b" text-anchor="middle">怎么焊的</text>
+
+  <!-- 生成法则（圆角矩形） -->
+  <rect x="240" y="56" width="250" height="62" rx="31" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="365" y="82" font-size="14" fill="#1d4ed8" text-anchor="middle" font-weight="bold">旋转曲面生成法则</text>
+  <text x="365" y="101" font-size="11.5" fill="#1d4ed8" text-anchor="middle">f(±√(x²+y²), z) = 0</text>
+
+  <!-- 法则 → 直纹面定义 -->
+  <line x1="498" y1="87" x2="544" y2="87" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="521" y="74" font-size="10.5" fill="#5c554b" text-anchor="middle">同是直纹面</text>
+
+  <!-- 直纹面定义（圆角矩形） -->
+  <rect x="552" y="56" width="150" height="62" rx="31" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="627" y="82" font-size="13" fill="#1d4ed8" text-anchor="middle" font-weight="bold">直纹面·直母线</text>
+  <text x="627" y="101" font-size="11" fill="#1d4ed8" text-anchor="middle">由直线铺成的面</text>
+
+  <!-- 法则 → 对照表 -->
+  <line x1="365" y1="118" x2="365" y2="142" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- 对照表（矩形） -->
+  <rect x="240" y="150" width="250" height="56" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="365" y="172" font-size="13" fill="#15803d" text-anchor="middle" font-weight="bold">母线 → 曲面对照表</text>
+  <text x="365" y="191" font-size="10.5" fill="#4a7c59" text-anchor="middle">圆 / 椭圆 / 抛物线 / 双曲线 / 直线</text>
+
+  <!-- 直纹面定义 → 家族 -->
+  <line x1="627" y1="118" x2="627" y2="142" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- 直纹面家族（矩形） -->
+  <rect x="552" y="150" width="150" height="56" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="627" y="172" font-size="13" fill="#15803d" text-anchor="middle" font-weight="bold">直纹面家族</text>
+  <text x="627" y="191" font-size="10.5" fill="#4a7c59" text-anchor="middle">单叶 · 马鞍 · 锥 · 柱</text>
+
+  <!-- 法则 → 纬圆法（绕左侧） -->
+  <polyline points="240,98 205,98 205,232 160,232 160,250" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="212" y="190" font-size="11" fill="#5c554b">两守恒</text>
+
+  <!-- 对照表 → 公垂线建系 -->
+  <line x1="360" y1="206" x2="360" y2="250" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="368" y="234" font-size="10.5" fill="#5c554b">异面直线单独推</text>
+
+  <!-- 家族 → 因式分解 -->
+  <line x1="627" y1="206" x2="627" y2="250" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- 三方法（六边形） -->
+  <polygon points="85,285 110,257 210,257 235,285 210,313 110,313" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="160" y="281" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">纬圆法</text>
+  <text x="160" y="297" font-size="10.5" fill="#6a55a3" text-anchor="middle">距离守恒推导</text>
+  <polygon points="285,285 310,257 410,257 435,285 410,313 310,313" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="360" y="281" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">公垂线建系</text>
+  <text x="360" y="297" font-size="10.5" fill="#6a55a3" text-anchor="middle">异面直线 ⟹ 单叶</text>
+  <polygon points="515,285 540,257 640,257 665,285 640,313 540,313" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="590" y="281" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">因式分解</text>
+  <text x="590" y="297" font-size="10.5" fill="#6a55a3" text-anchor="middle">读出两族直母线</text>
+
+  <!-- 纬圆法 → 13 届 -->
+  <polyline points="140,313 145,404" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- 公垂线建系 → 13 届 -->
+  <polyline points="320,313 320,345 180,345 180,404" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- 对照表 → 判型对接 -->
+  <line x1="470" y1="206" x2="470" y2="410" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="478" y="310" font-size="11" fill="#5c554b">认脸判型</text>
+  <!-- 法则 → 11 届（对称降维） -->
+  <polyline points="490,100 505,100 505,425" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="497" y="250" font-size="11" fill="#5c554b" text-anchor="end">对称降维</text>
+
+  <!-- 三出口（椭圆） -->
+  <ellipse cx="150" cy="440" rx="120" ry="32" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="150" y="436" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">第 13 届题一 · 15 分</text>
+  <text x="150" y="452" font-size="10.5" fill="#3d7a70" text-anchor="middle">直线绕轴五分类</text>
+  <ellipse cx="400" cy="440" rx="120" ry="32" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="400" y="436" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">第 2 章 · 判型对接</text>
+  <text x="400" y="452" font-size="10.5" fill="#3d7a70" text-anchor="middle">看 x²+y² 捆绑认旋转轴</text>
+  <ellipse cx="620" cy="440" rx="95" ry="32" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="620" y="436" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">第 11 届题一 · 15 分</text>
+  <text x="620" y="452" font-size="10.5" fill="#3d7a70" text-anchor="middle">动球 ⟹ 旋转椭球面</text>
+</svg>
+<figcaption>本章地图：一根直钢丝逼出生成法则；法则向下长出对照表与两个方法，定义向右长出直纹面家族与因式分解；三股绳分别通往题一与判型。</figcaption>
+</figure>
+
+<div class="net box" data-tag="画面感锚点（记这些，不记条文）">
+  <table>
+    <tr><th>节点</th><th>一句话画面</th></tr>
+    <tr><td>直钢丝焊弯面</td><td>冷却塔的直钢筋：每根是直的，焊起来腰会收细——弯面可以由直线织成</td></tr>
+    <tr><td>生成法则</td><td>绕谁谁不动，另一个换成 $\pm\sqrt{}$（平方和）；背后是"同高 + 等距"两守恒</td></tr>
+    <tr><td>直纹面定义</td><td>能被直线铺满的面；铺在面上的每条线叫直母线</td></tr>
+    <tr><td>对照表</td><td>九行脸谱；看 $x^2+y^2$ 捆绑认旋转轴，打包成一元函数判型</td></tr>
+    <tr><td>纬圆法</td><td>母点转一圈画纬圆：同高 + 等距，消参两步走</td></tr>
+    <tr><td>公垂线建系</td><td>异面两线摆成 $(d,bt,ct)$，腰圆半径 = 两线距离 $d$</td></tr>
+    <tr><td>因式分解</td><td>一次×一次 = 一次×一次，直母线自己跳出来；参数乘在一边不做除法</td></tr>
+    <tr><td>三个出口</td><td>13 届考分类、11 届考降维、判型反哺第 2 章</td></tr>
+  </table>
+  <p><strong>和已学知识的焊接点</strong>：第 1 章向量法——混合积判共面是第 13 届题一的开门 2 分，直线参数化是纬圆法的输入；第 2 章二次曲面——本章对照表是标准形判型的"旋转特例"，$x^2+y^2$ 捆绑是最快的认脸信号；第 3 章切锥面——锥面也是直纹面（第 16 届题一），那里的"切线族"和这里的"直母线族"是同一种语言。</p>
+</div>
+
+<h2>§8 例题：先看真人怎么想，再看卷面怎么写</h2>
+
+<h3>例 1 · 生成法则的严格推导（约 8 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>"求方程并判型" = 构造一个三元方程 + 报出曲面名字。查拆目标总表：这是<strong>构造型任务</strong>，没有证明骨架可套——但"严格"二字有明确要求：<strong>不许背公式，要从两个守恒把方程生产出来</strong>。第 13 届题一的 13 分主体就是这么给的。</p>
+  <p><span class="stage">【盘点】</span>① 母线 $\Gamma:\ x^2=2z$（$xz$ 平面，$z\ge0$，抛物线）——产出：母点 $M_0(x_0,0,z_0)$ 满足 $x_0^2=2z_0$；② 轴 $=z$ 轴——产出两个守恒：同高 $z=z_0$；等距 $\sqrt{x^2+y^2}=|x_0|$。</p>
+  <p><span class="stage">【会师】</span>倒推链：$M$ 在面上 $\Longleftarrow$（定义）存在 $M_0\in\Gamma$ 旋转到 $M$ $\Longleftarrow$ 两守恒 $+\ x_0^2=2z_0$ $\Longleftarrow$ 消去 $x_0,z_0$：$x^2+y^2=x_0^2=2z_0=2z$。每一环都是定义直译，消参是恒等代入（<strong>工具六 · 划归</strong>：化为生成法则那一步推导）。判型同理倒推：名字从母线认——抛物线绕对称轴 $\Rightarrow$ 旋转抛物面。<strong>特殊化侦察</strong>（工具三）：母线上 $(2,0,2)$ 转出的纬圆半径 $2$、高 $2$，圆上点满足 $x^2+y^2=4=2\cdot2$ ✓，方程通过点检。</p>
+  <p><span class="stage">【定型】</span>卷面三步：设 $M_0$ + 两守恒 → 消参 → 答 + 判型理由。口诀"绕谁谁不动"只在自检时出现，卷面上得分的是两个守恒。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 到轴距离守恒</strong>：绕轴旋转 = 每点画纬圆；纬圆由两件事钉死——高度（沿轴坐标）与半径（到轴距离）。写出"同高 + 等距"，旋转面问题就退化成一次消参。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 1</strong>　求 $xz$ 平面上的曲线 $\Gamma:\ x^2=2z$ 绕 $z$ 轴旋转所得旋转曲面的方程，并判定曲面类型。</p>
+  <hr>
+  <p class="proof-line"><strong>解</strong>　设 $M_0(x_0,0,z_0)\in\Gamma$，则
+  $$x_0^2=2z_0. \tag{1}$$<span class="step-score">（1 分）</span></p>
+  <p class="proof-line">点 $M(x,y,z)$ 在旋转面上，当且仅当 $M$ 由某个 $M_0$ 绕 $z$ 轴旋转得到。绕 $z$ 轴的旋转保持高度与到 $z$ 轴的距离，故
+  $$z=z_0,\qquad \sqrt{x^2+y^2}=|x_0|. \tag{2}$$<span class="step-score">（3 分）</span></p>
+  <p class="proof-line">由 (2) 得 $x^2+y^2=x_0^2$，$z_0=z$，代入 (1)：
+  $$x^2+y^2=2z. \tag{3}$$<span class="step-score">（5 分）</span></p>
+  <p class="proof-line"><strong>判型</strong>：母线 $x^2=2z$ 是 $xz$ 平面上的抛物线，$z$ 轴是它的对称轴；抛物线绕对称轴旋转所得为<strong>旋转抛物面</strong>，顶点在原点，开口朝 $+z$（水平截面 $z=h&gt;0$ 为圆 $x^2+y^2=2h$）。<span class="step-score">（8 分）</span></p>
+  <p class="aside">书写点评：(2) 的两个守恒各值约 1 分，是过程分主体；直接写 "$x^2+y^2=2z$" 属于跳步，证明类问法下大部分分归零。"判型"必须给理由（母线是抛物线 + 绕对称轴），只报名字拿不稳名字分。</p>
+</div>
+
+<h3>例 2 · 因式分解法求直母线（约 10 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>"两条直母线" = $\exists\times2$：构造两条直线，各证两件事——过 $(1,0,0)$、整条落在 $S$ 上。查拆目标总表：$\exists$ 型 $\Rightarrow$ 构造 + 验证。</p>
+  <p><span class="stage">【盘点】</span>① $S:\ x^2+y^2-z^2=1 \iff x^2-z^2=1-y^2 \iff (x-z)(x+z)=(1-y)(1+y)$——产出"两组一次式之积相等"，直母线全藏在这里；② $(1,0,0)$：$1+0-0=1$，在 $S$ 上 ✓——定点用来定参数；③ §3.4 的直觉：过每点恰两条，两族各一——知道该找几条、从哪找。</p>
+  <p><span class="stage">【会师】</span>构造链：两组因子交叉配对 $\Rightarrow$ 两族直线（两平面交线），两式相乘还原曲面方程 $\Rightarrow$ 直线<strong>自动</strong>整条在面上；把 $(1,0,0)$ 代入各族定参数 $\lambda=\mu=1$；解出交线并参数化为 $(1,t,t)$、$(1,t,-t)$；验证：$1+t^2-t^2=1$ 对一切 $t$ 成立（恒等式）。每环都是库存货，没有一步靠灵感。</p>
+  <p><span class="stage">【定型】</span>卷面四段：配方 → 写两族 → 代点定参得两直线 → 恒成立验证。"怎么想到配方"是倒推痕迹，不写；但<strong>配方那一步本身必须出现在卷面上</strong>——它是全场唯一的技术动作。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 因式分解法</strong>：把二次方程改写成"一次×一次 = 一次×一次"，直母线自己跳出来。两条纪律：参数<strong>乘在一边</strong>（不做除法，否则 $\lambda=0$ 的线会漏）；两式相乘能还原曲面方程，等于免费拿到"直线在面上"的证明。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 2</strong>　求单叶双曲面 $S:\ x^2+y^2-z^2=1$ 过点 $(1,0,0)$ 的两条直母线。</p>
+  <hr>
+  <p class="proof-line"><strong>解</strong>　$S$ 的方程等价于
+  $$x^2-z^2=1-y^2\ \Longleftrightarrow\ (x-z)(x+z)=(1-y)(1+y). \tag{1}$$<span class="step-score">（2 分）</span></p>
+  <p class="proof-line">由 (1)，下述两族直线整条落在 $S$ 上（每组两个方程各为平面，交线为直线；两式相乘即还原 (1)）：
+  $$\text{族一：}\ \begin{cases}x-z=\lambda(1-y),\\ \lambda(x+z)=1+y;\end{cases}\qquad
+  \text{族二：}\ \begin{cases}x-z=\mu(1+y),\\ \mu(x+z)=1-y.\end{cases} \tag{2}$$<span class="step-score">（5 分）</span></p>
+  <p class="proof-line">代入 $(1,0,0)$：族一中 $1=\lambda\cdot1$ 且 $\lambda\cdot1=1$，得 $\lambda=1$，交线为
+  $$\begin{cases}x-z=1-y,\\ x+z=1+y,\end{cases}\ \Longleftrightarrow\ x=1,\ z=y,\quad\text{即 }\ell_1:\ (1,\ t,\ t);$$
+  族二中同理得 $\mu=1$，交线为 $x=1,\ z=-y$，即 $\ell_2:\ (1,\ t,\ -t)$。<span class="step-score">（8 分）</span></p>
+  <p class="proof-line"><strong>验证</strong>：$\ell_1$ 上点代入 $S$：$1+t^2-t^2=1$ 对一切 $t\in\mathbb{R}$ 成立，且 $t=0$ 时过 $(1,0,0)$；$\ell_2$ 同理。故过 $(1,0,0)$ 的两条直母线为 $\ell_1$ 与 $\ell_2$。<span class="step-score">（10 分）</span></p>
+  <p class="aside">书写点评：验证步必须出现"对一切 $t\in\mathbb{R}$ 成立"字样——直线在面上是<strong>恒等式</strong>层面的断言，只代一个点不算数。第 14 届题一官方正是反过来用"恒成立 ⟹ 各次系数为零"求方向（见变式 2），两种写法同源。</p>
+</div>
+
+<h2>§9 配套题目</h2>
+
+<p>铁律：<strong>先写在纸上，写到写不动再展开答案</strong>。模仿题照例 1、例 2 的卷面格式写；变式题开始没有模板，先问自己"哪个动作够用、要换哪个动作"。</p>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 1</span>求 $xy$ 平面上的椭圆 $\dfrac{x^2}{4}+y^2=1$ 绕 $y$ 轴旋转所得曲面的方程，并判定类型。</p>
+  <details class="answer">
+    <summary>参考答案（约 8 分书写量）</summary>
+    <p>设 $M_0(x_0,y_0,0)\in\Gamma$，则 $\frac{x_0^2}{4}+y_0^2=1$（1 分）。绕 $y$ 轴旋转保持 $y$ 与到 $y$ 轴的距离：$y=y_0$，$\sqrt{x^2+z^2}=|x_0|$（3 分）。代入消参：
+    $$\frac{x^2+z^2}{4}+y^2=1. \quad（5 分）$$
+    判型：椭圆绕 $y$ 轴（短轴）旋转，得<strong>旋转椭球面（扁球面）</strong>：赤道半径 $2$，沿轴半轴长 $1$（8 分）。</p>
+    <p><strong>易错点</strong>：把 $y$ 换掉（绕 $y$ 轴 $y$ 不动）；判型漏写"绕短轴/扁"。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 2</span>求双曲抛物面 $S:\ z=x^2-y^2$ 上过点 $(2,1,3)$ 的两条直母线。</p>
+  <details class="answer">
+    <summary>参考答案（约 10 分书写量）</summary>
+    <p>先验 $(2,1,3)\in S$：$4-1=3$ ✓。配方：$z=(x-y)(x+y)$，即"一次×一次 = 一次×1"（2 分）。两族：
+    $$\text{族一：}\ x-y=\lambda,\ z=\lambda(x+y);\qquad \text{族二：}\ x+y=\mu,\ z=\mu(x-y). \quad（4 分）$$
+    代 $(2,1,3)$：族一 $\lambda=1$（验：$z=1\cdot(x+y)$，$3=3$ ✓），得 $x-y=1,\ z=x+y$，参数化 $x=t$：
+    $$\ell_1:\ (t,\ t-1,\ 2t-1)\quad(t=2\text{ 时过 }(2,1,3))；$$
+    族二 $\mu=3$（验：$z=3(x-y)$，$3=3\cdot1$ ✓），得 $x+y=3,\ z=3(x-y)$：
+    $$\ell_2:\ (t,\ 3-t,\ 6t-9). \quad（8 分）$$
+    验证：$t^2-(t-1)^2=2t-1=z$ 与 $t^2-(3-t)^2=(2t-3)\cdot3=z$ 对一切 $t$ 恒成立（10 分）。</p>
+    <p><strong>易错点</strong>：$\ell_2$ 的 $z$ 算成 $3(2t-3)$ 后忘展开核对；验证步只代 $t=2$。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 1</span>求下列 $xz$ 平面母线绕 $z$ 轴旋转所得曲面，判型，并回答：母线与轴的位置关系如何决定曲面类型？<br>
+  （i）直线 $x=z+1$；　（ii）直线 $x=2$；　（iii）双曲线 $x^2-z^2=1$。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p>（i）$x\to\pm\sqrt{x^2+y^2}$：$x^2+y^2=(z+1)^2$。母线与轴交于 $(0,0,-1)$ ⟹ <strong>圆锥面</strong>，顶点 $(0,0,-1)$。</p>
+    <p>（ii）$x^2+y^2=4$。母线与轴平行、距离 $2$ ⟹ <strong>圆柱面</strong>。</p>
+    <p>（iii）$x^2+y^2-z^2=1$。双曲线绕<strong>虚轴</strong>（$z$ 轴）⟹ <strong>旋转单叶双曲面</strong>，腰圆半径 $1$。</p>
+    <p><strong>规律</strong>：母线与轴平行 ⟹ 柱；相交 ⟹ 锥；双曲线绕虚轴 ⟹ 单叶、绕实轴 ⟹ 双叶——§3.3 那张表的对照表版本。<strong>点评</strong>：三小题共用同一个替换，差别全在"母线与轴的位置关系"——这正是第 13 届题一要你分类讨论的东西。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 2</span>用因式分解法求 $S:\ x^2+y^2-z^2=1$ 过 $(1,1,1)$ 的两条直母线，并求它们的夹角。（这就是第 14 届题一，15 分）</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p>配方同例 2：$(x-z)(x+z)=(1-y)(1+y)$，两族如例 2 (2)。</p>
+    <p><strong>族一</strong>：代 $(1,1,1)$，$0=\lambda\cdot0$ 对任意 $\lambda$ 成立，用第二式 $2\lambda=2$ 定 $\lambda=1$：$\{x-z=1-y,\ x+z=1+y\}\iff x=1,\ z=y$，即
+    $$\ell_1:\ (1,\ 1+t,\ 1+t),\quad \vec v_1=(0,1,1).$$
+    <strong>族二</strong>：代 $(1,1,1)$：第一式 $0=2\mu$ 得 $\mu=0$，第二式 $0\cdot(x+z)=1-y$ 即 $y=1$——<strong>这条线只有"参数乘在一边"的写法才抓得住</strong>（若把 $\mu$ 除过去，$\mu=0$ 这条线就漏了）：$\{x-z=0,\ y=1\}$，即
+    $$\ell_2:\ (t,\ 1,\ t),\quad \vec v_2=(1,0,1).$$
+    验证：$1+(1+t)^2-(1+t)^2=1$ 与 $t^2+1-t^2=1$ 对一切 $t$ 恒成立 ✓。</p>
+    <p>夹角：$\cos\theta=\dfrac{|\vec v_1\cdot\vec v_2|}{|\vec v_1||\vec v_2|}=\dfrac{1}{\sqrt2\cdot\sqrt2}=\dfrac12$，$\theta=60^\circ$。</p>
+    <p><strong>点评</strong>：与第 14 届官方解答（设方向代入、恒成立 ⟹ 系数为零）答案一致：方向 $(0,1,1)$ 与 $(1,0,1)$。因式分解法省掉了解方程组，但 $\mu=0$ 的边界情形是本法唯一的坑。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv3">真题节选</span><strong>（第 13 届题一，15 分）</strong>设不全为零的 $a,b,c\in\mathbb{R}$，求直线
+  $$\frac{x-1}{a}=\frac{y-1}{b}=\frac{z-1}{c}$$
+  绕 $z$ 轴旋转所得的旋转曲面方程。</p>
+  <p>这是本章动作一的全尺寸版。先回答三个梯子问题（写在纸上）：</p>
+  <p>（i）§3.3 取两线公垂线为 $x$ 轴，为什么"能取"？允许动坐标系的哪些自由度而不动 $z$ 轴？<br>
+  （ii）点 $M_0(1+at,\,1+bt,\,1+ct)$ 到 $z$ 轴的距离平方怎么算？它的 $z$ 坐标是什么？消参的关键一步是哪一步？<br>
+  （iii）什么参数范围退化成圆锥 / 圆柱 / 平面？（提示：先用混合积判共面，即 $a$ 与 $b$ 的关系；再看垂直，即 $c$；最后 $AC-B^2$ 的符号由谁决定？）</p>
+  <details class="answer">
+    <summary>梯子参考答案</summary>
+    <p>（i）沿 $z$ 轴平移与绕 $z$ 轴旋转都保持 $z$ 轴（整体）不动，且保持"到轴距离"与"高度"不变——旋转面方程在这类刚体运动下不变，故无损一般性：把公垂线的垂足移到原点、方向对准 $x$ 轴即可。官方解答没走这条路，直接用混合积判共面，更省事；但公垂线建系让你看清为什么最终只由"两线距离 $d$"一个参数决定腰圆。</p>
+    <p>（ii）点 $(x,y,z)$ 到 $z$ 轴的距离平方 $=x^2+y^2$（垂足是 $(0,0,z)$）。故 $M_0$ 处距离平方 $=(1+at)^2+(1+bt)^2$，高 $z=1+ct$。关键一步：由 $z$ 反解 $t=\frac{z-1}{c}$ 代入，把"距离平方"写成 $z$ 的二次函数 $Az^2+2Bz+C$。</p>
+    <p>（iii）$a=b$（共面）：$c=0$ ⟹ 平面 $z=1$；$a=b=0$ ⟹ 圆柱面 $x^2+y^2=2$；其余 ⟹ 圆锥面。$a\ne b$（异面）：$c=0$ ⟹ 平面 $z=1$ 挖去圆盘；$c\ne0$ ⟹ 单叶双曲面（$AC-B^2=\frac{(a-b)^2}{c^2}&gt;0$，符号由 $a-b$ 决定——异面 ⟹ 正 ⟹ 单叶）。</p>
+  </details>
+  <details class="answer">
+    <summary>官方解答全文（转录自官方参考答案）</summary>
+    <p>记 $z$ 轴为 $L_1$（过 $M_1(0,0,0)$，方向 $\vec s_1=(0,0,1)$），所给直线为 $L_2$（过 $M_2(1,1,1)$，方向 $\vec s_2=(a,b,c)$），混合积 $\bigl(\vec s_1,\vec s_2,\overrightarrow{M_1M_2}\bigr)=a-b$。<span class="step-score">（2 分）</span></p>
+    <p>当 $a=b$ 时 $L_2$ 与 $L_1$ 共面，分三种情形：$c=0$（垂直）得平面 $z=1$；$L_2\parallel L_1$ 得圆柱面 $x^2+y^2=2$；$L_1$ 与 $L_2$ 相交得圆锥面 $x^2+y^2-\dfrac{2a^2}{c^2}\Bigl(z-\dfrac{a-c}{a}\Bigr)^{2}=0$，顶点 $\bigl(0,0,\frac{a-c}{a}\bigr)$。<span class="step-score">（8 分）</span>　<em>（注：原卷该项印刷为 $(z-\frac{a-c}{a})$，按锥面标准方程应为平方项，引用时按标准式核对。）</em></p>
+    <p>当 $a\ne b$（异面）且不垂直（$c\ne0$）时，设 $M_0(x_0,y_0,z_0)\in L_2$，纬圆上点 $M(x,y,z)$ 满足 $\overrightarrow{M_0M}\cdot\vec s_1=0$、$\bigl|\overrightarrow{M_1M_0}\bigr|=\bigl|\overrightarrow{M_1M}\bigr|$，参数化 $x_0=1+at,\ y_0=1+bt,\ z_0=1+ct$，由 $t=\frac{z-1}{c}$ 消去得
+    $$x^2+y^2=\Bigl[1+\frac{a}{c}(z-1)\Bigr]^2+\Bigl[1+\frac{b}{c}(z-1)\Bigr]^2=Az^2+2Bz+C,$$
+    其中 $A=\dfrac{a^2+b^2}{c^2}$，$B=\dfrac{a(c-a)+b(c-b)}{c^2}$，$C=\dfrac{(c-a)^2+(c-b)^2}{c^2}$，且 $AC-B^2=\dfrac{(a-b)^2}{c^2}&gt;0$，配方得
+    $$\frac{A}{AC-B^2}\bigl(x^2+y^2\bigr)-\frac{A^2}{AC-B^2}\Bigl(z+\frac{B}{A}\Bigr)^2=1,$$
+    即旋转单叶双曲面。<span class="step-score">（13 分）</span></p>
+    <p>当 $L_1$ 与 $L_2$ 异面且垂直（$c=0$）时，所得曲面为平面 $z=1$ 挖去一个以 $(0,0,1)$ 为圆心、半径等于两异面直线距离 $\dfrac{|a-b|}{\sqrt{a^2+b^2}}$ 的圆盘。<span class="step-score">（15 分）</span></p>
+    <p><strong>复盘</strong>：全题 = 本章动作一（纬圆法两守恒，13 分主体）+ 第 1 章混合积判共面（开门 2 分）+ §3.3 五类表的书写纪律。注意官方写的两条件 $\overrightarrow{M_0M}\cdot\vec s_1=0$（同高）与 $|\overrightarrow{M_1M_0}|=|\overrightarrow{M_1M}|$（等距）就是例 1 卷面里的 (2)——同一个动作，换了件向量外衣。<em>（题目与解答转录自第 13 届官方 PDF，见 <a href="真题索引/第13届_2021.md">真题索引</a>。）</em></p>
+  </details>
+</div>
+
+<h2>§9.5 熟练度训练场</h2>
+
+<p>理解只是入场券，<strong>考场上拼的是基本动作的速度</strong>。两种训练，每天 10 分钟：</p>
+
+<h3>训练一 · 翻卡快测（目标：每卡 10 秒内出答案）</h3>
+<div class="quiz" data-quiz="ch25-drill"></div>
+
+<h3>训练二 · 计时默写（写在纸上，掐表）</h3>
+<div class="calc box" data-tag="默写清单">
+  <p>① <strong>60 秒</strong>：默写生成法则 $f\bigl(\pm\sqrt{x^2+y^2},z\bigr)=0$ 及"同高 + 等距"两守恒的推导骨架（四句话：定义直译 / 两守恒 / 解出 $x_0,z_0$ / 代回）；</p>
+  <p>② <strong>90 秒</strong>：默写 §3.2 对照表全部九行（允许遮住右三列，只看母线列默写）；</p>
+  <p>③ <strong>3 分钟</strong>：默写单叶双曲面直母线的因式分解全流程（以 $x^2+y^2-z^2=1$ 过 $(1,0,0)$ 为例：配方 → 两族 → 定参 → 验证，四步齐全）。</p>
+  <p><strong>过关标准</strong>：连续两天全对才算过。做不到就回到对应小节重读，再默。</p>
+</div>
+
+<h2>§10 六方向自测卡</h2>
+
+<div class="selftest">
+  <h3>合上书，拿张白纸，默写以下六项</h3>
+  <div class="st-item">
+    <p class="st-q"><em>=（它是什么）</em>　默写旋转曲面生成法则（含两个守恒）与直纹面、直母线的定义。</p>
+    <details><summary>对照</summary><p>$f(x,z)=0$（$xz$ 平面）绕 $z$ 轴 $\Rightarrow f\bigl(\pm\sqrt{x^2+y^2},z\bigr)=0$；守恒：同高（$z=z_0$）+ 等距（$\sqrt{x^2+y^2}=|x_0|$）。直纹面：能由一族直线铺满的曲面；族中每条直线（整条落在面上）叫直母线。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>←（什么带来它）</em>　生成法则从哪里来？单叶双曲面的两族直线从哪里来？</p>
+    <details><summary>对照</summary><p>生成法则来自纬圆：绕轴旋转时"到轴距离 + 高度"不变，两守恒消参即得。两族直线来自方程能配成"一次×一次 = 一次×一次"：$(x/a-z/c)(x/a+z/c)=(1-y/b)(1+y/b)$，两组因子交叉配对。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>→（它带来什么）</em>　本章动作在真题里兑现成什么？</p>
+    <details><summary>对照</summary><p>第 13 届题一（纬圆法 + 五分类，15 分）、第 14 届题一（直母线夹角 $60^\circ$，15 分）、第 11 届题一（对称降维 ⟹ 旋转椭球面，15 分）；判型反哺第 2 章（看 $x^2+y^2$ 捆绑认旋转轴）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>∈（实例）</em>　直线绕 $z$ 轴旋转的三个实例：异面、相交、平行各得什么（给方程）？</p>
+    <details><summary>对照</summary><p>异面（距离 $d$）：$\frac{x^2+y^2}{d^2}-\frac{b^2}{c^2d^2}z^2=1$ 单叶双曲面；相交：$x^2+y^2=k^2z^2$ 圆锥面；平行（距离 $a$）：$x^2+y^2=a^2$ 圆柱面。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>≠（区分）</em>　旋转单叶 vs 旋转双叶：方程、母线、绕轴三方面区分。</p>
+    <details><summary>对照</summary><p>单叶：$x^2+y^2-z^2=1$（两平方和减一平方），双曲线绕<strong>虚轴</strong>，一片有腰圆，是直纹面；双叶：$z^2-x^2-y^2=1$（一平方减两平方和），双曲线绕<strong>实轴</strong>，两片背对背，面上没有直线。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>（为何要有它）</em>　为什么要"直纹面"这个概念？为什么要学生成法则而不是背公式？</p>
+    <details><summary>对照</summary><p>知道面是直纹面，"曲面上求直线"才有入口（第 14 届 15 分）；工程上冷却塔用直梁焊成双曲面——直的便宜，弯的结实。生成法则的公式会记错（换错变量），但"同高 + 等距"两个守恒推不错——第 13 届的 13 分只认推导不认公式。</p></details>
+  </div>
+</div>
+
+<div class="net box" data-tag="间隔复习安排">
+  <p><strong>1 天后</strong>：重做六方向自测卡（不翻书）+ 翻卡快测第二轮；<strong>3 天后</strong>：重做变式 2 与真题节选的三个梯子问题 + 计时默写②③；<strong>1 周后</strong>：默写生成法则与对照表九行，确认翻卡全部"会了"。</p>
+  <p>本章动作在第 3 章（切锥面，第 16 届题一）继续用；下一章为选学内容：曲率、挠率与脐点。</p>
+</div>
+
+<div class="chapnav">
+  <span><a href="ch24.html">← 第 3 章 · 切平面、切锥面与截面</a></span>
+  <span><a href="index.html">首页</a></span>
+  <span><a href="ch26.html">第 5 章 · （选学）曲率、挠率与脐点 →</a></span>
+</div>
+
+</div>
+
+<script src="assets/quiz.js"></script>
+<script>
+/* §9.5 翻卡数据 */
+registerQuiz("ch25-drill", [
+  { q: "生成法则：$xz$ 平面 $f(x,z)=0$ 绕 $z$ 轴 → ？", a: "$f\\!\\left(\\pm\\sqrt{x^2+y^2},\\ z\\right)=0$。绕谁谁不动，另一个变量换成「到轴距离」。" },
+  { q: "同一条母线 $f(x,z)=0$ 改绕 $x$ 轴呢？", a: "$f\\!\\left(x,\\ \\pm\\sqrt{y^2+z^2}\\right)=0$（$x$ 不动，$z$ 换成到 $x$ 轴的距离）。" },
+  { q: "纬圆法的两个守恒？", a: "同高（沿轴坐标 $z=z_0$）+ 等距（$x^2+y^2=x_0^2+y_0^2$）。官方写法：$\\overrightarrow{M_0M}\\cdot\\vec s=0$ 且 $|\\overrightarrow{M_1M_0}|=|\\overrightarrow{M_1M}|$。" },
+  { q: "快认：$x^2+y^2=z^2$、$x^2+y^2=4$、$x^2+y^2=4z$ 各是什么面？", a: "圆锥面（顶点原点）/ 圆柱面（半径 2）/ 旋转抛物面。" },
+  { q: "$x^2+y^2-z^2=1$ 与 $z^2-x^2-y^2=1$ 哪个是单叶？", a: "前者单叶（一片，腰圆半径 1，直纹面）；后者双叶（两片，$|z|\\ge 1$，面上无直线）。" },
+  { q: "异面直线绕轴扫出什么？四种退化情形？", a: "旋转单叶双曲面（腰圆半径 = 两线距离）。平行→圆柱；相交→圆锥；垂直相交→平面；垂直异面→平面挖去开圆盘。" },
+  { q: "双曲线 $\\dfrac{x^2}{a^2}-\\dfrac{z^2}{c^2}=1$ 绕 $z$ 轴 vs 绕 $x$ 轴？", a: "绕 $z$（虚轴）→ 单叶 $\\dfrac{x^2+y^2}{a^2}-\\dfrac{z^2}{c^2}=1$；绕 $x$（实轴）→ 双叶 $\\dfrac{x^2}{a^2}-\\dfrac{y^2+z^2}{c^2}=1$。" },
+  { q: "求单叶双曲面直母线，第一步干什么？", a: "配方成「一次×一次 = 一次×一次」：$\\left(\\frac xa-\\frac zc\\right)\\left(\\frac xa+\\frac zc\\right)=\\left(1-\\frac yb\\right)\\left(1+\\frac yb\\right)$，再交叉配对；参数乘在一边不做除法。" },
+  { q: "过单叶双曲面上一点有几条直母线？锥面呢？", a: "两条（两族各一）；锥面只有一族，过顶点以外一点恰一条。" },
+  { q: "「轨迹题，构型绕轴旋转不变」怎么办？举个例子。", a: "降维：在过轴截面内解平面轨迹，再「旋转之」。第 11 届题一：$|PO_1|+|PO_2|=R_1+R_2$ → 截面内椭圆 → 旋转椭球面，$O_1,O_2$ 为焦点。" }
+]);
+</script>
+
+<script>
+/* §3.1 旋转曲面生成器 */
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  var svg = document.getElementById("rsw-svg");
+  var out = document.getElementById("rsw-out");
+  var kSlider = document.getElementById("rsw-k");
+  var kLabel = document.getElementById("rsw-klabel");
+  var pSlider = document.getElementById("rsw-p");
+  var radios = document.querySelectorAll("input[name=rsw-curve]");
+
+  function fmt(v) { return (Math.round(v * 100) / 100).toString(); }
+
+  var CURVES = {
+    line: {
+      k: { min: "-1", max: "1", step: "0.05", value: "0.5" },
+      ktext: "斜率 k：母线 r = |1 + k·z|（k = 0 时母线与轴平行）",
+      zrange: [-2, 2],
+      rat: function (k, z) { return Math.abs(1 + k * z); },
+      info: function (k) {
+        if (Math.abs(k) < 1e-9) return ["圆柱面", "x² + y² = 1", "母线与轴平行 ⟹ 柱面（一族互相平行的直母线）"];
+        return ["圆锥面", "x² + y² = (1 + k z)²", "母线与轴相交 ⟹ 锥面，顶点在 z = −1/k = " + fmt(-1 / k) + "（一族过顶点的直母线）"];
+      }
+    },
+    parabola: {
+      k: { min: "0.5", max: "2", step: "0.05", value: "1" },
+      ktext: "系数 k：母线 z = k·r²（只看 z ≥ 0 半支）",
+      zrange: [0, 2],
+      rat: function (k, z) { return z <= 0 ? 0 : Math.sqrt(z / k); },
+      info: function (k) { return ["旋转抛物面", "x² + y² = z / k（即 z = k(x² + y²)）", "母线是抛物线，顶点在原点，开口朝上"]; }
+    },
+    hyperbola: {
+      k: { min: "0.7", max: "2.5", step: "0.05", value: "1.2" },
+      ktext: "渐近参数 c：母线 r² − z²/c² = 1（腰圆半径固定为 1）",
+      zrange: [-2, 2],
+      rat: function (k, z) { return Math.sqrt(1 + z * z / (k * k)); },
+      info: function (k) { return ["旋转单叶双曲面", "x² + y² − z²/c² = 1（c = " + fmt(k) + "）", "腰圆半径 1；与轴异面的直线绕轴扫出的正是它——弯的面，直的骨架"]; }
+    },
+    poly: {
+      k: { min: "0.5", max: "1.6", step: "0.05", value: "1" },
+      ktext: "胖瘦 m：中间三节半径的缩放",
+      zrange: [-2, 2],
+      rat: function (k, z) {
+        var V = [[-2, 0.55], [-1.2, 1.5], [-0.3, 0.8], [0.7, 1.3], [2, 0.7]];
+        var pts = [[V[0][0], V[0][1]], [V[1][0], V[1][1] * k], [V[2][0], V[2][1] * k], [V[3][0], V[3][1] * k], [V[4][0], V[4][1]]];
+        for (var i = 0; i < pts.length - 1; i++) {
+          if (z <= pts[i + 1][0]) {
+            var t = (z - pts[i][0]) / (pts[i + 1][0] - pts[i][0]);
+            return pts[i][1] + t * (pts[i + 1][1] - pts[i][1]);
+          }
+        }
+        return pts[pts.length - 1][1];
+      },
+      info: function (k) { return ["花瓶形旋转面", "x² + y² = r(z)²", "没有专名——但「到轴距离守恒」的法则一字不变"]; }
+    }
+  };
+
+  function mk(tag, attrs) {
+    var el = document.createElementNS(NS, tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    svg.appendChild(el);
+    return el;
+  }
+  function mkText(x, y, str, attrs) {
+    var t = mk("text", attrs || {});
+    t.setAttribute("x", x); t.setAttribute("y", y);
+    t.textContent = str;
+    return t;
+  }
+  function polyline(pts, attrs) {
+    var s = [];
+    for (var i = 0; i < pts.length; i++) s.push(pts[i][0].toFixed(1) + "," + pts[i][1].toFixed(1));
+    var el = mk("polyline", attrs);
+    el.setAttribute("points", s.join(" "));
+    el.setAttribute("fill", "none");
+    return el;
+  }
+
+  /* 右侧投影参数 */
+  var CX = 500, CY = 170, SZ = 48, RR = 58, EL = 0.32;
+  function proj(r, th, z) {
+    return [CX + RR * r * Math.cos(th), CY - SZ * z + RR * r * Math.sin(th) * EL];
+  }
+
+  function curType() {
+    for (var i = 0; i < radios.length; i++) if (radios[i].checked) return radios[i].value;
+    return "line";
+  }
+
+  function draw() {
+    var type = curType(), C = CURVES[type], k = parseFloat(kSlider.value);
+    var sweep = parseFloat(pSlider.value) * 2 * Math.PI;
+    var z0 = C.zrange[0], z1 = C.zrange[1];
+    svg.innerHTML = "";
+
+    /* ===== 左：子午面 ===== */
+    mk("line", { x1: 150, y1: 46, x2: 150, y2: 294, stroke: "#2b2620", "stroke-width": 1.6 });
+    mk("polygon", { points: "150,38 146,50 154,50", fill: "#2b2620" });
+    mkText(158, 44, "z（旋转轴）", { "font-size": 12, fill: "#2b2620" });
+    mk("line", { x1: 80, y1: 170, x2: 296, y2: 170, stroke: "#2b2620", "stroke-width": 1.6 });
+    mk("polygon", { points: "304,170 292,166 292,174", fill: "#2b2620" });
+    mkText(300, 192, "r = 到轴距离", { "font-size": 12, fill: "#2b2620", "text-anchor": "end" });
+
+    var pts = [], i, z, r;
+    for (i = 0; i <= 72; i++) {
+      z = z0 + (z1 - z0) * i / 72;
+      r = Math.min(C.rat(k, z), 2.6);
+      pts.push([z, r]);
+    }
+    var left = [], mirror = [];
+    pts.forEach(function (p) {
+      left.push([150 + 55 * p[1], 170 - 48 * p[0]]);
+      mirror.push([150 - 55 * p[1], 170 - 48 * p[0]]);
+    });
+    polyline(mirror, { stroke: "#c9bfae", "stroke-width": 1.2, "stroke-dasharray": "4 3" });
+    polyline(left, { stroke: "#b45309", "stroke-width": 2.5 });
+    mkText(262, 60, "母线 Γ", { "font-size": 13, fill: "#b45309", "font-weight": "bold" });
+    mkText(180, 318, "左：子午面（虚线 = 镜像）", { "font-size": 11.5, fill: "#5c554b", "text-anchor": "middle" });
+
+    /* ===== 右：绕 z 轴扫掠 ===== */
+    mk("line", { x1: CX, y1: CY - SZ * 2.2, x2: CX, y2: CY + SZ * 2.2, stroke: "#2b2620", "stroke-width": 1.4, "stroke-dasharray": "5 4" });
+    mkText(CX + 8, CY - SZ * 2.2 + 4, "z", { "font-size": 13, fill: "#2b2620" });
+    mkText(620, 24, "右：绕 z 轴扫掠", { "font-size": 11.5, fill: "#5c554b", "text-anchor": "middle" });
+    mkText(620, 42, "橙线 = 母线当前位置", { "font-size": 11, fill: "#b45309", "text-anchor": "middle" });
+
+    /* 纬圆族（前深后浅） */
+    var NL = 11, j, zlev, rlev;
+    for (j = 0; j < NL; j++) {
+      zlev = z0 + (z1 - z0) * j / (NL - 1);
+      rlev = C.rat(k, zlev);
+      if (rlev < 0.02) {
+        var pp = proj(0, 0, zlev);
+        mk("circle", { cx: pp[0], cy: pp[1], r: 2.4, fill: "#0f766e" });
+        continue;
+      }
+      var front = [], back = [], th, t, p2;
+      for (th = 0; th <= sweep + 1e-9; th += Math.PI / 45) {
+        t = Math.min(th, sweep);
+        p2 = proj(rlev, t, zlev);
+        if (Math.sin(t) >= 0) front.push(p2); else back.push(p2);
+      }
+      if (back.length > 1) polyline(back, { stroke: "#a9cdc6", "stroke-width": 1 });
+      if (front.length > 1) polyline(front, { stroke: "#0f766e", "stroke-width": 1.5 });
+    }
+
+    /* 起始位置（θ=0，细）与当前位置（橙，粗） */
+    var start = [], wire = [];
+    pts.forEach(function (p3) {
+      start.push(proj(p3[1], 0, p3[0]));
+      wire.push(proj(p3[1], sweep, p3[0]));
+    });
+    polyline(start, { stroke: "#0f766e", "stroke-width": 1.2, opacity: "0.55" });
+    polyline(wire, { stroke: "#b45309", "stroke-width": 2.5 });
+
+    /* 反馈 */
+    var info = C.info(k);
+    var deg = Math.round(sweep * 180 / Math.PI);
+    out.innerHTML = "<strong>" + info[0] + "：" + info[1] + "</strong><br>" + info[2] + "<br>旋转进度 φ = " + deg + "°";
+  }
+
+  function syncK() {
+    var C = CURVES[curType()];
+    kSlider.min = C.k.min; kSlider.max = C.k.max;
+    kSlider.step = C.k.step; kSlider.value = C.k.value;
+    kLabel.textContent = C.ktext;
+  }
+  for (var ri = 0; ri < radios.length; ri++) {
+    radios[ri].addEventListener("change", function () { syncK(); draw(); });
+  }
+  kSlider.addEventListener("input", draw);
+  pSlider.addEventListener("input", draw);
+  syncK();
+  draw();
+})();
+</script>
+
+</body>
+</html>

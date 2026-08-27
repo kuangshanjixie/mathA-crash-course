@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>从能算到能证 —— 数学A速成讲义</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+<div class="wrap">
+
+<div class="bookbar">
+  <span>数学A速成讲义</span>
+  <span><a href="../数学A类·第一性认知手册.md">↩ 认知手册（词典）</a></span>
+</div>
+
+<div class="chapter-kicker">MATH A · CRASH COURSE</div>
+<h1>从能算到能证</h1>
+<p class="tagline">写给学过高数、线代、离散、概率，想冲刺全国大学生数学竞赛<strong>数学专业 A 类初赛</strong>的你。<br>
+目标：2026 年 11 月 · 第 18 届初赛。</p>
+
+<p>这本讲义不接替你的《第一性认知手册》——手册是<strong>词典</strong>，遇到黑话回去查；这本书是<strong>训练场</strong>，负责把词典里的词条变成你手上的肌肉。它要一次性练五样东西：</p>
+
+<table>
+  <tr><th>轨道</th><th>练什么</th><th>在书里的样子</th></tr>
+  <tr><td><strong>符号</strong></td><td>每个符号会读、会写、会拆成自然语言</td><td><span style="color:#1d4ed8;font-weight:700">■ 蓝色盒子</span>：精确定义 + 逐符号朗读</td></tr>
+  <tr><td><strong>题目翻译</strong></td><td>题面一句话 → 可执行的条件式</td><td><span style="color:#7c3aed;font-weight:700">■ 紫色盒子</span>：真题原句的翻译示范</td></tr>
+  <tr><td><strong>类型识别</strong></td><td>看到 X 反射出方法 Y</td><td><span style="color:#c2410c;font-weight:700">■ 橙色盒子</span>：识别反射表</td></tr>
+  <tr><td><strong>考法大纲</strong></td><td>这个考点在卷面哪题、多少分、什么频率</td><td><span style="color:#be123c;font-weight:700">■ 红色盒子</span>：考法定位</td></tr>
+  <tr><td><strong>计算能力</strong></td><td>分步给分格式下的完整书写</td><td><span style="color:#15803d;font-weight:700">■ 绿色盒子</span>：例题示范 + 三层配套题</td></tr>
+</table>
+
+<p>此外还有三种"黏合剂"：<span style="color:#b45309;font-weight:700">■ 棕色</span>是每章的开场谜题（先勾起问题再给药）；<span style="color:#0f766e;font-weight:700">■ 青色</span>是直觉与图像（先看见，再定义，很多章配有可拖动的交互小部件）；<span style="color:#475569;font-weight:700">■ 灰色</span>是关系网（这个概念从哪来、到哪去、和谁等价、和谁易混，用不同形状的节点画成地图）。例题分两层：<span style="color:#c2410c;font-weight:700">虚线橙框「按总纲拆解」</span>运行同一套证明程序——拆目标、盘点、会师、定型（程序见卷零<a href="ch0m.html">第 0.5 章《证明操作系统》</a>），然后才是抛光的卷面书写。每章末尾有两道收尾：<strong style="color:#1e293b">六方向自测卡</strong>（合上书，默写 = / ← / → / ∈ / ≠ / 动机）和<strong style="color:#b45309">熟练度训练场</strong>（翻卡快测 + 计时默写，把基本动作磨成肌肉记忆）。</p>
+
+<div class="warn box" data-tag="三条纪律">
+  <p><strong>① 先写后看。</strong>所有答案都折叠着。动笔写到写不出来为止，再展开对照——展开得越早，学得越慢。</p>
+  <p><strong>② 合书默写。</strong>六方向自测卡不是阅读理解，是默写测试。拿张白纸写。</p>
+  <p><strong>③ 出声读符号。</strong>看到 $\forall x \in E,\ x \le M$ 要在心里读成"对 $E$ 里每一个 $x$，都有 $x$ 不超过 $M$"。读不顺的符号就是不熟的符号，立刻标出来。</p>
+</div>
+
+<h2>作战地图（倒排到 11 月初赛）</h2>
+<p>假期每天约 4 小时，开学后每天约 1 小时——所以<strong>最硬的骨头全部压在假期</strong>，开学后转入真题与复盘。以下为基准节奏，可随实际进度浮动。</p>
+
+<table>
+  <tr><th>时间</th><th>阶段</th><th>任务</th></tr>
+  <tr><td>第 1 周（7/27–8/2）</td><td>摸底 + 数分地基</td><td>第 0 章诊断 → 数分 1–3 章</td></tr>
+  <tr><td>第 2–3 周（8/3–8/16）</td><td>数分主体</td><td>数分 4–8 章</td></tr>
+  <tr><td>第 4 周（8/17–8/23）</td><td>数分收尾</td><td>数分 9–10 章 + 数分卷自测卡总复习</td></tr>
+  <tr><td>第 5 周（8/24–8/30）</td><td>高代抽象层（假期最后窗口）</td><td>高代 1–5 章</td></tr>
+  <tr><td>第 6–8 周（8/31–9/20，开学 1h/天）</td><td>高代推进</td><td>高代 6–11 章（周中读概念，周末做题）</td></tr>
+  <tr><td>第 9–10 周（9/21–10/4）</td><td>解几专题</td><td>解几 1–5 章（国庆假期可加量）</td></tr>
+  <tr><td>第 11–15 周（10/5–11/8）</td><td>真题季</td><td>每周 1 套真题严格计时（第 11→17 届），错题映射回章节；自测卡间隔循环</td></tr>
+  <tr><td>考前周（11/9–考前）</td><td>收束</td><td>错题回看、公式默写、轻量保持手感</td></tr>
+</table>
+
+<h2>目录 <span class="tagline" id="progress-text">（勾选标记已完成）</span></h2>
+<div class="progress-outer"><div class="progress-inner" id="progress-bar"></div></div>
+
+<div class="toc-vol">
+  <h3>卷零 · 起点</h3>
+  <div class="toc-item"><input type="checkbox" data-ch="ch00"><span class="no">第 0 章</span><a href="ch00.html">摸底诊断：你的起点画像</a><span class="st st-done">已发布</span></div>
+  <div class="toc-item"><input type="checkbox" data-ch="ch0m"><span class="no">第 0.5 章</span><a href="ch0m.html">证明操作系统：一套程序 + 八件工具</a><span class="st st-done">已发布</span></div>
+</div>
+
+<div class="toc-vol">
+  <h3>卷一 · 数学分析（50%）</h3>
+  <div class="toc-item"><input type="checkbox" data-ch="ch01"><span class="no">第 1 章</span><a href="ch01.html">天花板定理：确界与实数的无缝性</a><span class="st st-done">已发布</span></div>
+  <div class="toc-item"><input type="checkbox" data-ch="ch02"><span class="no">第 2 章</span><a href="ch02.html">极限的严格语言：ε-N / ε-δ 与一致连续</a><span class="st st-done">已发布</span></div>
+  <div class="toc-item"><input type="checkbox" data-ch="ch03"><span class="no">第 3 章</span><a href="ch03.html">递推数列与单调有界：从 e 到不动点</a><span class="st st-done">已发布</span></div>
+  <div class="toc-item"><input type="checkbox" data-ch="ch04"><span class="no">第 4 章</span><a href="ch04.html">闭区间上的连续函数：四大定理与两大证法</a><span class="st st-done">已发布</span></div>
+  <div class="toc-item"><input type="checkbox" data-ch="ch05"><span class="no">第 5 章</span><a href="ch05.html">微分中值定理家族与辅助函数构造术</a><span class="st st-done">已发布</span></div>
+  <div class="toc-item"><input type="checkbox" data-ch="ch06"><span class="no">第 6 章</span><a href="ch06.html">Taylor 公式：阶的估计与不等式证明</a><span class="st st-done">已发布</span></div>
+  <div class="toc-item"><input type="checkbox" data-ch="ch07"><span class="no">第 7 章</span><a href="ch07.html">Riemann 可积性：Darboux 上下和与积分不等式</a><span class="st st-done">已发布</span></div>
+  <div class="toc-item"><input type="checkbox" data-ch="ch08"><span class="no">第 8 章</span><a href="ch08.html">反常积分与含参变量积分：一致收敛登场</a><span class="st st-done">已发布</span></div>
+  <div class="toc-item"><input type="checkbox" data-ch="ch09"><span class="no">第 9 章</span><a href="ch09.html">级数：判敛、一致收敛与幂级数</a><span class="st st-done">已发布</span></div>
+  <div class="toc-item"><input type="checkbox" data-ch="ch10"><span class="no">第 10 章</span><a href="ch10.html">多元微积分与三大公式：Green / Gauss / Stokes</a><span class="st st-done">已发布</span></div>
+</div>
+
+<div class="toc-vol">
+  <h3>卷二 · 高等代数（35%）</h3>
+  <div class="toc-item"><input type="checkbox" data-ch="ch11"><span class="no">第 1 章</span><a href="ch11.html">从矩阵到线性空间：抽象的第一步</a><span class="st st-done">已发布</span></div>
+  <div class="toc-item"><input type="checkbox" data-ch="ch12"><span class="no">第 2 章</span><a href="ch12.html">子空间、和与直和 ⊕</a><span class="st st-done">已发布</span></div>
+  <div class="toc-item"><input type="checkbox" data-ch="ch13"><span class="no">第 3 章</span><a href="ch13.html">线性映射、核与像：秩-零度定理</a><span class="st st-done">已发布</span></div>
+  <div class="toc-item"><input type="checkbox" data-ch="ch14"><span class="no">第 4 章</span><a href="ch14.html">表示矩阵与相似：换基的艺术</a><span class="st st-done">已发布</span></div>
+  <div class="toc-item"><input type="checkbox" data-ch="ch15"><span class="no">第 5 章</span><a href="ch15.html">特征值再认识：几何重数 vs 代数重数</a><span class="st st-done">已发布</span></div>
+  <div class="toc-item"><input type="checkbox" data-ch="ch16"><span class="no">第 6 章</span><a href="ch16.html">Cayley-Hamilton 与最小多项式</a><span class="st st-done">已发布</span></div>
+  <div class="toc-item"><input type="checkbox" data-ch="ch17"><span class="no">第 7 章</span><a href="ch17.html">Jordan 标准形：不可对角化的真相</a><span class="st st-done">已发布</span></div>
+  <div class="toc-item"><input type="checkbox" data-ch="ch18"><span class="no">第 8 章</span><a href="ch18.html">内积空间：酉、Hermite、正规与谱定理</a><span class="st st-done">已发布</span></div>
+  <div class="toc-item"><input type="checkbox" data-ch="ch19"><span class="no">第 9 章</span><a href="ch19.html">二次型与正定性：Sylvester 判别</a><span class="st st-done">已发布</span></div>
+  <div class="toc-item"><input type="checkbox" data-ch="ch20"><span class="no">第 10 章</span><a href="ch20.html">多项式：整除、不可约与数域</a><span class="st st-done">已发布</span></div>
+  <div class="toc-item"><input type="checkbox" data-ch="ch21"><span class="no">第 11 章</span><a href="ch21.html">高代技巧包：行列式、秩不等式与分块矩阵</a><span class="st st-done">已发布</span></div>
+</div>
+
+<div class="toc-vol">
+  <h3>卷三 · 解析几何（15%）</h3>
+  <div class="toc-item"><input type="checkbox" data-ch="ch22"><span class="no">第 1 章</span><a href="ch22.html">向量法通解：空间直线与平面</a><span class="st st-done">已发布</span></div>
+  <div class="toc-item"><input type="checkbox" data-ch="ch23"><span class="no">第 2 章</span><a href="ch23.html">二次曲面：标准形、分类与主轴化</a><span class="st st-done">已发布</span></div>
+  <div class="toc-item"><input type="checkbox" data-ch="ch24"><span class="no">第 3 章</span><a href="ch24.html">切平面、切锥面与截面：解几最高频家族</a><span class="st st-done">已发布</span></div>
+  <div class="toc-item"><input type="checkbox" data-ch="ch25"><span class="no">第 4 章</span><a href="ch25.html">旋转曲面与直纹面：直钢丝焊出的双曲面</a><span class="st st-done">已发布</span></div>
+  <div class="toc-item"><input type="checkbox" data-ch="ch26"><span class="no">第 5 章</span><a href="ch26.html">（选学）曲率、挠率与脐点</a><span class="st st-done">已发布</span></div>
+</div>
+
+<div class="toc-vol">
+  <h3>附录</h3>
+  <div class="toc-item"><span class="no">附录 A</span><a href="../数学A类·第一性认知手册.md">符号总表与黑话词典（认知手册 Part 0.5）</a></div>
+  <div class="toc-item"><span class="no">附录 B</span><a href="真题索引/">真题考点索引（第 11–17 届逐题转录）</a></div>
+  <div class="toc-item"><span class="no">附录 C</span><a href="../数学A考试范围与学习清单.md">官方考试范围与勾选项</a></div>
+</div>
+
+<hr>
+<p class="tagline">使用方式：按卷顺序推进；每章约 1 小时精读 + 1.5–2.5 小时做题；章末自测卡在 1 天后、3 天后各重做一遍。错题请在旁边标注属于"概念缺口 / 计算失误 / 方法不会 / 时间分配"中的哪一类。</p>
+
+</div>
+
+<script>
+(function () {
+  var KEY = "mathA-progress";
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) {}
+  var boxes = document.querySelectorAll('input[type="checkbox"][data-ch]');
+  boxes.forEach(function (b) {
+    b.checked = !!state[b.dataset.ch];
+    b.addEventListener("change", function () {
+      state[b.dataset.ch] = b.checked;
+      localStorage.setItem(KEY, JSON.stringify(state));
+      render();
+    });
+  });
+  function render() {
+    var done = 0;
+    boxes.forEach(function (b) { if (b.checked) done++; });
+    var total = boxes.length;
+    var pct = total ? Math.round(done / total * 100) : 0;
+    document.getElementById("progress-bar").style.width = pct + "%";
+    document.getElementById("progress-text").textContent =
+      "（已完成 " + done + " / " + total + " 章 · " + pct + "%）";
+  }
+  render();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数分第 7 章 · Riemann 可积性：Darboux 上下和与积分不等式 —— 数学A速成讲义</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+<div class="wrap">
+
+<div class="bookbar">
+  <span><a href="index.html">← 返回首页</a></span>
+  <span>卷一 · 数学分析 · 第 7 章</span>
+</div>
+
+<div class="chapter-kicker">CHAPTER 7 · 数学分析</div>
+<h1>Riemann 可积性：Darboux 上下和与积分不等式</h1>
+
+<div class="exam box" data-tag="本章导览">
+  <p><strong>这一章在整张卷子上的位置</strong>：可积性理论有两种出场形态。一种是<strong>直接主场</strong>——第 14 届题五（15 分，取样点带扰动的 Riemann 和）、第 17 届题六（20 分，自然密度子集上的 Riemann 和，收官动作就是 Darboux 上下和夹逼）；另一种是<strong>工具形态</strong>——第 11 届题二（变上限积分构造 $g(x)=\int_0^x f$，微分不等式化积分不等式）、第 16 届题二（优积分放缩 $\ln(1+x)\le C\sqrt x$ 控制一致收敛）、第 13 届题三（Cauchy–Schwarz 不等式，5 分点）。主场约值 <strong>15–20 分</strong>，工具形态遍布各届步骤分。</p>
+  <p><strong>学完你能</strong>：① 默写 Darboux 上下和与可积判据的两种写法，并逐符号朗读；② 用判据完成具体函数的可积证明（等分分割，把 $U-L$ 算到 $&lt;\varepsilon$）；③ 背出三大可积类及其证明思路，会判 Dirichlet 函数不可积；④ 用判别式法证 Cauchy–Schwarz 积分不等式；⑤ 把"扰动取样 Riemann 和"拆成"中段振幅细估 + 首尾有界粗估"（第 14 届题五的标准动作）。</p>
+  <p><strong>前置</strong>：第 1 章 sup / inf（本章的 $M_i,m_i$ 就是它，逐段上岗）；第 2 章 ε-N / ε-δ 语言；第 4 章一致连续（连续 ⟹ 可积的遥控器）。</p>
+</div>
+
+<h2>§1 开场谜题：面积凭什么存在？</h2>
+
+<div class="hook box" data-tag="开场谜题">
+  <p>你算了三年定积分：$\int_0^1 x^2\,dx=\frac13$，$\int_0^\pi\sin x\,dx=2$，提笔就来。但有个问题你大概率从没回答过——<strong>面积凭什么存在？</strong></p>
+  <p>拿一个具体的函数开刀。Dirichlet 函数：
+  $$D(x)=\begin{cases}1, & x\ \text{是有理数}\\ 0, & x\ \text{是无理数}\end{cases}\quad x\in[0,1].$$</p>
+  <p>它在 $[0,1]$ 上有没有面积？直觉抢答："有理数那么少——可数、测度为零——面积应该是 $0$ 吧？"</p>
+  <p>但 Riemann 积分给出的判决更狠：<strong>它不是面积为 $0$，而是连面积都没有</strong>（不可积）。为什么？随便切一小段，里面既有有理点（函数值 $1$）又有无理点（函数值 $0$）——你想用矩形从上面盖住它，每段高度都得取 $1$；想从下面托住它，每段高度都只能取 $0$。上盖总面积 $=1$，下托总面积 $=0$，而且<strong>无论切多细，这个夹缝永远是 $1$，一丝都不缩</strong>。"面积"被夹在 $0$ 和 $1$ 之间，合不拢。</p>
+  <p>对比一下 $f(x)=x^2$：切得越细，上盖和下托的夹缝就越小，最后挤出一个唯一的数 $\frac13$——这就是"面积存在"的精确含义。</p>
+  <p>所以"可积"是一道门槛：<strong>上盖和下托能不能任意接近</strong>。本章把这道门槛写成判据，把你从"会算"升级成"会判"——判一个函数有没有积分，比算一个积分值钱得多：第 14 届题五、第 17 届题六考的全是这个"判"字。</p>
+</div>
+
+<h2>§2 先看见它：上台阶与下台阶的夹逼</h2>
+
+<div class="vision box" data-tag="直觉与图像">
+  <p>把区间切成小段。在每一小段上，函数有起有伏——用<strong>这段的最高点</strong>（$M_i$，就是第 1 章的 sup）作高、段长作底，得到一个"从上面盖住曲线"的矩形；用<strong>最低点</strong>（$m_i$，inf）作高，得到一个"从下面托住曲线"的矩形。</p>
+  <p>所有上矩形拼成<strong>上台阶</strong>（橙色，面积记作 $U$），所有下矩形拼成<strong>下台阶</strong>（蓝色，面积记作 $L$）。曲边梯形的面积——如果它存在——必须被夹在中间：$L\le\text{面积}\le U$。</p>
+</div>
+
+<figure>
+<svg viewBox="0 0 720 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Darboux 上和与下和：上台阶与下台阶的夹逼">
+  <!-- 上台阶（橙） -->
+  <rect x="60"  y="247.5" width="150" height="12.5"  fill="#b45309" opacity="0.28"/>
+  <rect x="210" y="210"   width="150" height="50"    fill="#b45309" opacity="0.28"/>
+  <rect x="360" y="147.5" width="150" height="112.5" fill="#b45309" opacity="0.28"/>
+  <rect x="510" y="60"    width="150" height="200"   fill="#b45309" opacity="0.28"/>
+  <!-- 下台阶（蓝） -->
+  <rect x="210" y="247.5" width="150" height="12.5"  fill="#1d4ed8" opacity="0.30"/>
+  <rect x="360" y="210"   width="150" height="50"    fill="#1d4ed8" opacity="0.30"/>
+  <rect x="510" y="147.5" width="150" height="112.5" fill="#1d4ed8" opacity="0.30"/>
+  <!-- 曲线 y=x^2 on [0,2] -->
+  <polyline points="60,260 135,256.9 210,247.5 285,231.9 360,210 435,181.9 510,147.5 585,106.9 660,60"
+    fill="none" stroke="#2b2620" stroke-width="2.5"/>
+  <!-- ω_4 标注：M_4 与 m_4 之间 -->
+  <line x1="510" y1="147.5" x2="660" y2="147.5" stroke="#1d4ed8" stroke-width="1.4" stroke-dasharray="5 4"/>
+  <line x1="640" y1="60" x2="640" y2="147.5" stroke="#be123c" stroke-width="2"/>
+  <polygon points="640,52 636,62 644,62" fill="#be123c"/>
+  <polygon points="640,155.5 636,145.5 644,145.5" fill="#be123c"/>
+  <text x="632" y="108" font-size="13" fill="#be123c" text-anchor="end">ωᵢ = Mᵢ − mᵢ（本段落差）</text>
+  <!-- Δx_i 标注 -->
+  <line x1="210" y1="272" x2="360" y2="272" stroke="#5c554b" stroke-width="1.4"/>
+  <line x1="210" y1="268" x2="210" y2="276" stroke="#5c554b" stroke-width="1.4"/>
+  <line x1="360" y1="268" x2="360" y2="276" stroke="#5c554b" stroke-width="1.4"/>
+  <text x="285" y="290" font-size="13" fill="#5c554b" text-anchor="middle">Δxᵢ（第 i 段的底）</text>
+  <!-- x 轴 -->
+  <line x1="40" y1="260" x2="700" y2="260" stroke="#2b2620" stroke-width="2"/>
+  <polygon points="710,260 698,255 698,265" fill="#2b2620"/>
+  <line x1="60" y1="254" x2="60" y2="266" stroke="#2b2620" stroke-width="2"/>
+  <text x="60" y="252" font-size="13" fill="#2b2620" text-anchor="middle">0</text>
+  <line x1="360" y1="254" x2="360" y2="266" stroke="#2b2620" stroke-width="2"/>
+  <text x="360" y="252" font-size="13" fill="#2b2620" text-anchor="middle">1</text>
+  <line x1="660" y1="254" x2="660" y2="266" stroke="#2b2620" stroke-width="2"/>
+  <text x="660" y="252" font-size="13" fill="#2b2620" text-anchor="middle">2</text>
+  <!-- 图注 -->
+  <text x="120" y="40" font-size="13.5" fill="#b45309" font-weight="bold">上台阶（橙）：U = Σ MᵢΔxᵢ</text>
+  <text x="120" y="60" font-size="13.5" fill="#1d4ed8" font-weight="bold">下台阶（蓝）：L = Σ mᵢΔxᵢ</text>
+  <text x="450" y="30" font-size="12.5" fill="#5c554b">夹缝（橙蓝不重叠处）= Σ ωᵢΔxᵢ = U − L</text>
+</svg>
+<figcaption>$f(x)=x^2$ 在 $[0,2]$ 上四等分：上台阶盖住曲线，下台阶托住曲线，夹缝面积 $U-L$ 就是"面积是否存在"的裁判。</figcaption>
+</figure>
+
+<p>盯着这张图，读出三件事——它们就是本章的全部直觉：</p>
+<ul>
+  <li><strong>sup / inf 逐段上岗</strong>：$M_i,m_i$ 不是新东西，就是第 1 章的确界，只是从"整个集合"搬到了"每一小段"上。上下和 $=$ 逐段取 sup / inf，乘段长，求和。</li>
+  <li><strong>夹缝就是落差</strong>：橙蓝不重叠的那一条，第 $i$ 段上高度恰为 $\omega_i=M_i-m_i$（本段最大落差，叫<strong>振幅</strong>）。夹缝总面积 $=\sum\omega_i\Delta x_i=U-L$。</li>
+  <li><strong>可积 = 夹缝能任意小</strong>：分法加细时，$x^2$ 的夹缝缩到 $0$；Dirichlet 函数的夹缝恒为 $1$。一个缩一个不缩——门槛就在这里。</li>
+</ul>
+
+<p>把这幅图像写成符号，就是 §3 的定义；把"夹缝任意小"写成判据，就有了判一切函数的权力。</p>
+
+<h2>§3 精确定义：逐符号朗读</h2>
+
+<h3>3.1 分割与 Riemann 和（回顾，你会算的部分）</h3>
+
+<div class="def">
+  <p class="def-title">定义（分割、细度、Riemann 和）</p>
+  <p>区间 $[a,b]$ 的一个<strong>分割</strong>是一组分点 $P:\ a=x_0&lt;x_1&lt;\cdots&lt;x_n=b$。记 $\Delta x_i=x_i-x_{i-1}$（第 $i$ 段长度），$\|P\|=\max\limits_{1\le i\le n}\Delta x_i$（分割的<strong>细度</strong>）。任取取样点 $\xi_i\in[x_{i-1},x_i]$，称
+  $$\sum_{i=1}^{n}f(\xi_i)\,\Delta x_i$$
+  为 $f$ 关于 $P$ 与 $\{\xi_i\}$ 的 <strong>Riemann 和</strong>。</p>
+</div>
+
+<p>高数告诉你"$\|P\|\to0$ 时 Riemann 和的极限就是积分"。但这句话有个暗伤：$\xi_i$ 是<strong>任意</strong>取的——左端点、右端点、中点、甚至乱跳的点，极限都一样吗？凭什么？第 14 届题五干脆把取样点换成 $\frac{k}{n}+\beta_n$，明目张胆地扰动它。要回答这类问题，得先把"任意取样"这件不确定的事，换成"每段最坏情形"这件确定的事——这就是 Darboux 的想法：<strong>用 sup / inf 把每一小段钉死</strong>。</p>
+
+<h3>3.2 Darboux 上和与下和</h3>
+
+<div class="def">
+  <p class="def-title">定义（Darboux 上和、下和）</p>
+  <p>设 $f$ 在 $[a,b]$ 上<strong>有界</strong>。对分割 $P$，在第 $i$ 段上取确界（就是第 1 章那两副面孔）：
+  $$M_i=\sup_{x\in[x_{i-1},x_i]}f(x),\qquad m_i=\inf_{x\in[x_{i-1},x_i]}f(x),$$
+  并定义<strong>上和</strong>与<strong>下和</strong>：
+  $$U(P,f)=\sum_{i=1}^{n}M_i\,\Delta x_i,\qquad L(P,f)=\sum_{i=1}^{n}m_i\,\Delta x_i.$$</p>
+</div>
+
+<div class="symbol box" data-tag="逐符号朗读">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$P:\ a=x_0&lt;x_1&lt;\cdots&lt;x_n=b$</td><td>"把区间切成 $n$ 段"</td><td>分割是全部动作的布景；段数 $n$ 随你定</td></tr>
+    <tr><td>$\Delta x_i=x_i-x_{i-1}$</td><td>"第 $i$ 段的底"</td><td>矩形的宽度；$\sum\Delta x_i=b-a$ 永远成立</td></tr>
+    <tr><td>$M_i=\sup_{[x_{i-1},x_i]}f$</td><td>"第 $i$ 段上 $f$ 的天花板"</td><td>上矩形的高——第 1 章的 sup 逐段上岗；连续函数时就是这段的最大值</td></tr>
+    <tr><td>$m_i=\inf_{[x_{i-1},x_i]}f$</td><td>"第 $i$ 段上 $f$ 的地板"</td><td>下矩形的高——inf 逐段上岗</td></tr>
+    <tr><td>$U(P,f)=\sum M_i\Delta x_i$</td><td>"逐段天花板乘底，再求和"</td><td>上台阶总面积：从上面盖住曲边梯形的最经济的台阶</td></tr>
+    <tr><td>$L(P,f)=\sum m_i\Delta x_i$</td><td>"逐段地板乘底，再求和"</td><td>下台阶总面积：从下面托住它的最奢华的台阶</td></tr>
+  </table>
+  <p>三个一眼能看出的性质，每条都只值一行证明：</p>
+  <ul>
+    <li><strong>夹住一切取样</strong>：对任何 $\xi_i\in[x_{i-1},x_i]$，$m_i\le f(\xi_i)\le M_i$，所以
+    $$L(P,f)\le\sum_{i=1}^n f(\xi_i)\Delta x_i\le U(P,f).$$
+    ——Riemann 和的"任意取样"被两个确定的数夹死了。这就是 Darboux 方法的灵魂。</li>
+    <li><strong>加细单调</strong>：往 $P$ 里加插分点，sup 只能变小、inf 只能变大（罩的范围小了），故 $U$ 不增、$L$ 不减。</li>
+    <li><strong>下和永不超过上和</strong>：对<strong>任意两个</strong>分割 $P_1,P_2$，都有 $L(P_1,f)\le U(P_2,f)$（下面的先动手证它）。</li>
+  </ul>
+</div>
+
+<div class="think">
+  <p>别急着往下翻。<strong>自己证"任意下和 $\le$ 任意上和"</strong>：$P_1,P_2$ 是两个不相干的分割，段都对不齐，怎么比？提示：造一个它们俩的"公共加细" $P^*=P_1\cup P_2$（分点全部合并），用上加细单调性。写完再展开对照。</p>
+  <details class="answer">
+    <summary>对照：公共加细搭桥</summary>
+    <p>取 $P^*=P_1\cup P_2$。$P^*$ 既是 $P_1$ 的加细，也是 $P_2$ 的加细，于是由加细单调性：
+    $$L(P_1,f)\le L(P^*,f)\le U(P^*,f)\le U(P_2,f).$$
+    （中间那个 $\le$ 是因为同一段上 $m_i\le M_i$。）链条闭合，证毕。</p>
+    <p>这一行的推论极其重要：<strong>全体下和有上界，全体上和有下界</strong>——由确界存在定理（第 1 章公理），$\sup_P L(P,f)$ 与 $\inf_P U(P,f)$ 都存在，且 $\sup L\le\inf U$。下面积分的定义就站在这行推论上。</p>
+  </details>
+</div>
+
+<h3>3.3 可积判据：夹缝任意小</h3>
+
+<div class="def">
+  <p class="def-title">定义（Riemann 可积）与可积判据</p>
+  <p>设 $f$ 在 $[a,b]$ 上有界。称
+  $$\overline{\int_a^b}f=\inf_P\,U(P,f)\quad(\text{上积分}),\qquad \underline{\int_a^b}f=\sup_P\,L(P,f)\quad(\text{下积分}).$$
+  若二者相等，称 $f$ 在 $[a,b]$ 上 <strong>Riemann 可积</strong>，共同值记作 $\displaystyle\int_a^b f(x)\,dx$。</p>
+  <p><strong>可积判据（两种写法，背两种）</strong>：
+  $$f\ \text{可积}\iff \inf_P U(P,f)=\sup_P L(P,f)\iff \forall\varepsilon>0,\ \exists P:\ U(P,f)-L(P,f)&lt;\varepsilon.$$</p>
+  <p><strong>振幅语言重写</strong>：记第 $i$ 段的<strong>振幅</strong> $\omega_i=M_i-m_i$（本段最大落差），则 $U(P,f)-L(P,f)=\sum\limits_{i=1}^n\omega_i\Delta x_i$，判据变为
+  $$\forall\varepsilon>0,\ \exists P:\ \sum_{i=1}^{n}\omega_i\,\Delta x_i&lt;\varepsilon.$$</p>
+</div>
+
+<div class="symbol box" data-tag="判据逐符号朗读">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$\inf_P U(P,f)=\sup_P L(P,f)$</td><td>"最矮的上台阶 = 最高的下台阶"</td><td>上下台阶从两边挤出一个唯一的数——那就是面积。$\inf/\sup$ 又是第 1 章的确界</td></tr>
+    <tr><td>$\forall\varepsilon>0,\ \exists P$</td><td>"随便给缝隙预算，我都能交出一个分割"</td><td>注意是 <strong>$\exists P$</strong>：只需找一个好分割，不是验所有分割——找错了对象证明会全军覆没</td></tr>
+    <tr><td>$U(P,f)-L(P,f)&lt;\varepsilon$</td><td>"这一刀切下去，橙蓝夹缝小于预算"</td><td>夹缝 $=$ 台阶之差 $=$ 面积的不确定性</td></tr>
+    <tr><td>$\omega_i=M_i-m_i$</td><td>"第 $i$ 段的振幅"</td><td>把两段确界打包成一个数；连续函数时 $\omega_i=f(\text{该段最高点})-f(\text{该段最低点})$</td></tr>
+    <tr><td>$\sum\omega_i\Delta x_i&lt;\varepsilon$</td><td>"振幅按段长加权求和要够小"</td><td>两种让它小的办法：振幅一致小（连续/单调），或坏段总长小（包间断点）——三大可积类就是这三招</td></tr>
+  </table>
+  <p><strong>量词顺序通则再复习</strong>（第 0.5 章）：$\forall\varepsilon\ \exists P$ 意味着 $P$ <strong>必须允许依赖 $\varepsilon$</strong>——预算越紧，分割越细。§8 例 1 里那个"取 $n&gt;\frac{(b-a)^2}{\varepsilon}$"就是这么来的。</p>
+</div>
+
+<h3>3.4 亲手摸一摸夹缝（交互）</h3>
+
+<div class="widget" id="darboux-widget">
+  <p class="w-title">▶ Darboux 探索器：拖 $n$ 和 $b$，亲眼看夹缝缩不缩</p>
+  <p class="w-row">区间 $[0,b]$ 上的等分分割。<strong style="color:#b45309">橙 = 上和 $U$</strong>，<strong style="color:#1d4ed8">蓝 = 下和 $L$</strong>，不重叠的缝隙就是 $U-L$。三个模式：<strong>连续曲线 $x^2$</strong> / <strong>带一个跳点</strong>（区间中点处上跳 $0.5$）/ <strong>Dirichlet 示意</strong>（有理点取 $1$、无理点取 $0$ 的稠密点雾）。</p>
+  <div class="w-row" id="dw-modes">
+    <button type="button" data-mode="cont" style="font-family:inherit;font-size:0.85em;padding:3px 14px;border-radius:999px;border:1.5px solid #0f766e;background:#0f766e;color:#fff;cursor:pointer;margin-right:8px">连续 $x^2$</button>
+    <button type="button" data-mode="jump" style="font-family:inherit;font-size:0.85em;padding:3px 14px;border-radius:999px;border:1.5px solid #0f766e;background:#fff;color:#0f766e;cursor:pointer;margin-right:8px">带跳点</button>
+    <button type="button" data-mode="dir" style="font-family:inherit;font-size:0.85em;padding:3px 14px;border-radius:999px;border:1.5px solid #0f766e;background:#fff;color:#0f766e;cursor:pointer">Dirichlet 示意</button>
+  </div>
+  <div class="w-row"><label>分割数 n（从 2 拖到 40，观察缝隙怎么变）</label>
+  <input type="range" id="dw-n" min="2" max="40" step="1" value="6"></div>
+  <div class="w-row"><label>区间右端 b（[0,b]，从 0.5 拖到 3，看结论是否依赖区间）</label>
+  <input type="range" id="dw-b" min="0.5" max="3" step="0.05" value="2"></div>
+  <svg id="dw-svg" viewBox="0 0 720 330" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div class="w-verdict" id="dw-out">加载中……（需要启用 JavaScript）</div>
+  <p class="w-row" style="font-size:0.88em;color:#5c554b">玩出这三个体验再往下走：<strong>①</strong> 连续模式把 $n$ 从 $2$ 拖到 $40$，盯住读数验证 $U-L=\frac{b^3}{n}$——$n$ 翻倍缝隙减半；<strong>②</strong> 换跳点模式：缝隙照样缩到 $0$——跳点的振幅被越来越窄的小区间"包住"了，一个间断点不挡可积；<strong>③</strong> 换 Dirichlet：把 $n$ 拖爆，$U-L$ 纹丝不动——这就是不可积长出来的样子。</p>
+</div>
+
+<h3>3.5 三大可积类 + 反例库头牌</h3>
+
+<p>判据是"一刀一刀切出来"的体力劳动。下面三类函数直接免试——<strong>考场上看到题面信号，先查这三类，不要急着算</strong>。每条都给一句话思路，骨架都能在判据上立起来。</p>
+
+<div class="def">
+  <p class="def-title">定理一（连续 ⟹ 可积）</p>
+  <p>$f$ 在 $[a,b]$ 上连续，则 $f$ 在 $[a,b]$ 上 Riemann 可积。</p>
+  <p><strong>思路</strong>：闭区间连续 ⟹ 一致连续（Cantor 定理，第 4 章）：任给 $\varepsilon&gt;0$，存在 $\delta&gt;0$ 使 $|x-y|&lt;\delta$ 时 $|f(x)-f(y)|&lt;\frac{\varepsilon}{b-a}$。取 $\|P\|&lt;\delta$ 的分割，则每段 $\omega_i&lt;\frac{\varepsilon}{b-a}$（连续函数在闭段上取到最值，$\omega_i$ 就是某两点的函数值差），于是
+  $$\sum_{i=1}^n\omega_i\Delta x_i&lt;\frac{\varepsilon}{b-a}\sum_{i=1}^n\Delta x_i=\varepsilon.$$
+  <strong>一句话</strong>：一致连续把所有振幅一致地压小——它是连续 ⟹ 可积的<strong>遥控器</strong>。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定理二（单调 ⟹ 可积）</p>
+  <p>$f$ 在 $[a,b]$ 上单调，则 $f$ 在 $[a,b]$ 上 Riemann 可积。</p>
+  <p><strong>思路</strong>（不妨递增）：单调性把每段的天花板和地板直接钉在端点上：$M_i=f(x_i)$，$m_i=f(x_{i-1})$，于是振幅<strong>望远镜</strong>：
+  $$\sum_{i=1}^n\omega_i\Delta x_i\le\|P\|\sum_{i=1}^n\bigl(f(x_i)-f(x_{i-1})\bigr)=\|P\|\,\bigl(f(b)-f(a)\bigr).$$
+  取 $\|P\|&lt;\frac{\varepsilon}{f(b)-f(a)+1}$ 即小于 $\varepsilon$（$f(b)=f(a)$ 时 $f$ 为常数，显然可积）。<strong>一句话</strong>：各段落差首尾相接全部抵消，只剩总落差 $f(b)-f(a)$，再被细度压死。注意：单调函数可以有<strong>无穷多个</strong>间断点（如阶梯状跳跃），照样可积——可积远比连续便宜。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定理三（有界 + 有限间断 ⟹ 可积）</p>
+  <p>$f$ 在 $[a,b]$ 上有界，且只有有限个间断点，则 $f$ 在 $[a,b]$ 上 Riemann 可积。</p>
+  <p><strong>思路</strong>：设 $|f|\le M$，间断点为 $c_1,\dots,c_k$。<strong>坏点包区间</strong>：用总长 $&lt;\frac{\varepsilon}{4M}$ 的若干小区间把 $c_j$ 全部包住——坏段上振幅撑死 $2M$，贡献 $\le 2M\cdot\frac{\varepsilon}{4M}=\frac{\varepsilon}{2}$；剩下的好区间上 $f$ 连续，由定理一使好段贡献 $&lt;\frac{\varepsilon}{2}$。两段预算各半（工具二 · 误差预算），合计 $&lt;\varepsilon$。<strong>一句话</strong>：间断点不怕，怕的是它"占地方"——有限个坏点占的地方可以任意小，有界函数在任意小的地方翻不起浪。</p>
+</div>
+
+<div class="warn box" data-tag="反例库头牌：Dirichlet 函数不可积">
+  <p>$$D(x)=\begin{cases}1, & x\in\mathbb{Q}\\ 0, & x\notin\mathbb{Q}\end{cases}\quad x\in[0,1]\ \text{上不可积}.$$</p>
+  <p><strong>判决</strong>：任何小区间里既有有理点又有无理点（两者都在 $\mathbb{R}$ 中稠密），所以<strong>每一段</strong> $M_i=1$，$m_i=0$，振幅恒 $\omega_i=1$。于是对<strong>一切</strong>分割 $P$：
+  $$U(P,D)=\sum_{i=1}^n 1\cdot\Delta x_i=1,\qquad L(P,D)=0,\qquad U(P,D)-L(P,D)=1.$$</p>
+  <p>取 $\varepsilon_0=\frac12$：没有任何分割能让夹缝 $&lt;\frac12$——判据的 $\exists P$ 永远交不出货。上积分 $=1$，下积分 $=0$，不相等，不可积。$\square$</p>
+  <p><strong>反例库用法</strong>：它是"有界但不可积"的标准公民——以后凡是猜想"有界就够了"，先拿它过一遍。再记一个对照公民：<strong>Riemann 函数</strong>（$x=\frac pq$ 既约时取 $\frac1q$，无理点取 $0$）在 $[0,1]$ 上间断点是<strong>全体有理数</strong>（无穷多个），却可积且积分 $=0$——它说明定理三的"有限间断"只是充分条件，不是必要门槛。</p>
+</div>
+
+<h3>3.6 变上限积分与 Newton–Leibniz 公式</h3>
+
+<p>判据给了"积分存在"的判决书，接下来把积分写成上限的函数——这是把"面积"变回"函数"的关键一步，第 11 届题二、第 14 届题六的主角都是它。</p>
+
+<div class="def">
+  <p class="def-title">定理（变上限积分）</p>
+  <p>设 $f$ 在 $[a,b]$ 上 Riemann 可积，$|f|\le M$，定义 $F(x)=\displaystyle\int_a^x f(t)\,dt$（$a\le x\le b$）。则：</p>
+  <p>① $F$ 在 $[a,b]$ 上连续（其实更强：$|F(x)-F(y)|\le M|x-y|$，Lipschitz）；</p>
+  <p>② 若 $f$ 在 $x_0$ 处<strong>连续</strong>，则 $F$ 在 $x_0$ 可导，且 $F'(x_0)=f(x_0)$。</p>
+  <p><strong>证法骨架（②）</strong>：对 $h&gt;0$（$h&lt;0$ 同理），
+  $$\frac{F(x_0+h)-F(x_0)}{h}-f(x_0)=\frac1h\int_{x_0}^{x_0+h}\bigl(f(t)-f(x_0)\bigr)\,dt,$$
+  取绝对值 $\le\sup\limits_{|t-x_0|\le h}|f(t)-f(x_0)|\to0$（$h\to0$，$f$ 在 $x_0$ 连续）。也可以直接用积分中值定理：$\frac1h\int_{x_0}^{x_0+h}f=f(\xi_h)\to f(x_0)$。<strong>一句话</strong>：微分是积分的逆运算——在连续点上，对面积函数求导，弹回来的就是被积函数。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定理（Newton–Leibniz 公式）</p>
+  <p>设 $f$ 在 $[a,b]$ 上连续，$\Phi$ 是 $f$ 的任一原函数（$\Phi'=f$），则
+  $$\int_a^b f(x)\,dx=\Phi(b)-\Phi(a).$$</p>
+  <p><strong>证法骨架</strong>：由上面定理，$F(x)=\int_a^x f$ 也是原函数；两原函数之差为常数（Lagrange 中值定理的推论，第 5 章），故 $\Phi(x)=F(x)+C$。于是 $\Phi(b)-\Phi(a)=F(b)-F(a)=\int_a^b f-0$。<strong>一句话</strong>：算了三年的那个公式，到这里才真正被证出来——它的合法性来自可积性理论，不是来自定义。</p>
+</div>
+
+<h3>3.7 积分不等式三件套</h3>
+
+<div class="def">
+  <p class="def-title">三件基础工具（都可积函数通用）</p>
+  <p>① <strong>单调性</strong>：$f,g$ 可积且 $f\le g$ 于 $[a,b]$（$a&lt;b$），则 $\displaystyle\int_a^b f\le\int_a^b g$。<br>
+  <strong>一行证</strong>：$h=g-f\ge0$，每段 $M_i(h)\ge0$，故 $U(P,h)\ge0$，$\int h=\inf U\ge0$。</p>
+  <p>② <strong>估值定理</strong>：$f$ 可积，$m\le f\le M$，则
+  $$m(b-a)\le\int_a^b f\le M(b-a).$$
+  <strong>一行证</strong>：取平凡分割 $P=\{a,b\}$，$L(P,f)=m(b-a)\le\int f\le U(P,f)\le M(b-a)$。常用推论：$\left|\int_a^b f\right|\le\int_a^b|f|\le\max|f|\cdot(b-a)$。</p>
+  <p>③ <strong>Cauchy–Schwarz 积分不等式</strong>：$f,g$ 在 $[a,b]$ 上可积，则
+  $$\left(\int_a^b f(x)g(x)\,dx\right)^2\le\int_a^b f^2(x)\,dx\cdot\int_a^b g^2(x)\,dx.$$
+  证明（判别式法）是 §8 例 2 的全文。</p>
+</div>
+
+<p>配套一句：<strong>积分中值定理</strong>（连续版）——$f$ 连续则存在 $\xi\in[a,b]$ 使 $\int_a^b f=f(\xi)(b-a)$。它是估值定理 $+$ 介值定理的儿子：$\frac1{b-a}\int_a^b f$ 夹在 $m,M$ 之间，连续函数必取到这个中间值。</p>
+
+<h2>§4 翻译轨：三个标准动作 + 一间练功房</h2>
+
+<p>可积性在卷面上只有三种用法。练成反射，本章毕业。</p>
+
+<div class="trans box" data-tag="动作一：证可积（先查三类，再算判据）">
+  <p><strong>题面</strong>："证明 $f$ 在 $[a,b]$ 上 Riemann 可积" / "讨论 $f$ 的可积性"。</p>
+  <p><strong>翻译</strong>：先查<strong>三大可积类</strong>——连续？单调？有界 + 有限间断？命中任何一个，一句话划归（工具六）加定理名，分数到手。都不命中（比如带无穷多间断点的怪函数），才上判据硬算：</p>
+  <p>第 ① 步：任给 $\varepsilon&gt;0$；第 ② 步：<strong>构造</strong>分割 $P$（首选 $n$ 等分，$n$ 依赖 $\varepsilon$）；第 ③ 步：逐段写 $M_i,m_i$（单调性直接把确界钉在端点上），算 $\sum\omega_i\Delta x_i$，解出 $n$ 要多大（倒推法）；第 ④ 步：回卷面正着写验证 $&lt;\varepsilon$。完整示范见 §8 例 1。</p>
+</div>
+
+<div class="trans box" data-tag="动作二：用可积（把可积翻译成夹逼）">
+  <p><strong>题面</strong>：已知 $f$ 可积，证某个 Riemann 和型量的极限 $=\int_a^b f$（取样点被做过手脚）。</p>
+  <p><strong>翻译</strong>："$f$ 可积"翻译成取货单：$\forall\varepsilon,\ \exists P:\ U(P,f)-L(P,f)&lt;\varepsilon$，外加有界性 $|f|\le M$。然后用夹逼把目标量困住：</p>
+  <p>$$L(P,f)\le\ \text{目标量}\ \le U(P,f)\quad\text{（或经过扰动修正后近似成立）},$$</p>
+  <p>两端同趋于 $\int_a^b f$。取样点跑出小区间时（第 14 届题五），把积分也按扰动后的点分段，逐段用<strong>振幅</strong>估差；首尾少数几段估不动的，用有界性粗估——坏段总长 $\to0$，贡献就 $\to0$。第 17 届题六则是把 $f$ 用上下阶梯函数夹住，化为分段常值情形。<strong>同一个口音：可积 = 上下和夹逼。</strong></p>
+</div>
+
+<div class="trans box" data-tag="动作三：积分不等式（先比被积函数）">
+  <p><strong>题面</strong>：证含积分的不等式 / 用积分估计控制某个量。</p>
+  <p><strong>翻译</strong>：三选一，按长相反射：</p>
+  <p>① 两边都是积分、区间相同 ⟹ 先比<strong>被积函数</strong>：逐点 $f\le g$ 则 $\int f\le\int g$（单调性），绝大多数积分不等式最后都落到这一步；<br>
+  ② 看到 $\int fg$ 与 $\int f^2,\int g^2$ 同框 ⟹ <strong>Cauchy–Schwarz</strong>，证明用判别式法（§8 例 2）；<br>
+  ③ 只要一个常数界 ⟹ 估值定理 $\left|\int f\right|\le\max|f|\cdot(b-a)$。</p>
+  <p><strong>真题原句</strong>（第 16 届题二官方第一步）："由 $\lim\limits_{x\to0^+}\frac{\ln(1+x)}{\sqrt x}=\lim\limits_{x\to+\infty}\frac{\ln(1+x)}{\sqrt x}=0$ 得 $\ln(1+x)\le C\sqrt x$，从而被积函数 $\le\frac{C\sqrt s}{1+x^2}$。"——先造<strong>逐点</strong>不等式，再用单调性搬进积分号里（优函数控制），这就是动作三的完整一次呼吸。</p>
+</div>
+
+<h3>4.4 翻译练功房：像学语言一样，大量互译</h3>
+
+<p>老规矩：<strong>先全部写在纸上，再逐条展开对照</strong>。每条不超过 1 分钟。</p>
+
+<div class="trans box" data-tag="互译 8 句">
+  <p><strong>T1</strong>　自然→符号（Darboux 说法）："$f$ 在 $[a,b]$ 上 Riemann 可积。"</p>
+  <details class="answer"><summary>对照</summary><p>$\forall\varepsilon&gt;0,\ \exists P:\ U(P,f)-L(P,f)&lt;\varepsilon$。<strong>易错</strong>：写成 $\forall P$——那是要求每个分割夹缝都小，连 $f(x)=x$ 都交不出货（粗分割夹缝很大）。判据只要<strong>存在</strong>一个好分割。</p></details>
+  <p><strong>T2</strong>　符号→自然："$\omega_i=M_i-m_i=\sup\limits_{[x_{i-1},x_i]}f-\inf\limits_{[x_{i-1},x_i]}f$。"</p>
+  <details class="answer"><summary>对照</summary><p>"第 $i$ 小段上函数值的最大落差（振幅）"。连续函数时它就是该段最大值减最小值；$\sum\omega_i\Delta x_i$ 就是上下台阶之间的夹缝面积。</p></details>
+  <p><strong>T3</strong>　自然→符号 + 追问："$f$ 在 $[a,b]$ 上有界且只有有限个间断点。"能推出什么？</p>
+  <details class="answer"><summary>对照</summary><p>$\exists M&gt;0,\ \forall x\in[a,b]: |f(x)|\le M$；且存在有限点集 $\{c_1,\dots,c_k\}$ 使 $f$ 在 $[a,b]\setminus\{c_1,\dots,c_k\}$ 上连续。<strong>追问</strong>：由定理三，$f$ 可积——坏点包区间 + 好段用连续，误差预算各半。</p></details>
+  <p><strong>T4</strong>　快答：Dirichlet 函数在任意区间 $[c,d]$（$c&lt;d$）上的 $U(P,D)$、$L(P,D)$ 各是多少？与分割有关吗？</p>
+  <details class="answer"><summary>对照</summary><p>$U(P,D)=d-c$，$L(P,D)=0$，<strong>与分割完全无关</strong>——每段振幅恒 $1$。所以 $U-L=d-c$ 不随加细缩小，不可积。对比：$f(x)=x$ 的 $U-L$ 随 $n$ 增大趋于 $0$。"缩不缩"就是可积与否的分水岭。</p></details>
+  <p><strong>T5</strong>　符号→自然 + 用在哪："$\forall\varepsilon&gt;0,\ \exists\delta&gt;0,\ \forall x,y\in[a,b]: |x-y|&lt;\delta\Rightarrow|f(x)-f(y)|&lt;\frac{\varepsilon}{b-a}$。"</p>
+  <details class="answer"><summary>对照</summary><p>这是一致连续（第 4 章），只是把小目标从 $\varepsilon$ 换成了 $\frac{\varepsilon}{b-a}$。它在本章的职务：让<strong>每一段</strong> $\omega_i&lt;\frac{\varepsilon}{b-a}$（只要 $\|P\|&lt;\delta$），从而 $\sum\omega_i\Delta x_i&lt;\varepsilon$——连续 ⟹ 可积的遥控器。$\frac{\varepsilon}{b-a}$ 这个预算是倒推出来的：要凑够总长 $b-a$。</p></details>
+  <p><strong>T6</strong>　自然→符号 + 找坑："取样点扰动后的 Riemann 和" $\frac1n\sum\limits_{k=1}^n f\bigl(\frac{k}{n}+\beta_n\bigr)$（$\beta_n\to0$），能直接写 $L\le$ 它 $\le U$ 吗？</p>
+  <details class="answer"><summary>对照</summary><p>不能——$\frac{k}{n}+\beta_n$ 可能跑出 $\bigl[\frac{k}{n},\frac{k+1}{n}\bigr]$，夹逼的前提（取样点落在本段内）被破坏。<strong>正确翻译</strong>：把积分也按扰动点分段，逐段估 $\bigl|f\bigl(\frac{k}{n}+\beta_n\bigr)-f(x)\bigr|\le$ 该段振幅（sup $-$ inf），中段细估、首尾有界粗估——第 14 届题五的官方第一步就是这个动作。</p></details>
+  <p><strong>T7</strong>　找坑："$f(x)\le g(x)\Rightarrow\int_a^b f\le\int_a^b g$" 的使用前提是什么？</p>
+  <details class="answer"><summary>对照</summary><p>① $a&lt;b$（方向反了不等号跟着反：$\int_b^a=-\int_a^b$）；② $f,g$ 可积；③ 不等式要在<strong>整个区间</strong>上逐点成立（一个点例外无所谓——改有限个点不改变积分，但一段区间上反转就完了）。</p></details>
+  <p><strong>T8</strong>　符号→自然 + 追问："$\bigl(\int_a^b fg\bigr)^2\le\int_a^b f^2\cdot\int_a^b g^2$" 的离散亲戚是谁？证明共用哪个动作？</p>
+  <details class="answer"><summary>对照</summary><p>离散版：$\bigl(\sum a_ib_i\bigr)^2\le\sum a_i^2\sum b_i^2$（第 13 届题三的 5 分点）。共用一个动作：<strong>判别式法</strong>——构造关于 $t$ 的恒非负二次式 $\sum(a_i+tb_i)^2\ge0$ 或 $\int(f+tg)^2\ge0$，判别式 $\le0$ 即结论。一个模子，两种填料。</p></details>
+</div>
+
+<h2>§5 类型识别：什么信号在召唤可积性</h2>
+
+<div class="recog box" data-tag="识别反射表">
+  <table>
+    <tr><th>题面信号</th><th>反射</th></tr>
+    <tr><td>"证明 …Riemann 可积 / 讨论可积性"</td><td>先查三大可积类（连续 / 单调 / 有界+有限间断）；不命中再上判据：等分 + 算 $\sum\omega_i\Delta x_i$</td></tr>
+    <tr><td>小区间上出现 sup / inf、"振幅"、"落差"</td><td>Darboux 上下和：$U-L=\sum\omega_i\Delta x_i$，夹逼待命</td></tr>
+    <tr><td>"$\lim\frac1n\sum f\bigl(\frac{k}{n}+\cdots\bigr)$"（取样点被做手脚）</td><td>动作二：可积 ⟹ 上下和夹逼；扰动部分用振幅细估 + 有界粗估（第 14 届题五、第 17 届题六）</td></tr>
+    <tr><td>"证含积分的不等式"</td><td>先比被积函数（单调性）；$\int fg$ 与 $\int f^2$ 同框用 CS；要常数界用估值定理</td></tr>
+    <tr><td>"$F(x)=\int_a^x(\cdots)\,dt$"</td><td>变上限求导 $F'=f$（被积函数连续时）；配 $e^{-x}F$ 之类辅助函数是 Gronwall 口音（第 11 届题二）</td></tr>
+    <tr><td>条件里躺着"$f$ 连续"</td><td>库存自动上架：一致连续（第 4 章）⟹ 可积白送，$F=\int_a^x f$ 可导</td></tr>
+    <tr><td>"Dirichlet / 有理点取 …无理点取 …"</td><td>反例反射：每段振幅恒 $1$，$U-L$ 不缩，不可积</td></tr>
+    <tr><td>"$\ln(1+x)\le Cx^\alpha$" 型逐点估计</td><td>优函数控制积分——第 8 章一致收敛的门票（第 16 届题二）</td></tr>
+  </table>
+</div>
+
+<h2>§6 考法定位：它藏在哪里、值多少分</h2>
+
+<div class="exam box" data-tag="考法定位">
+  <table>
+    <tr><th>出处</th><th>题号</th><th>本章内容扮演什么角色</th><th>分值权重</th></tr>
+    <tr><td>第 14 届（2022）</td><td>题五</td><td><strong>主场</strong>：扰动取样 Riemann 和 $=$ Darboux 上下和 + 振幅估计 + 分段处理（中段细估 / 首尾粗估）</td><td>15 分（直接）</td></tr>
+    <tr><td>第 17 届（2025）</td><td>题六(2)</td><td><strong>主场</strong>：自然密度子集上的 Riemann 和；收官动作是上下阶梯函数夹逼 + Darboux 可积准则 $U-L\to0$</td><td>20 分中约 6 分（直接）</td></tr>
+    <tr><td>第 11 届（2019）</td><td>题二</td><td>变上限积分构造 $g(x)=\int_0^x f$；微分不等式化积分不等式 $f(x)\le\int_0^x f$；$(e^{-x}g)'\le0$ 的 Gronwall 收尾</td><td>15 分中约 5 分步骤</td></tr>
+    <tr><td>第 16 届（2024）</td><td>题二</td><td>优积分放缩 $\ln(1+x)\le C\sqrt x$ 造优函数 $\frac{C\sqrt s}{1+x^2}$，控制含参反常积分的一致收敛</td><td>2 分步骤（第 8 章主场）</td></tr>
+    <tr><td>第 13 届（2021）</td><td>题三</td><td>Cauchy–Schwarz 不等式（代数形）：$\sum x_i^2\sum\frac1{x_i^2}\ge2021^2$——判别式法的离散版</td><td>5 分步骤</td></tr>
+    <tr><td>第 14 届（2022）</td><td>题六</td><td>变限积分 $F(x)=\int_0^x t^\alpha f(t+x)\,dt$ 的一致连续：有界性 $M=\sup|f|$ + 分段估计</td><td>步骤分</td></tr>
+  </table>
+  <p><strong>规律</strong>：本章内容以两种形态出现。<strong>形态一（直接大题）</strong>：取样点被动过手脚的 Riemann 和（第 14 届扰动 $\beta_n$、第 17 届稀疏子集 $\mathcal A$）——入口永远是"可积 ⟺ 上下和夹逼"，差异只在怎么把扰动翻译成振幅估计；<strong>形态二（工具链一环）</strong>：积分不等式（单调性 / CS / 估值）与变上限积分构造，藏在微分不等式、含参积分、代数题里值 2–5 分。判据的 $\varepsilon$-$P$ 写法 + 振幅语言，是两种形态共同的钥匙。</p>
+</div>
+
+<h2>§7 关系网：一张地图看懂可积性</h2>
+
+<p>本章所有角色的来龙去脉画在下面：<span style="color:#b45309">三角形</span>是来源与动机，<span style="color:#1d4ed8">圆角矩形</span>是定义，<span style="color:#15803d">矩形</span>是定理，<span style="color:#7c3aed">六边形</span>是方法动作，<span style="color:#0f766e">椭圆</span>是应用出口。顺着箭头走一遍，就是本章的全部逻辑。</p>
+
+<figure>
+<svg viewBox="0 0 720 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Riemann 可积性关系网地图">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+
+  <!-- 图例 -->
+  <polygon points="30,16 22,30 38,30" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5"/>
+  <text x="44" y="28" font-size="11.5" fill="#5c554b">来源·动机</text>
+  <rect x="116" y="17" width="22" height="13" rx="6.5" fill="#eef3fe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="144" y="28" font-size="11.5" fill="#5c554b">定义</text>
+  <rect x="192" y="17" width="22" height="13" fill="#ecf8f0" stroke="#15803d" stroke-width="1.5"/>
+  <text x="220" y="28" font-size="11.5" fill="#5c554b">定理</text>
+  <polygon points="270,23.5 276,16 290,16 296,23.5 290,31 276,31" fill="#f4effd" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="302" y="28" font-size="11.5" fill="#5c554b">方法·动作</text>
+  <ellipse cx="390" cy="23.5" rx="12" ry="7" fill="#ecf8f5" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="408" y="28" font-size="11.5" fill="#5c554b">应用·出口</text>
+
+  <!-- 来源（三角） -->
+  <polygon points="110,48 66,104 154,104" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="110" y="82" font-size="12" fill="#7a4a12" text-anchor="middle" font-weight="bold">第 1 章</text>
+  <text x="110" y="97" font-size="11" fill="#7a4a12" text-anchor="middle">sup / inf</text>
+  <polygon points="360,48 316,104 404,104" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="360" y="82" font-size="12" fill="#7a4a12" text-anchor="middle" font-weight="bold">第 2·4 章</text>
+  <text x="360" y="97" font-size="11" fill="#7a4a12" text-anchor="middle">一致连续</text>
+  <polygon points="610,48 566,104 654,104" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="610" y="82" font-size="12" fill="#7a4a12" text-anchor="middle" font-weight="bold">高数会算的</text>
+  <text x="610" y="97" font-size="11" fill="#7a4a12" text-anchor="middle">Riemann 和</text>
+
+  <!-- 来源 → 定义 -->
+  <line x1="118" y1="106" x2="165" y2="143" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="112" y="128" font-size="11" fill="#5c554b" text-anchor="middle">逐段取 sup/inf</text>
+  <line x1="598" y1="106" x2="285" y2="143" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="470" y="127" font-size="11" fill="#5c554b" text-anchor="middle">夹住任意取样</text>
+  <polyline points="330,104 55,128 55,328 95,340" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="62" y="222" font-size="11" fill="#5c554b">Cantor 定理供货</text>
+
+  <!-- 定义（圆角矩形） -->
+  <rect x="95" y="145" width="210" height="56" rx="28" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="200" y="170" font-size="14" fill="#1d4ed8" text-anchor="middle" font-weight="bold">Darboux 上和 U · 下和 L</text>
+  <text x="200" y="188" font-size="11" fill="#1d4ed8" text-anchor="middle">逐段 sup/inf 乘段长求和</text>
+  <rect x="425" y="145" width="190" height="56" rx="28" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="520" y="170" font-size="14" fill="#1d4ed8" text-anchor="middle" font-weight="bold">振幅 ωᵢ = Mᵢ − mᵢ</text>
+  <text x="520" y="188" font-size="11" fill="#1d4ed8" text-anchor="middle">一段上的最大落差</text>
+
+  <!-- 定义 → 判据 -->
+  <line x1="215" y1="201" x2="290" y2="237" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="232" y="224" font-size="11" fill="#5c554b" text-anchor="middle">U − L</text>
+  <line x1="505" y1="201" x2="435" y2="237" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="508" y="224" font-size="11" fill="#5c554b" text-anchor="middle">Σ ωᵢΔxᵢ</text>
+
+  <!-- 判据（定理矩形） -->
+  <rect x="170" y="237" width="380" height="60" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="360" y="261" font-size="15" fill="#15803d" text-anchor="middle" font-weight="bold">可积判据（两种写法都要背）</text>
+  <text x="360" y="281" font-size="12" fill="#15803d" text-anchor="middle">inf U = sup L ⟺ ∀ε&gt;0 ∃P: U−L&lt;ε ⟺ ΣωᵢΔxᵢ&lt;ε</text>
+
+  <!-- 判据 → 三大可积类 + 反例 -->
+  <line x1="205" y1="297" x2="105" y2="338" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="305" y1="297" x2="283" y2="338" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="430" y1="297" x2="470" y2="338" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="365" y="326" font-size="11" fill="#5c554b" text-anchor="middle">逐一验证三大可积类</text>
+  <line x1="535" y1="297" x2="645" y2="338" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="715" y="320" font-size="11" fill="#5c554b" text-anchor="end">ε₀ = 1/2 挡死</text>
+
+  <!-- 三大可积类（矩形） -->
+  <rect x="30" y="340" width="140" height="52" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="100" y="363" font-size="13" fill="#15803d" text-anchor="middle" font-weight="bold">连续 ⟹ 可积</text>
+  <text x="100" y="381" font-size="10.5" fill="#4a7c59" text-anchor="middle">ωᵢ 被一致压小</text>
+  <rect x="210" y="340" width="140" height="52" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="280" y="363" font-size="13" fill="#15803d" text-anchor="middle" font-weight="bold">单调 ⟹ 可积</text>
+  <text x="280" y="381" font-size="10.5" fill="#4a7c59" text-anchor="middle">振幅望远镜抵消</text>
+  <rect x="390" y="340" width="170" height="52" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="475" y="363" font-size="13" fill="#15803d" text-anchor="middle" font-weight="bold">有界 + 有限间断</text>
+  <text x="475" y="381" font-size="10.5" fill="#4a7c59" text-anchor="middle">⟹ 可积（坏点占地任意小）</text>
+  <!-- 反例 -->
+  <rect x="590" y="340" width="120" height="52" fill="#fdeef2" stroke="#be123c" stroke-width="2"/>
+  <text x="650" y="363" font-size="13" fill="#be123c" text-anchor="middle" font-weight="bold">Dirichlet</text>
+  <text x="650" y="381" font-size="10.5" fill="#be123c" text-anchor="middle">不可积（反例头牌）</text>
+
+  <!-- 可积类 → 方法 -->
+  <line x1="100" y1="392" x2="108" y2="446" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="280" y1="392" x2="288" y2="446" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="475" y1="392" x2="488" y2="446" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="390" y="425" font-size="11" fill="#5c554b" text-anchor="middle">各配一个证明动作</text>
+
+  <!-- 方法（六边形） -->
+  <polygon points="25,475 45,448 175,448 195,475 175,502 45,502" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="110" y="471" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">振幅控制</text>
+  <text x="110" y="487" font-size="10.5" fill="#6a55a3" text-anchor="middle">一致连续遥控</text>
+  <polygon points="205,475 225,448 355,448 375,475 355,502 225,502" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="290" y="471" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">振幅望远镜</text>
+  <text x="290" y="487" font-size="10.5" fill="#6a55a3" text-anchor="middle">Σωᵢ = f(b)−f(a)</text>
+  <polygon points="395,475 415,448 565,448 585,475 565,502 415,502" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="490" y="471" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">坏点包区间</text>
+  <text x="490" y="487" font-size="10.5" fill="#6a55a3" text-anchor="middle">误差预算劈半</text>
+  <polygon points="588,475 605,448 695,448 712,475 695,502 605,502" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="650" y="471" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">判别式法</text>
+  <text x="650" y="487" font-size="10.5" fill="#6a55a3" text-anchor="middle">恒非负二次式</text>
+
+  <!-- 判据 → 出口（肘形走线） -->
+  <polyline points="185,297 20,320 20,575 58,575" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="26" y="440" font-size="11" fill="#5c554b">定义 F(x)=∫ₐˣf</text>
+  <line x1="380" y1="297" x2="380" y2="543" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="386" y="430" font-size="11" fill="#5c554b">单调性 · 估值定理</text>
+  <polyline points="650,502 650,530 480,530 480,543" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="566" y="522" font-size="11" fill="#5c554b" text-anchor="middle">CS 专用</text>
+  <polyline points="550,272 716,272 716,575 701,575" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="714" y="430" font-size="11" fill="#5c554b" text-anchor="end">语言直通第 8 章</text>
+
+  <!-- 出口（椭圆） -->
+  <ellipse cx="140" cy="575" rx="120" ry="30" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="140" y="571" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">变上限积分 F′ = f</text>
+  <text x="140" y="587" font-size="10.5" fill="#3d7a70" text-anchor="middle">Newton–Leibniz 公式</text>
+  <ellipse cx="400" cy="575" rx="130" ry="30" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="400" y="571" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">积分不等式三件套</text>
+  <text x="400" y="587" font-size="10.5" fill="#3d7a70" text-anchor="middle">单调性 · 估值 · Cauchy–Schwarz</text>
+  <ellipse cx="625" cy="575" rx="75" ry="30" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="625" y="571" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">第 8 章</text>
+  <text x="625" y="587" font-size="10.5" fill="#3d7a70" text-anchor="middle">反常·含参积分</text>
+  <text x="700" y="628" font-size="11" fill="#8a8175" text-anchor="end">直通：第 14 届题五 · 第 17 届题六</text>
+</svg>
+<figcaption>本章地图：sup/inf 与 Riemann 和汇成 Darboux 上下和，判据一刀判出三大可积类和一个头牌反例，方法动作各就各位，最后通向变上限积分、积分不等式与第 8 章。</figcaption>
+</figure>
+
+<div class="net box" data-tag="画面感锚点（记这些，不记条文）">
+  <table>
+    <tr><th>角色</th><th>一句话画面</th><th>擅长场景</th></tr>
+    <tr><td>Darboux 上下和</td><td>上台阶盖住、下台阶托住，sup/inf 逐段上岗</td><td>一切可积性问题的语言底座</td></tr>
+    <tr><td>振幅 $\omega_i$</td><td>一小段上的最大落差；夹缝 $=\sum\omega_i\Delta x_i$</td><td>把"上下和之差"打包成一个可估计的量</td></tr>
+    <tr><td>可积判据</td><td>夹缝能任意小 ⟺ 上下台阶挤出同一个数</td><td>证可积 / 判不可积的唯一入口</td></tr>
+    <tr><td>连续 ⟹ 可积</td><td>一致连续把所有落差一致地摁小</td><td>看到"$f$ 连续"自动上架</td></tr>
+    <tr><td>单调 ⟹ 可积</td><td>落差首尾抵消，只剩 $f(b)-f(a)$</td><td>单调（允许无穷多跳点）也可积</td></tr>
+    <tr><td>有界 + 有限间断</td><td>坏点包进总长任意小的小区间，翻不起浪</td><td>分段函数、带跳点的估值题</td></tr>
+    <tr><td>Dirichlet 函数</td><td>每段落差恒 $1$，夹缝永远 $=$ 区间长</td><td>反例库头牌："有界就够了"的死刑判决</td></tr>
+    <tr><td>判别式法</td><td>"$B^2\le AC$"型 ⟸ 造一个恒非负的 $t$ 二次式</td><td>Cauchy–Schwarz（积分版与求和版）</td></tr>
+  </table>
+  <p><strong>和你已学知识的焊接点</strong>：① $M_i,m_i$ 与 $\inf U,\sup L$ 全部是第 1 章的确界——本章是 sup/inf 第一次大规模上岗；② 定理一的遥控器是第 4 章的 Cantor 一致连续定理；③ Newton–Leibniz 公式里"两原函数差常数"来自第 5 章 Lagrange 中值定理；④ 下一章（第 8 章）把上限或区间"放开"成反常积分、把 $x$ 旁边再加一个参数成含参积分——语言还是这套夹逼，第 16 届题二已经提前剧透。</p>
+</div>
+
+<h2>§8 计算示范：先看真人怎么想，再看卷面怎么写</h2>
+
+<h3>例 1 · 用判据证可积（约 6 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>结论"可积"查拆目标总表：它<strong>不是</strong> $\forall$ 型，而是 $\forall\varepsilon\,\exists P$ 型——判据就是它的定义展开。骨架直接给定：任给 $\varepsilon&gt;0$，<strong>构造</strong>一个分割 $P$，验证 $U(P,f)-L(P,f)&lt;\varepsilon$。$\exists P$ 用构造，构造靠<strong>工具一 · 倒推</strong>。</p>
+  <p><span class="stage">【盘点】</span>$f(x)=x$ 的库存：① 单调递增——每段的天花板和地板<strong>直接钉在端点上</strong>，$M_i=f(x_i)=x_i$，$m_i=f(x_{i-1})=x_{i-1}$（单调性把 sup/inf 从"求"变成"读"）；② 等分分割下 $\Delta x_i=\frac{b-a}{n}$ 全部相同；③ 段数 $n$ 是我自由支配的构造材料。</p>
+  <p><span class="stage">【会师】</span>倒推链：要 $U-L&lt;\varepsilon$ ⟸ 先算出 $U-L$ 到底是 $n$ 的什么函数。等分下每段振幅 $\omega_i=x_i-x_{i-1}=\frac{b-a}{n}$（常数！），于是
+  $$U-L=\sum_{i=1}^n\omega_i\Delta x_i=n\cdot\frac{b-a}{n}\cdot\frac{b-a}{n}=\frac{(b-a)^2}{n}.$$
+  要 $\frac{(b-a)^2}{n}&lt;\varepsilon\Longleftarrow n&gt;\frac{(b-a)^2}{\varepsilon}$。<strong>量词顺序通则</strong>：$\varepsilon$ 在前 $n$ 在后，$n$ 必须依赖 $\varepsilon$——果然依赖。链条闭合。</p>
+  <div class="scratch">
+    <p>验证（$a=1,b=3,n=4$）：分点 $1,\frac32,2,\frac52,3$。
+    $U=\frac12\bigl(\frac32+2+\frac52+3\bigr)=\frac92$，$L=\frac12\bigl(1+\frac32+2+\frac52\bigr)=\frac72$，
+    $U-L=1=\frac{(3-1)^2}{4}$ ✓。公式对，再进卷面。</p>
+  </div>
+  <p><span class="stage">【定型】</span>卷面上倒推一个字不留：只写"任给 $\varepsilon&gt;0$，取 $n&gt;\frac{(b-a)^2}{\varepsilon}$，作 $n$ 等分……则 $U-L=\frac{(b-a)^2}{n}&lt;\varepsilon$"。那个仿佛天赐的 $n$，是程序第 4 步的产物。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 判据的标准操作</strong>：等分分割 → 用单调性（或连续性）逐段<strong>读出</strong> $M_i,m_i$ → 把 $\sum\omega_i\Delta x_i$ 算成 $n$ 的函数 → 倒推解出 $n$ → 正着写。以后所有"证可积"的题，都是这条流水线上的产品。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 1</strong>　用 Darboux 判据证明：$f(x)=x$ 在 $[a,b]$（$a&lt;b$）上 Riemann 可积。</p>
+  <hr>
+  <p class="proof-line"><strong>证明</strong>　任给 $\varepsilon&gt;0$，取正整数 $n&gt;\dfrac{(b-a)^2}{\varepsilon}$，将 $[a,b]$ 作 $n$ 等分：
+  $$P:\ x_i=a+\frac{i(b-a)}{n},\quad i=0,1,\dots,n,\qquad \Delta x_i=\frac{b-a}{n}.$$<span class="step-score">（2 分）</span></p>
+  <p class="proof-line">$f(x)=x$ 单调递增，故在 $[x_{i-1},x_i]$ 上
+  $$M_i=\sup f=f(x_i)=x_i,\qquad m_i=\inf f=f(x_{i-1})=x_{i-1},\qquad \omega_i=M_i-m_i=\frac{b-a}{n}.$$<span class="step-score">（4 分）</span></p>
+  <p class="proof-line">于是
+  $$U(P,f)-L(P,f)=\sum_{i=1}^{n}\omega_i\,\Delta x_i=n\cdot\frac{b-a}{n}\cdot\frac{b-a}{n}=\frac{(b-a)^2}{n}&lt;\varepsilon.$$
+  由可积判据（$\forall\varepsilon&gt;0\ \exists P$ 使 $U-L&lt;\varepsilon$），$f(x)=x$ 在 $[a,b]$ 上 Riemann 可积。$\square$<span class="step-score">（6 分）</span></p>
+  <p class="aside">书写点评：三个分点各占一个动作——<strong>给出依赖 $\varepsilon$ 的分割</strong>、<strong>逐段读出 $M_i,m_i$（"单调递增"四字是这步的合法性来源，漏写要扣分）</strong>、<strong>算出夹缝并收回判据</strong>。只写"$x$ 连续故可积"本题也对，但那是定理一的划归写法，本题考的是判据本身。</p>
+</div>
+
+<h3>例 2 · Cauchy–Schwarz 积分不等式（约 8 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>结论是不等式 $\forall$ 型：对所有（连续）函数 $f,g$ 都有 $\bigl(\int fg\bigr)^2\le\int f^2\int g^2$。两头夹用不上（不是等式）；直接比被积函数也用不上（$fg$ 与 $f^2,g^2$ 逐点没法比）。<strong>关键观察</strong>：结论形如 $B^2\le AC$（$A=\int f^2$，$B=\int fg$，$C=\int g^2$）——而 $B^2\le AC$ 正是"二次式 $At^2+2Bt+C\ge0$ 对一切 $t$ 成立"的判别式条件。于是目标<strong>划归</strong>（工具六）为中学问题：造一个恒非负的二次式。</p>
+  <p><span class="stage">【盘点】</span>库存：① 积分单调性——逐点非负的函数积分非负；② 积分线性性——$\int(f+tg)^2$ 能展开成 $t$ 的二次三项式；③ $(f(x)+tg(x))^2\ge0$ 对每个 $x$、每个实数 $t$ 逐点成立（白送）。<strong>工具八 · 辅助函数</strong>：构造 $\Phi(t)=\int_a^b(f+tg)^2\,dt$，把参数 $t$ 当杠杆。</p>
+  <p><span class="stage">【会师】</span>倒推链：要 $B^2\le AC$ ⟸（判别式）只需 $\Phi(t)=At^2+2Bt+C\ge0\ \forall t\in\mathbb{R}$ ⟸（单调性）只需 $(f+tg)^2\ge0\ \forall x,t$ ⟸ 库存③白送。链条闭合。<strong>退化情形</strong>别漏：$A=\int f^2=0$（连续 $f$ 则 $f\equiv0$）时二次式退化为一次式 $2Bt+C\ge0$ 对一切 $t$ 成立，迫使斜率 $B=0$，结论 $0\le0$ 仍成立——卷面上用"$f\equiv0$，两边均为 $0$"一句话处理。</p>
+  <p><span class="stage">【定型】</span>卷面从"对任意实数 $t$"直接写起，构造 $\Phi(t)$ 的心路（$B^2\le AC$ 的观察）删除——但草稿纸上它必须存在，否则你想不到这个 $t$。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 判别式法</strong>：见到 $B^2\le AC$ 型的不等式（$\bigl(\int fg\bigr)^2$、$\bigl(\sum a_ib_i\bigr)^2$、$\bigl(\sum a_i\bigr)^2$），反射性地构造关于参数 $t$ 的恒非负二次式 $\int(f+tg)^2\ge0$（或 $\sum(a_i+tb_i)^2\ge0$），展开、写判别式 $\le0$。积分版与求和版是同一个模子——第 13 届题三用的就是求和版。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 2</strong>　设 $f,g$ 在 $[a,b]$（$a&lt;b$）上连续。证明 Cauchy–Schwarz 不等式：
+  $$\left(\int_a^b f(x)g(x)\,dx\right)^2\le\int_a^b f^2(x)\,dx\cdot\int_a^b g^2(x)\,dx.$$</p>
+  <hr>
+  <p class="proof-line"><strong>证明</strong>　若 $f\equiv0$，两边均为 $0$，结论成立。下设 $f$ 不恒为 $0$，则由 $f^2$ 连续非负且不恒为 $0$ 知 $A:=\int_a^b f^2&gt;0$。<span class="step-score">（2 分）</span></p>
+  <p class="proof-line">对任意实数 $t$ 与任意 $x\in[a,b]$，$(f(x)+tg(x))^2\ge0$。由积分单调性与线性性，
+  $$\Phi(t):=\int_a^b\bigl(f(x)+tg(x)\bigr)^2dx=t^2\int_a^b f^2+2t\int_a^b fg+\int_a^b g^2\ge0,\quad\forall t\in\mathbb{R}.$$<span class="step-score">（5 分）</span></p>
+  <p class="proof-line">$\Phi(t)$ 是首项系数 $A&gt;0$ 且恒非负的二次三项式，故其判别式非正：
+  $$\Delta=\left(2\int_a^b fg\right)^2-4\int_a^b f^2\cdot\int_a^b g^2\le0,$$
+  整理即 $\bigl(\int_a^b fg\bigr)^2\le\int_a^b f^2\cdot\int_a^b g^2$。$\square$<span class="step-score">（8 分）</span></p>
+  <p class="aside">书写点评：分点在三个动作——<strong>退化情形先行处理</strong>（漏了它，严格阅卷会扣这 1–2 分）、<strong>构造 $\Phi(t)$ 并展开</strong>（"由单调性"四字说明 $\ge0$ 的合法性）、<strong>判别式收束</strong>。备注：等号成立 ⟺ $f$ 与 $g$ 线性相关（其一为另一个的常数倍；此时 $\Phi(t)$ 有实根，被积函数恒为 $0$）——结论对 Riemann 可积的 $f,g$ 也成立（此时 $f^2,fg$ 可积，"可积函数的乘积仍可积"，连续情形只是最干净的版本）。</p>
+</div>
+
+<h2>§9 配套题目</h2>
+
+<p>铁律：<strong>先写在纸上，写到写不动再展开答案</strong>。模仿题照例 1、例 2 的卷面格式写；变式题没有模板，先查判据、先问"振幅从哪来"。</p>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 1</span>用 Darboux 判据证明：$f(x)=x^2$ 在 $[a,b]$（$0\le a&lt;b$）上 Riemann 可积。</p>
+  <details class="answer">
+    <summary>参考答案（约 6 分书写量）</summary>
+    <p>任给 $\varepsilon&gt;0$，取 $n&gt;\dfrac{(b-a)(b^2-a^2)}{\varepsilon}$，作 $n$ 等分 $x_i=a+\frac{i(b-a)}{n}$，$\Delta x_i=\frac{b-a}{n}$（2 分）。</p>
+    <p>$a\ge0$，故 $x^2$ 在 $[a,b]$ 上单调递增，$M_i=x_i^2$，$m_i=x_{i-1}^2$，$\omega_i=x_i^2-x_{i-1}^2$（4 分）。</p>
+    <p>振幅<strong>望远镜</strong>：
+    $$U-L=\sum_{i=1}^n\omega_i\Delta x_i=\frac{b-a}{n}\sum_{i=1}^n\bigl(x_i^2-x_{i-1}^2\bigr)=\frac{b-a}{n}\bigl(x_n^2-x_0^2\bigr)=\frac{(b-a)(b^2-a^2)}{n}&lt;\varepsilon.$$
+    由判据，$x^2$ 可积。$\square$（6 分）</p>
+    <p><strong>易错点</strong>：① 把 $M_i$ 写成 $x_{i-1}^2$——端点读反，先说一句"$x^2$ 在 $[a,b]$（$a\ge0$）递增"再读端点；② 求和时忘了 $\omega_i$ 会相互抵消，试图逐段估计——单调函数的振幅就该望远镜。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 2</span>设 $f$ 在 $[a,b]$（$a&lt;b$）上连续。证明：$\displaystyle\left(\int_a^b f(x)\,dx\right)^2\le(b-a)\int_a^b f^2(x)\,dx$。</p>
+  <details class="answer">
+    <summary>参考答案（约 5 分书写量）</summary>
+    <p>这是 Cauchy–Schwarz 中 $g\equiv1$ 的特例。对任意实数 $t$，
+    $$\int_a^b\bigl(f(x)+t\bigr)^2dx=t^2(b-a)+2t\int_a^b f+\int_a^b f^2\ge0$$
+    （单调性：被积函数逐点非负）（3 分）。这是关于 $t$ 的恒非负二次式（若 $\int f^2=0$ 则连续 $f\equiv0$，两边同为 $0$），故判别式
+    $$\Delta=4\left(\int_a^b f\right)^2-4(b-a)\int_a^b f^2\le0,$$
+    整理即得结论。$\square$（5 分）</p>
+    <p><strong>易错点</strong>：$\int_a^b 1^2\,dx=b-a$ 这一步要显式出现；直接默写 CS 再代入 $g=1$ 也行，但判别式法走一遍更稳。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 1</span>设 $f$ 在 $[a,b]$ 上单调递增。证明：$f$ 在 $[a,b]$ 上 Riemann 可积。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：单调函数有界（$f(a)\le f\le f(b)$），判据可用。单调性把每段确界钉在端点：$M_i=f(x_i)$，$m_i=f(x_{i-1})$。振幅求和<strong>只能</strong>望远镜——但各段 $\Delta x_i$ 可能不等，提不出公因子，所以用细度统一放缩：$\Delta x_i\le\|P\|$。</p>
+    <p><strong>证明</strong>：若 $f(b)=f(a)$ 则 $f$ 为常数，显然可积。下设 $f(b)&gt;f(a)$。任给 $\varepsilon&gt;0$，取正整数 $n&gt;\dfrac{(b-a)(f(b)-f(a))}{\varepsilon}$，作 $n$ 等分 $P$，则 $\Delta x_i=\frac{b-a}{n}=\|P\|$，且
+    $$\sum_{i=1}^n\omega_i\Delta x_i\le\|P\|\sum_{i=1}^n\bigl(f(x_i)-f(x_{i-1})\bigr)=\frac{b-a}{n}\bigl(f(b)-f(a)\bigr)&lt;\varepsilon.$$
+    由判据，$f$ 可积。$\square$</p>
+    <p><strong>点评</strong>：和模仿 1 的差别只有一处——那里 $\omega_i$ 本身是常数，这里靠望远镜把 $\sum\omega_i$ 算成 $f(b)-f(a)$。注意本证法对<strong>任意</strong>满足 $\|P\|$ 足够小的分割都有效，不必等分。再强调一次：单调函数可以有无穷多个间断点，照样可积。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 2</span>证明 Dirichlet 函数 $D(x)=\begin{cases}1,&x\in\mathbb{Q}\\0,&x\notin\mathbb{Q}\end{cases}$ 在 $[0,1]$ 上不可积。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：结论是<strong>否定句</strong>——先用工具四（量词否定）把"可积"翻过来：可积是 $\forall\varepsilon\,\exists P:\ U-L&lt;\varepsilon$，其否定为
+    $$\exists\varepsilon_0&gt;0,\ \forall P:\ U(P,D)-L(P,D)\ge\varepsilon_0.$$
+    注意否定后变成 <strong>$\forall P$</strong>：必须对<strong>一切</strong>分割成立，只验等分分割是零分操作。</p>
+    <p><strong>证明</strong>：取 $\varepsilon_0=\frac12$。任取 $[0,1]$ 的分割 $P:\ 0=x_0&lt;x_1&lt;\cdots&lt;x_n=1$。每个小区间 $[x_{i-1},x_i]$ 中既有有理点又有无理点（$\mathbb{Q}$ 与 $\mathbb{R}\setminus\mathbb{Q}$ 都在 $\mathbb{R}$ 中稠密），故
+    $$M_i=\sup_{[x_{i-1},x_i]}D=1,\qquad m_i=\inf_{[x_{i-1},x_i]}D=0,\qquad i=1,\dots,n.$$
+    于是 $U(P,D)=\sum_i 1\cdot\Delta x_i=1$，$L(P,D)=0$，$U(P,D)-L(P,D)=1\ge\varepsilon_0$。由判据的否定形式，$D$ 在 $[0,1]$ 上不可积。$\square$</p>
+    <p><strong>点评</strong>：全题只有一个动作——<strong>每段振幅恒 $1$</strong>。它也告诉你 Dirichlet 函数"病"在哪：不是间断点太多，而是<strong>每一段上函数值都在 $0$ 与 $1$ 之间满幅震荡</strong>，落差压不下去。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv3">真题节选</span><strong>（第 14 届题五，15 分）</strong>设 $\lim\limits_{n\to+\infty}\beta_n=0$，函数 $f$ 在 $[-1,2]$ 上有界，在 $[0,1]$ 上 Riemann 可积。证明：
+  $$\lim_{n\to+\infty}\frac1n\sum_{k=1}^{n}f\Bigl(\frac{k}{n}+\beta_n\Bigr)=\int_0^1 f(x)\,dx.$$</p>
+  <p>取样点被扰动了 $\beta_n$——这正是本章动作二的考场原形。先回答三个梯子问题（写在纸上）：</p>
+  <p>（i）如果 $f$ <strong>连续</strong>，这题会简单得多：差 $\frac1n\sum\bigl[f\bigl(\frac{k}{n}+\beta_n\bigr)-f\bigl(\frac{k}{n}\bigr)\bigr]$ 会被什么直接压死？题设只给"有界 + 可积"，为什么这件武器用不上？<br>
+  （ii）取样点 $\frac{k}{n}+\beta_n$ 可能跑出 $\bigl[\frac{k}{n},\frac{k+1}{n}\bigr]$，为什么不能直接套"$L\le$ Riemann 和 $\le U$"？振幅估计应该在哪一步进来？<br>
+  （iii）首尾各约 $m_n$ 段（$m_n=[n|\beta_n|]+1$）为什么敢"粗估"？</p>
+  <details class="answer">
+    <summary>梯子参考答案</summary>
+    <p>（i）连续 ⟹ 一致连续（第 4 章）：$\beta_n\to0$ 时 $\max_k\bigl|f\bigl(\frac{k}{n}+\beta_n\bigr)-f\bigl(\frac{k}{n}\bigr)\bigr|\to0$，差的平均值随之 $\to0$——遥控器一按就灵。但题设的 $f$ 只是可积（可以像 Riemann 函数那样处处有间断点），一致连续不存在，遥控器失灵，<strong>必须改用 Darboux 振幅逐段估计</strong>——这就是本题存在的意义。</p>
+    <p>（ii）夹逼 $L\le\sum f(\xi_i)\Delta x_i\le U$ 的前提是取样点 $\xi_i$ 落在本段内；扰动后落点漂移（甚至跑出 $[0,1]$，这正是"$f$ 在 $[-1,2]$ 上有界"这句条件存在的原因）。官方的对策：把积分也按扰动后的点分段，对 $m_n\le k\le n-m_n$ 的中段估计
+    $$n\left|\int_{\frac{k}{n}+\beta_n}^{\frac{k+1}{n}+\beta_n}\Bigl(f\Bigl(\frac{k}{n}+\beta_n\Bigr)-f(x)\Bigr)dx\right|\le\sup_{I_k}f-\inf_{I_k}f,$$
+    ——<strong>振幅就在这一步进来</strong>，再放大成两个平移分割 $P_n,Q_n$（分点 $\frac{k}{n}\mp|\beta_n|$）的振幅之和。</p>
+    <p>（iii）首尾段数只有 $O(m_n)$ 段，每段贡献被有界性 $|f|\le M$ 控制在 $O\bigl(\frac1n\bigr)$，合计 $O\bigl(\frac{m_n}{n}\bigr)\to0$（因 $\frac{m_n}{n}\to0$）。<strong>有界函数在总长趋于 $0$ 的区间族上翻不起浪</strong>——和定理三"坏点包区间"同宗。</p>
+  </details>
+  <details class="answer">
+    <summary>官方解答骨架（转录自官方参考答案）</summary>
+    <p>① 记 $M=\sup\limits_{x\in[-1,2]}|f(x)|$，$m_n=[n|\beta_n|]+1$，则 $\frac{m_n}{n}\to0$；取 $N$ 使 $n\ge N$ 时 $2m_n\le n$，以下考虑 $n\ge3N+3$。</p>
+    <p>② <strong>核心局部估计</strong>（5 分点）：对 $m_n\le k\le n-m_n$，
+    $$n\Bigl|\int_{\frac kn+\beta_n}^{\frac{k+1}{n}+\beta_n}\bigl(f(\tfrac kn+\beta_n)-f(x)\bigr)\,dx\Bigr|\le\sup_{t\in[\frac kn+\beta_n,\frac{k+1}{n}+\beta_n]}f(t)-\inf_{t\in[\frac kn+\beta_n,\frac{k+1}{n}+\beta_n]}f(t),$$
+    再放大为平移区间 $\bigl[\frac kn-|\beta_n|,\frac{k+1}{n}-|\beta_n|\bigr]$ 与 $\bigl[\frac kn+|\beta_n|,\frac{k+1}{n}+|\beta_n|\bigr]$ 上两对 $\sup-\inf$ 之和。</p>
+    <p>③ 首尾小段用有界性粗估（共 $\frac{6m_n}{n}$ 量级），中段化为
+    $$\Bigl|\frac1n\sum_{k=1}^n f\Bigl(\frac kn+\beta_n\Bigr)-\int_0^1f(x)\,dx\Bigr|\le\bigl(U(f;P_n)-L(f;P_n)\bigr)+\bigl(U(f;Q_n)-L(f;Q_n)\bigr)+\frac{6m_n}{n},$$
+    其中 $P_n$、$Q_n$ 分别为分点 $\{\frac kn-|\beta_n|\}\cup\{a,b\}$、$\{\frac kn+|\beta_n|\}\cup\{a,b\}$ 的划分，$U,L$ 为 Darboux 上和与下和。</p>
+    <p>④ 由 $f$ 在 $[0,1]$ 可积（Darboux 上下和之差 $\to0$）及 $\frac{m_n}{n}\to0$ 得结论（15 分点）。</p>
+    <p><strong>复盘</strong>：本题把本章四件家当全用了一遍——<strong>振幅语言</strong>（②的 sup $-$ inf）、<strong>可积判据</strong>（④的 $U-L\to0$）、<strong>分段处理</strong>（中段细估 + 首尾粗估，定理三"坏点包区间"的近亲）、<strong>有界性</strong>（①的 $M=\sup|f|$，第 1 章语言）。它还给"可积 ⟹ Riemann 和收敛"换了一层皮：取样点不但可以乱取，还可以<strong>系统地漂</strong>，只要漂得慢（$\beta_n\to0$）就翻不了车。<em>（题目与解答转录自第 14 届官方 PDF，见 <a href="真题索引/第14届_2022.md">真题索引</a>。）</em></p>
+  </details>
+</div>
+
+<h2>§9.5 熟练度训练场</h2>
+
+<p>理解只是入场券，<strong>考场上拼的是基本动作的速度</strong>。两种训练，每天 10 分钟：</p>
+
+<h3>训练一 · 翻卡快测（目标：每卡 10 秒内出答案）</h3>
+<div class="quiz" data-quiz="ch07-drill"></div>
+
+<h3>训练二 · 计时默写（写在纸上，掐表）</h3>
+<div class="calc box" data-tag="默写清单">
+  <p>① <strong>45 秒</strong>：默写可积判据的两种写法 + 振幅语言重写（$\inf U=\sup L$；$\forall\varepsilon\,\exists P:\ U-L&lt;\varepsilon$；$\sum\omega_i\Delta x_i&lt;\varepsilon$，三行一字不差）；</p>
+  <p>② <strong>40 秒</strong>：默写三大可积类 + 各一句思路（连续/一致连续压振幅；单调/振幅望远镜；有界+有限间断/坏点包区间 + 误差预算）；</p>
+  <p>③ <strong>3 分钟</strong>：默写 Cauchy–Schwarz 积分不等式 + 判别式法骨架四步（构造 $\Phi(t)=\int(f+tg)^2\ge0$ → 展开成二次式 → 判别式 $\le0$ → 退化情形 $\int f^2=0$ 处理）。</p>
+  <p><strong>过关标准</strong>：连续两天全对才算过。做不到就回到对应小节重读，再默。</p>
+</div>
+
+<h2>§10 六方向自测卡</h2>
+
+<div class="selftest">
+  <h3>合上书，拿张白纸，默写以下六项</h3>
+  <div class="st-item">
+    <p class="st-q"><em>=（它是什么）</em>　写出 $U(P,f)$、$L(P,f)$ 的定义，以及可积判据的两种写法。</p>
+    <details><summary>对照</summary><p>$M_i=\sup_{[x_{i-1},x_i]}f$，$m_i=\inf_{[x_{i-1},x_i]}f$；$U=\sum M_i\Delta x_i$，$L=\sum m_i\Delta x_i$。判据：$\inf_P U=\sup_P L$（上积分 = 下积分）⟺ $\forall\varepsilon&gt;0,\ \exists P:\ U-L&lt;\varepsilon$（振幅写法：$\sum\omega_i\Delta x_i&lt;\varepsilon$）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>←（什么带来它）</em>　Riemann 和已经能算积分了，为什么还需要 Darboux 上下和？</p>
+    <details><summary>对照</summary><p>Riemann 和的取样点 $\xi_i$ 任意——"极限与取法无关"这件事本身需要证明；而且像 Dirichlet 函数，不同取样给出不同的和（全取有理点得 $1$，全取无理点得 $0$），"面积"无法定义。Darboux 用每段的 sup/inf（第 1 章）把任意取样夹死：$L\le$ 一切 Riemann 和 $\le U$，可积性变成两个确定数列的夹逼问题。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>→（它带来什么）</em>　说出可积判据的四条直接产出。</p>
+    <details><summary>对照</summary><p>① 三大可积类（连续 / 单调 / 有界+有限间断）全部判出；② 变上限积分 $F=\int_a^x f$ 连续、$f$ 连续处 $F'=f$，推出 Newton–Leibniz 公式；③ 积分不等式三件套（单调性 / 估值 / CS）有了合法底座；④ 判据就是第 14 届题五、第 17 届题六的入口，也是第 8 章反常与含参积分的语言地基。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>∈（实例）</em>　默写三个可积函数与一个不可积函数（各属不同类型）。</p>
+    <details><summary>对照</summary><p>可积：$x^2$（连续型）；任意单调函数，如 $\lfloor x\rfloor$ 类阶梯（单调型，允许无穷跳点）；带一个跳点的分段函数（有界+有限间断型）。不可积：Dirichlet 函数（每段振幅恒 $1$）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>≠（区分）</em>　"可积"与"连续"谁强？"$\exists P:\ U-L&lt;\varepsilon$"与"$\forall P$"差在哪？</p>
+    <details><summary>对照</summary><p>连续 ⟹ 可积，反之不然：单调跳点函数可积但不连续；Dirichlet 说明有界也不够。判据只要<strong>存在</strong>一个（依赖 $\varepsilon$ 的）好分割；$\forall P$ 连 $f(x)=x$ 都满足不了（粗分割夹缝很大）——找错量词，证明方向整个反掉。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>（为何要有它）</em>　"可积"这道门槛到底在判什么？为什么竞赛爱考它？</p>
+    <details><summary>对照</summary><p>判的是"上台阶与下台阶能否任意接近"——面积是否唯一确定。它把模糊的"面积直觉"变成可操作的 $\varepsilon$-$P$ 语言：入口是确界（sup/inf 逐段上岗），出口是夹逼估计。竞赛爱考，因为它是"定义回推 + 精细估计"风格的最佳载体：一句话题面（取样点扰动、稀疏子集求和），考的就是你能不能把定义展开成振幅估计。</p></details>
+  </div>
+</div>
+
+<div class="net box" data-tag="间隔复习安排">
+  <p><strong>1 天后</strong>：重做六方向自测卡（不翻书）+ 翻卡快测第二轮；<strong>3 天后</strong>：重做变式 1、变式 2 与真题节选的三个梯子问题 + 计时默写②③；<strong>1 周后</strong>：默写例 1 全流程（等分 → 读 $M_i,m_i$ → 算 $U-L$ → 倒推 $n$），确认翻卡全部"会了"。</p>
+  <p>本章是<strong>第 8 章</strong>（反常积分与含参变量积分）的直接地基——把上限或区间"放开"之后，用的还是这套上下和与夹逼语言，第 16 届题二的优函数控制已经预演；同时它也是第 14 届题五、第 17 届题六的直通车道，学完后请回做这两道真题全文。</p>
+</div>
+
+<div class="chapnav">
+  <span><a href="ch06.html">← 第 6 章 · Taylor 公式</a></span>
+  <span><a href="index.html">首页</a></span>
+  <span><a href="ch08.html">第 8 章 · 反常积分与含参变量积分：一致收敛登场 →</a></span>
+</div>
+
+</div>
+
+<script src="assets/quiz.js"></script>
+<script>
+/* §9.5 翻卡数据 */
+registerQuiz("ch07-drill", [
+  { q: "Darboux 上和 $U(P,f)$ 的定义？", a: "$U(P,f)=\\sum M_i\\Delta x_i$，其中 $M_i=\\sup\\limits_{[x_{i-1},x_i]}f$——逐段取 sup（第 1 章），乘段长，求和。" },
+  { q: "可积判据，两种写法。", a: "① $\\inf_P U(P,f)=\\sup_P L(P,f)$（上积分 = 下积分）；② $\\forall\\varepsilon>0,\\ \\exists P:\\ U(P,f)-L(P,f)&lt;\\varepsilon$。" },
+  { q: "振幅语言把判据重写成什么？", a: "$\\omega_i=M_i-m_i$（本段最大落差），判据 ⟺ $\\exists P:\\ \\sum\\omega_i\\Delta x_i&lt;\\varepsilon$。" },
+  { q: "三大可积类？", a: "连续 ⟹ 可积（一致连续压振幅）；单调 ⟹ 可积（振幅望远镜）；有界 + 有限间断 ⟹ 可积（坏点包区间 + 误差预算）。" },
+  { q: "Dirichlet 函数为什么不可积？", a: "任何小区间里有理、无理点都在：$M_i=1$，$m_i=0$，$U-L=1$ 不随分割缩小；$\\varepsilon_0=\\frac12$ 挡死一切分割。" },
+  { q: "$f$ 连续，$F(x)=\\int_a^x f(t)\\,dt$ 怎样？", a: "$F$ 可导且 $F'(x)=f(x)$——微分是积分的逆运算。（$f$ 只可积时 $F$ 连续。）" },
+  { q: "Newton–Leibniz 公式？", a: "$f$ 连续，$\\Phi'=f$，则 $\\int_a^b f=\\Phi(b)-\\Phi(a)$。证明：$F=\\int_a^x f$ 也是原函数，两原函数差常数。" },
+  { q: "Cauchy–Schwarz 积分不等式 + 证明骨架。", a: "$(\\int_a^b fg)^2\\le\\int_a^b f^2\\cdot\\int_a^b g^2$。骨架：$\\Phi(t)=\\int(f+tg)^2\\ge0$ 对一切 $t$ 成立，展开成 $t$ 的二次式，判别式 $\\le0$。" },
+  { q: "连续 ⟹ 可积的证明里，$\\frac{\\varepsilon}{b-a}$ 是怎么来的？", a: "倒推：要 $\\sum\\omega_i\\Delta x_i&lt;\\varepsilon$，而 $\\sum\\Delta x_i=b-a$，故每段振幅预算 $\\frac{\\varepsilon}{b-a}$，由一致连续供货。" },
+  { q: "Riemann 函数（$x=\\frac pq$ 既约时取 $\\frac1q$，无理点取 $0$）在 $[0,1]$ 可积吗？", a: "可积！且积分 $=0$。间断点是全体有理数（无穷多个）也挡不住——「有限间断」只是充分条件，不是门槛。" }
+]);
+</script>
+
+<script>
+/* §3.4 Darboux 探索器 */
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  var svg = document.getElementById("dw-svg");
+  var out = document.getElementById("dw-out");
+  var nSlider = document.getElementById("dw-n");
+  var bSlider = document.getElementById("dw-b");
+  var modeBtns = document.querySelectorAll("#dw-modes button");
+  var mode = "cont";
+  var X0 = 60, X1 = 680, YB = 288;
+  var YMAXC = 9.6, YMAXD = 1.25;
+  function px(x) { return X0 + (x / 3) * (X1 - X0); }
+  function py(y, ym) { return YB - (y / ym) * 248; }
+  function mk(tag, attrs) {
+    var el = document.createElementNS(NS, tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    return el;
+  }
+  function tx(x, y, s, attrs) {
+    var t = mk("text", attrs || {});
+    t.setAttribute("x", x); t.setAttribute("y", y);
+    t.textContent = s;
+    return t;
+  }
+  function f4(v) { return v.toFixed(4); }
+  function drawAxes(b) {
+    svg.appendChild(mk("line", { x1: 40, y1: YB, x2: 705, y2: YB, stroke: "#2b2620", "stroke-width": 2 }));
+    svg.appendChild(mk("polygon", { points: "714," + YB + " 702," + (YB - 5) + " 702," + (YB + 5), fill: "#2b2620" }));
+    for (var t = 0; t <= 3; t++) {
+      svg.appendChild(mk("line", { x1: px(t), y1: YB - 6, x2: px(t), y2: YB + 6, stroke: "#2b2620", "stroke-width": 2 }));
+      svg.appendChild(tx(px(t), YB + 24, String(t), { "font-size": 13, fill: "#2b2620", "text-anchor": "middle" }));
+    }
+    svg.appendChild(mk("line", { x1: px(b), y1: 36, x2: px(b), y2: YB, stroke: "#5c554b", "stroke-width": 1.2, "stroke-dasharray": "5 4" }));
+    svg.appendChild(tx(px(b) + 6, 32, "b", { "font-size": 14, fill: "#5c554b", "font-weight": "bold" }));
+  }
+  function render() {
+    var n = parseInt(nSlider.value, 10);
+    var b = parseFloat(bSlider.value);
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    drawAxes(b);
+    var h = b / n, i, U = 0, L = 0;
+    if (mode === "dir") {
+      var ymd = YMAXD, y1 = py(1, ymd);
+      svg.appendChild(tx(X0, 26, "有理点：y = 1（红）· 无理点：y = 0（黑）—— 稠密点雾示意", { "font-size": 12, fill: "#5c554b" }));
+      for (i = 1; i <= 420; i++) {
+        var xf = (i / 421) * 3;
+        var yy = ((i * 37) % 11 < 5) ? 1 : 0;
+        svg.appendChild(mk("circle", { cx: px(xf), cy: yy ? y1 : YB, r: 1.5, fill: yy ? "#be123c" : "#2b2620", opacity: 0.45 }));
+      }
+      for (i = 0; i < n; i++) {
+        var xa = i * h, xb = (i + 1) * h;
+        svg.appendChild(mk("rect", { x: px(xa), y: y1, width: px(xb) - px(xa), height: YB - y1, fill: "#b45309", opacity: 0.22 }));
+      }
+      svg.appendChild(mk("line", { x1: px(0), y1: YB, x2: px(b), y2: YB, stroke: "#1d4ed8", "stroke-width": 5, opacity: 0.55 }));
+      svg.appendChild(tx(X0 - 8, y1 + 4, "1", { "font-size": 13, fill: "#2b2620", "text-anchor": "end" }));
+      svg.appendChild(tx(X0 - 8, YB + 4, "0", { "font-size": 13, fill: "#2b2620", "text-anchor": "end" }));
+      out.innerHTML = "n = " + n + "，b = " + b.toFixed(2) + "：<br>" +
+        "上台阶 U = " + f4(b) + "（每段 Mᵢ = 1），下台阶 L = 0（每段 mᵢ = 0），<strong>U − L = " + f4(b) + "</strong>　" +
+        "<span class='no'>✗ 与 n 无关，纹丝不动</span><br>" +
+        "<strong>每一小段里既有有理点又有无理点，振幅恒 1——判据的 ∃P 永远交不出货：不可积。你直觉里的「面积 = 0」属于更强的积分理论（Lebesgue），Riemann 这里判的是「连面积都没有」。</strong>";
+      return;
+    }
+    var ym = YMAXC, J = 0.5, c = b / 2;
+    function f(x) { return x * x + ((mode === "jump" && x >= c) ? J : 0); }
+    var M, m;
+    for (i = 0; i < n; i++) {
+      var x0 = i * h, x1 = (i + 1) * h;
+      M = f(x1); m = f(x0);
+      U += M * h; L += m * h;
+      svg.appendChild(mk("rect", { x: px(x0), y: py(M, ym), width: px(x1) - px(x0), height: YB - py(M, ym), fill: "#b45309", opacity: 0.22 }));
+      svg.appendChild(mk("rect", { x: px(x0), y: py(m, ym), width: px(x1) - px(x0), height: YB - py(m, ym), fill: "#1d4ed8", opacity: 0.28 }));
+    }
+    var pts = [];
+    for (i = 0; i <= 240; i++) {
+      var xv = (i / 240) * 3;
+      pts.push(px(xv).toFixed(1) + "," + py(f(xv), ym).toFixed(1));
+    }
+    svg.appendChild(mk("polyline", { points: pts.join(" "), fill: "none", stroke: "#2b2620", "stroke-width": 2 }));
+    if (mode === "jump") {
+      svg.appendChild(mk("line", { x1: px(c), y1: py(c * c, ym), x2: px(c), y2: py(c * c + J, ym), stroke: "#be123c", "stroke-width": 2, "stroke-dasharray": "4 3" }));
+      svg.appendChild(tx(px(c) + 6, py(c * c + J, ym) - 8, "跳 0.5", { "font-size": 12, fill: "#be123c" }));
+    }
+    svg.appendChild(tx(548, 140, "y = x²", { "font-size": 13, fill: "#2b2620", "text-anchor": "end" }));
+    var gap = U - L;
+    var area = b * b * b / 3 + (mode === "jump" ? 0.5 * (b - c) : 0);
+    var theory = (mode === "cont") ? (b * b * b / n) : ((b * b * b + J * b) / n);
+    var tStr = (mode === "cont") ? "b³/n" : "b³/n + 0.5·b/n";
+    var line1 = "n = " + n + "，b = " + b.toFixed(2) + "：<br>" +
+      "上台阶 U = " + f4(U) + "，下台阶 L = " + f4(L) + "，<strong>U − L = " + f4(gap) + "</strong>　" +
+      "<span class='ok'>✓ 恰为 " + tStr + " = " + f4(theory) + "</span><br>" +
+      "真面积 ∫₀ᵇf = " + f4(area) + "，被夹在 L 与 U 之间；";
+    var line2 = (mode === "cont")
+      ? "<strong>n 翻倍、缝隙减半，想要多小有多小——这就是「可积」长出来的样子。</strong>"
+      : "<strong>跳点的振幅 0.5 只住在一个宽 b/n 的小区间里，贡献 0.5·b/n → 0：一个间断点不挡可积（定理三的画面）。</strong>";
+    out.innerHTML = line1 + line2;
+  }
+  function setMode(m) {
+    mode = m;
+    for (var i = 0; i < modeBtns.length; i++) {
+      var on = modeBtns[i].getAttribute("data-mode") === m;
+      modeBtns[i].style.background = on ? "#0f766e" : "#fff";
+      modeBtns[i].style.color = on ? "#fff" : "#0f766e";
+    }
+    render();
+  }
+  for (var j = 0; j < modeBtns.length; j++) {
+    (function (btn) {
+      btn.addEventListener("click", function () { setMode(btn.getAttribute("data-mode")); });
+    })(modeBtns[j]);
+  }
+  nSlider.addEventListener("input", render);
+  bSlider.addEventListener("input", render);
+  render();
+})();
+</script>
+
+</body>
+</html>

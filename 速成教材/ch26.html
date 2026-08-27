@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>解几第 5 章 ·（选学）曲率、挠率与脐点：给弯曲定价 —— 数学A速成讲义</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+<div class="wrap">
+
+<div class="bookbar">
+  <span><a href="index.html">← 返回首页</a></span>
+  <span>卷三 · 解析几何 · 第 5 章（选学）</span>
+</div>
+
+<div class="chapter-kicker">CHAPTER 5 · 解析几何 · 选学章</div>
+<h1>（选学）曲率、挠率与脐点：给弯曲定价</h1>
+
+<div class="exam box" data-tag="本章导览">
+  <p><strong>这一章在整张卷子上的位置（说实话版）</strong>：先把丑话说在前面——官方考纲的解几条目只列"空间曲面与曲线：球面、柱面、锥面、二次曲面及截面"（见《数学A考试范围与学习清单》），<strong>没有明列曲率与挠率</strong>；翻遍第 11–17 届初赛索引，$\kappa$、$\tau$ 从未直接登场，唯一沾边的是<strong>第 12 届题六</strong>（可求长曲线，20 分，但它归属数分，考的是上下极限夹逼）。曲率挠率真正的主场在<strong>决赛</strong>（高年级组可选微分几何板块）。所以本章的定位是<strong>偶发较难、学有余力再补</strong>：若出现，最可能的形态是解几大题里"给参数曲线求 $\kappa,\tau$ 并判断是否平面曲线"的压轴小问。<strong>优先级全书最低——前四章没吃透，请先回去。</strong></p>
+  <p><strong>学完你能</strong>：① 默写弧长微元 $ds=|\mathbf r'(t)|\,dt$、曲率 $\kappa$、挠率 $\tau$ 的任意参数公式并套公式算到底；② 用"$\tau\equiv0$"判定平面曲线并给出完整证明；③ 默写 Frenet 公式的反对称矩阵形式；④ 说出螺旋线"$\kappa,\tau$ 双常数"的刻画，以及脐点"II 与 I 成比例"的定义。</p>
+  <p><strong>前置</strong>：本卷前四章的向量运算（叉积、混合积、模长）+ 一元函数求导。全程只需这两件旧武器。</p>
+</div>
+
+<h2>§1 开场谜题：弹簧和圆，弯法完全不同</h2>
+
+<div class="hook box" data-tag="开场谜题">
+  <p>桌上放着两样东西：一枚圆戒指，一根拉长的弹簧。</p>
+  <p>问一个看似废话的问题：它们都"弯"——可弯法一样吗？</p>
+  <p>不一样，而且你能用手感觉到不一样：戒指可以整个平躺在桌面上，它的弯曲<strong>始终发生在同一个平面里</strong>；弹簧呢？无论你怎么摆放、怎么旋转，都没法把它压进任何一个平面——它一边弯，一边还在<strong>"扭出"自己此刻所在的平面</strong>。</p>
+  <p>所以要给"弯曲"定价，一个价签不够，需要两个：</p>
+  <ul>
+    <li><strong>曲率 $\kappa$</strong>——弯得多狠（切方向转头转得多快）；</li>
+    <li><strong>挠率 $\tau$</strong>——扭得多凶（曲线逃离自己平面的速度）。</li>
+  </ul>
+  <p>对戒指：$\kappa=\frac1R$（常数），$\tau=0$。对弹簧：$\kappa,\tau$ 都是非零常数——这就是为什么弹簧"均匀地又弯又扭"。</p>
+  <p>真正神奇的是反向的那一头：<strong>给你两个标量函数 $\kappa(s)$ 和 $\tau(s)$，一条空间曲线的形状就被完全决定了</strong>（最多差一个刚体运动——平移加旋转）。两个一元函数 = 一条空间曲线的全部信息，这就是曲线的"DNA"。本章的任务很收敛：学会这两个价签怎么算、怎么用它们判形，点到为止。</p>
+</div>
+
+<h2>§2 先看见它：一张平面里的弯，一张扭出来的弯</h2>
+
+<div class="vision box" data-tag="直觉与图像">
+  <p>盯住下面两张图。左图的圆：<strong style="color:#1d4ed8">切向 $T$</strong> 不断转向 <strong style="color:#be123c">主法向 $N$</strong>（指向圆心），这就是"弯"；而 <strong style="color:#15803d">副法向 $B$</strong>（指向纸面外，用 $\odot$ 表示）从头到尾纹丝不动——平面曲线的标志。右图的弹簧：$T$ 照样在转向 $N$（指向中心轴），但 $B$ 自己也在绕轴摆动——它"躺不平"，这就是"扭"。</p>
+</div>
+
+<figure>
+<svg viewBox="0 0 720 205" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="圆与螺旋线：弯与扭">
+  <!-- 左图：圆 -->
+  <circle cx="140" cy="102" r="62" fill="none" stroke="#2b2620" stroke-width="2.5"/>
+  <!-- 圆上一点（30°方向） -->
+  <circle cx="193.7" cy="71" r="4.5" fill="#2b2620"/>
+  <!-- T 切向（垂直于半径，沿逆时针） -->
+  <line x1="193.7" y1="71" x2="165.7" y2="119.5" stroke="#1d4ed8" stroke-width="2.5"/>
+  <polygon points="162.8,124.6 160.5,114.6 169.6,118.5" fill="#1d4ed8"/>
+  <text x="152" y="128" font-size="13" fill="#1d4ed8" font-weight="bold">T</text>
+  <!-- N 主法向（指向圆心） -->
+  <line x1="193.7" y1="71" x2="148" y2="97.4" stroke="#be123c" stroke-width="2.5"/>
+  <polygon points="142.6,100.6 151.8,101.6 148.6,93" fill="#be123c"/>
+  <text x="152" y="80" font-size="13" fill="#be123c" font-weight="bold">N</text>
+  <!-- B 指向纸外 -->
+  <circle cx="215" cy="52" r="7" fill="#fff" stroke="#15803d" stroke-width="2"/>
+  <circle cx="215" cy="52" r="2.2" fill="#15803d"/>
+  <text x="226" y="56" font-size="13" fill="#15803d" font-weight="bold">B（恒指纸外，不动）</text>
+  <text x="140" y="195" font-size="13" fill="#2b2620" text-anchor="middle">圆：只在平面里弯（τ = 0）</text>
+  <!-- 分隔 -->
+  <line x1="330" y1="18" x2="330" y2="188" stroke="#d8d2c6" stroke-width="1.5"/>
+  <!-- 右图：螺旋线（伪 3D） -->
+  <polyline points="550.0,168.0 549.8,168.4 549.1,168.9 548.1,169.3 546.6,169.7 544.7,170.1 542.4,170.4 539.7,170.7 536.6,170.9 533.2,171.1 529.5,171.2 525.5,171.2 521.1,171.2 516.6,171.1 511.8,170.9 506.8,170.6 501.6,170.2 496.3,169.7 491.0,169.2 485.5,168.5 480.0,167.8 474.5,166.9 469.0,165.9 463.7,164.9 458.4,163.7 453.2,162.5 448.2,161.1 443.4,159.7 438.9,158.2 434.5,156.6 430.5,154.9 426.8,153.2 423.4,151.4 420.3,149.5 417.6,147.6 415.3,145.7 413.4,143.7 411.9,141.7 410.9,139.6 410.2,137.6 410.0,135.5 410.2,133.4 410.9,131.4 411.9,129.3 413.4,127.3 415.3,125.3 417.6,123.4 420.3,121.5 423.4,119.6 426.8,117.8 430.5,116.1 434.5,114.4 438.9,112.8 443.4,111.3 448.2,109.9 453.2,108.5 458.4,107.3 463.7,106.1 469.0,105.1 474.5,104.1 480.0,103.2 485.5,102.5 491.0,101.8 496.3,101.3 501.6,100.8 506.8,100.4 511.8,100.1 516.6,99.9 521.1,99.8 525.5,99.8 529.5,99.8 533.2,99.9 536.6,100.1 539.7,100.3 542.4,100.6 544.7,100.9 546.6,101.3 548.1,101.7 549.1,102.1 549.8,102.6 550.0,103.0 549.8,103.4 549.1,103.9 548.1,104.3 546.6,104.7 544.7,105.1 542.4,105.4 539.7,105.7 536.6,105.9 533.2,106.1 529.5,106.2 525.5,106.2 521.1,106.2 516.6,106.1 511.8,105.9 506.8,105.6 501.6,105.2 496.3,104.7 491.0,104.2 485.5,103.5 480.0,102.8 474.5,101.9 469.0,100.9 463.7,99.9 458.4,98.7 453.2,97.5 448.2,96.1 443.4,94.7 438.9,93.2 434.5,91.6 430.5,89.9 426.8,88.2 423.4,86.4 420.3,84.5 417.6,82.6 415.3,80.7 413.4,78.7 411.9,76.7 410.9,74.6 410.2,72.6 410.0,70.5 410.2,68.4 410.9,66.4 411.9,64.3 413.4,62.3 415.3,60.3 417.6,58.4 420.3,56.5 423.4,54.6 426.8,52.8 430.5,51.1 434.5,49.4 438.9,47.8 443.4,46.3 448.2,44.9 453.2,43.5 458.4,42.3 463.7,41.1 469.0,40.1 474.5,39.1 480.0,38.2 485.5,37.5 491.0,36.8 496.3,36.3 501.6,35.8 506.8,35.4 511.8,35.1 516.6,34.9 521.1,34.8 525.5,34.8 529.5,34.8 533.2,34.9 536.6,35.1 539.7,35.3 542.4,35.6 544.7,35.9 546.6,36.3 548.1,36.7 549.1,37.1 549.8,37.6 550.0,38.0" fill="none" stroke="#2b2620" stroke-width="2.5"/>
+  <!-- 中心轴虚线 -->
+  <line x1="480" y1="26" x2="480" y2="182" stroke="#b0a89a" stroke-width="1.2" stroke-dasharray="4 4"/>
+  <!-- 螺旋线上一点 t≈1.57（第三圈起点附近），取 t = π/2 + 2π = 7.85 -->
+  <circle cx="550" cy="103" r="4.5" fill="#2b2620"/>
+  <!-- T：指向运动方向（此刻向纸里且向上，画成左上） -->
+  <line x1="550" y1="103" x2="518" y2="78" stroke="#1d4ed8" stroke-width="2.5"/>
+  <polygon points="513,74 522.7,75 519.6,83.2" fill="#1d4ed8"/>
+  <text x="506" y="72" font-size="13" fill="#1d4ed8" font-weight="bold">T</text>
+  <!-- N：指向中心轴 -->
+  <line x1="550" y1="103" x2="486" y2="103" stroke="#be123c" stroke-width="2.5"/>
+  <polygon points="480,103 489,99 489,107" fill="#be123c"/>
+  <text x="510" y="96" font-size="13" fill="#be123c" font-weight="bold">N</text>
+  <!-- B：斜向上（摆动中） -->
+  <line x1="550" y1="103" x2="574" y2="58" stroke="#15803d" stroke-width="2.5"/>
+  <polygon points="577,52 578.3,61.8 570.2,58.6" fill="#15803d"/>
+  <text x="580" y="54" font-size="13" fill="#15803d" font-weight="bold">B（边走边摆）</text>
+  <text x="480" y="195" font-size="13" fill="#2b2620" text-anchor="middle">弹簧：又弯又扭（κ, τ 均非零）</text>
+</svg>
+<figcaption>同一套标架 $(T,N,B)$ 跟着曲线旅行：圆上 $B$ 冻结，弹簧上 $B$ 摆动。$\kappa$ 管 $T$ 转向 $N$ 的速度，$\tau$ 管 $B$ 摆动的速度。</figcaption>
+</figure>
+
+<p>看图的三个要点：</p>
+<ul>
+  <li><strong>$\kappa$ 是"转头"的速率</strong>：沿曲线走单位弧长，切向 $T$ 偏转多少。直线的 $T$ 不转，$\kappa=0$；圆转得匀，$\kappa$ 是常数。</li>
+  <li><strong>$\tau$ 是"翻身"的速率</strong>：密切平面（$T,N$ 张成的那张"此刻最想躺进去的平面"）绕 $T$ 翻动的快慢，等价地由 $B$ 的摆动测出。平面曲线不翻身，$\tau=0$。</li>
+  <li><strong>两者都是"每弧长"的速率</strong>——所以要先把"弧长"这把尺子造出来，再去定价。这就是下一节的顺序：先尺子（弧长参数），再标架，再两个价签。</li>
+</ul>
+
+<h2>§3 精确定义：尺子、标架、两个价签</h2>
+
+<div class="def">
+  <p class="def-title">定义 1（弧长微元与弧长参数）</p>
+  <p>设 $\mathbf r(t)=(x(t),y(t),z(t))$ 是光滑<strong>正则</strong>曲线（$\mathbf r'(t)\ne\mathbf 0$）。从 $t_0$ 到 $t$ 的弧长为
+  $$s(t)=\int_{t_0}^{t}\bigl|\mathbf r'(u)\bigr|\,du,\qquad\text{即弧长微元 } \boxed{\,ds=\bigl|\mathbf r'(t)\bigr|\,dt\,}.$$</p>
+  <p>若用 $s$ 自己做参数，则 $\bigl|\mathbf r'(s)\bigr|=1$ 恒成立——弧长参数就是"匀速一米一米地走"，此时单位切向量
+  $$\mathbf T(s)=\mathbf r'(s).$$</p>
+</div>
+
+<p>一句真题背景：第 12 届题六把"可求长"定义为<strong>折线长之和的极限存在</strong>（$\lim_{\|P\|\to0^+}s(f;P)$），并证明 Lipschitz 函数图像必可求长——那是弧长概念的分析学严格版。对光滑曲线，折线逼近的极限正好就是上面这个积分。本章只需后者，但看到"折线长极限"要认得它是同一件事的数分口音。</p>
+
+<div class="def">
+  <p class="def-title">定义 2（Frenet 标架）</p>
+  <p>设 $\mathbf r(s)$ 为弧长参数曲线，且 $\kappa(s)=|\mathbf T'(s)|\ne0$。逐点定义三个互相垂直的单位向量：</p>
+  <p>$$\mathbf T=\mathbf r'(s)\ \ (\text{单位切向}),\qquad
+  \mathbf N=\frac{\mathbf T'(s)}{|\mathbf T'(s)|}\ \ (\text{主法向}),\qquad
+  \mathbf B=\mathbf T\times\mathbf N\ \ (\text{副法向}).$$</p>
+  <p>$(\mathbf T,\mathbf N,\mathbf B)$ 构成右手标准正交标架——一个"长在曲线上、跟着曲线旅行"的活动坐标系。它张出的三张平面各有名字：<strong>密切平面</strong>（由 $\mathbf T,\mathbf N$ 张成，法向 $\mathbf B$——曲线此刻最想躺进去的那张平面）、<strong>法平面</strong>（法向 $\mathbf T$）、<strong>从切平面</strong>（由 $\mathbf T,\mathbf B$ 张成）。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定义 3（曲率）与定义 4（挠率）</p>
+  <p><strong>曲率</strong>：$\kappa(s)=\bigl|\mathbf T'(s)\bigr|=\bigl|\mathbf r''(s)\bigr|\ge0$。任意正则参数下，
+  $$\boxed{\ \kappa(t)=\frac{\bigl|\mathbf r'(t)\times\mathbf r''(t)\bigr|}{\bigl|\mathbf r'(t)\bigr|^{3}}\ }\qquad
+  \text{曲率半径 } R=\frac1\kappa.$$</p>
+  <p>特例刻进骨头：直线 $\kappa\equiv0$；半径 $R$ 的圆 $\kappa\equiv\frac1R$（越小越弯）。</p>
+  <p><strong>挠率</strong>：由 $\mathbf B'(s)=-\tau(s)\,\mathbf N(s)$ 定义 $\tau$（$\mathbf B$ 的摆动全部发生在 $\mathbf N$ 方向）。任意正则参数下（要求 $\kappa\ne0$），
+  $$\boxed{\ \tau(t)=\frac{\bigl(\mathbf r'(t)\times\mathbf r''(t)\bigr)\cdot\mathbf r'''(t)}{\bigl|\mathbf r'(t)\times\mathbf r''(t)\bigr|^{2}}\ }$$</p>
+  <p>分子正是混合积 $[\mathbf r',\mathbf r'',\mathbf r''']$——"三阶导数逃出密切平面"的分量。判形铁律：$\tau\equiv0\iff$ 曲线是平面曲线（例 2 全证）。</p>
+</div>
+
+<div class="symbol box" data-tag="逐符号朗读">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$ds=|\mathbf r'(t)|\,dt$</td><td>"弧长微元等于速度向量的模乘 $dt$"</td><td>把"走了多远"从参数 $t$ 手里夺回来，只认路程</td></tr>
+    <tr><td>$\mathbf T=\mathbf r'(s)$</td><td>"弧长参数下一阶导数就是单位切向"</td><td>匀速行走时，导数自动是单位向量——省掉归一化</td></tr>
+    <tr><td>$\mathbf N=\mathbf T'/|\mathbf T'|$</td><td>"切向变化率方向的单位向量"</td><td>指向曲线"弯向哪边"（圆的情形恒指圆心）</td></tr>
+    <tr><td>$\mathbf B=\mathbf T\times\mathbf N$</td><td>"切向叉乘主法向"</td><td>凑出第三个方向，盯住密切平面的法向——它动就是"扭"</td></tr>
+    <tr><td>$\kappa=|\mathbf T'|$</td><td>"每走单位弧长，切向转过的角速度大小"</td><td>第一张价签：弯得多狠（恒非负）</td></tr>
+    <tr><td>$\mathbf B'=-\tau\mathbf N$</td><td>"副法向的变化率反号挂在主法向上"</td><td>第二张价签：扭得多凶（可正可负，符号=旋向）</td></tr>
+    <tr><td>$(\mathbf r'\times\mathbf r'')\cdot\mathbf r'''$</td><td>"速度、加速度叉积，再点乘三阶导"</td><td>混合积：测三阶导数逃出"密切平面"的垂直分量</td></tr>
+  </table>
+  <p>注意分工：<strong>$\kappa$ 只看二阶导（$\mathbf r''$），$\tau$ 必须动用三阶导（$\mathbf r'''$）</strong>。弯是二阶现象，扭是三阶现象——这就是为什么公式里 $\tau$ 的分子一定有 $\mathbf r'''$。</p>
+</div>
+
+<div class="think">
+  <p>别急着接受任意参数的 $\kappa$ 公式。<strong>拿张纸，自己从弧长版 $\kappa=|\mathbf T'|$ 把它推出来</strong>。提示：记 $v=|\mathbf r'(t)|$，则 $\mathbf r'=v\mathbf T$；对 $t$ 再求一次导，用链式法则 $\frac{d}{dt}=\frac{ds}{dt}\frac{d}{ds}=v\frac{d}{ds}$ 和 Frenet 第一式 $\frac{d\mathbf T}{ds}=\kappa\mathbf N$，然后把 $\mathbf r'$ 与 $\mathbf r''$ 叉乘，看 $\mathbf T$ 分量如何自相残杀。推完展开对照。</p>
+  <details class="answer">
+    <summary>对照：任意参数曲率公式的推导</summary>
+    <p>$\mathbf r'=v\mathbf T$；再求导：
+    $$\mathbf r''=v'\mathbf T+v\frac{d\mathbf T}{dt}=v'\mathbf T+v\cdot v\,\kappa\mathbf N=v'\mathbf T+\kappa v^{2}\mathbf N.$$</p>
+    <p>叉乘时 $\mathbf T\times\mathbf T=\mathbf 0$，含 $v'$ 的项自相残杀：
+    $$\mathbf r'\times\mathbf r''=v\mathbf T\times\bigl(v'\mathbf T+\kappa v^{2}\mathbf N\bigr)=\kappa v^{3}\,(\mathbf T\times\mathbf N)=\kappa v^{3}\mathbf B.$$</p>
+    <p>取模：$|\mathbf r'\times\mathbf r''|=\kappa v^{3}$，即 $\kappa=\dfrac{|\mathbf r'\times\mathbf r''|}{|\mathbf r'|^{3}}$。$\square$</p>
+    <p>副产品白送：$\mathbf r'\times\mathbf r''$ 的方向就是 $\mathbf B$——<strong>算挠率时不用再求一次 $\mathbf B$</strong>，叉积顺手就把它给出了。$\tau$ 公式的推导同理（对 $\mathbf r'''$ 取点积，只留下 $\mathbf B$ 分量上的系数），本章不强求，知道结论即可。</p>
+  </details>
+</div>
+
+<div class="def">
+  <p class="def-title">定理（Frenet 公式）</p>
+  <p>弧长参数下，标架的导数被标架自己线性表出：
+  $$\mathbf T'=\kappa\mathbf N,\qquad
+  \mathbf N'=-\kappa\mathbf T+\tau\mathbf B,\qquad
+  \mathbf B'=-\tau\mathbf N,$$
+  即
+  $$\frac{d}{ds}\begin{pmatrix}\mathbf T\\ \mathbf N\\ \mathbf B\end{pmatrix}
+  =\begin{pmatrix}0&\kappa&0\\ -\kappa&0&\tau\\ 0&-\tau&0\end{pmatrix}
+  \begin{pmatrix}\mathbf T\\ \mathbf N\\ \mathbf B\end{pmatrix}.$$</p>
+  <p><strong>高代接口一句</strong>：系数矩阵是<strong>反对称矩阵</strong>（$A^{T}=-A$）——这不是巧合：标架矩阵 $F(s)$ 每列都是单位向量且两两正交（$F$ 正交），求导得 $F^{T}F'+{F'}^{T}F=O$，故 $A=F^{-1}F'$ 必反对称。反对称矩阵的指数是正交矩阵，所以标架全程保持标准正交。卷二（内积空间）的知识在这里闭环。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定理（曲线基本定理 · 曲线的 DNA，陈述）</p>
+  <p>设 $\kappa(s)>0$ 与 $\tau(s)$ 是 $s\in[0,L]$ 上的光滑函数，则存在一条弧长参数曲线以它们为曲率与挠率；且任意两条这样的曲线只差一个刚体运动（平移 + 旋转）。——<strong>$\kappa,\tau$ 是曲线的完全不变量</strong>。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">推论（螺旋线刻画，陈述）</p>
+  <p>圆柱螺旋线 $\mathbf r(t)=(a\cos t,\ a\sin t,\ bt)$ 的 $\kappa=\dfrac{a}{a^{2}+b^{2}}$、$\tau=\dfrac{b}{a^{2}+b^{2}}$ 均为常数（例 1 全算）；反之，$\kappa>0$ 与 $\tau$ 均为常数的曲线必为（圆柱）螺旋线。$\tau$ 的符号对应旋向（$b>0$ 右旋）。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定义 5（脐点 · 选学中的选学，知道即可）</p>
+  <p>曲面上第二基本形式 $\mathrm{II}$ 与第一基本形式 $\mathrm{I}$ <strong>成比例</strong>的点（$\mathrm{II}=\lambda\,\mathrm{I}$，即两个主曲率 $k_1=k_2$ 的点）称为<strong>脐点</strong>——该点处曲面沿各方向"弯得一样"。流程名记住：<strong>求脐点 = 解"$\mathrm{II}$ 与 $\mathrm{I}$ 成比例"</strong>。两个经典结论：球面处处脐点；三轴互不相等的椭球面<strong>恰好 4 个</strong>脐点（都在包含最长轴与最短轴的那个对称平面上）。</p>
+</div>
+
+<h3>3.1 亲手摸一摸：Frenet 标架旅行器（交互）</h3>
+
+<div class="widget" id="frenet-widget">
+  <p class="w-title">▶ 标架旅行器：拖参数 t 让标架沿螺旋线走，拖螺距 b 看"扭"被关掉</p>
+  <p class="w-row">曲线是螺旋线 $\mathbf r(t)=(a\cos t,\ a\sin t,\ bt)$（$a=2$ 固定）。三个箭头：<strong style="color:#1d4ed8">T 切向</strong>、<strong style="color:#be123c">N 主法向</strong>（恒指向中心轴）、<strong style="color:#15803d">B 副法向</strong>；橙色透明片是<strong>密切平面</strong>。</p>
+  <div class="w-row"><label>参数 t（拖着走，盯 T 转向 N、B 摆动）</label>
+  <input type="range" id="fw-t" min="0" max="12.566" step="0.02" value="1.2"></div>
+  <div class="w-row"><label>螺距 b（拖到 0：弹簧压成圆；拖到 1.5：看 κ、τ 怎么变）</label>
+  <input type="range" id="fw-b" min="0" max="1.5" step="0.05" value="0.6"></div>
+  <svg id="fw-svg" viewBox="0 0 720 420" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div class="w-verdict" id="fw-out">加载中……（需要启用 JavaScript）</div>
+  <p class="w-row" style="font-size:0.88em;color:#5c554b">玩出这三个体验再往下走：<strong>①</strong> 把 b 拖到 0：B 变成竖直方向<strong>纹丝不动</strong>，密切平面摊平——$\tau=0$ 就是"平面曲线"的几何面孔；<strong>②</strong> b=0.6 时拖 t 走一整圈：T 一直在转向 N（弯），B 的水平投影绕圈摆（扭），但 B 的竖直分量 $\frac{a}{\sqrt{a^2+b^2}}$ 永远不变；<strong>③</strong> b 拖到 1.5：读数里 $\kappa$ 变小（曲线更"直"）——弹簧拉得越开越接近直线。</p>
+</div>
+
+<h2>§4 翻译轨：三个标准动作 + 一间练功房</h2>
+
+<p>本章在卷面上只有三种用法。都是"条件反射级"的短动作。</p>
+
+<div class="trans box" data-tag="动作一：求 κ、τ（四步流水线）">
+  <p><strong>题面</strong>："求曲线 $\mathbf r(t)=\cdots$ 的曲率（与曲率半径）/ 挠率"。</p>
+  <p><strong>翻译</strong>：固定四步，不许跳——</p>
+  <p>第 ① 步：算 $\mathbf r'$（顺手记下 $|\mathbf r'|$）；第 ② 步：算 $\mathbf r''$，叉乘 $\mathbf r'\times\mathbf r''$（方向即 $\mathbf B$，模长入公式）；第 ③ 步：$\kappa=\dfrac{|\mathbf r'\times\mathbf r''|}{|\mathbf r'|^{3}}$；第 ④ 步：算 $\mathbf r'''$，$\tau=\dfrac{(\mathbf r'\times\mathbf r'')\cdot\mathbf r'''}{|\mathbf r'\times\mathbf r''|^{2}}$。</p>
+  <p><strong>用在哪一步、值多少分</strong>：作为压轴小问出现时每步都有分点（见例 1 的分步给分）；算完用特例（$b=0$ 退化为圆）和量纲（$\kappa,\tau$ 的量纲都是 $\frac1{\text{长度}}$）自查，十秒钟防全军覆没。</p>
+</div>
+
+<div class="trans box" data-tag="动作二：判平面曲线（τ ≡ 0）">
+  <p><strong>题面</strong>："证明曲线是平面曲线 / 判断曲线是否在某个平面内"。</p>
+  <p><strong>翻译</strong>：两条等价路径，任选——</p>
+  <p>路径 A（算）：验证 $(\mathbf r'\times\mathbf r'')\cdot\mathbf r'''\equiv0$（即 $\tau\equiv0$），再补一句"由例 2 结论"；</p>
+  <p>路径 B（造）：直接找出常向量 $\mathbf n$ 与常数 $c$，使 $\langle\mathbf r(t),\mathbf n\rangle\equiv c$——曲线躺在平面 $\langle\mathbf x,\mathbf n\rangle=c$ 里。猜 $\mathbf n$ 时先算一两个点的 $\mathbf r'\times\mathbf r''$，看它是不是常向量。</p>
+  <p>反过来，"证明不是平面曲线"= 找一点使混合积 $\ne0$。</p>
+</div>
+
+<div class="trans box" data-tag="动作三：弧长与可求长（数分口音）">
+  <p><strong>题面</strong>："弧长 / 弧长微元 / 曲线可求长"。</p>
+  <p><strong>翻译</strong>：光滑情形 $ds=|\mathbf r'(t)|\,dt$，弧长 $=\int|\mathbf r'|\,dt$；题面若出现"折线长之和的极限"（如第 12 届题六的 $s(f;P)$），那是可求长的分析学定义，属数分战场——本章只负责认出它们是同一件事的两种口音。</p>
+</div>
+
+<h3>4.1 翻译练功房：像学语言一样，大量互译</h3>
+
+<p>下面 8 句，先全部写在纸上，再逐条展开对照。每条不超过 1 分钟。</p>
+
+<div class="trans box" data-tag="互译 8 句">
+  <p><strong>T1</strong>　默写填空：$\kappa(t)=\dfrac{|\ \underline{\qquad}\ |}{|\ \underline{\qquad}\ |^{3}}$，$R=\underline{\quad}$。</p>
+  <details class="answer"><summary>对照</summary><p>$\kappa(t)=\dfrac{|\mathbf r'\times\mathbf r''|}{|\mathbf r'|^{3}}$，$R=\dfrac1\kappa$。<strong>易错</strong>：分母写成 $|\mathbf r'|^2$ 或与 $\tau$ 的分母混淆——记"$\kappa$ 三次方、$\tau$ 平方（叉积模的平方）"。</p></details>
+  <p><strong>T2</strong>　默写填空：$\tau(t)=\dfrac{(\ \underline{\qquad}\ )\cdot\underline{\qquad}}{|\ \underline{\qquad}\ |^{2}}$。</p>
+  <details class="answer"><summary>对照</summary><p>$\tau(t)=\dfrac{(\mathbf r'\times\mathbf r'')\cdot\mathbf r'''}{|\mathbf r'\times\mathbf r''|^{2}}$。<strong>易错</strong>：分子漏掉 $\mathbf r'''$ 写成二阶——挠率是三阶现象，没有 $\mathbf r'''$ 就没有 $\tau$。</p></details>
+  <p><strong>T3</strong>　判形（说理由）：$\kappa\equiv0$ 的曲线是什么？</p>
+  <details class="answer"><summary>对照</summary><p>直线。$\kappa=|\mathbf T'|\equiv0\Rightarrow\mathbf T$ 为常向量 $\mathbf T_0$，积分得 $\mathbf r(s)=\mathbf r_0+s\mathbf T_0$——过 $\mathbf r_0$ 方向 $\mathbf T_0$ 的直线。</p></details>
+  <p><strong>T4</strong>　判形：$\tau\equiv0$（且 $\kappa\ne0$）的曲线是什么？反之平面曲线的 $\tau$ 如何？</p>
+  <details class="answer"><summary>对照</summary><p>平面曲线（例 2 的证明对象）。反之平面曲线的密切平面恒定、$\mathbf B$ 常值，故 $\tau\equiv0$。双向都要会写。</p></details>
+  <p><strong>T5</strong>　判形：$\kappa,\tau$ 均为非零常数的曲线是什么？若再有 $\tau=0$ 呢？</p>
+  <details class="answer"><summary>对照</summary><p>（圆柱）螺旋线（DNA 定理的推论，本章只陈述）。$\tau=0$ 时退化为圆——圆是"不扭的螺旋线"。</p></details>
+  <p><strong>T6</strong>　自然→符号："曲线在 $t_0$ 处的弯曲程度与半径为 $3$ 的圆相同。"</p>
+  <details class="answer"><summary>对照</summary><p>$\kappa(t_0)=\dfrac13$（曲率半径 $R(t_0)=3$）。<strong>易错</strong>：写成 $\kappa=3$——半径越小越弯，$\kappa$ 与 $R$ 互为倒数。</p></details>
+  <p><strong>T7</strong>　符号→自然 + 追问："$(\mathbf r'\times\mathbf r'')\cdot\mathbf r'''\equiv0$。"它与 $\tau\equiv0$ 是什么关系？</p>
+  <details class="answer"><summary>对照</summary><p>"三阶导数始终躺在 $\mathbf r',\mathbf r''$ 张成的平面里"——曲线是平面曲线。它和 $\tau\equiv0$ 就是一回事（$\tau$ 的分子正是这个混合积，分母在 $\kappa\ne0$ 处非零）。</p></details>
+  <p><strong>T8</strong>　找坑："$\kappa$ 可正可负，$\tau$ 恒非负"——这话对吗？</p>
+  <details class="answer"><summary>对照</summary><p>正好说反了。$\kappa=|\mathbf T'|\ge0$ 恒非负（弯不分方向）；$\tau$ 可正可负——螺旋线 $\tau=\frac{b}{a^2+b^2}$，$b$ 的符号就是旋向（右旋/左旋）。</p></details>
+</div>
+
+<h2>§5 类型识别：什么信号在召唤 κ 和 τ</h2>
+
+<div class="recog box" data-tag="识别反射表">
+  <table>
+    <tr><th>题面信号</th><th>反射</th></tr>
+    <tr><td>"求曲率 / 曲率半径 / 弯曲程度"</td><td>动作一四步流水线：$\kappa=\dfrac{|\mathbf r'\times\mathbf r''|}{|\mathbf r'|^{3}}$，$R=1/\kappa$</td></tr>
+    <tr><td>"挠率 / 扭转 / 密切平面的变化"</td><td>$\tau=\dfrac{(\mathbf r'\times\mathbf r'')\cdot\mathbf r'''}{|\mathbf r'\times\mathbf r''|^{2}}$</td></tr>
+    <tr><td>"证明曲线在某平面内 / 判断是否平面曲线"</td><td>动作二：混合积 $\equiv0$（即 $\tau\equiv0$）或造常法向 $\mathbf n$</td></tr>
+    <tr><td>"弧长 / 弧长微元 / $ds$"</td><td>$ds=|\mathbf r'|\,dt$；弧长参数下 $|\mathbf r'|=1$，$\mathbf T=\mathbf r'$</td></tr>
+    <tr><td>"折线长之和的极限 / 可求长"</td><td>数分口音的可求长定义（第 12 届题六），属数分战场</td></tr>
+    <tr><td>"$\mathbf T,\mathbf N,\mathbf B$ 的变化率 / Frenet"</td><td>反对称矩阵 $\begin{pmatrix}0&\kappa&0\\-\kappa&0&\tau\\0&-\tau&0\end{pmatrix}$</td></tr>
+    <tr><td>"曲率挠率均为常数"</td><td>螺旋线（$\tau=0$ 时圆，$\kappa=0$ 时直线）</td></tr>
+    <tr><td>"脐点 / 各方向弯曲相同"</td><td>$\mathrm{II}$ 与 $\mathrm{I}$ 成比例；球面处处是，三轴椭球恰 4 个</td></tr>
+  </table>
+</div>
+
+<h2>§6 考法定位：它到底考不考</h2>
+
+<div class="exam box" data-tag="考法定位（如实版）">
+  <table>
+    <tr><th>出处</th><th>题号</th><th>与本章的关系</th><th>分值形态</th></tr>
+    <tr><td>第 12 届（2020）</td><td>题六</td><td>可求长曲线 = 弧长的分析学定义（折线长极限 $\lim_{\|P\|\to0^+}s(f;P)$），与 $ds=|\mathbf r'|dt$ 同源背景；但考点是上下极限夹逼，<strong>归属数分</strong></td><td>20 分（数分题）</td></tr>
+    <tr><td>第 11–17 届初赛</td><td>解几题一</td><td>舞台依次是：旋转椭球面、球极投影、旋转曲面分类、单叶双曲面直纹、球心轨迹、切锥面、混合积体积——<strong>$\kappa,\tau$ 均未直接出现</strong></td><td>—</td></tr>
+    <tr><td>官方考纲</td><td>解几第 2 条</td><td>"空间曲面与曲线：球面、柱面、锥面、二次曲面及截面"——未明列曲率挠率，属"空间曲线"边缘内容</td><td>边缘</td></tr>
+    <tr><td>决赛（高年级组）</td><td>—</td><td>微分几何为可选板块，Frenet 标架与 $\kappa,\tau$ 是入门语言</td><td>决赛视野</td></tr>
+  </table>
+  <p><strong>规律一句话</strong>：初赛 7 届零直接命中。若将来出现，最可能的形态是解几大题里"给参数曲线求 $\kappa,\tau$ 并判断是否平面曲线"的<strong>压轴小问</strong>——偶发、较难、分值小。因此本章的正确用法是：<strong>前四章（直线平面、二次曲面、切锥面、旋转曲面）全熟之后</strong>，用本章把"空间曲线"这条边缘补齐，顺手把叉积混合积再练一轮。时间紧可以直接跳过本章，不欠谁。</p>
+</div>
+
+<h2>§7 关系网：两个价签，一套标架</h2>
+
+<p>本章所有角色的来龙去脉：<span style="color:#b45309">三角形</span>是来源动机，<span style="color:#1d4ed8">圆角矩形</span>是定义，<span style="color:#15803d">矩形</span>是定理公式，<span style="color:#7c3aed">六边形</span>是方法动作，<span style="color:#0f766e">椭圆</span>是应用出口。</p>
+
+<figure>
+<svg viewBox="0 0 720 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="曲率挠率关系网地图">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+
+  <!-- 图例 -->
+  <polygon points="30,16 22,30 38,30" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5"/>
+  <text x="44" y="28" font-size="11.5" fill="#5c554b">来源·动机</text>
+  <rect x="116" y="17" width="22" height="13" rx="6.5" fill="#eef3fe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="144" y="28" font-size="11.5" fill="#5c554b">定义</text>
+  <rect x="198" y="17" width="22" height="13" fill="#ecf8f0" stroke="#15803d" stroke-width="1.5"/>
+  <text x="226" y="28" font-size="11.5" fill="#5c554b">定理·公式</text>
+  <polygon points="296,23.5 302,16 316,16 322,23.5 316,31 302,31" fill="#f4effd" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="328" y="28" font-size="11.5" fill="#5c554b">方法·动作</text>
+  <ellipse cx="416" cy="23.5" rx="12" ry="7" fill="#ecf8f5" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="434" y="28" font-size="11.5" fill="#5c554b">应用·出口</text>
+
+  <!-- 来源三角：弹簧 vs 圆 -->
+  <polygon points="130,48 66,130 194,130" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="130" y="95" font-size="12.5" fill="#7a4a12" text-anchor="middle" font-weight="bold">弹簧 vs 圆</text>
+  <text x="130" y="112" font-size="10.5" fill="#7a4a12" text-anchor="middle">弯法不同：弯 + 扭</text>
+
+  <!-- 三角 → 弧长参数 -->
+  <line x1="198" y1="90" x2="268" y2="90" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="233" y="80" font-size="11" fill="#5c554b" text-anchor="middle">先造尺子</text>
+
+  <!-- 圆角矩形：弧长参数 -->
+  <rect x="272" y="60" width="180" height="60" rx="30" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="362" y="85" font-size="13.5" fill="#1d4ed8" text-anchor="middle" font-weight="bold">弧长参数</text>
+  <text x="362" y="104" font-size="11" fill="#1d4ed8" text-anchor="middle">ds = |r′(t)|dt，|r′(s)| = 1</text>
+
+  <!-- 弧长参数 → Frenet 标架 -->
+  <line x1="452" y1="90" x2="522" y2="90" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="487" y="80" font-size="11" fill="#5c554b" text-anchor="middle">装上标架</text>
+
+  <!-- 圆角矩形：Frenet 标架 -->
+  <rect x="526" y="60" width="176" height="60" rx="30" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="614" y="85" font-size="13.5" fill="#1d4ed8" text-anchor="middle" font-weight="bold">Frenet 标架</text>
+  <text x="614" y="104" font-size="11" fill="#1d4ed8" text-anchor="middle">T = r′，N = T′/|T′|，B = T×N</text>
+
+  <!-- 标架 → 两公式矩形 -->
+  <line x1="614" y1="120" x2="614" y2="158" stroke="#8a8175" stroke-width="1.5"/>
+  <line x1="614" y1="158" x2="300" y2="158" stroke="#8a8175" stroke-width="1.5"/>
+  <line x1="300" y1="158" x2="300" y2="180" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="614" y1="158" x2="614" y2="180" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="455" y="150" font-size="11" fill="#5c554b">对标架求导，读出两个价签</text>
+
+  <!-- 矩形：κ 公式 -->
+  <rect x="190" y="182" width="220" height="56" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="300" y="205" font-size="13" fill="#15803d" text-anchor="middle" font-weight="bold">曲率 κ = |r′×r′′| / |r′|³</text>
+  <text x="300" y="224" font-size="11" fill="#4a7c59" text-anchor="middle">弯多狠 · R = 1/κ · 直线 κ≡0</text>
+
+  <!-- 矩形：τ 公式 -->
+  <rect x="500" y="182" width="206" height="56" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="603" y="205" font-size="13" fill="#15803d" text-anchor="middle" font-weight="bold">挠率 τ = (r′×r′′)·r′′′/|r′×r′′|²</text>
+  <text x="603" y="224" font-size="11" fill="#4a7c59" text-anchor="middle">扭多凶 · τ≡0 ⟺ 平面曲线</text>
+
+  <!-- 矩形：Frenet 公式 -->
+  <rect x="40" y="182" width="130" height="56" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="105" y="205" font-size="12.5" fill="#15803d" text-anchor="middle" font-weight="bold">Frenet 公式</text>
+  <text x="105" y="224" font-size="10.5" fill="#4a7c59" text-anchor="middle">反对称矩阵（高代接口）</text>
+
+  <!-- 两公式 → 三动作 -->
+  <line x1="300" y1="238" x2="140" y2="316" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="400" y1="238" x2="380" y2="316" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="603" y1="238" x2="610" y2="316" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- 六边形：三动作 -->
+  <polygon points="60,348 85,318 195,318 220,348 195,378 85,378" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="140" y="344" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">套公式四步</text>
+  <text x="140" y="362" font-size="10.5" fill="#6a55a3" text-anchor="middle">r′ r′′(r′′′) 叉积代入</text>
+  <polygon points="300,348 325,318 435,318 460,348 435,378 325,378" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="380" y="344" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">τ≡0 判定</text>
+  <text x="380" y="362" font-size="10.5" fill="#6a55a3" text-anchor="middle">混合积恒零 ⟺ 平面</text>
+  <polygon points="530,348 555,318 665,318 690,348 665,378 555,378" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="610" y="344" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">标架矩阵求导</text>
+  <text x="610" y="362" font-size="10.5" fill="#6a55a3" text-anchor="middle">反对称 A，F′=FA</text>
+
+  <!-- 动作 → 出口 -->
+  <line x1="140" y1="378" x2="150" y2="414" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="380" y1="378" x2="380" y2="414" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="610" y1="378" x2="600" y2="414" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- 椭圆：三出口 -->
+  <ellipse cx="150" cy="438" rx="120" ry="26" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="150" y="434" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">螺旋线刻画</text>
+  <text x="150" y="450" font-size="10.5" fill="#3d7a70" text-anchor="middle">κ, τ 双常数（DNA 定理）</text>
+  <ellipse cx="400" cy="438" rx="130" ry="26" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="400" y="434" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">微分几何接口（决赛）</text>
+  <text x="400" y="450" font-size="10.5" fill="#3d7a70" text-anchor="middle">曲线论 / 曲面论的入门语言</text>
+  <ellipse cx="620" cy="438" rx="100" ry="26" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="620" y="434" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">脐点（一段）</text>
+  <text x="620" y="450" font-size="10.5" fill="#3d7a70" text-anchor="middle">II 与 I 成比例</text>
+</svg>
+<figcaption>本章地图：一个"弯法不同"的观察，逼出尺子与标架，标架求导长出两个价签，价签再变成三个手上动作与三个出口。</figcaption>
+</figure>
+
+<div class="net box" data-tag="画面感锚点（记这些，不记条文）">
+  <table>
+    <tr><th>角色</th><th>一句话画面</th><th>擅长场景</th></tr>
+    <tr><td>弧长参数</td><td>匀速一米一米走，导数自动单位长</td><td>一切"每弧长"的速率定义</td></tr>
+    <tr><td>Frenet 标架</td><td>长在曲线上的活动三脚架，跟着曲线旅行</td><td>把几何变化翻译成三个向量的导数</td></tr>
+    <tr><td>$\kappa$</td><td>$T$ 转向 $N$ 的角速度；圆的 $\kappa=\frac1R$</td><td>"弯多狠"；越小越弯</td></tr>
+    <tr><td>$\tau$</td><td>$B$ 摆动的速率；平面曲线 $\tau=0$</td><td>"扭多凶"；判平面曲线</td></tr>
+    <tr><td>Frenet 公式</td><td>标架的导数 = 反对称矩阵 × 标架</td><td>一切标架求导题；高代反对称矩阵的活例子</td></tr>
+    <tr><td>DNA 定理</td><td>两个一元函数 = 一条曲线的全部形状</td><td>螺旋线刻画；理解"完全不变量"</td></tr>
+  </table>
+  <p><strong>和你已学知识的焊接点</strong>：① 本卷前四章的叉积、混合积在这里全部复用——$\kappa,\tau$ 公式就是叉积混合积的操练场；② 卷二高代的<strong>反对称矩阵</strong>（$A^T=-A$）在 Frenet 公式里现身，正交标架保持性由它保证；③ 卷一数分的<strong>可求长曲线</strong>（第 12 届题六）与本章弧长微元是同一概念的分析学/几何学两种口音；④ 平面曲线的曲率（高数里 $y=f(x)$ 的 $\kappa=\frac{|f''|}{(1+f'^2)^{3/2}}$）是本章公式在 $z=0$ 情形的特例。</p>
+</div>
+
+<h2>§8 计算示范：先看真人怎么想，再看卷面怎么写</h2>
+
+<h3>例 1 · 螺旋线的两个价签（约 12 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>"求 $\kappa$ 与 $\tau$"——<strong>计算型</strong>结论，骨架由公式直接给出：动作一的四步流水线。没有存在性、没有任意性，程序第 2 步查表即得"代入验证"型骨架。</p>
+  <p><span class="stage">【盘点】</span>已知 $\mathbf r(t)=(a\cos t,a\sin t,bt)$（$a>0$）：产出 $\mathbf r',\mathbf r'',\mathbf r'''$ 全是初等函数；$\cos^2+\sin^2=1$ 会在三处收尾（$|\mathbf r'|$、$|\mathbf r'\times\mathbf r''|$、混合积）——这就是为什么螺旋线的答案是干净的常数。</p>
+  <p><span class="stage">【会师】</span>无倒推需求，正推一条链：$\mathbf r'\to|\mathbf r'|$；$\mathbf r''\to$ 叉积 $\to\kappa$；$\mathbf r'''\to$ 混合积 $\to\tau$。唯一的风险是计算失误，所以程序外加一道<strong>工具三 · 特殊化侦察</strong>：$b=0$ 时曲线退化为半径 $a$ 的圆，此时必须有 $\kappa=\frac1a,\ \tau=0$——答案不满足就是算错了。</p>
+  <p><span class="stage">【定型】</span>卷面按四步写，每步标注中间结果；最后补一行验证。中间量（$|\mathbf r'|$、叉积向量、混合积）全部写出来——它们就是分点。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 四步流水线 + 算完必验</strong>：$\mathbf r'$、$\mathbf r''$、叉积（方向即 $\mathbf B$）、$\mathbf r'''$ 混合积——顺序固定，中间量全留痕。验算两件套：<strong>特例</strong>（参数退化成熟知曲线）+<strong>量纲</strong>（$\kappa,\tau$ 都是 $\frac1{\text{长度}}$）。这套动作对任何参数曲线通用。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 1</strong>　求圆柱螺旋线 $\mathbf r(t)=(a\cos t,\ a\sin t,\ bt)$（$a>0$）的曲率与挠率。</p>
+  <hr>
+  <p class="proof-line"><strong>解</strong>　<strong>第 ① 步（速度）</strong>：$\mathbf r'(t)=(-a\sin t,\ a\cos t,\ b)$，故
+  $$|\mathbf r'(t)|=\sqrt{a^{2}\sin^{2}t+a^{2}\cos^{2}t+b^{2}}=\sqrt{a^{2}+b^{2}}.$$<span class="step-score">（2 分）</span></p>
+  <p class="proof-line"><strong>第 ② 步（加速度与叉积）</strong>：$\mathbf r''(t)=(-a\cos t,\ -a\sin t,\ 0)$，
+  $$\mathbf r'\times\mathbf r''=\bigl(ab\sin t,\ -ab\cos t,\ a^{2}\sin^{2}t+a^{2}\cos^{2}t\bigr)=\bigl(ab\sin t,\ -ab\cos t,\ a^{2}\bigr),$$
+  $$|\mathbf r'\times\mathbf r''|=\sqrt{a^{2}b^{2}+a^{4}}=a\sqrt{a^{2}+b^{2}}.$$<span class="step-score">（5 分）</span></p>
+  <p class="proof-line"><strong>第 ③ 步（曲率）</strong>：
+  $$\kappa=\frac{|\mathbf r'\times\mathbf r''|}{|\mathbf r'|^{3}}=\frac{a\sqrt{a^{2}+b^{2}}}{(a^{2}+b^{2})^{3/2}}=\frac{a}{a^{2}+b^{2}}.$$<span class="step-score">（7 分）</span></p>
+  <p class="proof-line"><strong>第 ④ 步（挠率）</strong>：$\mathbf r'''(t)=(a\sin t,\ -a\cos t,\ 0)$，
+  $$(\mathbf r'\times\mathbf r'')\cdot\mathbf r'''=a^{2}b\sin^{2}t+a^{2}b\cos^{2}t=a^{2}b,$$
+  $$\tau=\frac{(\mathbf r'\times\mathbf r'')\cdot\mathbf r'''}{|\mathbf r'\times\mathbf r''|^{2}}=\frac{a^{2}b}{a^{2}(a^{2}+b^{2})}=\frac{b}{a^{2}+b^{2}}.$$<span class="step-score">（10 分）</span></p>
+  <p class="proof-line"><strong>验证</strong>：$b=0$ 时曲线是半径 $a$ 的圆，公式给出 $\kappa=\frac{a}{a^{2}}=\frac1a$、$\tau=0$，与熟知结论一致；$\kappa,\tau$ 的量纲均为 $\frac1{\text{长度}}$，正确。$\square$<span class="step-score">（12 分）</span></p>
+  <p class="aside">书写点评：分点全在中间量——$|\mathbf r'|$、叉积向量及其模、混合积，各占一份。若一步跳到最终答案而中间出错，前面步骤分全丢；把中间量写出来，即使最后化简笔误也能保住大半分数。$\kappa,\tau$ 均为常数——这正是"螺旋线 = 均匀地又弯又扭"。</p>
+</div>
+
+<h3>例 2 · τ ≡ 0 ⟹ 平面曲线（约 10 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>结论"$\Gamma$ 在某平面内"——查拆目标总表：这是 <strong>$\exists$ 型</strong>（存在常向量 $\mathbf n$ 与常数 $c$ 使 $\langle\mathbf r(s),\mathbf n\rangle\equiv c$），骨架 = 构造 + 验证。整题是 $P\Rightarrow Q$：假设 $\tau\equiv0$，构造那张平面。</p>
+  <p><span class="stage">【盘点】</span>库存两条：<br>
+  ① $\tau\equiv0$：代入 Frenet 第三式，产出 $\mathbf B'(s)\equiv\mathbf 0$，即 <strong>$\mathbf B$ 是常向量 $\mathbf B_0$</strong>——一个白送的常向量，$\exists$ 型构造的候选对象；<br>
+  ② $\kappa\ne0$：保证 $\mathbf N,\mathbf B$ 处处有定义（标架合法）。<br>
+  另有免费武器：$\mathbf B_0\perp\mathbf T$ 恒成立（标架两两正交）。</p>
+  <p><span class="stage">【会师】</span>倒推链：要证 $\langle\mathbf r(s),\mathbf B_0\rangle$ 是常数 $\Longleftarrow$ 只需其导数恒为 $0$ $\Longleftarrow$ $\langle\mathbf r'(s),\mathbf B_0\rangle=\langle\mathbf T(s),\mathbf B_0\rangle\equiv0$ $\Longleftarrow$ 标架正交性，白送。链条闭合，每一环都是库存。<strong>工具一 · 倒推</strong>的产物是那个函数 $f(s)=\langle\mathbf r(s),\mathbf B_0\rangle$——卷面上它"凭空出现"，实际是倒推出来的。</p>
+  <p><span class="stage">【定型】</span>卷面三步：$\mathbf B$ 常值 $\to$ 造 $f(s)$ 证导数为零 $\to$ 读出平面方程。倒推痕迹删除。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 常向量证平面</strong>：证明曲线是平面曲线的标准打法——从 $\tau\equiv0$ 取出一个<strong>常向量 $\mathbf B_0$</strong>，再证 $\langle\mathbf r,\mathbf B_0\rangle$ 为常数（求导即杀）。同一只 $\mathbf B_0$，既是密切平面的法向，又是目标平面的法向：曲线"此刻最想躺进去的平面"从头到尾是同一张。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 2</strong>　设 $\Gamma:\ \mathbf r=\mathbf r(s)$ 为弧长参数的正则曲线，$\kappa(s)\ne0$，且 $\tau(s)\equiv0$。证明：$\Gamma$ 是平面曲线。</p>
+  <hr>
+  <p class="proof-line"><strong>证明　第 ① 步（取出常向量）</strong>：由 $\kappa\ne0$，Frenet 标架 $(\mathbf T,\mathbf N,\mathbf B)$ 处处有定义。由 Frenet 公式第三式，
+  $$\mathbf B'(s)=-\tau(s)\,\mathbf N(s)\equiv\mathbf 0,$$
+  故 $\mathbf B(s)\equiv\mathbf B_0$ 为常单位向量。<span class="step-score">（4 分）</span></p>
+  <p class="proof-line"><strong>第 ② 步（造函数，求导即杀）</strong>：考察 $f(s)=\bigl\langle\mathbf r(s),\,\mathbf B_0\bigr\rangle$。对 $s$ 求导：
+  $$f'(s)=\bigl\langle\mathbf r'(s),\mathbf B_0\bigr\rangle=\bigl\langle\mathbf T(s),\mathbf B_0\bigr\rangle=0\quad(\forall s),$$
+  最后一步因为标架两两正交。故 $f(s)\equiv c$（常数）。<span class="step-score">（8 分）</span></p>
+  <p class="proof-line"><strong>第 ③ 步（读出平面）</strong>：上式即 $\Gamma$ 上每点都满足 $\langle\mathbf x,\mathbf B_0\rangle=c$——这是以 $\mathbf B_0$ 为法向量的平面。故 $\Gamma$ 含于该平面，是平面曲线。$\square$<span class="step-score">（10 分）</span></p>
+  <p class="aside">书写点评：①中"由 $\kappa\ne0$ 标架有定义"这句<strong>不能省</strong>——$\mathbf N,\mathbf B$ 的定义以 $\kappa\ne0$ 为前提，漏写等于用了未定义的对象。逆命题同样一行：平面曲线的密切平面恒定，$\mathbf B$ 为常值，$\mathbf B'=\mathbf 0=-\tau\mathbf N$ 给出 $\tau\equiv0$。双向合起来才是"$\tau\equiv0\iff$ 平面曲线"。</p>
+</div>
+
+<h2>§9 配套题目</h2>
+
+<p>铁律：<strong>先写在纸上，写到写不动再展开答案</strong>。模仿题照例 1、例 2 的卷面格式写，中间量一个不许省。</p>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 1</span>求螺旋线 $\mathbf r(t)=(2\cos t,\ 2\sin t,\ t)$ 的曲率、挠率与曲率半径，并写出 $t=0$ 处的 Frenet 标架 $(\mathbf T,\mathbf N,\mathbf B)$。</p>
+  <details class="answer">
+    <summary>参考答案（约 8 分书写量）</summary>
+    <p>套例 1 结果（$a=2,\ b=1$）：$\kappa=\dfrac{2}{2^{2}+1^{2}}=\dfrac25$，$\tau=\dfrac15$，$R=\dfrac1\kappa=\dfrac52$（4 分）。</p>
+    <p>$t=0$ 处：$v=\sqrt5$，$\mathbf T=\dfrac{\mathbf r'}{|\mathbf r'|}=\left(0,\dfrac{2}{\sqrt5},\dfrac{1}{\sqrt5}\right)$（5 分）；$\mathbf N=(-\cos t,-\sin t,0)\big|_{t=0}=(-1,0,0)$（6 分）；$\mathbf B=\mathbf T\times\mathbf N=\left(0,-\dfrac1{\sqrt5},\dfrac{2}{\sqrt5}\right)$（8 分）。</p>
+    <p><strong>易错点</strong>：$\mathbf N$ 不是 $\mathbf r''$ 归一化的"想当然"版——本题 $\mathbf r''=(-2\cos t,-2\sin t,0)$ 恰好与 $\mathbf N$ 同向（因为 $|\mathbf r'|$ 是常数），但一般情况下 $\mathbf N\ne\mathbf r''/|\mathbf r''|$（$\mathbf r''$ 里还有 $\mathbf T$ 方向的分量）。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 2</span>证明：曲线 $\mathbf r(t)=(\cos t,\ \sin t,\ \sin t)$ 是平面曲线，并指出它所在的平面。</p>
+  <details class="answer">
+    <summary>参考答案（约 8 分书写量）</summary>
+    <p>$\mathbf r'=(-\sin t,\cos t,\cos t)$，$\mathbf r''=(-\cos t,-\sin t,-\sin t)$，$\mathbf r'''=(\sin t,-\cos t,-\cos t)$。</p>
+    <p>叉积：$\mathbf r'\times\mathbf r''=(0,\ -1,\ 1)\ne\mathbf 0$（故 $\kappa\ne0$，标架合法）（4 分）。</p>
+    <p>混合积：$(\mathbf r'\times\mathbf r'')\cdot\mathbf r'''=0\cdot\sin t+(-1)(-\cos t)+1\cdot(-\cos t)\equiv0$，即 $\tau\equiv0$。由例 2 结论，曲线是平面曲线（7 分）。</p>
+    <p>所在平面：$\mathbf B$ 方向即常向量 $(0,-1,1)$，平面过原点，方程 $-y+z=0$，即 $z=y$（8 分）。</p>
+    <p><strong>自查</strong>：直接观察 $z(t)=y(t)$ 也能秒杀——动作二路径 B（造常法向）。考试时任选一条，但混合积路径不要求你"看出来"。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 1</span>求椭圆 $\mathbf r(t)=(a\cos t,\ b\sin t,\ 0)$（$a>b>0$）的曲率 $\kappa(t)$，并指出曲率最大、最小的点。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：平面曲线也走三维公式——$\mathbf r',\mathbf r''$ 都在 $z=0$ 平面内，叉积只剩 $z$ 分量，计算反而快。</p>
+    <p>$\mathbf r'=(-a\sin t,b\cos t,0)$，$\mathbf r''=(-a\cos t,-b\sin t,0)$，$\mathbf r'\times\mathbf r''=(0,0,ab)$，$|\mathbf r'\times\mathbf r''|=ab$；$|\mathbf r'|=\sqrt{a^{2}\sin^{2}t+b^{2}\cos^{2}t}$。故
+    $$\kappa(t)=\frac{ab}{\bigl(a^{2}\sin^{2}t+b^{2}\cos^{2}t\bigr)^{3/2}}.$$</p>
+    <p>分母最小处 $\kappa$ 最大：$t=0,\pi$（长轴端点）处 $\kappa_{\max}=\dfrac{ab}{b^{3}}=\dfrac{a}{b^{2}}$；$t=\pm\dfrac{\pi}{2}$（短轴端点）处 $\kappa_{\min}=\dfrac{b}{a^{2}}$。</p>
+    <p><strong>点评</strong>：$\tau\equiv0$（$\mathbf r'''$ 也在 $z=0$ 平面内，混合积自动为 0）——平面曲线天经地义。结论的几何画面：椭圆在长轴端点"拐得最急"，曲率半径最小（$b^{2}/a$）。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 2</span>由 $\mathbf N=\mathbf B\times\mathbf T$ 与 Frenet 第一、三式，推出 Frenet 第二式：$\mathbf N'=-\kappa\mathbf T+\tau\mathbf B$。</p>
+  <details class="answer">
+    <summary>参考答案</summary>
+    <p>对 $\mathbf N=\mathbf B\times\mathbf T$ 两边关于 $s$ 求导（叉积的 Leibniz 法则）：
+    $$\mathbf N'=\mathbf B'\times\mathbf T+\mathbf B\times\mathbf T'=(-\tau\mathbf N)\times\mathbf T+\mathbf B\times(\kappa\mathbf N).$$</p>
+    <p>右手标架里 $\mathbf N\times\mathbf T=-\mathbf B$，$\mathbf B\times\mathbf N=-\mathbf T$，代入：
+    $$\mathbf N'=-\tau(-\mathbf B)+\kappa(-\mathbf T)=-\kappa\mathbf T+\tau\mathbf B.\qquad\square$$</p>
+    <p><strong>点评</strong>：三式中第二式不用背——第一、三式 + 叉积求导就出来了。这也解释了矩阵中间行的来历：它是另外两行的"后果"，反对称性（$\mathbf N'$ 的 $\mathbf T$ 分量与 $\mathbf T'$ 的 $\mathbf N$ 分量互为相反数）则是标架正交的必然。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv3">真题节选（背景 + 改编）</span>本章内容初赛未直接考过。唯一同源的真题背景是<strong>第 12 届题六</strong>对"可求长"的定义：</p>
+  <p style="margin-left:1em;color:#5c554b">"对于有界区间 $[a,b]$ 的划分 $P:\ a=x_0&lt;x_1&lt;\cdots&lt;x_{n+1}=b$，其范数 $\|P\|=\max(x_{k+1}-x_k)$。设 $f$ 满足 Lipschitz 条件……若 $\lim\limits_{\|P\|\to0^+}s(f;P)$ 存在，则称曲线 $y=f(x)$ 可求长。"<em>（转录自第 12 届官方 PDF，见 <a href="真题索引/第12届_2020.md">真题索引</a>）</em></p>
+  <p>——折线长逼近就是弧长的分析学定义，光滑情形下它退化为 $\int|\mathbf r'|\,dt$。那题真正的考点（上下极限夹逼）属数分第 6 章，此处不展开。下面这题<strong>按竞赛风格改编（无官方出处）</strong>，模拟"解几大题里求 $\kappa,\tau$ 并判形"的压轴小问形态：</p>
+  <p><strong>（改编题）</strong>设 $\Gamma:\ \mathbf r(t)=(t,\ t^{2},\ t^{3})$。（i）求 $\kappa(t)$ 与 $\tau(t)$；（ii）判断 $\Gamma$ 是否平面曲线，并证明你的结论。</p>
+  <p>先回答三个梯子问题（写在纸上）：</p>
+  <p>（1）$\kappa,\tau$ 的任意参数公式各是什么？本题最多要算到几阶导？<br>
+  （2）算出 $\mathbf r'\times\mathbf r''$ 后，它的模有什么巧结构（提出因子 4）？<br>
+  （3）$\tau$ 算出来恒不为零意味着什么？能不能找到一张平面装下 $\Gamma$？</p>
+  <details class="answer">
+    <summary>梯子参考答案</summary>
+    <p>（1）$\kappa=\dfrac{|\mathbf r'\times\mathbf r''|}{|\mathbf r'|^{3}}$，$\tau=\dfrac{(\mathbf r'\times\mathbf r'')\cdot\mathbf r'''}{|\mathbf r'\times\mathbf r''|^{2}}$；要算到三阶导 $\mathbf r'''$。</p>
+    <p>（2）$\mathbf r'\times\mathbf r''=(6t^{2},-6t,2)$，$|\mathbf r'\times\mathbf r''|^{2}=36t^{4}+36t^{2}+4=4(9t^{4}+9t^{2}+1)$。</p>
+    <p>（3）$\tau\ne0$ 即曲线不在任何平面内（例 2 的逆否 + 逆命题）；找不到常法向。</p>
+  </details>
+  <details class="answer">
+    <summary>改编题参考解答（本讲义自编）</summary>
+    <p><strong>（i）</strong>$\mathbf r'=(1,2t,3t^{2})$，$\mathbf r''=(0,2,6t)$，$\mathbf r'''=(0,0,6)$。<span class="step-score">（2 分）</span></p>
+    <p>$\mathbf r'\times\mathbf r''=(2t\cdot6t-3t^{2}\cdot2,\ 3t^{2}\cdot0-1\cdot6t,\ 1\cdot2-2t\cdot0)=(6t^{2},-6t,2)$，
+    $|\mathbf r'\times\mathbf r''|=2\sqrt{9t^{4}+9t^{2}+1}$，$|\mathbf r'|=\sqrt{1+4t^{2}+9t^{4}}$。<span class="step-score">（5 分）</span></p>
+    <p>$$\kappa(t)=\frac{2\sqrt{9t^{4}+9t^{2}+1}}{\bigl(1+4t^{2}+9t^{4}\bigr)^{3/2}}.\qquad\text{<span class="step-score">（7 分）</span>}$$</p>
+    <p>混合积 $(\mathbf r'\times\mathbf r'')\cdot\mathbf r'''=2\times6=12$，故
+    $$\tau(t)=\frac{12}{4(9t^{4}+9t^{2}+1)}=\frac{3}{9t^{4}+9t^{2}+1}.\qquad\text{<span class="step-score">（10 分）</span>}$$</p>
+    <p><strong>（ii）</strong>$\tau(t)=\dfrac{3}{9t^{4}+9t^{2}+1}>0$ 恒成立，由"$\tau\equiv0\iff$ 平面曲线"（例 2 及其逆命题），$\Gamma$ <strong>不是</strong>平面曲线。$\square$<span class="step-score">（12 分）</span></p>
+    <p><strong>复盘</strong>：整题就是动作一（四步流水线）+ 动作二（混合积判平面）的连体婴，中间量全部是分点。特例自查：$t=0$ 处 $\kappa=2,\ \tau=3$，量纲无虞。<em>（本题为按竞赛风格改编题，无官方出处；背景材料转录自第 12 届官方 PDF。）</em></p>
+  </details>
+</div>
+
+<h2>§9.5 熟练度训练场</h2>
+
+<p>本章是选学章，训练量刻意收敛：<strong>两公式 + 一矩阵 + 一道全算</strong>，每天 8 分钟封顶。</p>
+
+<h3>训练一 · 翻卡快测（目标：每卡 10 秒内出答案）</h3>
+<div class="quiz" data-quiz="ch26-drill"></div>
+
+<h3>训练二 · 计时默写（写在纸上，掐表）</h3>
+<div class="calc box" data-tag="默写清单">
+  <p>① <strong>90 秒</strong>：默写 $\kappa(t)$、$\tau(t)$ 的任意参数公式 + $R=1/\kappa$（分母几次方不许错）；</p>
+  <p>② <strong>60 秒</strong>：默写 Frenet 三公式及其反对称矩阵形式；</p>
+  <p>③ <strong>4 分钟</strong>：默写例 1 螺旋线全流程（$\mathbf r',\mathbf r'',\mathbf r'''$、叉积、混合积、两个结果、$b=0$ 验证）。</p>
+  <p><strong>过关标准</strong>：连续两天全对才算过。做不到就回到 §3 与例 1 重读，再默。</p>
+</div>
+
+<h2>§10 六方向自测卡</h2>
+
+<div class="selftest">
+  <h3>合上书，拿张白纸，默写以下六项</h3>
+  <div class="st-item">
+    <p class="st-q"><em>=（它是什么）</em>　写出 $\kappa$ 与 $\tau$ 的弧长参数定义（$\kappa=|\mathbf T'|$、$\mathbf B'=-\tau\mathbf N$）与任意参数公式，各配一句大白话。</p>
+    <details><summary>对照</summary><p>$\kappa=|\mathbf T'(s)|=\dfrac{|\mathbf r'\times\mathbf r''|}{|\mathbf r'|^{3}}$——"弯多狠"；$\tau$ 由 $\mathbf B'=-\tau\mathbf N$ 定义，$=\dfrac{(\mathbf r'\times\mathbf r'')\cdot\mathbf r'''}{|\mathbf r'\times\mathbf r''|^{2}}$——"扭多凶"。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>←（什么带来它）</em>　为什么定义 $\kappa,\tau$ 之前必须先有弧长参数？</p>
+    <details><summary>对照</summary><p>因为两者都是"每走单位弧长"的变化率——尺子（弧长）不定，速率无意义。弧长参数下 $|\mathbf r'|=1$，$\mathbf T=\mathbf r'$，求导链才干净；任意参数公式由链式法则换算而来。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>→（它带来什么）</em>　说出由 $\kappa,\tau$ 出发的三条重要结论。</p>
+    <details><summary>对照</summary><p>① DNA 定理：$\kappa(s),\tau(s)$ 决定曲线形状（差刚体运动）；② $\tau\equiv0\iff$ 平面曲线（$\kappa\ne0$）；③ $\kappa,\tau$ 双常数 ⟺ 螺旋线（$\tau=0$ 圆、$\kappa=0$ 直线为退化）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>∈（实例）</em>　默写三条曲线及其 $(\kappa,\tau)$：直线、半径 $R$ 的圆、螺旋线 $(a\cos t,a\sin t,bt)$。</p>
+    <details><summary>对照</summary><p>直线 $(0,0)$；圆 $\left(\frac1R,0\right)$；螺旋线 $\left(\dfrac{a}{a^{2}+b^{2}},\dfrac{b}{a^{2}+b^{2}}\right)$。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>≠（区分）</em>　$\kappa$ 与 $\tau$ 的三处不同。</p>
+    <details><summary>对照</summary><p>① 阶数：$\kappa$ 只用 $\mathbf r''$（二阶现象），$\tau$ 必须 $\mathbf r'''$（三阶现象）；② 符号：$\kappa\ge0$ 恒非负，$\tau$ 可正可负（符号 = 旋向）；③ 几何：$\kappa$ 管 $T$ 转向 $N$（弯），$\tau$ 管 $B$ 摆动（扭出密切平面）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>（为何要有它）</em>　为什么一个"弯曲程度"不够用，需要两个价签？</p>
+    <details><summary>对照</summary><p>圆和弹簧在每点"弯得一样急"也可以形状迥异——差别在"是否扭出自己所在的平面"。$\kappa$ 测不出扭，必须加 $\tau$；而 DNA 定理说这两个也就够了。</p></details>
+  </div>
+</div>
+
+<div class="net box" data-tag="间隔复习安排 · 解几卷总复盘">
+  <p><strong>1 天后</strong>：翻卡第二轮 + 计时默写①②；<strong>3 天后</strong>：重做例 1 与变式 1（椭圆曲率）+ 计时默写③；<strong>1 周后</strong>：默写例 2 证明骨架（$\mathbf B$ 常值 → $\langle\mathbf r,\mathbf B_0\rangle$ 常数 → 读出平面），确认翻卡全部"会了"。</p>
+  <p><strong>解几卷总复盘（五章一句话）</strong>：第 1 章向量法通解——直线平面一切问题翻译成向量方程；第 2 章二次曲面——标准形 + 主轴化分类；第 3 章切平面、切锥面与截面——解几最高频家族，判别式与极平面思想；第 4 章旋转曲面与直纹面——绕轴距离守恒、直母线；第 5 章（选学）曲率挠率——两个价签，点到为止。解几 15 分 = 一道大题，<strong>主战场永远在前四章</strong>。</p>
+  <p><strong>全书使用路线回顾</strong>：数分 50% → 卷一十章是脊梁；高代 35% → 卷二跟紧；解几 15% → 本卷五章。每章走同一套流程：导览定位 → 谜题开胃 → 定义朗读 → 翻译练功 → 识别反射 → 考法定位 → 关系网收口 → 例题两层 → 训练场巩固；六方向自测卡在 1 天、3 天后各重做一遍；《真题索引》就是你的题库，按考法定位表逐题对号。</p>
+</div>
+
+<div class="chapnav">
+  <span><a href="ch25.html">← 第 4 章 · 旋转曲面与直纹面</a></span>
+  <span><a href="index.html">首页</a></span>
+  <span><a href="index.html">全书完 · 回首页 →</a></span>
+</div>
+
+</div>
+
+<script src="assets/quiz.js"></script>
+<script>
+/* §9.5 翻卡数据 */
+registerQuiz("ch26-drill", [
+  { q: "写出任意参数下的曲率公式与曲率半径。", a: "$\\kappa=\\dfrac{|\\mathbf r'\\times\\mathbf r''|}{|\\mathbf r'|^{3}}$，$R=\\dfrac1\\kappa$。分母是三次方——「κ 三次方」。" },
+  { q: "写出挠率公式。", a: "$\\tau=\\dfrac{(\\mathbf r'\\times\\mathbf r'')\\cdot\\mathbf r'''}{|\\mathbf r'\\times\\mathbf r''|^{2}}$。分子必有 $\\mathbf r'''$——扭是三阶现象。" },
+  { q: "$ds$ 等于什么？弧长参数下 $|\\mathbf r'(s)|$ =？", a: "$ds=|\\mathbf r'(t)|\\,dt$；$|\\mathbf r'(s)|=1$，此时 $\\mathbf T=\\mathbf r'(s)$。" },
+  { q: "Frenet：$\\mathbf T'=\\ ?$，$\\mathbf B'=\\ ?$", a: "$\\mathbf T'=\\kappa\\mathbf N$；$\\mathbf B'=-\\tau\\mathbf N$。" },
+  { q: "$\\mathbf N'=\\ ?$ 怎么推？", a: "$-\\kappa\\mathbf T+\\tau\\mathbf B$。由 $\\mathbf N=\\mathbf B\\times\\mathbf T$ 求导，代入第一、三式。" },
+  { q: "$\\kappa\\equiv0$ / $\\tau\\equiv0$（$\\kappa\\ne0$）各说明曲线是什么？", a: "直线 / 平面曲线。前者 $\\mathbf T$ 常值积分出直线；后者 $\\mathbf B$ 常值，$\\langle\\mathbf r,\\mathbf B_0\\rangle$ 为常数。" },
+  { q: "螺旋线 $(a\\cos t,\\ a\\sin t,\\ bt)$ 的 $\\kappa,\\tau$？", a: "$\\kappa=\\dfrac{a}{a^{2}+b^{2}}$，$\\tau=\\dfrac{b}{a^{2}+b^{2}}$，均为常数；$b=0$ 退化为圆。" },
+  { q: "半径 $R$ 的圆，$\\kappa$ =？$R$ 与 $\\kappa$ 的关系？", a: "$\\kappa=\\dfrac1R$；互为倒数——半径越小越弯。" },
+  { q: "判平面曲线的两条路径？", a: "混合积 $(\\mathbf r'\\times\\mathbf r'')\\cdot\\mathbf r'''\\equiv0$（即 $\\tau\\equiv0$）；或造常向量 $\\mathbf n$ 使 $\\langle\\mathbf r(t),\\mathbf n\\rangle$ 恒为常数。" },
+  { q: "脐点是什么？球面与三轴不等椭球各有多少个？", a: "曲面上 II 与 I 成比例（两主曲率相等）的点。球面处处脐点；三轴不等椭球恰 4 个。" }
+]);
+</script>
+
+<script>
+/* §3.1 Frenet 标架旅行器 */
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  var svg = document.getElementById("fw-svg");
+  var out = document.getElementById("fw-out");
+  var tSlider = document.getElementById("fw-t");
+  var bSlider = document.getElementById("fw-b");
+  var a = 2, T_END = 4 * Math.PI;
+  var W = 720, H = 420;
+  var phi = -0.5, cp = Math.cos(phi), sp = Math.sin(phi);
+  function proj(p) {
+    var x1 = p[0] * cp + p[1] * sp;
+    var y1 = -p[0] * sp + p[1] * cp;
+    return [x1, p[2] - y1 * 0.42];
+  }
+  function helix(t, b) { return [a * Math.cos(t), a * Math.sin(t), b * t]; }
+  function computeFit(b) {
+    var minX = 1e9, maxX = -1e9, minY = 1e9, maxY = -1e9, i, pr;
+    for (i = 0; i <= 240; i++) {
+      pr = proj(helix(T_END * i / 240, b));
+      minX = Math.min(minX, pr[0]); maxX = Math.max(maxX, pr[0]);
+      minY = Math.min(minY, pr[1]); maxY = Math.max(maxY, pr[1]);
+    }
+    var pad = 2.5;
+    minX -= pad; maxX += pad; minY -= pad; maxY += pad;
+    var s = Math.min((W - 40) / (maxX - minX), (H - 60) / (maxY - minY));
+    return { s: s, ox: W / 2 - (minX + maxX) / 2 * s, oy: H / 2 + 14 - (minY + maxY) / 2 * s };
+  }
+  function mk(tag, attrs) {
+    var el = document.createElementNS(NS, tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    svg.appendChild(el);
+    return el;
+  }
+  function mkText(x, y, str, attrs) {
+    var t = mk("text", attrs || {});
+    t.setAttribute("x", x); t.setAttribute("y", y);
+    t.textContent = str;
+    return t;
+  }
+  function update() {
+    var t = parseFloat(tSlider.value), b = parseFloat(bSlider.value);
+    var fit = computeFit(b), s = fit.s;
+    function toScreen(p) {
+      var pr = proj(p);
+      return [fit.ox + pr[0] * s, fit.oy - pr[1] * s];
+    }
+    svg.innerHTML = "";
+    /* 图例 */
+    mkText(24, 26, "螺旋线 r(t) = (a cos t, a sin t, b t)，a = 2", { "font-size": 12.5, fill: "#5c554b" });
+    /* 中心轴 */
+    var ax0 = toScreen([0, 0, 0]), ax1 = toScreen([0, 0, b * T_END]);
+    mk("line", { x1: ax0[0], y1: ax0[1], x2: ax1[0], y2: ax1[1], stroke: "#c9c2b4", "stroke-width": 1.2, "stroke-dasharray": "4 4" });
+    /* 螺旋线 */
+    var pts = [], i;
+    for (i = 0; i <= 240; i++) {
+      var sc = toScreen(helix(T_END * i / 240, b));
+      pts.push(sc[0].toFixed(1) + "," + sc[1].toFixed(1));
+    }
+    mk("polyline", { points: pts.join(" "), fill: "none", stroke: "#2b2620", "stroke-width": 2.2 });
+    /* 当前点的标架 */
+    var v = Math.sqrt(a * a + b * b);
+    var Tv = [-a * Math.sin(t) / v, a * Math.cos(t) / v, b / v];
+    var Nv = [-Math.cos(t), -Math.sin(t), 0];
+    var Bv = [b * Math.sin(t) / v, -b * Math.cos(t) / v, a / v];
+    var P = helix(t, b);
+    /* 密切平面（T、N 张成） */
+    var L = 1.6, corners = [[1, 1], [1, -1], [-1, -1], [-1, 1]].map(function (uv) {
+      return toScreen([
+        P[0] + uv[0] * L * Tv[0] + uv[1] * L * Nv[0],
+        P[1] + uv[0] * L * Tv[1] + uv[1] * L * Nv[1],
+        P[2] + uv[0] * L * Tv[2] + uv[1] * L * Nv[2]
+      ]);
+    });
+    mk("polygon", {
+      points: corners.map(function (c) { return c[0].toFixed(1) + "," + c[1].toFixed(1); }).join(" "),
+      fill: "#f59e0b", opacity: 0.15, stroke: "#b45309", "stroke-width": 1.2, "stroke-dasharray": "5 4"
+    });
+    mkText(corners[0][0] + 4, corners[0][1] - 4, "密切平面", { "font-size": 11, fill: "#b45309" });
+    /* 箭头 */
+    function arrow(dir, color, label) {
+      var o = toScreen(P);
+      var e = proj([P[0] + dir[0], P[1] + dir[1], P[2] + dir[2]]);
+      var o2 = proj(P);
+      var dx = (e[0] - o2[0]) * s, dy = -(e[1] - o2[1]) * s;
+      var n = Math.hypot(dx, dy);
+      if (n < 1e-9) return;
+      var ux = dx / n, uy = dy / n, AL = 44;
+      var tipx = o[0] + ux * AL, tipy = o[1] + uy * AL;
+      mk("line", { x1: o[0], y1: o[1], x2: tipx, y2: tipy, stroke: color, "stroke-width": 2.6 });
+      var px = -uy, py = ux, hs = 7;
+      mk("polygon", {
+        points: (tipx + ux * 10).toFixed(1) + "," + (tipy + uy * 10).toFixed(1) + " " +
+          (tipx + px * hs * 0.6).toFixed(1) + "," + (tipy + py * hs * 0.6).toFixed(1) + " " +
+          (tipx - px * hs * 0.6).toFixed(1) + "," + (tipy - py * hs * 0.6).toFixed(1),
+        fill: color
+      });
+      mkText(tipx + ux * 16 + 3, tipy + uy * 16 + 4, label, { "font-size": 14, fill: color, "font-weight": "bold" });
+    }
+    arrow(Tv, "#1d4ed8", "T");
+    arrow(Nv, "#be123c", "N");
+    arrow(Bv, "#15803d", "B");
+    /* 当前点 */
+    var pc = toScreen(P);
+    mk("circle", { cx: pc[0], cy: pc[1], r: 4.5, fill: "#2b2620" });
+    /* 读数 */
+    var kappa = a / (a * a + b * b), tau = b / (a * a + b * b);
+    var line1 = "t = " + t.toFixed(2) + "　κ = a/(a²+b²) = " + kappa.toFixed(4) +
+      "　τ = b/(a²+b²) = " + tau.toFixed(4) + "　B 的竖直分量 = a/√(a²+b²) = " + (a / v).toFixed(4) + "（恒定）";
+    var line2;
+    if (b === 0) {
+      line2 = "b = 0：τ = 0，B 竖直向上纹丝不动，密切平面摊成水平面——弹簧被压成了圆，这就是「平面曲线 ⟺ τ≡0」。把 b 拖回去试试。";
+    } else {
+      line2 = "拖 t 走一圈：T 一直在转向 N（弯，κ 管这件事）；B 的水平投影绕轴转（扭，τ 管这件事），但 B 的竖直分量永远不变——螺旋线是「均匀地又弯又扭」。";
+    }
+    out.textContent = "";
+    var d1 = document.createElement("div"); d1.textContent = line1;
+    var d2 = document.createElement("strong"); d2.textContent = line2;
+    out.appendChild(d1); out.appendChild(d2);
+  }
+  tSlider.addEventListener("input", update);
+  bSlider.addEventListener("input", update);
+  update();
+})();
+</script>
+
+</body>
+</html>

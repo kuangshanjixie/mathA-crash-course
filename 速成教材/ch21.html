@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高代第 11 章 · 高代技巧包：行列式、秩不等式与分块矩阵 —— 数学A速成讲义</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+<div class="wrap">
+
+<div class="bookbar">
+  <span><a href="index.html">← 返回首页</a></span>
+  <span>卷二 · 高等代数 · 第 11 章（高代卷收官）</span>
+</div>
+
+<div class="chapter-kicker">CHAPTER 11 · 高等代数</div>
+<h1>高代技巧包：行列式、秩不等式与分块矩阵</h1>
+
+<div class="exam box" data-tag="本章导览">
+  <p><strong>这一章在整张卷子上的位置</strong>：高代 35 分里，定理负责搭骨架，<strong>技巧负责开某一步的门</strong>。第 15 届题四（15 分）官方解答第一步是把 $A$ 拆成 $vv^t$ 型低秩分解；第 11 届题三（15 分）官方另法是对分块矩阵两次"打洞"；第 16 届题三（20 分）开门 3 分点是秩不等式 $\operatorname{rank}A^{*}\in\{0,1\}$；第 14 届题三（15 分）开门是"可交换 $\Rightarrow$ 矩阵形状"。这些步骤<strong>不在任何定理里</strong>，但每一步都值 3–10 分的步骤分。本章是暗器库，也是高代卷的收官章。</p>
+  <p><strong>学完你能</strong>：① 对六种行列式结构（等比、可拆、三对角、乘积、分块三角、可分块打洞）形成"信号 $\to$ 操作"反射；② 默写秩不等式四条 + $AB=O$ 推论，会说清每条的方向与条件；③ 用打洞原理推出 Schur 补、分块求逆与 $|I+uv^T|=1+v^Tu$；④ 把 $AX=B$、$AB=O$、$AB=BA$ 三类条件翻译成解空间语言。</p>
+  <p><strong>前置</strong>：第 3 章《线性映射、核与像》（秩-零度定理是本章一半不等式的发动机）、第 4 章《表示矩阵与相似》（扰动法与 $\det(sI+AB)=\det(sI+BA)$ 在那里）、第 6 章《Cayley–Hamilton 与最小多项式》。</p>
+</div>
+
+<h2>§1 开场谜题：官方解答的第一行，课本里找不到</h2>
+
+<div class="hook box" data-tag="开场谜题">
+  <p>前面十章给你的是<strong>体系</strong>：从线性空间到 Jordan 标准形，从 Cayley–Hamilton 到谱定理——每一章都在告诉你"世界是什么样的"。这一章不建任何新体系。先看一件真事。</p>
+  <p><strong>第 15 届题四（15 分）</strong>：设 $n\ge3$，$\theta=\dfrac{2\pi}{n}$，矩阵 $A=(a_{st})_{n\times n}$，$a_{st}=\sin(s+t)\theta$。计算 $|E+A^{2023}|$。</p>
+  <p>按体系走：$A$ 实对称，可对角化（第 8 章），$|E+A^{2023}|=\prod(1+\lambda_i^{2023})$——方向对，但要算出 $n$ 个特征值，得先解一个 $n$ 次方程。死路。Cayley–Hamilton 能把 $A^{2023}$ 降到 $n-1$ 次（第 6 章），可降完还是一个 $n\times n$ 的硬骨头。</p>
+  <p>官方解答的第一步是这样的：用 $\sin(s+t)\theta=\dfrac{1}{2i}\bigl(e^{i(s+t)\theta}-e^{-i(s+t)\theta}\bigr)$，令 $v=(e^{i\theta},e^{i2\theta},\dots,e^{in\theta})^t$，则
+  $$A=\frac{1}{2i}\bigl(vv^t-\overline{v}\,\overline{v^t}\bigr).$$</p>
+  <p>一个 $n\times n$ 的矩阵，被拆成<strong>两块"列乘行"</strong>。接下来全是顺水推舟：$r(A)\le r(vv^t)+r(\overline{v}v^{*})\le2$（秩不等式），$A$ 至多两个非零特征值，$|E+A^{2023}|$ 只由那两个数决定——答案 $1-\bigl(\frac n2\bigr)^{4046}$，三行收尾。</p>
+  <p>现在盯着第一步问一句：<strong>这一步从哪来？</strong>它不属于任何定义、任何定理、任何一章的"体系"。它就是一个技巧——看见 $a_{st}=f(s)g(t)$ 型矩阵元，就拆成"列乘行"。<strong>技巧不直接送分，但它是综合题某一步的开门钥匙；没有它，你体系再熟也卡在那一步。</strong></p>
+  <p>本章就是暗器库：四个工具箱（行列式、秩不等式、分块矩阵、方程组结构），每件暗器按"信号 $\to$ 操作 $\to$ 一例"收编入册，练到反射级为止。</p>
+</div>
+
+<h2>§2 先看见它：暗器的共性是"先拆结构，再动笔算"</h2>
+
+<div class="vision box" data-tag="直觉与图像">
+  <p>四件暗器长相不同，但共用同一个心法：<strong>计算之前先问"这东西的结构是什么"</strong>。秩 1 矩阵 $uv^T$ 是极端的例子：表面上 $n^2$ 个数，拆开后全部信息只有"一列 × 一行"共 $2n$ 个数——每个元素 $u_iv_j$ 都是行列两条的乘积。矩阵元形如 $a_{st}=f(s)g(t)$，就是它的指纹。</p>
+</div>
+
+<figure>
+<svg viewBox="0 0 720 225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="低秩拆解：n 平方个数其实只有 2n 个自由度">
+  <text x="94" y="46" font-size="12.5" fill="#2b2620" text-anchor="middle" font-weight="bold">看上去：n² 个数</text>
+  <!-- 左：6×6 矩阵 -->
+  <g stroke="#8a8175" stroke-width="1">
+    <rect x="40" y="60" width="18" height="18" fill="#dbe7fe"/>
+    <rect x="58" y="60" width="18" height="18" fill="#c2d5fc"/>
+    <rect x="76" y="60" width="18" height="18" fill="#dbe7fe"/>
+    <rect x="94" y="60" width="18" height="18" fill="#eef3fe"/>
+    <rect x="112" y="60" width="18" height="18" fill="#c2d5fc"/>
+    <rect x="130" y="60" width="18" height="18" fill="#dbe7fe"/>
+    <rect x="40" y="78" width="18" height="18" fill="#c2d5fc"/>
+    <rect x="58" y="78" width="18" height="18" fill="#dbe7fe"/>
+    <rect x="76" y="78" width="18" height="18" fill="#eef3fe"/>
+    <rect x="94" y="78" width="18" height="18" fill="#dbe7fe"/>
+    <rect x="112" y="78" width="18" height="18" fill="#c2d5fc"/>
+    <rect x="130" y="78" width="18" height="18" fill="#eef3fe"/>
+    <rect x="40" y="96" width="18" height="18" fill="#dbe7fe"/>
+    <rect x="58" y="96" width="18" height="18" fill="#eef3fe"/>
+    <rect x="76" y="96" width="18" height="18" fill="#c2d5fc"/>
+    <rect x="94" y="96" width="18" height="18" fill="#dbe7fe"/>
+    <rect x="112" y="96" width="18" height="18" fill="#eef3fe"/>
+    <rect x="130" y="96" width="18" height="18" fill="#c2d5fc"/>
+    <rect x="40" y="114" width="18" height="18" fill="#eef3fe"/>
+    <rect x="58" y="114" width="18" height="18" fill="#c2d5fc"/>
+    <rect x="76" y="114" width="18" height="18" fill="#dbe7fe"/>
+    <rect x="94" y="114" width="18" height="18" fill="#c2d5fc"/>
+    <rect x="112" y="114" width="18" height="18" fill="#dbe7fe"/>
+    <rect x="130" y="114" width="18" height="18" fill="#eef3fe"/>
+    <rect x="40" y="132" width="18" height="18" fill="#c2d5fc"/>
+    <rect x="58" y="132" width="18" height="18" fill="#dbe7fe"/>
+    <rect x="76" y="132" width="18" height="18" fill="#eef3fe"/>
+    <rect x="94" y="132" width="18" height="18" fill="#dbe7fe"/>
+    <rect x="112" y="132" width="18" height="18" fill="#c2d5fc"/>
+    <rect x="130" y="132" width="18" height="18" fill="#dbe7fe"/>
+    <rect x="40" y="150" width="18" height="18" fill="#dbe7fe"/>
+    <rect x="58" y="150" width="18" height="18" fill="#eef3fe"/>
+    <rect x="76" y="150" width="18" height="18" fill="#c2d5fc"/>
+    <rect x="94" y="150" width="18" height="18" fill="#dbe7fe"/>
+    <rect x="112" y="150" width="18" height="18" fill="#eef3fe"/>
+    <rect x="130" y="150" width="18" height="18" fill="#c2d5fc"/>
+  </g>
+  <text x="180" y="120" font-size="22" fill="#8a8175" text-anchor="middle">=</text>
+  <!-- 中：列向量 × 行向量 -->
+  <text x="255" y="46" font-size="12.5" fill="#2b2620" text-anchor="middle" font-weight="bold">拆开后：一列 × 一行</text>
+  <g stroke="#1d4ed8" stroke-width="1.5">
+    <rect x="230" y="60" width="18" height="18" fill="#eef3fe"/>
+    <rect x="230" y="78" width="18" height="18" fill="#dbe7fe"/>
+    <rect x="230" y="96" width="18" height="18" fill="#c2d5fc"/>
+    <rect x="230" y="114" width="18" height="18" fill="#dbe7fe"/>
+    <rect x="230" y="132" width="18" height="18" fill="#eef3fe"/>
+    <rect x="230" y="150" width="18" height="18" fill="#c2d5fc"/>
+  </g>
+  <text x="239" y="184" font-size="12" fill="#1d4ed8" text-anchor="middle">u（6 个数）</text>
+  <text x="262" y="120" font-size="18" fill="#8a8175" text-anchor="middle">×</text>
+  <g stroke="#be123c" stroke-width="1.5">
+    <rect x="276" y="105" width="18" height="18" fill="#fdeef2"/>
+    <rect x="294" y="105" width="18" height="18" fill="#f9d7dd"/>
+    <rect x="312" y="105" width="18" height="18" fill="#fdeef2"/>
+    <rect x="330" y="105" width="18" height="18" fill="#f9d7dd"/>
+    <rect x="348" y="105" width="18" height="18" fill="#fdeef2"/>
+    <rect x="366" y="105" width="18" height="18" fill="#f9d7dd"/>
+  </g>
+  <text x="330" y="141" font-size="12" fill="#be123c" text-anchor="middle">vᵀ（6 个数）</text>
+  <!-- 右：说明 -->
+  <text x="430" y="72" font-size="12.5" fill="#2b2620" font-weight="bold">每个元素 = uᵢ·vⱼ</text>
+  <text x="430" y="94" font-size="11.5" fill="#5c554b">第 i 行是 vᵀ 的 uᵢ 倍，行与行只差比例</text>
+  <text x="430" y="114" font-size="11.5" fill="#5c554b">⟹ 所有行共线，秩 = 1</text>
+  <text x="430" y="134" font-size="11.5" fill="#5c554b">36 个数 ⟸ 实际只有 12 个自由度</text>
+  <text x="430" y="160" font-size="12" fill="#0f766e" font-weight="bold">a_st = f(s)g(t) 就是它的指纹</text>
+  <text x="430" y="180" font-size="11.5" fill="#0f766e">（15 届题四：sin(s+t)θ 拆成两个 e 指数之积）</text>
+</svg>
+<figcaption>秩 1 拆解：$n^2$ 个格子背后只有 $2n$ 个自由参数。看见 $f(s)g(t)$ 型矩阵元，手要比脑子先到 $uv^T$。</figcaption>
+</figure>
+
+<p>其余三件暗器也是同一个姿势：<strong>行列式</strong>先找等比/零块/自相似再展开；<strong>秩不等式</strong>先把乘积翻译成"列空间包含、核空间变大"再放缩；<strong>分块矩阵</strong>先把某块打成零再按三角展开。下面逐个收编入册。</p>
+
+<h2>§3 精确定义：四个工具箱，逐条收编</h2>
+
+<p>本章的"定义"就是四张装备清单。每件暗器三栏：<strong>信号</strong>（题面长什么样）→ <strong>操作</strong>（手该怎么动）→ <strong>一例</strong>（真题或本章例题里的活样本）。</p>
+
+<h3>3.1 工具箱一 · 行列式六技</h3>
+
+<div class="def">
+  <p class="def-title">行列式六技（按信号取用）</p>
+  <p>① <strong>Vandermonde 化</strong>：行或列成等比时，
+  $$\begin{vmatrix}1&1&\cdots&1\\x_1&x_2&\cdots&x_n\\\vdots&\vdots&&\vdots\\x_1^{n-1}&x_2^{n-1}&\cdots&x_n^{n-1}\end{vmatrix}=\prod_{1\le i&lt;j\le n}(x_j-x_i).$$
+  ② <strong>拆分 / 加边</strong>：行列式对每一行（列）是线性的，可按行（列）拆成两个之和；或加一行一列升阶，化为已认识的形状。③ <strong>递推降阶</strong>：$n$ 阶自相似结构展开得 $D_n=aD_{n-1}-bD_{n-2}$，解特征方程 $x^2=ax-b$。④ <strong>拆积</strong>：$\det(AB)=\det A\cdot\det B$。⑤ <strong>分块三角</strong>：$\det\begin{pmatrix}A&B\\O&D\end{pmatrix}=\det A\cdot\det D$（$A,D$ 为方块）。⑥ <strong>Schur 补</strong>：$A$ 可逆时，$\det\begin{pmatrix}A&B\\C&D\end{pmatrix}=\det A\cdot\det(D-CA^{-1}B)$。</p>
+</div>
+
+<div class="trans box" data-tag="六技的信号、操作与活样本">
+  <table>
+    <tr><th>技巧</th><th>信号</th><th>操作</th><th>一例</th></tr>
+    <tr><td>Vandermonde 化</td><td>某行/列是同一元的幂 $1,x,x^2,\dots$（提公因子后也算）</td><td>提因子、转置、套 $\prod_{i&lt;j}(x_j-x_i)$</td><td>$\begin{vmatrix}1&1&1\\2&3&4\\4&9&16\end{vmatrix}=(3-2)(4-2)(4-3)=2$</td></tr>
+    <tr><td>拆分 / 加边</td><td>某行（列）是两组之和；或 Vandermonde"缺了一行"</td><td>拆成两个行列式；或补一行一列升阶后比较系数</td><td>缺 $x^{n-1}$ 行的 Vandermonde → 补 $y$ 列（§9 变式 1）</td></tr>
+    <tr><td>递推降阶</td><td>$n$ 阶三对角 / 箭形等自相似结构</td><td>按首行（列）展开建 $D_n=aD_{n-1}-bD_{n-2}$，解特征方程</td><td>$D_n=2D_{n-1}-D_{n-2}\Rightarrow D_n=n+1$（§8 例 1）</td></tr>
+    <tr><td>拆积</td><td>行列式里本身就是乘积 $AB$，或和能并成乘积</td><td>$\det(AB)=\det A\det B$，分别算</td><td>$A+uv^T=A(I+A^{-1}uv^T)$ 先拆出 $\det A$（§9 变式 2）</td></tr>
+    <tr><td>分块三角</td><td>分块矩阵里<strong>已有</strong>零块</td><td>直接 $\det A\cdot\det D$</td><td>箭形行列式消边化三角（§9 模仿 1）；第 17 届题三</td></tr>
+    <tr><td>Schur 补</td><td>分块无零块，但某对角块可逆</td><td>打洞造零块（工具箱三），得 $\det A\cdot\det(D-CA^{-1}B)$</td><td>第 11 届题三官方另法（见 3.3）</td></tr>
+  </table>
+</div>
+
+<h3>3.2 工具箱二 · 秩不等式组</h3>
+
+<div class="def">
+  <p class="def-title">秩不等式四条 + 两条推论（注意方向与条件）</p>
+  <p>设矩阵可乘、可加时：
+  $$r(A+B)\le r(A)+r(B);\qquad r(AB)\le\min\{r(A),r(B)\};$$
+  $$r(AB)\ge r(A)+r(B)-n\ \ (\text{Sylvester，}A\text{ 是 }m\times n\text{，}B\text{ 是 }n\times p);$$
+  $$r(ABC)\ge r(AB)+r(BC)-r(B)\ \ (\text{Frobenius}).$$
+  推论一（$AB=O$ 型）：若 $A$ 是 $m\times n$、$B$ 是 $n\times p$ 且 $AB=O$，则 $r(A)+r(B)\le n$。<br>
+  推论二（满秩 ⟺ 单边可逆）：$A$ 为 $m\times n$。存在 $B$ 使 $AB=I_m$ ⟺ $r(A)=m$（行满秩，有右逆）；存在 $C$ 使 $CA=I_n$ ⟺ $r(A)=n$（列满秩，有左逆）。</p>
+</div>
+
+<div class="trans box" data-tag="不等式组的信号、来历与活样本">
+  <table>
+    <tr><th>条文</th><th>一句话来历（为什么成立）</th><th>活样本</th></tr>
+    <tr><td>$r(A+B)\le r(A)+r(B)$</td><td>列$(A+B)\subseteq$ 列$(A)+$ 列$(B)$</td><td>第 15 届题四：$r(A)\le r(vv^t)+r(\overline{v}v^{*})\le2$</td></tr>
+    <tr><td>$r(AB)\le\min\{r(A),r(B)\}$</td><td>列$(AB)\subseteq$ 列$(A)$；行$(AB)\subseteq$ 行$(B)$</td><td>§8 例 2 的夹逼主力</td></tr>
+    <tr><td>Sylvester：$r(AB)\ge r(A)+r(B)-n$</td><td>$\dim\ker(AB)\le\dim\ker A+\dim\ker B$，配秩-零度</td><td>"秩的损失最多一档 $n$"；估下界专用</td></tr>
+    <tr><td>Frobenius：$r(ABC)\ge r(AB)+r(BC)-r(B)$</td><td>对 $\begin{pmatrix}ABC&O\\O&B\end{pmatrix}$ 打洞配秩的不等式</td><td>三连乘的下界；Sylvester 是它的 $B=I$ 特例</td></tr>
+    <tr><td>$AB=O\Rightarrow r(A)+r(B)\le n$</td><td>列$(B)\subseteq\ker A$，故 $r(B)\le\dim\ker A=n-r(A)$</td><td>幂等阵：$r(A)+r(I-A)=n$（§9 模仿 2）</td></tr>
+    <tr><td>满秩 ⟺ 单边可逆</td><td>$AB=I_m$ 夹逼：$m=r(AB)\le r(A)\le m$</td><td>§8 例 2 本身就是样本</td></tr>
+  </table>
+  <p>记忆口诀：<strong>和劣于和，积劣于小；积的下界是和减档（Sylvester），三连乘减中间（Frobenius）</strong>。四条全是"列空间 / 核空间"的翻译——忘了哪条，回第 3 章推一遍比重背快。</p>
+</div>
+
+<h3>3.3 工具箱三 · 分块技巧</h3>
+
+<div class="def">
+  <p class="def-title">打洞原理与它的三个产品</p>
+  <p><strong>打洞原理</strong>：对分块矩阵左（右）乘一块分块初等阵 $\begin{pmatrix}I&O\\X&I\end{pmatrix}$（其行列式为 $1$），相当于把某行（列）块的倍数加到另一行（列）块，<strong>行列式不变</strong>——用它把想消的块打成 $O$，再按分块三角展开。$A$ 可逆时：
+  $$\begin{pmatrix}I&O\\-CA^{-1}&I\end{pmatrix}\begin{pmatrix}A&B\\C&D\end{pmatrix}=\begin{pmatrix}A&B\\O&D-CA^{-1}B\end{pmatrix},$$
+  两边取行列式即 <strong>Schur 补公式</strong>（产品一）。同一打洞给出分解
+  $$\begin{pmatrix}A&B\\C&D\end{pmatrix}=\begin{pmatrix}I&O\\CA^{-1}&I\end{pmatrix}\begin{pmatrix}A&O\\O&S\end{pmatrix}\begin{pmatrix}I&A^{-1}B\\O&I\end{pmatrix},\quad S=D-CA^{-1}B,$$
+  倒序取逆得<strong>分块求逆</strong>（产品二）：
+  $$\begin{pmatrix}A&B\\C&D\end{pmatrix}^{-1}=\begin{pmatrix}A^{-1}+A^{-1}BS^{-1}CA^{-1}&-A^{-1}BS^{-1}\\-S^{-1}CA^{-1}&S^{-1}\end{pmatrix}.$$
+  <strong>低秩分解</strong>（产品三）：$r(A)=1$ ⟺ $A=uv^T$（$u,v$ 非零列向量）；且
+  $$|I+uv^T|=1+v^Tu\quad(\text{矩阵行列式引理});\qquad |A+uv^T|=|A|\bigl(1+v^TA^{-1}u\bigr)\ (A\text{ 可逆}).$$</p>
+</div>
+
+<div class="trans box" data-tag="分块三技的信号与活样本">
+  <table>
+    <tr><th>技巧</th><th>信号</th><th>操作</th><th>一例</th></tr>
+    <tr><td>打洞原理</td><td>分块阵某对角块可逆，想造零块</td><td>左/右乘分块初等阵消块，行列式不变</td><td>第 11 届题三官方另法：对 $\begin{pmatrix}I&B\\A&sI\end{pmatrix}$ 两路打洞得 $\det(sI-AB)=\det(sI-BA)$</td></tr>
+    <tr><td>分块求逆</td><td>分块阵求逆 / 证可逆</td><td>Schur 分解后倒序取逆</td><td>公式本身；判可逆：$M$ 可逆 ⟺ $A$、$S$ 都可逆</td></tr>
+    <tr><td>低秩 $uv^T$</td><td>矩阵元 $a_{st}=f(s)g(t)$ 型；秩 1 痕迹</td><td>拆 $A=uv^T$（或两三块相加）；用 $|I+uv^T|=1+v^Tu$</td><td>第 15 届题四：$A=\frac1{2i}(vv^t-\overline{v}v^{*})$</td></tr>
+  </table>
+</div>
+
+<h3>3.4 工具箱四 · 方程组与解空间结构</h3>
+
+<div class="def">
+  <p class="def-title">三类条件的解空间翻译 + 一张快查卡</p>
+  <p>① <strong>$AX=B$</strong>：逐列看——$B$ 的第 $j$ 列对应方程 $Ax=(B\text{ 的第 }j\text{ 列})$。有解 ⟺ $r(A)=r(A\,|\,B)$；解集 = 一个特解 + $\ker A$。<br>
+  ② <strong>$AB=O$</strong> ⟺ 列$(B)\subseteq\ker A$（"$B$ 的每一列都是 $Ax=0$ 的解"）。<br>
+  ③ <strong>$AB=BA$（可交换）</strong>：复数域上 $A,B$ 必有公共特征向量，进而可同时上三角化；若都实对称，则可同时正交对角化。一句话：<strong>可交换 = 结构可以同步化简</strong>。<br>
+  ④ <strong>多项式技巧快查卡</strong>：带余除法（降次改写 $f=qg+r$）、Vieta（根 ↔ 系数）、有理根定理（$\frac pq$ 候选有限）、Eisenstein（不可约判别）——系统清单见第 10 章《多项式》，这里只负责提醒你它们存在。</p>
+</div>
+
+<div class="trans box" data-tag="结构三件的信号与活样本">
+  <table>
+    <tr><th>条件</th><th>翻译</th><th>活样本</th></tr>
+    <tr><td>$AX=B$</td><td>解 = 特解 + $\ker A$；有解 ⟺ $r(A)=r(A\,|\,B)$</td><td>矩阵方程题的标准开局</td></tr>
+    <tr><td>$AB=O$</td><td>列$(B)\subseteq\ker A$（第 3 章语言）</td><td>§9 模仿 2：$A(I-A)=O$</td></tr>
+    <tr><td>$AB=BA$</td><td>公共特征向量；同时上三角化；实对称则同时正交对角化</td><td>第 13 届题四（$f(D)$ 与 $D$ 的交换子）；第 14 届题三（§9 真题节选）</td></tr>
+    <tr><td>整系数 / 根与系数</td><td>带余除法、Vieta、有理根、Eisenstein</td><td>第 14 届题四、第 13 届题三（→ 第 10 章）</td></tr>
+  </table>
+</div>
+
+<h3>3.5 逐符号朗读：四句最关键的黑话</h3>
+
+<div class="symbol box" data-tag="逐符号朗读">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$\det\begin{pmatrix}A&B\\C&D\end{pmatrix}=\det A\cdot\det(D-CA^{-1}B)$</td><td>"大行列式 = 主块行列式 乘 舒尔补行列式"</td><td>打洞的产物：把 $C$ 消成 $O$ 后右下角剩下的 $D-CA^{-1}B$ 就是 Schur 补；前提 $A$ 可逆</td></tr>
+    <tr><td>$r(AB)\ge r(A)+r(B)-n$</td><td>"乘积的秩 ≥ 秩之和 减 中间那档 $n$"</td><td>Sylvester：秩的损失最多是中间维数；$n$ 是 $A$ 的列数（= $B$ 的行数），不是"矩阵阶数"</td></tr>
+    <tr><td>$|I+uv^T|=1+v^Tu$</td><td>"单位阵加秩一，行列式等于 1 加内积"</td><td>低秩修正的行列式公式（矩阵行列式引理）；$v^Tu$ 是数不是矩阵</td></tr>
+    <tr><td>$AB=O\iff\operatorname{col}(B)\subseteq\ker A$</td><td>"乘积为零 ⟺ $B$ 的列全躺在 $A$ 的核里"</td><td>把乘法语言翻译成解空间语言，秩不等式 $r(A)+r(B)\le n$ 立刻跟上</td></tr>
+  </table>
+</div>
+
+<div class="think">
+  <p>别急着背 $|I+uv^T|=1+v^Tu$。<strong>拿张纸，用打洞原理把它推出来</strong>：对 $n+1$ 阶分块矩阵 $M=\begin{pmatrix}I&u\\-v^T&1\end{pmatrix}$，分别以左上角 $I$ 和右下角 $1$ 为枢轴各打一次洞，写出两个 Schur 补表达式，让它们相等。写完再展开对照。</p>
+  <details class="answer">
+    <summary>对照：两路打洞，一次成型</summary>
+    <p>以 $I$ 为枢轴（消左下角的 $-v^T$）：
+    $$\det M=\det I\cdot\det\bigl(1-(-v^T)I^{-1}u\bigr)=1+v^Tu.$$
+    以 $1$ 为枢轴（消右上角的 $u$，此时公式为 $\det M=\det D\cdot\det(A-BD^{-1}C)$，取 $D=1$）：
+    $$\det M=\det 1\cdot\det\bigl(I-u\cdot1^{-1}\cdot(-v^T)\bigr)=|I+uv^T|.$$
+    两式相等 ⟹ $|I+uv^T|=1+v^Tu$。$\square$</p>
+    <p>同一个矩阵、换枢轴、得两个答案——这就是打洞原理的标准用法，第 11 届题三的官方另法（两路打洞得 $\det(sI-AB)=\det(sI-BA)$）与此<strong>一字不差地同构</strong>。顺手再进一步：$A$ 可逆时 $|A+uv^T|=|A|\cdot|I+A^{-1}uv^T|=|A|(1+v^TA^{-1}u)$，§9 变式 2 要用。</p>
+  </details>
+</div>
+
+<h3>3.6 亲手练信号反射（交互）</h3>
+
+<div class="widget" id="vand-widget">
+  <p class="w-title">▶ 面板一 · Vandermonde 条件反射训练器：四个行列式，只有一个是 Vandermonde 型</p>
+  <p class="w-row">考场节奏：5 秒内判断"是不是等比结构"。逐个点击你的判断，点错也会告诉你它属于哪个家族（那是另外几件暗器的信号）。</p>
+  <div class="w-row" id="vand-btns" style="display:flex;flex-wrap:wrap;gap:10px">
+    <button data-ok="1" style="font-family:inherit;cursor:pointer;padding:8px 12px;border:1.5px solid #0f766e;border-radius:10px;background:#fff">$\begin{vmatrix}1&1&1\\2&3&4\\4&9&16\end{vmatrix}$</button>
+    <button data-ok="0" style="font-family:inherit;cursor:pointer;padding:8px 12px;border:1.5px solid #0f766e;border-radius:10px;background:#fff">$\begin{vmatrix}2&1&0\\1&2&1\\0&1&2\end{vmatrix}$</button>
+    <button data-ok="0" style="font-family:inherit;cursor:pointer;padding:8px 12px;border:1.5px solid #0f766e;border-radius:10px;background:#fff">$\begin{vmatrix}1&2&3\\4&5&6\\7&8&9\end{vmatrix}$</button>
+    <button data-ok="0" style="font-family:inherit;cursor:pointer;padding:8px 12px;border:1.5px solid #0f766e;border-radius:10px;background:#fff">$\begin{vmatrix}1&2&3\\3&1&2\\2&3&1\end{vmatrix}$</button>
+  </div>
+  <div class="w-verdict" id="vand-out">点一个试试。（需要启用 JavaScript）</div>
+  <div class="w-row" id="vand-hl" style="display:none;font-size:0.92em">
+    <strong>等比结构高亮</strong>（每一列是同一元的 $0,1,2$ 次幂）：
+    列① <span style="color:#1d4ed8">1, 2, 4</span>（公比 2）　列② <span style="color:#b45309">1, 3, 9</span>（公比 3）　列③ <span style="color:#be123c">1, 4, 16</span>（公比 4）
+    ⟹ 行列式 $=(3-2)(4-2)(4-3)=2$。
+  </div>
+  <p class="w-row" style="font-size:0.88em;color:#5c554b">玩出这三个体验再往下走：<strong>①</strong> 故意点错一个，读它"属于哪个家族"——认家族比认答案重要；<strong>②</strong> 找到 Vandermonde，看清高亮的三条等比链，默念信号"每列同一元的幂"；<strong>③</strong> 自问：若每行先提一个公因子（如第二行全乘 2），还算不算 Vandermonde 型？（算——提完再套公式，这就是"变体"。）</p>
+</div>
+
+<div class="widget" id="tri-widget">
+  <p class="w-title">▶ 面板二 · 三对角行列式的递推生成：$D_n=2D_{n-1}-D_{n-2}$</p>
+  <p class="w-row">$D_n$ 是 §8 例 1 那个主对角全 2、次对角全 1 的 $n$ 阶行列式。拖动 $n$，看数值链 $D_1,D_2,\dots,D_n$ 怎样一节一节长出来——并盯着它恒等于 $n+1$。</p>
+  <div class="w-row"><label>n（从 1 拖到 10，观察每一节是怎么由前两节算出来的）</label>
+  <input type="range" id="tri-n" min="1" max="10" step="1" value="5"></div>
+  <svg id="tri-svg" viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div class="w-verdict" id="tri-out">加载中……（需要启用 JavaScript）</div>
+  <p class="w-row" style="font-size:0.88em;color:#5c554b">玩出这三个体验：<strong>①</strong> 把 $n$ 从 3 开始一格一格拖，每一步口算 $2D_{n-1}-D_{n-2}$ 再和条形比对；<strong>②</strong> 注意相邻条形高度差恒为 1——这就是"重根 $x=1$ ⟹ 通项是 $n$ 的一次函数"的几何长相；<strong>③</strong> 拖回 $n=1,2$，确认初值 $D_1=2,D_2=3$：递推没有初值就是空转，卷面上这两个数各值步骤分。</p>
+</div>
+
+<h2>§4 翻译轨：三个标准动作 + 一间练功房</h2>
+
+<p>暗器在卷面上只有三种拔法。练成反射，本章就毕业。</p>
+
+<div class="trans box" data-tag="动作一：看见幂次结构 → Vandermonde 化">
+  <p><strong>题面</strong>：行列式的行（列）出现 $1,x,x^2,\dots$ 的幂次链，或提公因子后变成幂次链。</p>
+  <p><strong>翻译</strong>：条件反射三步——① 每行（列）提公因子，把首元都变 $1$；② 必要时转置（行列式不变），让幂次沿列排好；③ 套 $\prod_{i&lt;j}(x_j-x_i)$。</p>
+  <p><strong>用在哪一步、值多少</strong>：行列式计算题的开门 3–5 分。注意变体也是 Vandermonde：缺行（§9 变式 1）、倒序幂、错位幂，都是先整理再套。</p>
+</div>
+
+<div class="trans box" data-tag="动作二：看见 AB=O → 列(B)⊂ker A → 秩和不等式">
+  <p><strong>题面</strong>：$AB=O$（或 $A^2=A$、$A^2=O$ 这类自己乘自己的）。</p>
+  <p><strong>翻译</strong>：① 读成"$B$ 的每一列都是 $Ax=0$ 的解"（第 3 章语言）；② 列$(B)\subseteq\ker A$，取维数得 $r(B)\le n-r(A)$，即 $r(A)+r(B)\le n$；③ 若是 $A^2=A$，改写为 $A(I-A)=O$ 再用，并配 $I=A+(I-A)$ 从另一头夹（§9 模仿 2 的完整套路）。</p>
+  <p><strong>用在哪一步、值多少</strong>：秩与幂等/幂零题的核心 4–6 分。自己乘自己 = 条件里藏着一个 $AB=O$，改写这一步就值一半分。</p>
+</div>
+
+<div class="trans box" data-tag="动作三：看见分块阵（有零块或能造零块）→ 打洞">
+  <p><strong>题面</strong>：分块矩阵求行列式、求逆、证可逆，或两个乘积序不同的行列式要证相等（$\det(sI\pm AB)$ 对 $\det(sI\pm BA)$）。</p>
+  <p><strong>翻译</strong>：① 已有零块 → 直接分块三角；② 没有零块但某对角块可逆 → 左/右乘分块初等阵消块（打洞），行列式不变，再分块三角；③ 要证两个量相等 → 造<strong>同一个</strong>分块矩阵，换枢轴两路打洞，让两个答案相等（3.5 的 $|I+uv^T|$ 就是这么来的）。</p>
+  <p><strong>用在哪一步、值多少</strong>：第 11 届题三官方另法全程就是③；箭形行列式（第 17 届题三、§9 模仿 1）是②的数值版。</p>
+</div>
+
+<h3>4.4 翻译练功房：信号与操作的互译</h3>
+
+<p>老规矩：<strong>先全部写在纸上，再逐条展开对照</strong>。每条不超过 1 分钟。</p>
+
+<div class="trans box" data-tag="互译 8 句">
+  <p><strong>T1</strong>　信号→操作："行列式每一列是同一个数的幂 $1,x_i,x_i^2,\dots,x_i^{n-1}$。"</p>
+  <details class="answer"><summary>对照</summary><p>Vandermonde 型，行列式 $=\prod_{i&lt;j}(x_j-x_i)$。<strong>变体反射</strong>：行（列）有公因子先提（如第 $i$ 行提出 $a_i$，多乘一个 $\prod a_i$）；顺序倒了先转置。</p></details>
+  <p><strong>T2</strong>　自然→符号："$AB$ 的每一列都是 $A$ 的列的线性组合。"这件事说明 $r(AB)$ 与 $r(A)$ 什么关系？</p>
+  <details class="answer"><summary>对照</summary><p>列$(AB)\subseteq$ 列$(A)$，故 $r(AB)\le r(A)$。同理行$(AB)\subseteq$ 行$(B)$ 得 $r(AB)\le r(B)$——$r(AB)\le\min$ 就是这么两句话。</p></details>
+  <p><strong>T3</strong>　符号→自然 + 追问："$AB=O$。"追问：若还知道 $r(A)=n-1$，$B$ 的列空间最多几维？</p>
+  <details class="answer"><summary>对照</summary><p>"$B$ 的每一列都是 $Ax=0$ 的解"，即列$(B)\subseteq\ker A$。$r(A)=n-1$ ⟹ $\dim\ker A=1$ ⟹ $r(B)\le1$：$B$ 的列全共线（可以为零矩阵）。</p></details>
+  <p><strong>T4</strong>　判断（说理由）：Sylvester 不等式 "$r(AB)\ge r(A)+r(B)-n$" 中的 $n$ 是矩阵的阶数吗？</p>
+  <details class="answer"><summary>对照</summary><p>不是。$A$ 是 $m\times n$、$B$ 是 $n\times p$ 时，$n$ 是 <strong>$A$ 的列数 = $B$ 的行数</strong>（中间那一档），长方形矩阵没有"阶数"。<strong>易错</strong>：把 $n$ 顺手写成 $\max\{m,n,p\}$ 或 $m$——方向一错整题崩。</p></details>
+  <p><strong>T5</strong>　符号→自然："$|I+uv^T|=1+v^Tu$。"</p>
+  <details class="answer"><summary>对照</summary><p>"单位阵加一个秩 1 修正，行列式 = $1$ 加内积。"左边 $n$ 阶行列式，右边一个数。证明：对 $\begin{pmatrix}I&u\\-v^T&1\end{pmatrix}$ 两路打洞（§3.5 你亲手推过）。</p></details>
+  <p><strong>T6</strong>　判断（找坑）："$\det\begin{pmatrix}A&B\\C&D\end{pmatrix}=\det A\cdot\det(D-CA^{-1}B)$ 永远成立"对吗？</p>
+  <details class="answer"><summary>对照</summary><p>错。前提 <strong>$A$ 可逆</strong>（$CA^{-1}$ 要存在）；$A,D$ 还必须是方块。$A$ 不可逆时两条路：换可逆的块当枢轴（若 $D$ 可逆，$\det=\det D\cdot\det(A-BD^{-1}C)$）；或扰动 $A+\varepsilon I$ 挤进可逆再取极限（第 4 章手法）。</p></details>
+  <p><strong>T7</strong>　信号→操作："$n$ 阶行列式划掉一行一列后，长得和低一阶的自己一样。"</p>
+  <details class="answer"><summary>对照</summary><p>自相似结构 → 按首行（列）展开建递推 $D_n=aD_{n-1}-bD_{n-2}$ → 特征方程 $x^2=ax-b$ → 通项（重根 $x_0$ 时 $D_n=(C_1+C_2n)x_0^{\,n}$）→ 初值定常数。§8 例 1 全流程。</p></details>
+  <p><strong>T8</strong>　判断 + 补全："AB=BA ⟹ A,B 有公共特征向量"在哪个数域上成立？实对称时升级成什么？</p>
+  <details class="answer"><summary>对照</summary><p>在<strong>复数域</strong>上成立（特征值先得有）；证明骨架：取 $A$ 的特征子空间 $V_\lambda$，由 $AB=BA$ 得 $V_\lambda$ 是 $B$-不变子空间，$B$ 在其中（复数域上）有特征向量。都实对称时升级为：<strong>可同时正交对角化</strong>（第 8 章）。实数域上一般结论不成立——公共特征向量可能是复的。</p></details>
+</div>
+
+<h2>§5 类型识别：信号 → 反射（与练功房配套的大表）</h2>
+
+<div class="recog box" data-tag="识别反射表（12 行，贴墙用）">
+  <table>
+    <tr><th>题面信号</th><th>反射</th></tr>
+    <tr><td>行/列成等比（提公因子后成等比也算）</td><td>Vandermonde 化：提因子 → 转置 → 套 $\prod_{i&lt;j}(x_j-x_i)$</td></tr>
+    <tr><td>某行（列）是两组之和；Vandermonde 缺一行</td><td>拆分法 / 加边升阶（变式 1）</td></tr>
+    <tr><td>$n$ 阶三对角、箭形等自相似行列式</td><td>展开建 $D_n=aD_{n-1}-bD_{n-2}$，解特征方程（例 1）</td></tr>
+    <tr><td>行列式里是乘积 $AB$</td><td>$\det(AB)=\det A\det B$ 拆开各算</td></tr>
+    <tr><td>分块矩阵已有零块</td><td>分块三角：$\det=\det A\cdot\det D$</td></tr>
+    <tr><td>分块无零块、某对角块可逆；或要证 $\det(\cdots AB)=\det(\cdots BA)$</td><td>打洞（分块初等变换），Schur 补；两个量相等就造同一矩阵两路打洞</td></tr>
+    <tr><td>证秩的不等式</td><td>先定方向：上界用 $r(AB)\le\min$ / $r(A+B)\le r(A)+r(B)$；下界用 Sylvester / Frobenius</td></tr>
+    <tr><td>$AB=O$（或 $A^2=A$、$A^2=O$）</td><td>列$(B)\subseteq\ker A$ ⟹ $r(A)+r(B)\le n$；自乘型先改写成乘积为零</td></tr>
+    <tr><td>$AB=I_m$（$A$ 是 $m\times n$ 长方形）</td><td>夹逼 $m=r(AB)\le\min\{r(A),r(B)\}\le m$（例 2）；口诀：有左逆 ⟹ 列满秩，有右逆 ⟹ 行满秩</td></tr>
+    <tr><td>矩阵元 $a_{st}=f(s)g(t)$ 型 / 秩 1 痕迹</td><td>低秩分解 $A=uv^T$；$|I+uv^T|=1+v^Tu$；特征值 $\{v^Tu,0,\dots,0\}$</td></tr>
+    <tr><td>$AB=BA$（可交换）</td><td>（复）公共特征向量、同时上三角化；都实对称则同时正交对角化；抽象条件先翻译成"形状"</td></tr>
+    <tr><td>$AX=B$ 解的存在与结构</td><td>有解 ⟺ $r(A)=r(A\,|\,B)$；解 = 特解 + $\ker A$，逐列处理</td></tr>
+  </table>
+</div>
+
+<h2>§6 考法定位：暗器在真题里开过哪些门</h2>
+
+<div class="exam box" data-tag="考法定位">
+  <table>
+    <tr><th>出处</th><th>题号</th><th>本章暗器扮演的角色</th><th>分值权重</th></tr>
+    <tr><td>第 11 届（2019）</td><td>题三</td><td>官方另法：对 $\begin{pmatrix}I&B\\A&sI\end{pmatrix}$ 两路打洞得 $\det(sI-AB)=\det(sI-BA)$（打洞原理）</td><td>15 分（整题引理）</td></tr>
+    <tr><td>第 15 届（2023）</td><td>题四</td><td>开门：$\sin$ 拆复指数得 $A=\frac1{2i}(vv^t-\overline{v}v^{*})$（低秩分解）；$r(A)\le2$ 定非零特征值个数（秩不等式）</td><td>15 分（前 10 分的钥匙）</td></tr>
+    <tr><td>第 16 届（2024）</td><td>题三</td><td>开门 3 分点：$A$ 不可逆 ⟹ $r(A^{*})\in\{0,1\}$（秩不等式组 + $AA^{*}=O$ 翻译）</td><td>20 分（开局定方向）</td></tr>
+    <tr><td>第 14 届（2022）</td><td>题三</td><td>开门：$AB=BA$ 翻译成 $B$ 的形状 $c=b,\ d=a-b$；递降收尾（可交换结构 + 极端原理）</td><td>15 分（§9 真题节选）</td></tr>
+    <tr><td>第 13 届（2021）</td><td>题四</td><td>"$E=f(D)$ 与一切和 $D$ 交换的矩阵交换"（可交换 ⟹ 结构同步化简）</td><td>20 分（15 分点）</td></tr>
+    <tr><td>第 17 届（2025）</td><td>题三</td><td>构造完矩阵要算箭形行列式 $|A_1-A_2-\cdots-A_m|$（分块三角 / 消边化三角）</td><td>20 分中约 8 分</td></tr>
+  </table>
+  <p><strong>规律</strong>：六届里五届的高代题都在某一步用了本章的暗器，但<strong>没有一届把暗器写进题面</strong>——它永远以"官方解答里那个没有名字的第一步"的形态出现。这正是本章的读法：不是多学几个定理，而是把"信号 → 操作"的反射练到和看见 $\forall\varepsilon$ 就想拆定义一样快。</p>
+</div>
+
+<h2>§7 关系网：信号是扳机，工具箱是枪膛，真题是靶子</h2>
+
+<p>本章地图按"拔枪顺序"排：<span style="color:#b45309">三角形</span>是动机（综合题卡住的那一步），<span style="color:#7c3aed">六边形</span>是题面信号（扳机），<span style="color:#15803d">矩形</span>是四个工具箱（枪膛），<span style="color:#0f766e">椭圆</span>是真题出口（靶子，标着步骤分）。顺着箭头从上往下走一遍，就是考场上的一次完整反射。</p>
+
+<figure>
+<svg viewBox="0 0 720 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="技巧包关系网地图">
+  <defs>
+    <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+
+  <!-- 图例 -->
+  <polygon points="30,16 22,30 38,30" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5"/>
+  <text x="44" y="28" font-size="11.5" fill="#5c554b">来源·动机</text>
+  <polygon points="130,23.5 136,16 150,16 156,23.5 150,31 136,31" fill="#f4effd" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="162" y="28" font-size="11.5" fill="#5c554b">题面信号（扳机）</text>
+  <rect x="292" y="17" width="22" height="13" fill="#ecf8f0" stroke="#15803d" stroke-width="1.5"/>
+  <text x="320" y="28" font-size="11.5" fill="#5c554b">工具箱（枪膛）</text>
+  <ellipse cx="436" cy="23.5" rx="12" ry="7" fill="#ecf8f5" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="454" y="28" font-size="11.5" fill="#5c554b">真题出口（靶子）</text>
+
+  <!-- 动机三角 -->
+  <polygon points="360,48 296,116 424,116" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="360" y="90" font-size="12.5" fill="#7a4a12" text-anchor="middle" font-weight="bold">综合题卡住的那一步</text>
+  <text x="360" y="107" font-size="10.5" fill="#7a4a12" text-anchor="middle">不在任何定理里</text>
+
+  <!-- 三角 → 信号排 -->
+  <line x1="360" y1="116" x2="360" y2="140" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="372" y="134" font-size="11" fill="#5c554b">题面长出信号</text>
+
+  <!-- 六个信号六边形 -->
+  <polygon points="8,172 26,148 90,148 108,172 90,196 26,196" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="58" y="168" font-size="11" fill="#7c3aed" text-anchor="middle" font-weight="bold">行/列等比</text>
+  <text x="58" y="184" font-size="9.5" fill="#6a55a3" text-anchor="middle">幂次链 1,x,x²…</text>
+  <polygon points="128,172 146,148 210,148 228,172 210,196 146,196" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="178" y="168" font-size="11" fill="#7c3aed" text-anchor="middle" font-weight="bold">n 阶三对角</text>
+  <text x="178" y="184" font-size="9.5" fill="#6a55a3" text-anchor="middle">自相似结构</text>
+  <polygon points="248,172 266,148 330,148 348,172 330,196 266,196" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="298" y="168" font-size="11" fill="#7c3aed" text-anchor="middle" font-weight="bold">AB = O</text>
+  <text x="298" y="184" font-size="9.5" fill="#6a55a3" text-anchor="middle">或 A²=A / A²=O</text>
+  <polygon points="368,172 386,148 450,148 468,172 450,196 386,196" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="418" y="168" font-size="11" fill="#7c3aed" text-anchor="middle" font-weight="bold">分块有零块</text>
+  <text x="418" y="184" font-size="9.5" fill="#6a55a3" text-anchor="middle">或能造零块</text>
+  <polygon points="488,172 506,148 570,148 588,172 570,196 506,196" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="538" y="168" font-size="11" fill="#7c3aed" text-anchor="middle" font-weight="bold">a_st=f(s)g(t)</text>
+  <text x="538" y="184" font-size="9.5" fill="#6a55a3" text-anchor="middle">vv 型低秩</text>
+  <polygon points="608,172 626,148 690,148 708,172 690,196 626,196" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="658" y="168" font-size="11" fill="#7c3aed" text-anchor="middle" font-weight="bold">AB = BA</text>
+  <text x="658" y="184" font-size="9.5" fill="#6a55a3" text-anchor="middle">可交换条件</text>
+
+  <!-- 信号 → 工具箱 -->
+  <polyline points="58,196 58,232 95,232 95,252" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <polyline points="178,196 178,252" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <polyline points="298,196 298,232 275,232 275,252" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <polyline points="418,196 418,232 455,232 455,252" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <polyline points="538,196 538,232 455,232 455,252" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <polyline points="658,196 658,232 635,232 635,252" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+  <!-- 四个工具箱矩形 -->
+  <rect x="15" y="258" width="160" height="64" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="95" y="284" font-size="13" fill="#15803d" text-anchor="middle" font-weight="bold">箱一 · 行列式六技</text>
+  <text x="95" y="302" font-size="10" fill="#4a7c59" text-anchor="middle">等比 / 拆 / 递推 / 拆积 / 三角 / Schur</text>
+  <rect x="195" y="258" width="160" height="64" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="275" y="284" font-size="13" fill="#15803d" text-anchor="middle" font-weight="bold">箱二 · 秩不等式组</text>
+  <text x="275" y="302" font-size="10" fill="#4a7c59" text-anchor="middle">四条 + AB=O + 满秩⟺单边可逆</text>
+  <rect x="375" y="258" width="160" height="64" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="455" y="284" font-size="13" fill="#15803d" text-anchor="middle" font-weight="bold">箱三 · 分块技巧</text>
+  <text x="455" y="302" font-size="10" fill="#4a7c59" text-anchor="middle">打洞 / 分块求逆 / 低秩 uvᵀ</text>
+  <rect x="555" y="258" width="160" height="64" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="635" y="284" font-size="13" fill="#15803d" text-anchor="middle" font-weight="bold">箱四 · 方程组与结构</text>
+  <text x="635" y="302" font-size="10" fill="#4a7c59" text-anchor="middle">AX=B / AB=O / 可交换</text>
+
+  <!-- 工具箱 → 真题 -->
+  <polyline points="95,322 95,360 72,360 72,448" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="88" y="384" font-size="10" fill="#5c554b">箭形化三角</text>
+  <polyline points="275,322 275,400 344,400 344,452" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="282" y="384" font-size="10" fill="#5c554b">秩定方向</text>
+  <polyline points="455,322 455,360 208,360 208,448" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="300" y="352" font-size="10" fill="#5c554b">低秩分解开门</text>
+  <polyline points="455,322 455,452" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="462" y="384" font-size="10" fill="#5c554b">两路打洞</text>
+  <polyline points="635,322 635,360 592,360 592,452" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="612" y="384" font-size="10" fill="#5c554b">可交换译形状</text>
+
+  <!-- 五个真题椭圆 -->
+  <ellipse cx="72" cy="492" rx="66" ry="42" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="72" y="484" font-size="11.5" fill="#0f766e" text-anchor="middle" font-weight="bold">17 届题三</text>
+  <text x="72" y="500" font-size="9.5" fill="#3d7a70" text-anchor="middle">箭形行列式</text>
+  <text x="72" y="514" font-size="9.5" fill="#3d7a70" text-anchor="middle">20 分里约 8 分</text>
+  <ellipse cx="208" cy="492" rx="66" ry="42" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="208" y="484" font-size="11.5" fill="#0f766e" text-anchor="middle" font-weight="bold">15 届题四</text>
+  <text x="208" y="500" font-size="9.5" fill="#3d7a70" text-anchor="middle">|E+A²⁰²³| 低秩</text>
+  <text x="208" y="514" font-size="9.5" fill="#3d7a70" text-anchor="middle">15 分</text>
+  <ellipse cx="344" cy="492" rx="66" ry="42" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="344" y="484" font-size="11.5" fill="#0f766e" text-anchor="middle" font-weight="bold">16 届题三</text>
+  <text x="344" y="500" font-size="9.5" fill="#3d7a70" text-anchor="middle">r(A*)∈{0,1}</text>
+  <text x="344" y="514" font-size="9.5" fill="#3d7a70" text-anchor="middle">20 分</text>
+  <ellipse cx="480" cy="492" rx="66" ry="42" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="480" y="484" font-size="11.5" fill="#0f766e" text-anchor="middle" font-weight="bold">11 届题三</text>
+  <text x="480" y="500" font-size="9.5" fill="#3d7a70" text-anchor="middle">det(sI−AB) 打洞</text>
+  <text x="480" y="514" font-size="9.5" fill="#3d7a70" text-anchor="middle">15 分</text>
+  <ellipse cx="616" cy="492" rx="70" ry="42" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="616" y="484" font-size="11.5" fill="#0f766e" text-anchor="middle" font-weight="bold">14 届题三</text>
+  <text x="616" y="500" font-size="9.5" fill="#3d7a70" text-anchor="middle">可交换 ⟹ B=Aᵏ</text>
+  <text x="616" y="514" font-size="9.5" fill="#3d7a70" text-anchor="middle">15 分</text>
+</svg>
+<figcaption>拔枪顺序：题面信号（六边形）触发工具箱（矩形），工具箱打开真题的那一步（椭圆）。三角形是这一切存在的理由。</figcaption>
+</figure>
+
+<div class="net box" data-tag="画面感锚点（记这些，不记条文）">
+  <table>
+    <tr><th>节点</th><th>一句话画面</th></tr>
+    <tr><td>箱一 · 行列式六技</td><td>六把钥匙挂一串：等比上 Vandermonde，自相似就递推，有零块按三角，没零块打洞造</td></tr>
+    <tr><td>箱二 · 秩不等式组</td><td>四根杠杆：和往上压、积往小压、Sylvester 从下托、Frobenius 管三连</td></tr>
+    <tr><td>箱三 · 打洞</td><td>拿一块可逆的当凿子，把讨厌的块凿成 0——行列式纹丝不动</td></tr>
+    <tr><td>箱三 · 低秩 $uv^T$</td><td>$n^2$ 个数的矩阵，拆完只剩一列乘一行</td></tr>
+    <tr><td>箱四 · $AB=O$</td><td>$B$ 的列集体搬进 $A$ 的核里住</td></tr>
+    <tr><td>箱四 · 可交换</td><td>两个矩阵肯换位，就能用同一组基同时收拾它们</td></tr>
+  </table>
+  <p><strong>和已学知识的焊接点</strong>：① 秩不等式全是第 3 章"秩-零度 + 列/核空间包含"的推论，卡壳就回第 3 章重推；② 打洞与第 4 章的"扰动 + 取极限"是亲兄弟——一个用分块初等变换，一个用连续性，都解决"不可逆怎么办"；③ $|I+uv^T|=1+v^Tu$ 配上第 6 章 Cayley–Hamilton，高次幂行列式题（15 届题四型）就能打全套；④ 可交换矩阵"同时上三角化"站在第 7 章 Jordan 的肩膀上；⑤ 多项式快查卡归第 10 章管，本章只发通行证。</p>
+</div>
+
+<h2>§8 例题：先按总纲拆解，再看卷面怎么写</h2>
+
+<h3>例 1 · 三对角行列式的递推降阶（约 10 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>这是<strong>计算型</strong>目标：求一个含参数 $n$ 的行列式的值。计算型没有 $\forall\exists$ 骨架可查，但有一条通用策略：$n$ 阶行列式只有三条路——定义硬算（$n!$ 项，死路）、化成三角（三对角化不动）、<strong>利用自相似建递推</strong>。结构侦察（<strong>工具三 · 特殊化</strong>）：先算小的，$D_1=2$，$D_2=\begin{vmatrix}2&1\\1&2\end{vmatrix}=3$，$D_3$ 展开得 $4$——猜想 $D_n=n+1$，证明随后。</p>
+  <p><span class="stage">【盘点】</span>矩阵的三条产出：① 三对角——每行至多 3 个非零元，展开代价极低；② <strong>自相似</strong>——划掉首行首列，剩下的还是同型的 $D_{n-1}$；③ 余子式 $M_{12}$ 的第一列只剩一个非零元，再展开一次就是 $D_{n-2}$。自相似就是递推的入场券。</p>
+  <p><span class="stage">【会师】</span>倒推链：要算 $D_n$（<strong>工具六 · 划归</strong>）$\Longleftarrow$ 只需把 $n$ 阶问题归约成低阶同型问题：按第一行展开得 $D_n=2D_{n-1}-D_{n-2}$（库存②③）$\Longleftarrow$ 常系数线性递推再划归成代数方程 $x^2=2x-1$ $\Longleftarrow$ 重根 $x=1$，通项 $(C_1+C_2n)\cdot1^n$ $\Longleftarrow$ 初值 $D_1=2,D_2=3$ 定出 $C_1=C_2=1$。链条闭合，每环都是标准动作。</p>
+  <p><span class="stage">【定型】</span>卷面正着写：展开 → 递推 → 解递推 → 答案。草稿纸上的"$D_3=4$、猜想 $n+1$"不进卷面；但若考场上忘了重根通项公式，备选路线见下方点评。</p>
+</div>
+
+<div class="scratch">
+  <p>展开细节（卷面只需一行带过）：按第一行展开，$D_n=2M_{11}+1\cdot(-1)^{1+2}M_{12}=2D_{n-1}-M_{12}$，其中 $M_{12}$ 的第一列只有首个元素 $1$ 非零，再按第一列展开得 $M_{12}=D_{n-2}$。故 $D_n=2D_{n-1}-D_{n-2}$。</p>
+  <p>特征方程：$x^2=2x-1\iff(x-1)^2=0$，重根 $x_0=1$ ⟹ 通项 $D_n=(C_1+C_2n)\cdot1^n=C_1+C_2n$。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 递推降阶三件套</strong>：自相似（划掉一行一列还像自己）→ 按行/列展开建 $D_n=aD_{n-1}-bD_{n-2}$ → 特征方程 $x^2=ax-b$。<strong>重根警报</strong>：$x_1=x_2=x_0$ 时通项是 $(C_1+C_2n)x_0^{\,n}$，不是 $C_1x_0^n$——漏掉那个 $n$，本题直接归零。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 1</strong>　计算 $n$ 阶行列式
+  $$D_n=\begin{vmatrix}2&1&0&\cdots&0&0\\1&2&1&\cdots&0&0\\0&1&2&\ddots&&\vdots\\\vdots&\vdots&\ddots&\ddots&\ddots&0\\0&0&&\ddots&2&1\\0&0&\cdots&0&1&2\end{vmatrix}.$$</p>
+  <hr>
+  <p class="proof-line"><strong>解</strong>　按第一行展开，得
+  $$D_n=2D_{n-1}-M_{12},$$
+  其中余子式 $M_{12}$ 的第一列仅首元 $1$ 非零，再按该列展开得 $M_{12}=D_{n-2}$。故
+  $$D_n=2D_{n-1}-D_{n-2}\qquad(n\ge3).$$<span class="step-score">（4 分）</span></p>
+  <p class="proof-line">初值：$D_1=2$，$D_2=\begin{vmatrix}2&1\\1&2\end{vmatrix}=3$。<span class="step-score">（5 分）</span></p>
+  <p class="proof-line">递推的特征方程 $x^2=2x-1$ 有二重根 $x_0=1$，故通项 $D_n=C_1+C_2n$。代入初值：
+  $$C_1+C_2=2,\qquad C_1+2C_2=3\ \Longrightarrow\ C_1=C_2=1.$$<span class="step-score">（8 分）</span></p>
+  <p class="proof-line">所以 $D_n=n+1$。<span class="step-score">（10 分）</span></p>
+  <p class="aside">书写点评：三个分点——递推式（含 $M_{12}=D_{n-2}$ 的交代）、初值、通项定常数。<strong>备选路线</strong>（忘了重根公式时）：由 $D_n-D_{n-1}=D_{n-1}-D_{n-2}$ 知 $\{D_n\}$ 等差，$D_n=D_1+(n-1)(D_2-D_1)=n+1$，两行搞定；数学归纳法证 $D_n=n+1$ 同样满分。三条路都通，考场上选你最稳的那条。</p>
+</div>
+
+<h3>例 2 · 秩不等式组合：$AB=I_m$ 型（约 6 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>结论是<strong>两个等式</strong> $r(A)=m$ 且 $r(B)=m$——等式型，查拆目标总表：两头夹。即 $r(A)\ge m$ 与 $r(A)\le m$ 各证一半，$r(B)$ 同理。秩的世界里"夹"的工具就是不带等号的那几条不等式，方向决定用哪条。</p>
+  <p><span class="stage">【盘点】</span>条件 $AB=I_m$（$A$ 为 $m\times n$，$B$ 为 $n\times m$）产出三条：① $r(AB)=r(I_m)=m$；② $A$ 只有 $m$ 行 ⟹ $r(A)\le m$；③ $B$ 只有 $m$ 列 ⟹ $r(B)\le m$。上界白送，下界要找一条"$r(AB)$ 不超过谁"的不等式反向用。</p>
+  <p><span class="stage">【会师】</span>倒推链：要证 $r(A)\ge m$ $\Longleftarrow$ 只需 $m=r(AB)\le r(A)$（库存① + 箱二第二条 $r(AB)\le\min$）。一头一尾拼起来：
+  $$m=r(AB)\le\min\{r(A),r(B)\}\le m,$$
+  两端都是 $m$，夹逼闭合，$r(A)=r(B)=m$。<strong>方向检查</strong>：Sylvester 给的是 $r(AB)$ 的下界，这里需要的是上界——选工具先看方向，拿反了就是零分动作。第二证（核语言）走<strong>工具六 · 划归</strong>：$AB=I$ 意味着 $B$ 单射、$A$ 满射，回第 3 章用 $\ker$ 重述一遍，见卷面另证。</p>
+  <p><span class="stage">【定型】</span>卷面四行写完，每行一条不等式并注明出处；另证作为加分项附上，展示"同一结论的两种语言"。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 秩的夹逼</strong>：证 $r(X)=k$，把 $k$ 写成某个 $r(\text{乘积})$，用 $r(AB)\le\min$ 从下面顶、用行数/列数从上面压。<strong>口诀</strong>：有左逆 ⟹ 列满秩（$B$ 被 $A$ 左乘得 $I_m$，$Bx=0\Rightarrow x=0$，单射），有右逆 ⟹ 行满秩（$A$ 被 $B$ 右乘得 $I_m$，满射）。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 2</strong>　设 $A$ 为 $m\times n$ 矩阵，$B$ 为 $n\times m$ 矩阵，且 $AB=I_m$。证明：$r(A)=r(B)=m$。</p>
+  <hr>
+  <p class="proof-line"><strong>证法一（夹逼）</strong>　由 $AB=I_m$ 知 $r(AB)=m$。<span class="step-score">（1 分）</span></p>
+  <p class="proof-line">由秩不等式 $r(AB)\le\min\{r(A),r(B)\}$，得
+  $$m=r(AB)\le r(A),\qquad m=r(AB)\le r(B).$$<span class="step-score">（3 分）</span></p>
+  <p class="proof-line">又 $A$ 只有 $m$ 行，故 $r(A)\le m$；$B$ 只有 $m$ 列，故 $r(B)\le m$。<span class="step-score">（5 分）</span></p>
+  <p class="proof-line">两头夹得 $r(A)=r(B)=m$。$\square$<span class="step-score">（6 分）</span></p>
+  <p class="proof-line"><strong>证法二（核语言，另证）</strong>　设 $x$ 满足 $Bx=0$，则 $x=I_mx=(AB)x=A(Bx)=0$，故 $\ker B=\{0\}$，$B$ 列满秩，$r(B)=m$。</p>
+  <p class="proof-line">设 $y$ 满足 $y^TA=0$，则 $y^T=y^TI_m=y^TAB=0$，故 $A$ 的左零空间为 $\{0\}$，$A$ 行满秩，$r(A)=m$。$\square$</p>
+  <p class="aside">书写点评：证法一的三个分点对应三条不等式，每条都要写明依据（"由 $r(AB)\le\min$""由行数/列数"），跳步即丢分。证法二把"有左逆 ⟹ 单射、有右逆 ⟹ 满射"说成了人话——注意 Sylvester 在本题<strong>方向不对</strong>（它给 $m\ge r(A)+r(B)-n$，管不了上界），这就是为什么工具箱二要按"上界/下界"分类记。</p>
+</div>
+
+<h2>§9 配套题目</h2>
+
+<p>铁律：<strong>先写在纸上，写到写不动再展开答案</strong>。模仿题照例 1、例 2 的卷面格式写；变式题开始没有模板，先问自己"题面里哪个信号在闪"。</p>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 1</span>设 $x_2,x_3,\dots,x_n$ 均不为零，计算箭形行列式
+  $$D_n=\begin{vmatrix}x_1&1&1&\cdots&1\\1&x_2&0&\cdots&0\\1&0&x_3&\cdots&0\\\vdots&\vdots&\vdots&\ddots&\vdots\\1&0&0&\cdots&x_n\end{vmatrix}.$$</p>
+  <details class="answer">
+    <summary>参考答案（约 6 分书写量）</summary>
+    <p><strong>操作</strong>：第 1 列依次减去第 $i$ 列的 $\dfrac1{x_i}$ 倍（$i=2,3,\dots,n$）——这是打洞原理的数值版，行列式不变（2 分）。</p>
+    <p>第 $i$ 列（$i\ge2$）只有第 1 行的 $1$ 与第 $i$ 行的 $x_i$ 非零，故操作后第 1 列变为
+    $$\Bigl(x_1-\sum_{i=2}^{n}\frac1{x_i},\ 0,\ 0,\ \dots,\ 0\Bigr)^T,$$
+    矩阵化为下三角，主对角元为 $x_1-\sum_{i=2}^n\frac1{x_i},\ x_2,\ x_3,\ \dots,\ x_n$（4 分）。</p>
+    <p>故
+    $$D_n=x_2x_3\cdots x_n\Bigl(x_1-\sum_{i=2}^{n}\frac1{x_i}\Bigr).$$<span class="step-score">（6 分）</span></p>
+    <p><strong>易错点</strong>：① 漏写"行列式不变"的依据（列的倍数加到另一列，$\det$ 不变）；② 若某 $x_i=0$（$i\ge2$），上述除法失效，改为按第 $i$ 行展开：该行只有第 1 列的 $1$ 非零，得 $D_n=-\prod\limits_{k\ne1,i}x_k$——题目给了"均不为零"就是为了让你放心打洞。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 2</span>设 $n$ 阶方阵 $A$ 满足 $A^2=A$（幂等矩阵）。证明：$r(A)+r(I-A)=n$。</p>
+  <details class="answer">
+    <summary>参考答案（约 6 分书写量）</summary>
+    <p><strong>第一步（$\le$）</strong>：由 $A^2=A$ 得 $A(I-A)=O$，即列$(I-A)\subseteq\ker A$，故 $r(I-A)\le\dim\ker A=n-r(A)$，即
+    $$r(A)+r(I-A)\le n.$$<span class="step-score">（3 分）</span></p>
+    <p><strong>第二步（$\ge$）</strong>：由 $I=A+(I-A)$ 及秩不等式 $r(X+Y)\le r(X)+r(Y)$，得
+    $$n=r(I)\le r(A)+r(I-A).$$<span class="step-score">（5 分）</span></p>
+    <p>两头夹，$r(A)+r(I-A)=n$。$\square$<span class="step-score">（6 分）</span></p>
+    <p><strong>易错点</strong>：① 忘了把 $A^2=A$ <strong>改写</strong>成 $A(I-A)=O$——动作二的那次改写就是开门；② 两条不等式各管一头，只证一头最多一半分；③ 方向用反（拿 Sylvester 来证 $\ge$ 是绕远且不对的）。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 1</span>计算"缺一行"的 Vandermonde 型行列式（$x_1,\dots,x_n$ 两两不同）：
+  $$D=\begin{vmatrix}1&1&\cdots&1\\x_1&x_2&\cdots&x_n\\\vdots&\vdots&&\vdots\\x_1^{n-2}&x_2^{n-2}&\cdots&x_n^{n-2}\\x_1^{n}&x_2^{n}&\cdots&x_n^{n}\end{vmatrix}$$
+  （第 $n$ 行是 $n$ 次幂，$n-1$ 次幂那一行缺席了）。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：缺一行就不是标准 Vandermonde——那就<strong>加边升阶</strong>，把它补成 $n+1$ 阶 Vandermonde：添一行 $x^{n-1}$、添一列变量 $y$：
+    $$W(y)=\begin{vmatrix}1&\cdots&1&1\\x_1&\cdots&x_n&y\\\vdots&&\vdots&\vdots\\x_1^{n-1}&\cdots&x_n^{n-1}&y^{n-1}\\x_1^n&\cdots&x_n^n&y^n\end{vmatrix}=\prod_{1\le i&lt;j\le n}(x_j-x_i)\cdot\prod_{i=1}^{n}(y-x_i).$$
+    $D$ 恰好是 $W(y)$ 中 $y^{n-1}$ 的代数余子式（差一个符号）：按最后一列展开，$y^{n-1}$ 在第 $n$ 行第 $n+1$ 列，系数为 $(-1)^{n+(n+1)}D=-D$。</p>
+    <p><strong>证明</strong>：展开 $\prod_{i=1}^n(y-x_i)=y^n-e_1y^{n-1}+\cdots$（$e_1=\sum_{i=1}^n x_i$），故 $W(y)$ 中 $y^{n-1}$ 的系数为 $-e_1\prod_{i&lt;j}(x_j-x_i)$。与 $-D$ 比较，得
+    $$D=\Bigl(\sum_{i=1}^{n}x_i\Bigr)\prod_{1\le i&lt;j\le n}(x_j-x_i).\qquad\square$$</p>
+    <p><strong>点评</strong>：加边法的心法——<strong>缺什么补什么，补完比较系数</strong>。$y$ 是工具人，用完即扔。同法可处理缺任意一行 $x^k$ 的变体（答案是对应的初等对称多项式 $e_{n-k}$ 乘 $\prod(x_j-x_i)$，本题是 $k=n-1$ 得 $e_1$）。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 2</span>设 $A$ 为 $n$ 阶可逆矩阵，$u,v$ 为 $n$ 维列向量。证明：
+  $$|A+uv^T|=|A|\bigl(1+v^TA^{-1}u\bigr),$$
+  并由此给出 $A+uv^T$ 可逆的充要条件。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：秩 1 修正 + 可逆 ⟹ 先拆积（箱一第四技），把 $A$ 提出来，剩下的就是 §3.5 亲手推过的 $|I+(\cdot)(\cdot)^T|$。</p>
+    <p><strong>证明</strong>：$A$ 可逆，故
+    $$A+uv^T=A\bigl(I+A^{-1}uv^T\bigr)=A\bigl(I+(A^{-1}u)v^T\bigr).$$
+    由 $\det$ 拆积与矩阵行列式引理（视 $A^{-1}u$ 为列向量）：
+    $$|A+uv^T|=|A|\cdot\bigl|I+(A^{-1}u)v^T\bigr|=|A|\bigl(1+v^TA^{-1}u\bigr).\qquad\square$$
+    充要条件：$A+uv^T$ 可逆 ⟺ $|A+uv^T|\ne0$ ⟺ $1+v^TA^{-1}u\ne0$（$|A|\ne0$ 已知）。</p>
+    <p><strong>点评</strong>：两个动作各来自一个工具箱——拆积（箱一）+ 低秩公式（箱三）。Sherman–Morrison 公式 $(A+uv^T)^{-1}=A^{-1}-\dfrac{A^{-1}uv^TA^{-1}}{1+v^TA^{-1}u}$ 是它的求逆版，竞赛里见到"对角阵加低秩"（如 $D+\alpha\mathbf{1}\mathbf{1}^T$）就该亮这件暗器。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv3">真题节选</span><strong>（第 14 届题三，15 分）</strong>设 $A=\begin{pmatrix}2&1\\1&1\end{pmatrix}$，矩阵 $B$ 与 $A$ 可交换，其元素均为正整数且行列式为 $1$。证明存在正整数 $k$ 使得 $B=A^k$。</p>
+  <p>先回答三个梯子问题（写在纸上）：</p>
+  <p>（i）把 $AB=BA$ 翻译成四个分量等式——它能挤出 $B$ 的哪几个元素关系？$B$ 还剩几个自由参数？<br>
+  （ii）官方第二步"考察 $B_1=A^{-1}B$"凭什么值得试？$B_1$ 的形状和 $B$ 一样吗？哪个量严格变小了？<br>
+  （iii）递降为什么一定在有限步内停？停在哪一格？</p>
+  <details class="answer">
+    <summary>梯子参考答案</summary>
+    <p>（i）设 $B=\begin{pmatrix}a&b\\c&d\end{pmatrix}$，比较 $AB$ 与 $BA$ 的四个分量得 $c=b$、$d=a-b$——四个参数压成两个（$a,b$）。这就是箱四"可交换 ⟹ 形状"的翻译。</p>
+    <p>（ii）$A^{-1}=\begin{pmatrix}1&-1\\-1&2\end{pmatrix}$ 仍是整数阵，且 $\det A^{-1}=1$，所以 $B_1=A^{-1}B$ 仍是"形状相同的正整数阵、行列式 1"——关键：它的参数 $b_1=2b-a&lt;b$，$b$ 严格下降。左乘 $A^{-1}$ 就是"把 $B$ 剥一层 $A$"。</p>
+    <p>（iii）$b$ 是正整数且严格递减，正整数不能无限递减（<strong>极端原理 / 良序</strong>），有限步后 $b_s$ 触底为最小正整数 $1$；代回 $a^2-ab-b^2=1$ 得 $a=2$，即 $B_s=A$。</p>
+  </details>
+  <details class="answer">
+    <summary>官方解答全文（转录自官方参考答案）</summary>
+    <p>令 $B=\begin{pmatrix}a&b\\c&d\end{pmatrix}$。由 $AB=BA$ 得 $c=b$，$d=a-b$；元素均为正整数 ⟹ $a>b$；$\det B=1$ ⟹ $a^2-ab-b^2=1$。<span class="step-score">（5 分）</span></p>
+    <p>若 $b=1$，则由 $a^2-ab-b^2=1$ 得 $a=2$，即 $B=A$。</p>
+    <p>若 $b>1$，考察
+    $$B_1=A^{-1}B=\begin{pmatrix}1&-1\\-1&2\end{pmatrix}\begin{pmatrix}a&b\\b&a-b\end{pmatrix}=\begin{pmatrix}a-b&2b-a\\2b-a&2a-3b\end{pmatrix};$$
+    令 $a_1=a-b$，$b_1=2b-a$，则 $B_1=\begin{pmatrix}a_1&b_1\\b_1&a_1-b_1\end{pmatrix}$。</p>
+    <p>验证 $a_1,b_1$ 仍为正整数且 $a_1>b_1$：若 $a\ge2b$，则 $1+b^2=a(a-b)\ge2b^2$ ⟹ $b^2\le1$，与 $b>1$ 矛盾，故 $b_1=2b-a>0$；又 $a_1^2-a_1b_1-b_1^2=\det B_1=1$ ⟹ $a_1>b_1$。但 $b_1=b-(a-b)&lt;b$：左乘 $A^{-1}$ 使 $(a,b)$ 满足同样条件而 $b$ 严格下降。<span class="step-score">（12 分）</span></p>
+    <p>递降有限步（$s$ 次）后 $b_s$ 为最小正整数，即 $b_s=1$，由 $b=1$ 的情形知 $B_s=(A^{-1})^sB=A$，故 $B=A^{s+1}$，取 $k=s+1$。$\square$<span class="step-score">（15 分）</span></p>
+    <p><strong>复盘</strong>：本题的两把暗器——① <strong>箱四 · 可交换翻译</strong>：$AB=BA$ 先挤成 $B=\begin{pmatrix}a&b\\b&a-b\end{pmatrix}$（5 分开门分）；② <strong>递降 / 极端原理</strong>（第 0.5 章工具七）：左乘 $A^{-1}$ 制造严格递减的正整数，触底必为 $A$。另有一个体系内的影子：递降的每一步其实是 Cayley–Hamilton 的亲戚——$A$ 满足 $A^2=3A-I$（特征方程 $x^2-3x+1=0$），所以 $A$ 的幂永远落在 "$aA-bI$ 形"的二维空间里，这就是 $B$ 的形状与 $A^k$ 的形状为什么恰好吻合。<em>（题目与解答转录自第 14 届官方 PDF，见 <a href="真题索引/第14届_2022.md">真题索引</a>。）</em></p>
+  </details>
+</div>
+
+<h2>§9.5 熟练度训练场</h2>
+
+<p>暗器靠手感，手感靠重复。两种训练，每天 10 分钟：</p>
+
+<h3>训练一 · 翻卡快测（目标：每卡 10 秒内出答案）</h3>
+<div class="quiz" data-quiz="ch21-drill"></div>
+
+<h3>训练二 · 计时默写（写在纸上，掐表）</h3>
+<div class="calc box" data-tag="默写清单">
+  <p>① <strong>90 秒</strong>：默写秩不等式四条（$r(A+B)$、$r(AB)\le\min$、Sylvester、Frobenius）+ $AB=O$ 推论，每条注明条件（Sylvester 的 $n$ 是谁）；</p>
+  <p>② <strong>60 秒</strong>：默写 Schur 补公式（含 $A$ 可逆前提）与 $|I+uv^T|=1+v^Tu$，并用两路打洞各推一遍；</p>
+  <p>③ <strong>90 秒</strong>：默写递推降阶五步走（自相似 → 展开建 $D_n=aD_{n-1}-bD_{n-2}$ → 特征方程 → 通项（重根 $(C_1+C_2n)x_0^{\,n}$）→ 初值定常数），并写出 $D_n=2D_{n-1}-D_{n-2}$ 的答案 $D_n=n+1$。</p>
+  <p><strong>过关标准</strong>：连续两天全对才算过。做不到就回 §3 对应工具箱重读，再默。</p>
+</div>
+
+<h2>§10 六方向自测卡</h2>
+
+<div class="selftest">
+  <h3>合上书，拿张白纸，默写以下六项</h3>
+  <div class="st-item">
+    <p class="st-q"><em>=（它是什么）</em>　默写四个工具箱的核心条文：行列式六技的名称、秩不等式四条、Schur 补、$|I+uv^T|$、$AB=O$ 的翻译。</p>
+    <details><summary>对照</summary><p>六技：Vandermonde 化、拆分/加边、递推降阶、拆积、分块三角、Schur 补；秩：$r(A+B)\le r(A)+r(B)$，$r(AB)\le\min$，$r(AB)\ge r(A)+r(B)-n$，$r(ABC)\ge r(AB)+r(BC)-r(B)$；$\det\begin{pmatrix}A&B\\C&D\end{pmatrix}=\det A\cdot\det(D-CA^{-1}B)$（$A$ 可逆）；$|I+uv^T|=1+v^Tu$；$AB=O\iff$ 列$(B)\subseteq\ker A$。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>←（什么带来它）</em>　秩不等式组的发动机是哪一章的哪条定理？$|I+uv^T|=1+v^Tu$ 是怎么推出来的？</p>
+    <details><summary>对照</summary><p>第 3 章秩-零度定理 + 列/核空间包含（$\dim\ker(AB)\le\dim\ker A+\dim\ker B$ 等）。$|I+uv^T|$：对 $\begin{pmatrix}I&u\\-v^T&1\end{pmatrix}$ 分别以 $I$ 与 $1$ 为枢轴两路打洞，两个 Schur 补表达式相等即得。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>→（它带来什么）</em>　说出本章暗器打开的三道真题及其各自开门的那一步。</p>
+    <details><summary>对照</summary><p>15 届题四：低秩分解 $A=\frac1{2i}(vv^t-\overline{v}v^{*})$ 开门；11 届题三：两路打洞得 $\det(sI-AB)=\det(sI-BA)$；16 届题三：$r(A^*)\in\{0,1\}$ 定方向（另：14 届题三可交换译形状、17 届题三箭形行列式）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>∈（实例）</em>　各举一例：递推降阶、$AB=O$ 型秩等式、低秩行列式公式。</p>
+    <details><summary>对照</summary><p>$D_n=2D_{n-1}-D_{n-2}\Rightarrow D_n=n+1$（例 1）；$A^2=A\Rightarrow r(A)+r(I-A)=n$（模仿 2）；$|I+uv^T|=1+v^Tu$ 及其推广 $|A+uv^T|=|A|(1+v^TA^{-1}u)$（变式 2）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>≠（区分）</em>　最易混的一对：$r(AB)\le\min\{r(A),r(B)\}$ 与 Sylvester $r(AB)\ge r(A)+r(B)-n$——什么时候用哪条？</p>
+    <details><summary>对照</summary><p>看要证的方向：要 $r(AB)$ 的上界（或要拿 $r(AB)$ 去压别的秩）用 $\le\min$；要 $r(AB)$ 的下界（秩损失估计）用 Sylvester。例 2 用的是前者（夹逼），后者管"乘起来秩最多丢多少"。记反 = 拿反杠杆。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>（为何要有它）</em>　体系已经很全了，为什么还要一章"技巧包"？</p>
+    <details><summary>对照</summary><p>因为综合题的某一步（低秩分解、打洞、可交换译形状）不在任何定理里，定理只告诉你世界是什么样，不告诉你这扇门怎么开。技巧是步骤分的开门钥匙：体系让你看懂全场，技巧让你在某一步拿分。</p></details>
+  </div>
+</div>
+
+<div class="net box" data-tag="间隔复习安排 + 高代卷总复盘">
+  <p><strong>1 天后</strong>：重做六方向自测卡（不翻书）+ 翻卡快测第二轮；<strong>3 天后</strong>：重做模仿 2、变式 1 与真题节选的三个梯子问题 + 计时默写②③；<strong>1 周后</strong>：把 §5 识别反射表（12 行）默写一遍，Vandermonde 训练器再点一轮，确认全对。</p>
+  <p><strong>高代卷 11 章总复盘</strong>（本章是收官章，做完这遍高代卷封卷）：① 把第 1–8 章（ch11–ch18）每章 §5 的识别反射表各抄成一行，加上本章 12 行，合成一张"高代信号总表"贴墙；② 四条主线自查——<strong>空间</strong>（子空间、直和、商）/ <strong>映射</strong>（核、像、秩-零度）/ <strong>不变量</strong>（特征值、最小多项式、Jordan、谱）/ <strong>技巧</strong>（本章四箱），每条主线随便指一章能说出它的主定理和开门动作；③ 真题回炉：把 §6 考法定位表里的六届高代题各重做第一问，掐表 20 分钟一道。</p>
+  <p>下一站：<strong>卷三 · 解析几何</strong>（15 分题，旋转曲面、二次曲面分类在那里等你——第 11、13、14、15、16 届的题一全是它）。</p>
+</div>
+
+<div class="chapnav">
+  <span><a href="ch20.html">← 第 10 章 · 多项式</a></span>
+  <span><a href="index.html">首页</a></span>
+  <span><a href="ch22.html">卷三 · 解析几何 · 第 1 章：向量法通解 →</a></span>
+</div>
+
+</div>
+
+<script src="assets/quiz.js"></script>
+<script>
+/* §9.5 翻卡数据 */
+registerQuiz("ch21-drill", [
+  { q: "行列式的每一列是同一元的幂 $1,x_i,x_i^2,\\dots$ —— 反射？", a: "Vandermonde 型：行列式 $=\\prod_{i<j}(x_j-x_i)$。有公因子先提，顺序乱先转置。" },
+  { q: "$AB=O$ 的两个立即产出？", a: "列$(B)\\subseteq\\ker A$（解空间语言）；$r(A)+r(B)\\le n$（秩不等式）。" },
+  { q: "$r(AB)$ 的上界？", a: "$r(AB)\\le\\min\\{r(A),r(B)\\}$（列包含 + 行包含）。" },
+  { q: "$r(AB)$ 的下界（Sylvester）？", a: "$r(AB)\\ge r(A)+r(B)-n$，$n$ 是 $A$ 的列数 = $B$ 的行数。" },
+  { q: "$r(A+B)$ 与 $r(A),r(B)$？", a: "$r(A+B)\\le r(A)+r(B)$（列$(A+B)\\subseteq$ 列$(A)+$列$(B)$）。" },
+  { q: "Frobenius 不等式？", a: "$r(ABC)\\ge r(AB)+r(BC)-r(B)$（三连乘，减中间那个）。" },
+  { q: "$|I+uv^T|$ = ？", a: "$1+v^Tu$。对 $\\begin{pmatrix}I&u\\\\-v^T&1\\end{pmatrix}$ 两路打洞即得。" },
+  { q: "Schur 补公式（含前提）？", a: "$A$ 可逆时 $\\det\\begin{pmatrix}A&B\\\\C&D\\end{pmatrix}=\\det A\\cdot\\det(D-CA^{-1}B)$。" },
+  { q: "$D_n=aD_{n-1}-bD_{n-2}$ 怎么解？重根怎么办？", a: "特征方程 $x^2=ax-b$；两异根 $C_1x_1^n+C_2x_2^n$，重根 $x_0$ 时 $(C_1+C_2n)x_0^{\\,n}$；初值定常数。" },
+  { q: "$A$ 为 $m\\times n$、$B$ 为 $n\\times m$、$AB=I_m$，则 $r(A),r(B)$？口诀？", a: "$r(A)=r(B)=m$（夹逼 $m=r(AB)\\le\\min\\le m$）。口诀：有左逆 ⟹ 列满秩（单射），有右逆 ⟹ 行满秩（满射）。" }
+]);
+</script>
+
+<script>
+/* 面板一 · Vandermonde 条件反射训练器 */
+(function () {
+  var out = document.getElementById("vand-out");
+  var hl = document.getElementById("vand-hl");
+  var msgs = [
+    "✗ 不是它。这是三对角行列式——信号是「自相似」，归递推降阶管（例 1：值 = 阶数 + 1 = 4）。再看行与行：没有公共的等比关系。",
+    "✗ 不是它。这是等差阵（每行是等差数列）——信号是「可拆分」，第 3 行 − 2×第 2 行 + 第 1 行 = 0，行列式 = 0。等差不是等比。",
+    "✗ 不是它。这是循环阵（1,2,3 循环移位）——行内相邻元之比不是常数（第 1 行 2/1=2，但 3/2≠2），构不成等比。它的家族另有算法，不在本训练范围。"
+  ];
+  var btns = document.querySelectorAll("#vand-btns button");
+  var solved = false;
+  btns.forEach(function (b, i) {
+    b.addEventListener("click", function () {
+      if (b.getAttribute("data-ok") === "1") {
+        out.innerHTML = "<span class=\"ok\">✓ 就是它</span>：每一列是同一元的 0,1,2 次幂——列①公比 2、列②公比 3、列③公比 4。行列式 = (3−2)(4−2)(4−3) = 2。<strong>信号：「每列同一元的幂」⟹ Vandermonde。</strong>";
+        hl.style.display = "block";
+        b.style.borderColor = "#15803d";
+        b.style.background = "#ecf8f0";
+        solved = true;
+      } else {
+        var k = i - 1;
+        out.innerHTML = "<span class=\"no\">" + msgs[k] + "</span>";
+        b.style.borderColor = "#be123c";
+        b.style.background = "#fdeef2";
+        if (!solved) hl.style.display = "none";
+      }
+    });
+  });
+})();
+</script>
+
+<script>
+/* 面板二 · 三对角行列式的递推生成 */
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  var svg = document.getElementById("tri-svg");
+  var out = document.getElementById("tri-out");
+  var slider = document.getElementById("tri-n");
+  function mk(tag, attrs) {
+    var el = document.createElementNS(NS, tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    svg.appendChild(el);
+    return el;
+  }
+  function txt(x, y, s, attrs) {
+    var t = mk("text", attrs || {});
+    t.setAttribute("x", x); t.setAttribute("y", y);
+    t.textContent = s;
+    return t;
+  }
+  function draw() {
+    var n = parseInt(slider.value, 10);
+    svg.innerHTML = "";
+    var base = 168, bw = 52, gap = 12, x0 = 46, scale = 12;
+    /* 基线 */
+    mk("line", { x1: 30, y1: base, x2: 705, y2: base, stroke: "#2b2620", "stroke-width": 1.5 });
+    for (var k = 1; k <= n; k++) {
+      var v = k + 1;
+      var h = v * scale;
+      var x = x0 + (k - 1) * (bw + gap);
+      var last = (k === n);
+      mk("rect", { x: x, y: base - h, width: bw, height: h, fill: last ? "#15803d" : "#bfe4ca", stroke: "#15803d", "stroke-width": 1.2 });
+      txt(x + bw / 2, base - h - 6, "D" + k + "=" + v, { "font-size": 11.5, fill: "#15803d", "text-anchor": "middle", "font-weight": last ? "bold" : "normal" });
+      txt(x + bw / 2, base + 16, k + 1, { "font-size": 10, fill: "#5c554b", "text-anchor": "middle" });
+    }
+    txt(x0 + (n - 1) * (bw + gap) / 2 + 20, 24, "条形高度 = D_k，底边数字 = k+1（对照：D_k 恒等于 k+1）", { "font-size": 11, fill: "#5c554b" });
+    /* 递推链条文本 */
+    var chain = "D₁ = 2";
+    if (n >= 2) chain += "，D₂ = 3";
+    for (var j = 3; j <= n; j++) {
+      chain += "，D" + j + " = 2·" + j + " − " + (j - 1) + " = " + (j + 1);
+    }
+    var lastStep = n >= 3
+      ? "最新一节：D" + n + " = 2·D" + (n - 1) + " − D" + (n - 2) + " = 2×" + n + " − " + (n - 1) + " = " + (n + 1) + " = n+1 ✓"
+      : (n === 2 ? "初值两节齐备：D₁ = 2、D₂ = 3 —— 从 n = 3 起每节都由前两节算出" : "初值 D₁ = 2：递推的第一块骨牌");
+    out.innerHTML = "数值链：" + chain + "<br><strong>" + lastStep + "</strong>";
+  }
+  slider.addEventListener("input", draw);
+  draw();
+})();
+</script>
+
+</body>
+</html>

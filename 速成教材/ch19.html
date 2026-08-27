@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高代第 9 章 · 二次型与正定性：Sylvester 判别 —— 数学A速成讲义</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+<div class="wrap">
+
+<div class="bookbar">
+  <span><a href="index.html">← 返回首页</a></span>
+  <span>卷二 · 高等代数 · 第 9 章</span>
+</div>
+
+<div class="chapter-kicker">CHAPTER 9 · 高等代数</div>
+<h1>二次型与正定性：Sylvester 判别</h1>
+
+<div class="exam box" data-tag="本章导览">
+  <p><strong>这一章在整张卷子上的位置</strong>：二次型是高等代数的收官主题，也是<strong>三卷之间的接口</strong>。直接命中时是整道高代大题：第 11 届题四（20 分）整题考"恒号二次型 + 同时合同对角化"，其中"同时合同对角化"一个引理就值 10 分。不直接命中时它以三种形态渗透：数分卷的 Hessian 极值判别（第 15 届题二唯一驻点处 Hessian $=2I_3$，正定——官方虽用放缩，判据的语言来自本章）、解几卷的二次曲面分类（第 16 届题一的锥面就是二次型的零等值面）、以及高代证明的开门动作（"$B$ 正定，先合同到 $I$"这类第一行）。估价：<strong>直接命中 20 分；渗透形态 3–10 分</strong>。</p>
+  <p><strong>学完你能</strong>：① 默写正定五等价，并能在五种语言之间双向互译；② 用 Sylvester 三连（$\Delta_1,\Delta_2,\Delta_3$）解"含参矩阵何时正定"；③ 把不等式配成 $x^T\!Ax\ge0$（判别式法 / Gram 矩阵法）；④ 默写"同时合同对角化"的证明骨架，并用它拿下第 11 届题四；⑤ 一句话说清合同与相似的分工。</p>
+  <p><strong>前置</strong>：卷二第 8 章《内积空间》（ch18）那句"实对称矩阵可正交对角化"——本章每条定理都站在它上面；会算三阶行列式；第 0.5 章的程序。</p>
+</div>
+
+<h2>§1 开场谜题：一个二次三项式，什么时候恒正？</h2>
+
+<div class="hook box" data-tag="开场谜题">
+  <p>问你一个看上去初中级别的问题：</p>
+  <p>$$Q(x,y)=ax^2+2bxy+cy^2\quad\text{什么时候对所有 }(x,y)\ne(0,0)\text{ 恒正？}$$</p>
+  <p>你大概会做：固定 $y$，它是 $x$ 的抛物线；抛物线开口向上且不触地——答案是 $a&gt;0$ 且 $ac-b^2&gt;0$。<strong>就是那个"判别式小于零"</strong>，只是换了个马甲。</p>
+  <p>现在把变量加到 $n$ 个：$Q(x_1,\dots,x_n)=\sum_{i,j}a_{ij}x_ix_j$。"什么时候恒正？"逐点代入是不可能的——$\mathbb{R}^n$ 里有无穷多个方向。抛物线图像也没有了，你无法"看"它开不开口。</p>
+  <p>Sylvester 给出的回答惊人地干脆：<strong>恒不恒正，看 $n$ 个顺序主子式的符号就够了</strong>——$\Delta_1=a_{11}$，$\Delta_2=\begin{vmatrix}a_{11}&a_{12}\\a_{12}&a_{22}\end{vmatrix}$，……，$\Delta_n=\det A$。二维情形 $\Delta_1=a&gt;0$、$\Delta_2=ac-b^2&gt;0$，恰好就是你初中那个答案。也就是说，你早就会了 Sylvester 判据的 $n=2$ 特例，本章只是把它推到 $n$ 维——并讲清它凭什么成立。</p>
+  <p>更妙的是，二次型不是孤立的一章，它是把三股绳拧在一起的<strong>接口</strong>：代数上它是<strong>对称矩阵</strong>；几何上它的等高线就是<strong>二次曲线/曲面</strong>，曲面分类就是给它"转正"（解几卷第 23 章见）；分析上它是<strong>不等式与 Hessian 极值判别</strong>的发动机（数分第 10 章的驻点判别，骨子里就是正负定）。学会这一章，等于同时给三卷各交了一件武器。</p>
+</div>
+
+<h2>§2 先看见它：等高线的形状就是"号"</h2>
+
+<div class="vision box" data-tag="直觉与图像">
+  <p>二元二次型 $Q(x,y)$ 的等高线 $Q(x,y)=\text{常数}$，形状完全被两个数控制：$\Delta_1=a$ 与 $\Delta_2=ac-b^2$。<strong>$\Delta_2&gt;0$ 时等高线是一族椭圆</strong>（碗状曲面，原点处取唯一最小值 $0$）；<strong>$\Delta_2&lt;0$ 时是一族双曲线</strong>（马鞍面，$Q$ 既能取正也能取负）。$\Delta_2=0$ 是临界：椭圆"爆开"退化成平行直线。正定性 therefore 有一个几何读法：<strong>$Q$ 恒正 ⟺ 等高线 $Q=1$ 是椭圆</strong>。</p>
+</div>
+
+<figure>
+<svg viewBox="0 0 720 235" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="正定与不定的等高线">
+  <!-- 左：正定，同心椭圆族 -->
+  <ellipse cx="180" cy="110" rx="35" ry="22" fill="none" stroke="#1d4ed8" stroke-width="1.6"/>
+  <ellipse cx="180" cy="110" rx="62" ry="40" fill="none" stroke="#1d4ed8" stroke-width="1.6"/>
+  <ellipse cx="180" cy="110" rx="89" ry="58" fill="none" stroke="#1d4ed8" stroke-width="1.6"/>
+  <ellipse cx="180" cy="110" rx="116" ry="76" fill="none" stroke="#1d4ed8" stroke-width="1.6"/>
+  <circle cx="180" cy="110" r="3.5" fill="#1d4ed8"/>
+  <text x="180" y="210" font-size="13" fill="#1d4ed8" text-anchor="middle" font-weight="bold">正定：Q = 常数 是同心椭圆族</text>
+  <text x="180" y="228" font-size="11.5" fill="#1d4ed8" text-anchor="middle">Δ₁ = 2 &gt; 0，Δ₂ = 3 &gt; 0（Q = 2x² + 2xy + 2y²）</text>
+  <!-- 右：不定，双曲线族 -->
+  <line x1="445" y1="195" x2="625" y2="15" stroke="#8a8175" stroke-width="1" stroke-dasharray="4 4"/>
+  <line x1="445" y1="15" x2="625" y2="195" stroke="#8a8175" stroke-width="1" stroke-dasharray="4 4"/>
+  <polyline points="575,105 585,81 603,52 627,23" fill="none" stroke="#b45309" stroke-width="1.6"/>
+  <polyline points="575,105 585,129 603,158 627,187" fill="none" stroke="#b45309" stroke-width="1.6"/>
+  <polyline points="495,105 485,81 467,52 443,23" fill="none" stroke="#b45309" stroke-width="1.6"/>
+  <polyline points="495,105 485,129 467,158 443,187" fill="none" stroke="#b45309" stroke-width="1.6"/>
+  <polyline points="535,65 561,58 590,38 618,14" fill="none" stroke="#be123c" stroke-width="1.6"/>
+  <polyline points="535,155 561,162 590,182 618,206" fill="none" stroke="#be123c" stroke-width="1.6"/>
+  <circle cx="535" cy="105" r="3.5" fill="#2b2620"/>
+  <text x="535" y="228" font-size="13" fill="#b45309" text-anchor="middle" font-weight="bold">不定：等高线是双曲线（马鞍），Q 有正有负</text>
+  <text x="535" y="210" font-size="11.5" fill="#b45309" text-anchor="middle">Δ₂ = −1 &lt; 0（Q = x² − y²），虚线是渐近方向</text>
+</svg>
+<figcaption>等高线的形状 = 二次型的"号"：椭圆族（定号）与双曲线族（不定）之间，只隔一个 $\Delta_2=0$。</figcaption>
+</figure>
+
+<p>把这张图记住。后面每一条判据——Sylvester、特征值、惯性指数——都只是"等高线是不是椭圆"这句话的不同语言。§3.4 的探索器会让你亲手把 $b^2$ 拖过 $ac$，亲眼看椭圆爆成双曲线。</p>
+
+<h2>§3 精确定义与判定定理群</h2>
+
+<h3>3.1 二次型：对称矩阵是它的身份证</h3>
+
+<div class="def">
+  <p class="def-title">定义（二次型与它的矩阵）</p>
+  <p>$n$ 元实<strong>二次型</strong>是 $n$ 个变量的二次齐次多项式，总可以写成
+  $$Q(\mathbf{x})=\mathbf{x}^T\!A\mathbf{x}=\sum_{i,j=1}^{n}a_{ij}x_ix_j,\qquad \mathbf{x}=(x_1,\dots,x_n)^T,$$
+  其中 $A$ 取<strong>实对称矩阵</strong>（$A^T=A$）。在此约定下，<strong>二次型与实对称矩阵一一对应</strong>：$a_{ii}$ 是 $x_i^2$ 的系数，$2a_{ij}$（$i\ne j$）是 $x_ix_j$ 的系数。</p>
+  <p>若手里 $A$ 不对称，先<strong>对称化</strong>：因 $\mathbf{x}^T\!A\mathbf{x}$ 是一个数，它等于自己的转置 $\mathbf{x}^T\!A^T\mathbf{x}$，故
+  $$\mathbf{x}^T\!A\mathbf{x}=\mathbf{x}^T\frac{A+A^T}{2}\,\mathbf{x}.$$
+  交叉项系数被两个对称位置平分——这就是为什么"默认 $A$ 对称"不含任何损失。</p>
+</div>
+
+<div class="symbol box" data-tag="逐符号朗读">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$\mathbf{x}^T\!A\mathbf{x}$</td><td>"$x$ 转置乘 $A$ 乘 $x$"</td><td>一个 $1\times n$、$n\times n$、$n\times1$ 三连乘，结果是一个<strong>数</strong>——纯二次的多项式</td></tr>
+    <tr><td>$A^T=A$</td><td>"$A$ 等于自己的转置"</td><td>对称约定：让"矩阵 ↔ 二次型"成为一一对应，并且解锁正交对角化（ch18 谱定理）</td></tr>
+    <tr><td>$\dfrac{A+A^T}{2}$</td><td>"$A$ 加 $A$ 转置，除以 2"</td><td>对称化手术：任何方阵喂进来，出来的对称矩阵给出同一个二次型</td></tr>
+  </table>
+</div>
+
+<div class="think">
+  <p>别急着往下翻。<strong>拿张纸，用配方法自己推出二维判据</strong>：$Q(x,y)=ax^2+2bxy+cy^2$ 恒正（$(x,y)\ne(0,0)$）当且仅当什么？提示：先代一个特殊点找到必要条件，再把含 $x$ 的项配进一个平方。写完再展开对照。</p>
+  <details class="answer">
+    <summary>对照：配方推判据</summary>
+    <p>取 $(x,y)=(1,0)$：$Q(1,0)=a$，故 $a&gt;0$ 必要。设 $a&gt;0$，把 $x$ 配掉：
+    $$Q=a\Bigl(x+\frac{b}{a}y\Bigr)^2+\Bigl(c-\frac{b^2}{a}\Bigr)y^2=a\Bigl(x+\frac{b}{a}y\Bigr)^2+\frac{ac-b^2}{a}\,y^2.$$
+    两项系数皆正（$a&gt;0$ 且 $\frac{ac-b^2}{a}&gt;0$）时 $Q\ge0$，且 $Q=0$ 要求 $y=0$ 进而 $x=0$——恒正。反之若 $\frac{ac-b^2}{a}\le0$，取 $y=1$、$x=-\frac{b}{a}$ 得 $Q\le0$。结论：
+    $$Q\text{ 恒正}\iff a&gt;0\ \text{且}\ ac-b^2&gt;0\iff \Delta_1&gt;0,\ \Delta_2&gt;0.$$
+    这就是 Sylvester 判据的 $n=2$ 原型：<strong>配方在二维做的手术，Sylvester 在 $n$ 维用行列式做</strong>。</p>
+  </details>
+</div>
+
+<h3>3.2 合同变换与惯性定理：换坐标系，"号"不换</h3>
+
+<p>对二次型做可逆的变量替换 $\mathbf{x}=P\mathbf{y}$，则 $\mathbf{x}^T\!A\mathbf{x}=\mathbf{y}^T(P^T\!AP)\mathbf{y}$。二次型在新坐标下的矩阵是 $P^T\!AP$——这就是本章的变换：</p>
+
+<div class="def">
+  <p class="def-title">定义（合同）</p>
+  <p>设 $A,B$ 为 $n$ 阶实矩阵。若存在<strong>可逆</strong>矩阵 $P$ 使 $B=P^T\!AP$，称 $A$ 与 $B$ <strong>合同</strong>。合同就是"同一个二次型在不同坐标系下的两张照片"。</p>
+</div>
+
+<div class="warn box" data-tag="头号陷阱：合同 ≠ 相似">
+  <p>两套变换长得像，分工完全不同：</p>
+  <table>
+    <tr><th></th><th>合同 $P^T\!AP$</th><th>相似 $P^{-1}AP$</th></tr>
+    <tr><td>来历</td><td>二次型换坐标 $\mathbf{x}=P\mathbf{y}$</td><td>线性变换换基</td></tr>
+    <tr><td>保持</td><td>对称性、秩、<strong>正负惯性指数</strong>（惯性定理）、行列式的<strong>符号</strong>（$\det P^T\!AP=(\det P)^2\det A$）</td><td>特征值（含重数）、行列式、迹、Jordan 形</td></tr>
+    <tr><td>不保</td><td>特征值：$I$ 与 $2I$ 合同（取 $P=\sqrt2\,I$），特征值却不同</td><td>对称性：对称矩阵经一般相似可以变不对称</td></tr>
+    <tr><td>交汇</td><td colspan="2">$P$ 正交时 $P^T=P^{-1}$，两变换合一——所以"正交对角化"既是合同又是相似</td></tr>
+  </table>
+</div>
+
+<div class="def">
+  <p class="def-title">惯性定理（Sylvester）</p>
+  <p>任一 $n$ 阶实对称矩阵 $A$ 必合同于规范形
+  $$\operatorname{diag}(I_p,\,-I_q,\,0_{\,n-p-q}),$$
+  其中 $p,q$ 由 $A$ 唯一决定（与对角化途径无关），分别称为<strong>正、负惯性指数</strong>；$p+q=\operatorname{rank}A$，$p-q$ 称为<strong>符号差</strong>。一句话：<strong>合同变换改不掉"号"的分布</strong>——$p$ 个正方向、$q$ 个负方向是二次型的胎记。</p>
+</div>
+
+<h3>3.3 正定判据五等价（本章的乘法口诀表）</h3>
+
+<div class="def">
+  <p class="def-title">定义（正定、负定、半正定、不定）</p>
+  <p>设 $A$ 为 $n$ 阶实对称矩阵，$Q(\mathbf{x})=\mathbf{x}^T\!A\mathbf{x}$。若对一切 $\mathbf{x}\ne\mathbf0$ 都有 $Q(\mathbf{x})&gt;0$，称 $Q$（与 $A$）<strong>正定</strong>；$Q(\mathbf{x})&lt;0$ 为<strong>负定</strong>；$Q(\mathbf{x})\ge0$ 且能取到非零零点为<strong>半正定</strong>（$\le0$ 同理为半负定）；既能取正又能取负为<strong>不定</strong>。正定、负定与零二次型合称<strong>恒号二次型</strong>（第 11 届题四的原话）。</p>
+</div>
+
+<div class="calc box" data-tag="正定判据五等价（必须全对）">
+  <p>对 $n$ 阶实对称 $A$，以下五条<strong>互相等价</strong>：</p>
+  <p>$$\mathbf{x}^T\!A\mathbf{x}&gt;0\ (\forall\mathbf{x}\ne\mathbf0)\iff \text{特征值全正}\iff \underbrace{\Delta_k&gt;0\ (k=1,\dots,n)}_{\text{Sylvester：顺序主子式全正}}\iff A=P^T\!P\ (P\text{ 可逆})\iff p=n.$$</p>
+  <p><strong>负定</strong>：$A$ 负定 $\iff -A$ 正定 $\iff$ 顺序主子式<strong>符号交替</strong>：
+  $$(-1)^k\Delta_k&gt;0\ (k=1,\dots,n),\quad\text{即 }\Delta_1&lt;0,\ \Delta_2&gt;0,\ \Delta_3&lt;0,\ \dots$$</p>
+  <p><strong>半正定一句话</strong>：$A$ 半正定 $\iff$ 特征值全 $\ge0$ $\iff$ <strong>全部</strong>主子式（不止顺序的那 $n$ 个）都 $\ge0$。</p>
+</div>
+
+<div class="warn box" data-tag="陷阱：顺序主子式 ≥0 判不了半正定">
+  <p>"$\Delta_k\ge0$（$k=1,\dots,n$）⟹ 半正定"是<strong>错的</strong>。反例 $A=\operatorname{diag}(0,-1)$：$\Delta_1=0\ge0$，$\Delta_2=0\ge0$，可 $\mathbf{x}^T\!A\mathbf{x}=-x_2^2$ 取负值。半正定的行列式判据要查<strong>所有</strong>主子式，卷面上更稳的两条路是：特征值全 $\ge0$，或按定义把 $\mathbf{x}^T\!A\mathbf{x}$ 配成平方和（§8 例 2 就是这条路）。</p>
+</div>
+
+<h3>3.4 亲手把椭圆"拖爆"（交互）</h3>
+
+<div class="widget" id="qf-widget">
+  <p class="w-title">▶ 二次型形状探索器：拖动 a、b、c，看 Sylvester 两个读数如何判决形状</p>
+  <p class="w-row">$Q(x,y)=ax^2+2bxy+cy^2$。<strong style="color:#1d4ed8">蓝线</strong>是等高线 $Q=1$，<strong style="color:#b45309">橙线</strong>是 $Q=-1$。右侧两个 Sylvester 读数实时变色：绿 = 该关通过，红 = 该关失守。</p>
+  <div class="w-row"><label>a（Δ₁ 就是它）</label>
+  <input type="range" id="qf-a" min="-2" max="2" step="0.05" value="1"></div>
+  <div class="w-row"><label>b（交叉项的一半，爆炸按钮）</label>
+  <input type="range" id="qf-b" min="-2" max="2" step="0.05" value="0.7"></div>
+  <div class="w-row"><label>c</label>
+  <input type="range" id="qf-c" min="-2" max="2" step="0.05" value="1"></div>
+  <svg id="qf-svg" viewBox="0 0 720 380" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div class="w-verdict" id="qf-out">加载中……（需要启用 JavaScript）</div>
+  <p class="w-row" style="font-size:0.88em;color:#5c554b">玩出这三个体验再往下走：<strong>①</strong> 初始 $a=1,\ b=0.7,\ c=1$ 是椭圆（正定）。保持 $a,c$ 不动，把 $b$ 缓缓拖到 $1$：看 $\Delta_2$ 读数逼近 $0$、椭圆越拉越扁，$b$ 一过 $1$ 椭圆<strong>爆成双曲线</strong>——$b^2$ 越过 $ac$ 的瞬间就是判据翻脸的瞬间；<strong>②</strong> 把 $a,c$ 都拖到 $-1$、$b$ 归零：蓝线消失、橙线（$Q=-1$）变成椭圆——负定的等高线住在另一侧，读 $\Delta_1,\Delta_2$ 的符号（负、正）；<strong>③</strong> 调到 $a=1,\ b=1,\ c=1$：$\Delta_2=0$，等高线退化成两条平行直线——这就是半正定：值恒 $\ge0$ 但摸得到 $0$，Sylvester 的严格不等式恰好差一口气。</p>
+</div>
+
+<h3>3.5 正定的推论库：一旦正定，全部免费</h3>
+
+<div class="calc box" data-tag="推论库（每条附一句话证法）">
+  <table>
+    <tr><th>推论</th><th>一句话为什么</th></tr>
+    <tr><td>$\det A&gt;0$，$\operatorname{tr}A&gt;0$</td><td>分别是特征值之积、之和，而特征值全正</td></tr>
+    <tr><td>对角元 $a_{ii}&gt;0$</td><td>$a_{ii}=\mathbf{e}_i^T\!A\mathbf{e}_i&gt;0$（取 $\mathbf{x}=\mathbf{e}_i$）</td></tr>
+    <tr><td>$A$ 可逆，且 $A^{-1}$ 正定</td><td>$A=P^T\!P\Rightarrow A^{-1}=P^{-1}P^{-T}=(P^{-T})^T(P^{-T})$，又合五等价 ④</td></tr>
+    <tr><td>各阶主子阵都正定</td><td>把 $\mathbf{x}$ 限制在那些坐标上非零，$\mathbf{x}^T\!A\mathbf{x}&gt;0$ 原样成立</td></tr>
+    <tr><td>存在唯一正定 $B$ 使 $B^2=A$（平方根）</td><td>存在性：$A=Q\operatorname{diag}(\lambda_i)Q^T$ 取 $B=Q\operatorname{diag}(\sqrt{\lambda_i})Q^T$；唯一性：这样的 $B$ 必与 $A$ 可交换，同一特征子空间上只能取 $\sqrt{\lambda_i}$</td></tr>
+    <tr><td>Cauchy–Schwarz 推广：$(\mathbf{x}^T\!A\mathbf{y})^2\le(\mathbf{x}^T\!A\mathbf{x})(\mathbf{y}^T\!A\mathbf{y})$</td><td>$A$ 正定给出内积 $\langle\mathbf{x},\mathbf{y}\rangle_A=\mathbf{x}^T\!A\mathbf{y}$，对它用 C–S；或令 $t$ 变化：$(\mathbf{x}+t\mathbf{y})^T\!A(\mathbf{x}+t\mathbf{y})\ge0$ 的判别式 $\le0$</td></tr>
+  </table>
+  <p>使用姿态：题目一旦判出"正定"，这一整桌菜随便取——第 11 届题四的第一行"$B=PP^T$"取的就是第四行（五等价 ④ 的改写）。</p>
+</div>
+
+<h3>3.6 三个应用出口（接口章的自我修养）</h3>
+
+<div class="vision box" data-tag="出口一：不等式证明">
+  <p>一大批不等式的真身是"某个二次型恒 $\ge0$"。流程反着用：<strong>把目标不等式配成 $\mathbf{x}^T\!A\mathbf{x}\ge0$</strong>，再去证 $A$ 半正定（定义配方 / 特征值 / 主子式）。连 Cauchy–Schwarz 都是一张 $2\times2$ 半正定矩阵的行列式——§8 例 2 完整示范。</p>
+</div>
+
+<div class="vision box" data-tag="出口二：Hessian 与多元极值（呼应数分第 10 章）">
+  <p>设 $f$ 在驻点 $\mathbf{x}_0$（$\nabla f=\mathbf0$）附近 $C^2$，Taylor 展开一阶项消失：
+  $$f(\mathbf{x}_0+\mathbf{h})-f(\mathbf{x}_0)=\tfrac12\,\mathbf{h}^T\!H\mathbf{h}+o(\|\mathbf{h}\|^2),\qquad H=\Bigl(\frac{\partial^2f}{\partial x_i\partial x_j}\Bigr)_{\mathbf{x}_0}.$$
+  增量被二次型 $\mathbf{h}^T\!H\mathbf{h}$ 主导，于是：<strong>$H$ 正定 ⟹ 严格极小</strong>（$\mathbf{h}^T\!H\mathbf{h}\ge\lambda_{\min}\|\mathbf{h}\|^2$，压得住余项）；<strong>$H$ 负定 ⟹ 严格极大；$H$ 不定 ⟹ 鞍点</strong>（沿正、负特征向量各走一步，函数值一升一降）；半定则判据失效。第 15 届题二 $f=x^2+(y^2+z^2)(1-x)^3$ 的唯一驻点 $(0,0,0)$ 处 $H=2I_3$ 正定——官方解答用放缩定全局最小，但"它是极小"的第一张证书就是这张 Hessian。</p>
+</div>
+
+<div class="vision box" data-tag="出口三预告：二次曲面的主轴化（解几接口）">
+  <p>二次曲面 $\mathbf{x}^T\!A\mathbf{x}+\text{一次项}=0$ 的分类，就是取正交 $Q$ 把 $A$ 对角化（消交叉项、摆正主轴），再读出特征值的符号分布——惯性指数直接报出曲面的名字。解几卷第 2 章（全书第 23 章）是它的完整展开；第 16 届题一的锥面已经提前露过面（一个二次型的零等值面）。本章只交工具：正交合同 $\Rightarrow$ 主轴定理。</p>
+</div>
+
+<h3>3.7 核心引理：同时合同对角化（第 11 届题四的 10 分点）</h3>
+
+<div class="def">
+  <p class="def-title">定理（同时合同对角化）</p>
+  <p>设 $A$ 实对称，$B$ 实对称<strong>正定</strong>。则存在可逆矩阵 $P$ 使
+  $$P^T\!BP=I,\qquad P^T\!AP=\operatorname{diag}(\lambda_1,\dots,\lambda_n),$$
+  且 $\lambda_1,\dots,\lambda_n$ 恰为方程 $\det(\lambda B-A)=0$ 的全部根（即 $B^{-1}A$ 的特征值）。等价的乘法写法（第 11 届题四官方解答用的形式）：存在可逆 $Q$ 使
+  $$B=QQ^T,\qquad A=Q\operatorname{diag}(\lambda_1,\dots,\lambda_n)Q^T$$
+  （取 $Q=P^{-T}$ 即可）。</p>
+</div>
+
+<div class="calc box" data-tag="证明（两步，各就各位）">
+  <p><strong>第一步 · 把 $B$ 合同到 $I$</strong>：$B$ 正定，由五等价 ④ 存在可逆 $C$ 使 $C^T\!BC=I$（显式地，$B=R\operatorname{diag}(\mu_i)R^T$、$\mu_i&gt;0$，取 $C=R\operatorname{diag}(\mu_i^{-1/2})$ 即可）。</p>
+  <p><strong>第二步 · 正交对角化 $C^T\!AC$</strong>：$C^T\!AC$ 实对称，由谱定理（ch18）存在正交矩阵 $U$ 使 $U^T(C^T\!AC)U=\operatorname{diag}(\lambda_1,\dots,\lambda_n)$。</p>
+  <p><strong>合拢</strong>：令 $P=CU$（可逆）。则 $P^T\!BP=U^T(C^T\!BC)U=U^TU=I$，$P^T\!AP=\operatorname{diag}(\lambda_i)$。$\square$</p>
+  <p><strong>$\lambda_i$ 的身份</strong>：$\det(\lambda B-A)=\det(P^{-T})\det\bigl(\lambda I-\operatorname{diag}(\lambda_i)\bigr)\det(P^{-1})$，故 $\det(\lambda B-A)=0\iff\prod_i(\lambda-\lambda_i)=0$。</p>
+  <p class="aside">一句话记忆：<strong>一个正定坐镇，两个二次型可以一起"方"</strong>——先把正定的那个捏成 $I$，另一个随便怎么正交对角化都不会再碰坏 $I$（正交矩阵保持 $I$）。这是第 11 届题四证法一的开门 10 分。</p>
+</div>
+
+<h2>§4 翻译轨：三个标准动作 + 一间练功房</h2>
+
+<p>二次型在卷面上的高频句型就三种。练成反射，本章毕业。</p>
+
+<div class="trans box" data-tag="动作一：含参判正定 → Sylvester 三连">
+  <p><strong>题面</strong>："$\lambda$（或 $t$）为何值时，$A$ / 二次型 $f$ 正定？"</p>
+  <p><strong>翻译</strong>：写 $\Delta_1&gt;0,\ \Delta_2&gt;0,\ \dots$ 的不等式组，解出参数交集。<strong>顺序主子式逐个算，一个都不能跳</strong>；算 $\Delta_3$ 时优先用"行变换化简再展开"。若矩阵有 $A=\alpha I+\beta J$（$J$ 全一）结构，特征值往往比行列式更快——两法互证最稳（§8 例 1 示范）。</p>
+  <p><strong>值多少分</strong>：写出 Sylvester 判据（2 分）→ 三个 $\Delta$ 算对（4–6 分）→ 解集正确（8–10 分）。</p>
+</div>
+
+<div class="trans box" data-tag="动作二：证不等式 → 配成 xᵀAx ≥ 0">
+  <p><strong>题面</strong>："证明（对任意实数 $x_i,y_i,\dots$）某不等式 $\ge0$ 成立。"</p>
+  <p><strong>翻译</strong>：盯住目标的形状——若它是"平方减交叉项平方"（$ac-b^2$ 形），造 $2\times2$ 对称矩阵 $M$，证 $M$ 半正定，取 $\det M\ge0$；若它本身像平方和，直接配成 $\sum(\text{线性式})^2$。<strong>半正定的定义本身就是"一个恒 $\ge0$ 的式子"</strong>——不等式与半正定是同一枚硬币的两面。</p>
+  <p><strong>值多少分</strong>：造出矩阵并说明它半正定是全题腰眼（§8 例 2，约 6 分点）；只写"由 Cauchy–Schwarz 得"而题目正是让你证 C–S——循环论证，归零。</p>
+</div>
+
+<div class="trans box" data-tag="动作三：两个二次型、其一正定 → 同时合同对角化">
+  <p><strong>题面</strong>："已知 $f_1$ 为实 $n$ 元正定二次型。令 $V=\{f\mid f$ 为实 $n$ 元二次型，满足：对任何实数 $k$ 有 $kf+f_1$ 属于恒号二次型 $\}$……"（第 11 届题四，20 分）</p>
+  <p><strong>翻译</strong>：这句话一口气给了三件事：</p>
+  <p>① <strong>"恒号"是三档</strong>：$0$、正定、负定——不是"恒正"，$0$ 和负定都算数；<br>
+  ② "对<strong>任何</strong>实数 $k$"是 $\forall k$ 型条件——它的用法是<strong>代入特殊的 $k$ 制造矛盾</strong>（反证法的扳机）；<br>
+  ③ $f_1$ 正定 ⟹ 动作：把 $f,f_1$ 的矩阵 $A,B$ 同时合同对角化（§3.7），$kf+f_1$ 在新坐标下变成 $\sum_i(k\lambda_i+1)y_i^2$——<strong>恒号与否一眼可读</strong>：所有系数 $k\lambda_i+1$ 必须同号或全零。</p>
+  <p>剩下只有一个问题：$\forall k$ 时这些"直线" $1+k\lambda_i$ 什么时候永不异号？答：$\lambda_i$ 全部相等——这就是 20 分的落点（§9 真题节选完整拆解）。</p>
+</div>
+
+<h3>4.4 翻译练功房：像学语言一样，大量互译</h3>
+
+<p>先全部写在纸上（自然→符号 / 符号→自然 / 判断说理），再逐条展开对照。每条不超过 1 分钟。</p>
+
+<div class="trans box" data-tag="互译 8 句">
+  <p><strong>T1</strong>　自然→符号："$f$ 是 $n$ 元正定二次型。"</p>
+  <details class="answer"><summary>对照</summary><p>设 $f$ 的矩阵为实对称 $A$，则 $\forall\mathbf{x}\in\mathbb{R}^n,\ \mathbf{x}\ne\mathbf0\Rightarrow\mathbf{x}^T\!A\mathbf{x}&gt;0$。<strong>易错</strong>：① 漏掉"$A$ 对称"的前提（没有它，五等价全部失效）；② 把 $&gt;$ 写成 $\ge$——那是半正定，差一整档。</p></details>
+  <p><strong>T2</strong>　自然→符号 + 追问："$A$ 与 $B$ 合同。"它和"$A$ 与 $B$ 相似"各保什么、不保什么？</p>
+  <details class="answer"><summary>对照</summary><p>合同：$\exists$ 可逆 $P$，$B=P^T\!AP$；相似：$\exists$ 可逆 $P$，$B=P^{-1}AP$。合同保对称性、秩、正负惯性指数、$\det$ 的符号，<strong>不保特征值</strong>；相似保特征值、$\det$、$\operatorname{tr}$、Jordan 形，<strong>不保对称性</strong>。$P$ 正交时二者合一。</p></details>
+  <p><strong>T3</strong>　符号→自然："正惯性指数 $p=n$。"</p>
+  <details class="answer"><summary>对照</summary><p>"$A$ 合同于 $I$"——即正定（五等价 ⑤）。规范形里没有一个负方向、也没有零方向，$n$ 个方向全部向上开口。</p></details>
+  <p><strong>T4</strong>　判断（说理）："若 $A$ 的各阶顺序主子式都 $\ge0$，则 $A$ 半正定。"</p>
+  <details class="answer"><summary>对照</summary><p><strong>错</strong>。反例 $A=\operatorname{diag}(0,-1)$：$\Delta_1=0\ge0$，$\Delta_2=0\ge0$，但 $\mathbf{x}^T\!A\mathbf{x}=-x_2^2$ 取负值。正确判据是<strong>全部主子式</strong>（每个指标子集）都 $\ge0$，或特征值全 $\ge0$。顺序主子式管"正定"（严格 $&gt;$），管不了"半正定"。</p></details>
+  <p><strong>T5</strong>　符号→自然："$A$ 负定 $\iff(-1)^k\Delta_k&gt;0$（$k=1,\dots,n$）。"</p>
+  <details class="answer"><summary>对照</summary><p>"奇阶顺序主子式为负、偶阶为正，符号严格交替"。因为 $A$ 负定 $\iff-A$ 正定，而 $-A$ 的 $k$ 阶顺序主子式 $=(-1)^k\Delta_k$。记忆：$\Delta_1=a_{11}&lt;0$ 起步，负、正、负、正……</p></details>
+  <p><strong>T6</strong>　自然→符号（真题原句）："对任何实数 $k$，$kf+f_1$ 属于恒号二次型。"</p>
+  <details class="answer"><summary>对照</summary><p>设 $f,f_1$ 的矩阵为 $A,B$：$\forall k\in\mathbb{R}$，$kA+B$ 正定、负定、<strong>或为零矩阵</strong>（三档，$0$ 二次型也算恒号）。<strong>易错</strong>：把"恒号"读成"恒正"，漏掉 $0$ 与负定两档——$k=-\frac{f_1(\mathbf{x})}{f(\mathbf{x})}$ 这类取值正是靠"$0$ 也算恒号"来制造矛盾的。</p></details>
+  <p><strong>T7</strong>　判断（说理）："$A$ 正定、$B$ 半正定，则 $A+B$ 正定。"</p>
+  <details class="answer"><summary>对照</summary><p><strong>对</strong>。$A+B$ 实对称；$\mathbf{x}\ne\mathbf0$ 时 $\mathbf{x}^T(A+B)\mathbf{x}=\mathbf{x}^T\!A\mathbf{x}+\mathbf{x}^T\!B\mathbf{x}$：第一项 $&gt;0$，第二项 $\ge0$，和 $&gt;0$。定义直接出手，一行证完。</p></details>
+  <p><strong>T8</strong>　判断（找坑）："合同变换保持特征值不变，所以 $I$ 与 $2I$ 不合同。"</p>
+  <details class="answer"><summary>对照</summary><p><strong>全错，而且错在根上</strong>。取 $P=\sqrt2\,I$：$P^TIP=2I$，它们<strong>恰好合同</strong>（都是正定，正惯性指数都是 $n$）。合同保的是特征值的<strong>符号分布</strong>（惯性定理），不是特征值的数值。把"相似不变量"错记成"合同不变量"是本章第一坑。</p></details>
+</div>
+
+<h2>§5 类型识别：什么信号在召唤二次型</h2>
+
+<div class="recog box" data-tag="识别反射表">
+  <table>
+    <tr><th>题面信号</th><th>反射</th></tr>
+    <tr><td>"恒正 / 恒负 / 恒号 / 正定 / 负定"</td><td>Sylvester 顺序主子式，或特征值符号——二选一并可互验</td></tr>
+    <tr><td>"$\lambda$ / $t$ 为何值时正定"（含参）</td><td>$\Delta_1,\Delta_2,\Delta_3$ 不等式组，动作一</td></tr>
+    <tr><td>"证明不等式 …… $\ge0$"</td><td>配成 $\mathbf{x}^T\!A\mathbf{x}\ge0$：平方和 / 半正定取 $\det\ge0$（动作二）</td></tr>
+    <tr><td>"驻点、极值、Hessian"</td><td>正定极小、负定极大、不定鞍点（数分第 10 章的代数发动机）</td></tr>
+    <tr><td>"两个二次型，其一正定 / $kf+f_1$"</td><td>同时合同对角化（动作三，§3.7）</td></tr>
+    <tr><td>"规范形 / 惯性指数 / 符号差 / 秩"</td><td>惯性定理：合同不变量只有 $p,q$</td></tr>
+    <tr><td>"二次曲面 / 二次曲线方程、消交叉项"</td><td>正交对角化 = 主轴化（解几第 23 章预告）</td></tr>
+  </table>
+</div>
+
+<h2>§6 考法定位：它藏在哪里、值多少分</h2>
+
+<div class="exam box" data-tag="考法定位">
+  <table>
+    <tr><th>出处</th><th>题号</th><th>本章扮演什么角色</th><th>分值权重</th></tr>
+    <tr><td>第 11 届（2019）</td><td>题四</td><td><strong>主角</strong>：恒号二次型刻画 + 同时合同对角化（引理本身就是 10 分点）</td><td>20 分（整题直接命中）</td></tr>
+    <tr><td>第 15 届（2023）</td><td>题二</td><td><strong>背景</strong>：唯一驻点 $(0,0,0)$ 处 Hessian $=2I_3$ 正定；官方用放缩定全局最小，判据语言来自本章</td><td>15 分题的隐含地基</td></tr>
+    <tr><td>第 16 届（2024）</td><td>题一</td><td><strong>几何面孔</strong>：锥面 = 二次型的零等值面（该届无正定直接考点）</td><td>15 分题的一部分</td></tr>
+    <tr><td>第 12–14、17 届</td><td>—</td><td>索引中无二次型 / 正定直接考点</td><td>—</td></tr>
+  </table>
+  <p><strong>规律</strong>：近七届索引中，二次型作为<strong>整道大题</strong>只出现过一次（第 11 届题四，20 分），但它以"接口"身份稳定渗透：高代卷题四、题五的证明里，"$B$ 正定 ⟹ 先合同到 $I$"是常见的开门第一行（步骤分 2–10 分）；数分卷的多元极值题、解几卷的曲面分类题，判据都从本章引水。练习权重建议：<strong>五等价与 Sylvester 三连 &gt; 同时合同对角化 &gt; 推论库取用</strong>。</p>
+</div>
+
+<h2>§7 关系网：一张接口地图</h2>
+
+<p>本章的逻辑链只有四节：二维判别式（你早就会）→ 二次型与合同（把"号"定义为几何性质）→ Sylvester 五等价（判据总成）→ 三个方法、三个出口。<span style="color:#b45309">三角形</span>是来源动机，<span style="color:#1d4ed8">圆角矩形</span>是定义，<span style="color:#15803d">矩形</span>是定理，<span style="color:#7c3aed">六边形</span>是方法动作，<span style="color:#0f766e">椭圆</span>是应用出口。</p>
+
+<figure>
+<svg viewBox="0 0 720 505" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="二次型与正定性关系网地图">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+
+  <!-- 图例 -->
+  <polygon points="30,16 22,30 38,30" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5"/>
+  <text x="44" y="28" font-size="11.5" fill="#5c554b">来源·动机</text>
+  <rect x="116" y="17" width="22" height="13" rx="6.5" fill="#eef3fe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="144" y="28" font-size="11.5" fill="#5c554b">定义</text>
+  <rect x="192" y="17" width="22" height="13" fill="#ecf8f0" stroke="#15803d" stroke-width="1.5"/>
+  <text x="220" y="28" font-size="11.5" fill="#5c554b">定理</text>
+  <polygon points="268,23.5 274,16 288,16 294,23.5 288,31 274,31" fill="#f4effd" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="300" y="28" font-size="11.5" fill="#5c554b">方法·动作</text>
+  <ellipse cx="388" cy="23.5" rx="12" ry="7" fill="#ecf8f5" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="406" y="28" font-size="11.5" fill="#5c554b">应用·出口</text>
+
+  <!-- 来源：二维判别式（三角） -->
+  <polygon points="110,52 58,116 162,116" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="110" y="90" font-size="12.5" fill="#7a4a12" text-anchor="middle" font-weight="bold">二维判别式</text>
+  <text x="110" y="106" font-size="11" fill="#7a4a12" text-anchor="middle">ac − b² 与配方</text>
+
+  <!-- 来源 → 定义 -->
+  <line x1="168" y1="85" x2="262" y2="85" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="215" y="74" font-size="11" fill="#5c554b" text-anchor="middle">n 维化</text>
+
+  <!-- 定义（圆角矩形） -->
+  <rect x="270" y="56" width="240" height="58" rx="29" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="390" y="82" font-size="15" fill="#1d4ed8" text-anchor="middle" font-weight="bold">二次型 Q(x) = xᵀAx</text>
+  <text x="390" y="101" font-size="11.5" fill="#1d4ed8" text-anchor="middle">A 实对称：型与矩阵一一对应</text>
+
+  <!-- 定义 → 合同与惯性 -->
+  <line x1="390" y1="114" x2="390" y2="158" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="402" y="141" font-size="11" fill="#5c554b">换坐标系 x = Py</text>
+
+  <!-- 定理 1（矩形）：合同与惯性 -->
+  <rect x="215" y="165" width="350" height="50" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="390" y="186" font-size="12.5" fill="#15803d" text-anchor="middle" font-weight="bold">合同变换 A → PᵀAP · 惯性定理</text>
+  <text x="390" y="203" font-size="10.5" fill="#4a7c59" text-anchor="middle">保对称性与正负惯性指数 (p, q)；不保特征值</text>
+
+  <!-- 合同 → Sylvester -->
+  <line x1="390" y1="215" x2="390" y2="258" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="402" y="241" font-size="11" fill="#5c554b">规范形全取 +1 的情形</text>
+
+  <!-- 定理 2（矩形，c 位）：Sylvester 判据 -->
+  <rect x="185" y="265" width="410" height="56" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2.5"/>
+  <text x="390" y="288" font-size="13.5" fill="#15803d" text-anchor="middle" font-weight="bold">Sylvester 判据（正定五等价）</text>
+  <text x="390" y="307" font-size="10.5" fill="#4a7c59" text-anchor="middle">xᵀAx &gt; 0 ⟺ 特征值全正 ⟺ Δₖ 全正 ⟺ A = PᵀP ⟺ p = n</text>
+
+  <!-- Sylvester → 三方法 -->
+  <polyline points="320,321 320,342 200,342 200,366" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="390" y1="321" x2="400" y2="366" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <polyline points="470,321 470,342 600,342 600,366" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- 三方法（六边形） -->
+  <polygon points="125,398 150,370 250,370 275,398 250,426 150,426" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="200" y="394" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">同时合同对角化</text>
+  <text x="200" y="410" font-size="10.5" fill="#6a55a3" text-anchor="middle">B 正定 ⟹ 双双变方</text>
+  <polygon points="325,398 350,370 450,370 475,398 450,426 350,426" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="400" y="394" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">配方法</text>
+  <text x="400" y="410" font-size="10.5" fill="#6a55a3" text-anchor="middle">交叉项吞进平方</text>
+  <polygon points="525,398 550,370 650,370 675,398 650,426 550,426" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="600" y="394" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">主子式计算</text>
+  <text x="600" y="410" font-size="10.5" fill="#6a55a3" text-anchor="middle">Δ₁ Δ₂ Δ₃ 三连</text>
+
+  <!-- 方法 → 出口 -->
+  <line x1="200" y1="426" x2="145" y2="438" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="400" y1="426" x2="398" y2="438" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="600" y1="426" x2="622" y2="438" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- 三出口（椭圆） -->
+  <ellipse cx="140" cy="468" rx="118" ry="30" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="140" y="464" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">不等式证明</text>
+  <text x="140" y="480" font-size="10.5" fill="#3d7a70" text-anchor="middle">xᵀAx ≥ 0 的化身（例 2）</text>
+  <ellipse cx="395" cy="468" rx="128" ry="30" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="395" y="464" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">Hessian 判极值</text>
+  <text x="395" y="480" font-size="10.5" fill="#3d7a70" text-anchor="middle">数分第 10 章 · 15 届题二</text>
+  <ellipse cx="622" cy="468" rx="96" ry="30" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="622" y="464" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">二次曲面分类</text>
+  <text x="622" y="480" font-size="10.5" fill="#3d7a70" text-anchor="middle">解几第 23 章</text>
+</svg>
+<figcaption>本章地图：一个初中判别式长出 $n$ 维判据；五等价居 c 位，向下分三件手上武器、三个应用出口。</figcaption>
+</figure>
+
+<div class="net box" data-tag="画面感锚点（记这些，不记条文）">
+  <table>
+    <tr><th>节点</th><th>一句话画面</th><th>擅长场景</th></tr>
+    <tr><td>二次型 $x^T\!Ax$</td><td>一颗纯二次的多项式，对称矩阵是它的身份证</td><td>一切计算的入口</td></tr>
+    <tr><td>合同与惯性</td><td>换坐标系改不掉"号"的分布，$(p,q)$ 是胎记</td><td>规范形、惯性指数、"合同吗"判断</td></tr>
+    <tr><td>Sylvester 判据</td><td>恒正 ⟺ $n$ 个行列式连正——守门员逐个查证件</td><td>含参判正定、证明开门</td></tr>
+    <tr><td>同时合同对角化</td><td>一个正定坐镇，两个型一起变"方"</td><td>第 11 届题四的 10 分点</td></tr>
+    <tr><td>配方法</td><td>把交叉项一个个吞进完全平方</td><td>求标准形；不等式 $\ge0$ 的直接证</td></tr>
+    <tr><td>主子式计算</td><td>$\Delta_1,\Delta_2,\Delta_3$ 三连算</td><td>含参判别（例 1、模仿 1）</td></tr>
+    <tr><td>三个出口</td><td>不等式 / 极值 / 曲面分类——一根绳的三股</td><td>跨卷识别（数分、解几）</td></tr>
+  </table>
+  <p><strong>和你已学知识的焊接点</strong>：① ch18 的"实对称可正交对角化"是本章每条定理的发动机——正交矩阵处合同与相似合一，五等价中"特征值全正"一条全靠它；② 数分第 10 章（ch10）的 Hessian 判极值，代数发动机就是本段的正定判别；③ 你初中的配方与判别式，是 Sylvester 的二维原型（§3.1 的 think 已经亲手推过）。</p>
+</div>
+
+<h2>§8 例题：先看怎么想，再看卷面怎么写</h2>
+
+<h3>例 1 · Sylvester 三连解含参判定（约 10 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>"$\lambda$ 为何值时 $A$ 正定"——这不是证明题，是<strong>求解型</strong>：答案是一个参数区间。查拆目标总表没有现成骨架，但翻译轨动作一直接给路线：正定 ⟺ 五等价第 ③ 条 ⟺ 解不等式组 $\Delta_k&gt;0$。工具的选择原则：<strong>含参对称矩阵判正定，Sylvester 是默认武器</strong>（行列式是参数的多项式，不等式可解）。</p>
+  <p><span class="stage">【盘点】</span>① $A$ 实对称——五等价的前提白送，但卷面必须点一句；② 结构侦察（<strong>工具三</strong>）：$A=(\lambda-1)I+J$（$J$ 全一矩阵），$J$ 的特征值是 $3,0,0$，所以 $A$ 的特征值脱口而出：$\lambda+2$ 与 $\lambda-1$（二重）——这给出第二条独立路线，用来<strong>互验</strong>。</p>
+  <p><span class="stage">【会师】</span>主线：$\Delta_1=\lambda&gt;0$，$\Delta_2=\lambda^2-1&gt;0$，$\Delta_3=(\lambda-1)^2(\lambda+2)&gt;0$。第一、二式交出 $\lambda&gt;1$；代入第三式：$(\lambda-1)^2&gt;0$ 且 $\lambda+2&gt;0$ 自动成立。交集 $\lambda&gt;1$。验算线：特征值全正 $\iff\lambda-1&gt;0$ 且 $\lambda+2&gt;0\iff\lambda&gt;1$。<strong>两条独立路线给出同一区间——答案的可信度翻倍</strong>，这就是工具三"特殊化侦察"在计算题里的形态。</p>
+  <p><span class="stage">【定型】</span>卷面以 Sylvester 为主线（判据一句 + 三个行列式 + 解集），特征值对照写成一句"另法验证"——既展示双保险，又不喧宾夺主。行列式计算过程要给关键步（跳步=送命），但可以合并同类项后直接报因式分解。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 ×2</strong>：① <strong>含参判正定 = Sylvester 不等式组</strong>，三个 $\Delta$ 逐个算、取交集，一个都不许跳；② <strong>$\alpha I+\beta J$ 型矩阵的特征值套路</strong>：$J$（全一）的特征值是 $n,0,\dots,0$，平移 $\alpha$、缩放 $\beta$ 直接读出——竞赛里这一族矩阵出现频率极高。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 1</strong>　$\lambda$ 为何值时，矩阵 $A=\begin{pmatrix}\lambda&1&1\\1&\lambda&1\\1&1&\lambda\end{pmatrix}$ 正定？</p>
+  <hr>
+  <p class="proof-line"><strong>解</strong>　$A$ 实对称，由 Sylvester 判据，$A$ 正定当且仅当各阶顺序主子式全正。<span class="step-score">（2 分）</span></p>
+  <p class="proof-line"><strong>①</strong>　$\Delta_1=\lambda$。<strong>②</strong>　$\Delta_2=\begin{vmatrix}\lambda&1\\1&\lambda\end{vmatrix}=\lambda^2-1$。<span class="step-score">（4 分）</span></p>
+  <p class="proof-line"><strong>③</strong>　按第一行展开：
+  $$\Delta_3=\lambda(\lambda^2-1)-(\lambda-1)+(1-\lambda)=\lambda^3-3\lambda+2=(\lambda-1)^2(\lambda+2).$$<span class="step-score">（6 分）</span></p>
+  <p class="proof-line"><strong>④</strong>　解不等式组：$\lambda&gt;0$；$\lambda^2-1&gt;0$ 即 $|\lambda|&gt;1$；$(\lambda-1)^2(\lambda+2)&gt;0$ 即 $\lambda\ne1$ 且 $\lambda&gt;-2$。三式取交集：$\lambda&gt;0$ 与 $|\lambda|&gt;1$ 已交出 $\lambda&gt;1$，第三式自动满足。故
+  $$A\text{ 正定}\iff\lambda&gt;1.$$<span class="step-score">（9 分）</span></p>
+  <p class="proof-line"><strong>⑤（另法验证）</strong>　$A=(\lambda-1)I+J$，$J$ 为全一矩阵，特征值 $3,0,0$，故 $A$ 的特征值为 $\lambda+2$ 与 $\lambda-1$（二重）。全正 $\iff\lambda&gt;1$，与 Sylvester 判据一致。<span class="step-score">（10 分）</span></p>
+  <p class="aside">书写点评：④的取交集要写"谁推出谁"（$\lambda&gt;0$ 与 $|\lambda|&gt;1$ 合出 $\lambda&gt;1$），只写三个不等式然后直接报答案，会被扣"求解过程"分。③的行列式若算错符号，⑤的对照能救你一命——两法互证不是炫技，是保险丝。</p>
+</div>
+
+<h3>例 2 · 用二次型证不等式：Cauchy–Schwarz 的 2×2 证法（约 10 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>结论是不等式 $\bigl(\sum x_iy_i\bigr)^2\le\bigl(\sum x_i^2\bigr)\bigl(\sum y_i^2\bigr)$，$\forall$ 型。盯住形状：<strong>"乘积 ≤ 乘积"且带平方</strong>——这正是 $b^2\le ac$，即 $ac-b^2\ge0$，一个 $2\times2$ 行列式非负的形状！查翻译轨动作二：造 $2\times2$ 半正定矩阵，取行列式。骨架：<strong>目标 ⟸ $\det M\ge0$ ⟸ $M$ 半正定 ⟸ 按定义 $\mathbf{u}^TM\mathbf{u}\ge0$ ⟸ 一个平方和</strong>。</p>
+  <p><span class="stage">【盘点】</span>库存三个数：$a=\sum x_i^2$，$b=\sum x_iy_i$，$c=\sum y_i^2$。最值钱的产出：<strong>对任意实数 $t,s$，$\sum_i(tx_i+sy_i)^2\ge0$</strong>（平方和，白送）——展开它，恰好是 $(t,s)M(t,s)^T$。库存与目标在"半正定定义"处会师。</p>
+  <p><span class="stage">【会师】</span>倒推链逐环核对：要证 $ac-b^2\ge0$ ⟸ 只需 $M=\begin{pmatrix}a&b\\b&c\end{pmatrix}$ 半正定（实对称半正定 ⟹ $\det=\mu_1\mu_2\ge0$，$\mu_i$ 为特征值）⟸ 只需 $\forall(t,s)$，$(t,s)M(t,s)^T\ge0$ ⟸ 展开 $=\sum(tx_i+sy_i)^2$ ⟸ 平方和 $\ge0$。<strong>每一环都是定义或库存，没有一环靠灵感</strong>。等号条件顺手倒推：$\det M=0\iff\exists(t,s)\ne(0,0)$ 使平方和 $=0\iff$ 两向量成比例——这是附赠。</p>
+  <p><span class="stage">【定型】</span>卷面从"构造 $M$"正着写起，倒推链整体删除。分三块：造 $M$（2 分）→ 证半正定（6 分，腰眼）→ 取行列式收网（10 分）。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 判别式法 / Gram 矩阵法</strong>：见到"$(\text{交叉项})^2\le(\text{平方和})(\text{平方和})$"的形状，造 $M=\begin{pmatrix}\sum x_i^2&\sum x_iy_i\\\sum x_iy_i&\sum y_i^2\end{pmatrix}$——它是向量 $(x_i)$ 与 $(y_i)$ 的 <strong>Gram 矩阵</strong>（内积两两排列），Gram 矩阵恒半正定，于是 $\det M\ge0$。同一件武器还通杀：$\bigl(\int fg\bigr)^2\le\int f^2\int g^2$（把求和换成积分，一字不改）。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 2</strong>　证明：对任意实数 $x_1,\dots,x_n$ 与 $y_1,\dots,y_n$，
+  $$\Bigl(\sum_{i=1}^n x_iy_i\Bigr)^2\le\Bigl(\sum_{i=1}^n x_i^2\Bigr)\Bigl(\sum_{i=1}^n y_i^2\Bigr).$$</p>
+  <hr>
+  <p class="proof-line"><strong>证明</strong>　记 $a=\sum_{i=1}^n x_i^2$，$b=\sum_{i=1}^n x_iy_i$，$c=\sum_{i=1}^n y_i^2$，构造实对称矩阵
+  $$M=\begin{pmatrix}a&b\\b&c\end{pmatrix}.$$<span class="step-score">（2 分）</span></p>
+  <p class="proof-line"><strong>第一步（$M$ 半正定）</strong>：对任意 $(t,s)\in\mathbb{R}^2$，
+  $$(t,s)\,M\binom{t}{s}=at^2+2bts+cs^2=\sum_{i=1}^n\bigl(t^2x_i^2+2ts\,x_iy_i+s^2y_i^2\bigr)=\sum_{i=1}^n(tx_i+sy_i)^2\ge0,$$
+  故 $M$ 半正定。<span class="step-score">（6 分）</span></p>
+  <p class="proof-line"><strong>第二步（取行列式）</strong>：$M$ 实对称半正定，其两个特征值 $\mu_1,\mu_2\ge0$，故
+  $$\det M=\mu_1\mu_2=ac-b^2=\Bigl(\sum_{i=1}^n x_i^2\Bigr)\Bigl(\sum_{i=1}^n y_i^2\Bigr)-\Bigl(\sum_{i=1}^n x_iy_i\Bigr)^2\ge0,$$
+  移项即所证。$\square$<span class="step-score">（10 分）</span></p>
+  <p class="proof-line"><strong>等号条件</strong>：等号成立 $\iff\det M=0\iff$ 存在 $(t,s)\ne(0,0)$ 使 $\sum_i(tx_i+sy_i)^2=0$，即 $tx_i+sy_i=0$ 对所有 $i$ 成立——两向量 $(x_i),(y_i)$ 成比例（或其一全零）。</p>
+  <p class="aside">书写点评：第一步的"恒等变形 + 平方和"是全题腰眼——它同时完成了"$M$ 半正定"的定义验证。若直接写"由 Cauchy–Schwarz 不等式得证"：本题证的就是 C–S，循环论证归零。若题目改考积分版 $\bigl(\int fg\bigr)^2\le\int f^2\!\cdot\!\int g^2$，把 $\sum$ 换成 $\int$，本卷面一字不改照用。</p>
+</div>
+
+<h2>§9 配套题目</h2>
+
+<p>铁律：<strong>先写在纸上，写到写不动再展开答案</strong>。模仿题照例 1、例 2 的卷面格式写；变式题先问自己"第一反应是什么、能拿什么东西做小实验"。</p>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 1</span>$t$ 为何值时，二次型 $f=x_1^2+x_2^2+5x_3^2+2tx_1x_2-2x_1x_3+4x_2x_3$ 正定？</p>
+  <details class="answer">
+    <summary>参考答案（约 8 分书写量）</summary>
+    <p>矩阵 $A=\begin{pmatrix}1&t&-1\\t&1&2\\-1&2&5\end{pmatrix}$ 实对称（1 分）。Sylvester 三连：</p>
+    <p>$\Delta_1=1&gt;0$ 恒成立（3 分）；$\Delta_2=1-t^2&gt;0\iff|t|&lt;1$（5 分）；</p>
+    <p>$\Delta_3=1\cdot(5-4)-t\,(5t+2)+(-1)(2t+1)=-5t^2-4t&gt;0\iff t(5t+4)&lt;0\iff-\dfrac45&lt;t&lt;0$（7 分）。</p>
+    <p>取交集（$-\frac45&lt;t&lt;0$ 已蕴含 $|t|&lt;1$）：$f$ 正定 $\iff-\dfrac45&lt;t&lt;0$（8 分）。</p>
+    <p><strong>易错点</strong>：① $\Delta_3$ 展开时 $-t(5t+2)$ 与 $-(2t+1)$ 两处符号最易错，慢半拍逐项写；② 忘记取交集——三个不等式都解出来不算完，答案是一个区间。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 2</span>判别二次型 $f=5x^2+y^2+5z^2+4xy-8xz-4yz$ 是否正定。</p>
+  <details class="answer">
+    <summary>参考答案（约 6 分书写量）</summary>
+    <p>$A=\begin{pmatrix}5&2&-4\\2&1&-2\\-4&-2&5\end{pmatrix}$（1 分）。</p>
+    <p>$\Delta_1=5&gt;0$（2 分）；$\Delta_2=5-4=1&gt;0$（4 分）；</p>
+    <p>$\Delta_3=5(5-4)-2\,(10-8)+(-4)(-4+4)=5-4+0=1&gt;0$（5 分）。</p>
+    <p>三个顺序主子式全正，由 Sylvester 判据 $f$ 正定（6 分）。</p>
+    <p><strong>易错点</strong>：矩阵里 $x_3^2$ 的系数 $5$ 与交叉项 $-4yz$ 的一半 $-2$ 别填串位置——$a_{ij}$（$i\ne j$）是交叉项系数的<strong>一半</strong>。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 1</span>设 $A$ 正定。证明：$A^{-1}$ 与伴随矩阵 $A^{*}$ 都正定。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：判正定有五条路，选哪条看手里有什么——手里有 $A=P^T\!P$（五等价 ④），取逆是代数运算，走 ④ 最快。</p>
+    <p><strong>证明</strong>：$A^{-1}$ 对称：$(A^{-1})^T=(A^T)^{-1}=A^{-1}$。$A$ 正定，由五等价 ④ 存在可逆 $P$ 使 $A=P^T\!P$，于是
+    $$A^{-1}=P^{-1}P^{-T}=(P^{-T})^T(P^{-T}),$$
+    $P^{-T}$ 可逆，再由五等价 ④ 知 $A^{-1}$ 正定。$\square$</p>
+    <p>又 $A$ 正定 ⟹ $\det A&gt;0$（推论库第一条），而 $A^{*}=(\det A)\,A^{-1}$ 是正数乘正定矩阵：$\mathbf{x}^T\!A^{*}\mathbf{x}=(\det A)\,\mathbf{x}^T\!A^{-1}\mathbf{x}&gt;0$（$\mathbf{x}\ne\mathbf0$），故 $A^{*}$ 正定。$\square$</p>
+    <p><strong>点评</strong>：同一结论用特征值也一行——$A$ 的特征值 $\lambda_i&gt;0$ ⟹ $A^{-1}$ 的为 $\frac1{\lambda_i}&gt;0$、$A^{*}$ 的为 $\frac{\det A}{\lambda_i}&gt;0$。五等价的意义就是"哪条顺手走哪条"。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 2</span>设 $A,B$ 都是 $n$ 阶正定矩阵。证明：$AB$ 的特征值全为正数（注意：$AB$ 未必对称，谈不上"正定"，本题考的是特征值）。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：$AB$ 不对称，五等价整套武器直接失效——但"正定开平方"能把 $AB$ <strong>相似</strong>回一个对称正定矩阵。相似保特征值（这是相似的分工），合同保正定性（这是合同的分工）——本题把两套变换各用一次。</p>
+    <p><strong>证明</strong>：$A$ 正定，由推论库存在正定平方根 $A^{1/2}$（可逆、对称）。考察
+    $$A^{-1/2}(AB)A^{1/2}=A^{1/2}BA^{1/2}=(A^{1/2})^TB\,(A^{1/2}),$$
+    右端是 $B$ 经可逆矩阵 $A^{1/2}$ 的合同变换，$B$ 正定 ⟹ $(A^{1/2})^TBA^{1/2}$ 正定（合同保正定性），其特征值全正。而左端表明 $AB$ 与它<strong>相似</strong>，相似矩阵特征值相同，故 $AB$ 的特征值全为正数。$\square$</p>
+    <p><strong>点评</strong>：本题是"合同 ≠ 相似"最好的磨刀石——证明链里合同管"正定性传递"，相似管"特征值搬运"，各管一段，谁也别越界。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv3">真题节选</span><strong>（第 11 届题四，20 分）</strong>已知 $f_1$ 为实 $n$ 元正定二次型。令
+  $$V=\{f\mid f\text{ 为实 }n\text{ 元二次型，满足：对任何实数 }k\text{ 有 }kf+f_1\text{ 属于恒号二次型}\},$$
+  这里恒号二次型为 $0$ 二次型、正定二次型及负定二次型的总称。证明：$V$ 按照通常的二次型加法和数乘构成一个实向量空间，并求这个向量空间的维数。</p>
+  <p>先回答三个梯子问题（写在纸上）：</p>
+  <p>（i）"恒号"拆成哪三档？"对任何实数 $k$，$kf+f_1$ 恒号"翻译成矩阵语言是什么？<br>
+  （ii）同时合同对角化怎么搭？搭完之后 $kf+f_1$ 在新坐标下长什么样，"恒号"变成对什么对象的限制？<br>
+  （iii）为什么 $\lambda_i$ 必须全相等？——若 $\lambda_1\ne\lambda_2$，怎样取 $k$ 让 $kf+f_1$ 既取正又取负？</p>
+  <details class="answer">
+    <summary>梯子参考答案</summary>
+    <p>（i）三档：$0$ 二次型、正定、负定。矩阵语言：$\forall k\in\mathbb{R}$，$kA+B$（$A,B$ 分别为 $f,f_1$ 的矩阵）正定、负定或为零矩阵。</p>
+    <p>（ii）按 §3.7：$B$ 正定 ⟹ 存在可逆 $P$ 使 $B=PP^T$ 且 $A=P\operatorname{diag}(\lambda_1,\dots,\lambda_n)P^T$（搭法见 §3.7：先取 $C$ 使 $C^T\!BC=I$，再正交对角化 $C^T\!AC$ 得 $U$，则 $P=(CU)^{-T}$）。于是 $kA+B=P\operatorname{diag}(k\lambda_1+1,\dots,k\lambda_n+1)P^T$，即 $kf+f_1$ 在新坐标下为 $\sum_i(k\lambda_i+1)y_i^2$——"恒号"变成：<strong>$n$ 个系数 $k\lambda_i+1$ 全部同号，或全部为零</strong>。</p>
+    <p>（iii）若 $\lambda_1\ne\lambda_2$，考察 $g(k)=(k\lambda_1+1)(k\lambda_2+1)$：作为 $k$ 的函数，其判别式 $(\lambda_1+\lambda_2)^2-4\lambda_1\lambda_2=(\lambda_1-\lambda_2)^2&gt;0$，故 $g$ 总能在某个实数 $k$ 处取负（两根相异时介于其间，或开口向下时 $|k|$ 充分大；$\lambda_1\lambda_2=0$ 时 $g$ 是非常数一次函数）。此时 $k\lambda_1+1$ 与 $k\lambda_2+1$ 异号，$kf+f_1$ 在 $\mathbf{y}=\mathbf{e}_1,\mathbf{e}_2$ 两处取值一正一负——不定，不属于恒号三档，矛盾。故 $\lambda_1=\cdots=\lambda_n$。</p>
+  </details>
+  <details class="answer">
+    <summary>官方解答骨架（转录自官方参考答案）</summary>
+    <p><strong>证法一</strong>　设 $f,f_1$ 的矩阵分别为 $A,B$。由 $B$ 正定，存在可逆 $P$ 使 $B=PP^T$，且 $A=P\operatorname{diag}(\lambda_1,\dots,\lambda_n)P^T$（同时合同对角化）。<span class="step-score">（10 分点）</span></p>
+    <p>条件"对任何实数 $k$，$kf+f_1$ 恒号"推出 $\lambda_1=\cdots=\lambda_n$：若 $\lambda_1\ne\lambda_2$，取 $k$ 使 $(k\lambda_1+1)(k\lambda_2+1)&lt;0$，则 $kf+f_1$ 在两点取值异号，矛盾。于是 $A=\lambda B$，$f=\lambda f_1$，$V=\{kf_1\mid k\in\mathbb{R}\}$；它对加法、数乘封闭，构成实向量空间，维数为 $1$。<span class="step-score">（20 分点）</span></p>
+    <p><strong>证法二（要点）</strong>　先证 $V\ne\varnothing$（$0\in V$）且对任何 $k$ 有 $kf_1\in V$<span class="step-score">（2 分点）</span>；再断言任意非零 $f\in V$ 与 $f_1$ 必线性相关：否则考察二次型 $g=f_1(P_1)f-f(P_1)f_1$（$f_1(P_1)&gt;0$），$g\not\equiv0$，存在 $P_2$ 使 $0\ne g(P_2)=f_1(P_1)f(P_2)-f(P_1)f_1(P_2)$；分 $f(P_1)\ne0$ 与 $f(P_2)\ne0$ 两种情形，取 $k=\frac{f_1(P_1)}{-f(P_1)}$ 或 $k=-\frac{f_1(P_2)}{f(P_2)}$，由 $kf+f_1$ 恒号导出"$&gt;0$（或 $&lt;0$）的量其实为零"的矛盾<span class="step-score">（15 分点）</span>。于是 $f=-\frac{\lambda_1}{\mu}f_1$，即 $V=\{kf_1\mid k\in\mathbb{R}\}$<span class="step-score">（18 分点）</span>；它显然是实向量空间，维数为 $1$。<span class="step-score">（20 分点）</span></p>
+    <p><strong>复盘</strong>：证法一的骨架 = 本章动作三的完整运行——10 分买"同时合同对角化"（§3.7 引理，默写级），10 分买"$\lambda_i$ 全相等"的反证（$\forall k$ 型条件取特殊 $k$ 制造异号，工具四）。注意证法一只证了 $V\subseteq\{kf_1\}$；$\{kf_1\}\subseteq V$ 由"$k(\lambda f_1)+f_1=(k\lambda+1)f_1$ 恒属三档"白送——两个方向的包含关系合出 $V=\{kf_1\}$。<em>（题目与解答骨架转录自第 11 届官方 PDF，见 <a href="真题索引/第11届_2019.md">真题索引</a>。）</em></p>
+  </details>
+</div>
+
+<h2>§9.5 熟练度训练场</h2>
+
+<p>理解只是入场券，<strong>考场上拼的是基本动作的速度</strong>。两种训练，每天 10 分钟：</p>
+
+<h3>训练一 · 翻卡快测（目标：每卡 10 秒内出答案）</h3>
+<div class="quiz" data-quiz="ch19-drill"></div>
+
+<h3>训练二 · 计时默写（写在纸上，掐表）</h3>
+<div class="calc box" data-tag="默写清单">
+  <p>① <strong>90 秒</strong>：默写正定五等价（五个框 + 四个 ⟺，一条不缺），并附负定的顺序主子式符号规律 $(-1)^k\Delta_k&gt;0$；</p>
+  <p>② <strong>45 秒</strong>：默写半正定的一句话判据 + 陷阱反例 $\operatorname{diag}(0,-1)$（顺序主子式 $\ge0$ 判不了半正定）；</p>
+  <p>③ <strong>3 分钟</strong>：默写同时合同对角化的完整骨架（先 $C^T\!BC=I$，再正交对角化 $C^T\!AC$，$P=CU$；$\lambda_i$ 是 $\det(\lambda B-A)=0$ 的根；乘法形式 $B=QQ^T,\ A=Q\operatorname{diag}(\lambda_i)Q^T$）。</p>
+  <p><strong>过关标准</strong>：连续两天全对才算过。做不到就回到 §3.3、§3.7 重读，再默。</p>
+</div>
+
+<h2>§10 六方向自测卡</h2>
+
+<div class="selftest">
+  <h3>合上书，拿张白纸，默写以下六项</h3>
+  <div class="st-item">
+    <p class="st-q"><em>=（它是什么）</em>　写出正定的定义与五等价，再写负定的顺序主子式规律。</p>
+    <details><summary>对照</summary><p>定义：$A$ 实对称且 $\mathbf{x}\ne\mathbf0\Rightarrow\mathbf{x}^T\!A\mathbf{x}&gt;0$。五等价：值恒正 ⟺ 特征值全正 ⟺ $\Delta_k&gt;0$（Sylvester）⟺ $A=P^T\!P$（$P$ 可逆）⟺ $p=n$。负定：$(-1)^k\Delta_k&gt;0$（奇负偶正）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>←（什么带来它）</em>　Sylvester 判据的二维原型是什么？$n$ 维里"恒正"为什么不能逐点验证？</p>
+    <details><summary>对照</summary><p>二维配方：$ax^2+2bxy+cy^2$ 恒正 ⟺ $a&gt;0$ 且 $ac-b^2&gt;0$（§3.1 亲手推过）。$n$ 维有无穷多方向，逐点代入不可行——必须把"恒正"翻译成有限个可计算的条件（$n$ 个行列式 / $n$ 个特征值）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>→（它带来什么）</em>　说出正定判出之后立刻免费的三条推论，与三个应用出口。</p>
+    <details><summary>对照</summary><p>推论（任三）：$\det&gt;0$、$\operatorname{tr}&gt;0$、对角元 $&gt;0$、$A^{-1}$ 正定、主子阵正定、平方根存在唯一、C–S 推广。出口：不等式证明（配 $x^T\!Ax\ge0$）、Hessian 判极值、二次曲面主轴化。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>∈（实例）</em>　各写一个：正定的 $2\times2$、负定的 $2\times2$、"顺序主子式全 $\ge0$ 却不半正定"的反例。</p>
+    <details><summary>对照</summary><p>$\begin{pmatrix}2&1\\1&2\end{pmatrix}$（$\Delta_1=2,\Delta_2=3$，正定）；$\begin{pmatrix}-2&1\\1&-2\end{pmatrix}$（$\Delta_1=-2&lt;0,\Delta_2=3&gt;0$，负定）；$\operatorname{diag}(0,-1)$（$\Delta_1=\Delta_2=0\ge0$ 但取负值，陷阱本尊）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>≠（区分）</em>　合同与相似：各保什么、不保什么？什么时候二者合一？</p>
+    <details><summary>对照</summary><p>合同 $P^T\!AP$：保对称性、秩、正负惯性指数、$\det$ 符号；不保特征值（$I$ 与 $2I$ 合同）。相似 $P^{-1}AP$：保特征值、$\det$、$\operatorname{tr}$、Jordan；不保对称性。$P$ 正交（$P^T=P^{-1}$）时合一——正交对角化同时是两种变换。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>（为何要有它）</em>　"恒正"这件事为什么值得一套五等价？它给哪三卷各送了什么？</p>
+    <details><summary>对照</summary><p>"恒正 / 恒号"是能量、极值、稳定性的共同语言，而 $n$ 维无法逐点验证——五等价把它变成可计算的行列式、可数出的特征值、可分解的 $P^T\!P$。高代卷：同时合同对角化等开门动作；数分卷：Hessian 判极值；解几卷：二次曲面分类的主轴化。</p></details>
+  </div>
+</div>
+
+<div class="net box" data-tag="间隔复习安排">
+  <p><strong>1 天后</strong>：重做六方向自测卡（不翻书）+ 翻卡快测第二轮；<strong>3 天后</strong>：重做变式 2 与真题节选的梯子问题 + 计时默写①③；<strong>1 周后</strong>：把 §3.7 同时合同对角化的证明默写一遍，确认翻卡全部"会了"。</p>
+  <p>本章是<strong>数分第 10 章</strong>（Hessian 判极值）的代数地基，也是<strong>解几第 23 章</strong>（二次曲面：标准形、分类与主轴化）的直接前置——曲面分类的每一步都是本章动作的重播。</p>
+</div>
+
+<div class="chapnav">
+  <span><a href="ch18.html">← 第 8 章 · 内积空间</a></span>
+  <span><a href="index.html">首页</a></span>
+  <span><a href="ch20.html">第 10 章 · 多项式：整除、不可约与数域 →</a></span>
+</div>
+
+</div>
+
+<script src="assets/quiz.js"></script>
+<script>
+/* §9.5 翻卡数据 */
+registerQuiz("ch19-drill", [
+  { q: "二次型为什么默认 $A$ 对称？拿到不对称的 $A$ 怎么办？", a: "对称约定让「型 ↔ 矩阵」一一对应并解锁谱定理；不对称就对称化：$x^T\\!Ax=x^T\\frac{A+A^T}{2}x$。" },
+  { q: "正定五等价，背。", a: "$x^T\\!Ax>0\\ (\\forall x\\ne0)$ ⟺ 特征值全正 ⟺ 顺序主子式全正（Sylvester）⟺ $A=P^TP$（$P$ 可逆）⟺ 正惯性指数 $p=n$。" },
+  { q: "$A$ 负定 ⟺ 顺序主子式满足什么？", a: "符号交替：$(-1)^k\\Delta_k>0$，即 $\\Delta_1<0,\\ \\Delta_2>0,\\ \\Delta_3<0,\\dots$（看 $-A$ 正定）。" },
+  { q: "合同保什么？相似保什么？", a: "合同 $P^T\\!AP$：保对称性、秩、正负惯性指数、$\\det$ 符号，不保特征值；相似 $P^{-1}AP$：保特征值、$\\det$、$\\operatorname{tr}$，不保对称性。$P$ 正交时合一。" },
+  { q: "惯性定理说什么？", a: "实对称 $A$ 必合同于 $\\operatorname{diag}(I_p,-I_q,0)$，$(p,q)$ 由 $A$ 唯一决定；$p+q=$ 秩，$p-q=$ 符号差。合同改不掉「号」的分布。" },
+  { q: "同时合同对角化怎么操作？（$A$ 对称、$B$ 正定）", a: "先取可逆 $C$ 使 $C^TBC=I$，再正交对角化 $C^TAC$：$U^T(C^TAC)U=\\operatorname{diag}(\\lambda_i)$，令 $P=CU$。$\\lambda_i$ 是 $\\det(\\lambda B-A)=0$ 的根。" },
+  { q: "$A$ 正定，立刻免费的三条推论？", a: "$\\det A>0$；$\\operatorname{tr}A>0$；对角元 $a_{ii}>0$。（还可报：$A^{-1}$ 正定、主子阵正定、平方根唯一。）" },
+  { q: "$ax^2+2bxy+cy^2$ 恒正 ⟺？", a: "$a>0$ 且 $ac-b^2>0$（$\\Delta_1,\\Delta_2$ 全正——Sylvester 的二维原型）。" },
+  { q: "「顺序主子式全 $\\ge0$」能判半正定吗？", a: "不能。反例 $\\operatorname{diag}(0,-1)$：$\\Delta_1=\\Delta_2=0$ 但 $-x_2^2$ 取负值。要查全部主子式，或特征值全 $\\ge0$。" },
+  { q: "证 $(\\sum x_iy_i)^2\\le(\\sum x_i^2)(\\sum y_i^2)$ 的二次型路线？", a: "造 $M=\\begin{pmatrix}\\sum x_i^2&\\sum x_iy_i\\\\\\sum x_iy_i&\\sum y_i^2\\end{pmatrix}$，由 $(t,s)M(t,s)^T=\\sum(tx_i+sy_i)^2\\ge0$ 知 $M$ 半正定，取 $\\det M\\ge0$。" }
+]);
+</script>
+
+<script>
+/* §3.4 二次型形状探索器 */
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  var svg = document.getElementById("qf-svg");
+  var out = document.getElementById("qf-out");
+  var sA = document.getElementById("qf-a");
+  var sB = document.getElementById("qf-b");
+  var sC = document.getElementById("qf-c");
+  var W = 720, H = 380, CX = 250, CY = 195, SC = 52;
+  function mk(tag, attrs) {
+    var el = document.createElementNS(NS, tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    svg.appendChild(el);
+    return el;
+  }
+  function mkText(x, y, str, attrs) {
+    var t = mk("text", attrs || {});
+    t.setAttribute("x", x); t.setAttribute("y", y);
+    t.textContent = str;
+    return t;
+  }
+  /* 网格与坐标轴 */
+  var gx, gy;
+  for (gx = -4; gx <= 4; gx++) {
+    mk("line", { x1: CX + SC * gx, y1: 15, x2: CX + SC * gx, y2: 370, stroke: "#e8e2d6", "stroke-width": 1 });
+  }
+  for (gy = -3; gy <= 3; gy++) {
+    mk("line", { x1: 30, y1: CY - SC * gy, x2: 470, y2: CY - SC * gy, stroke: "#e8e2d6", "stroke-width": 1 });
+  }
+  mk("rect", { x: 30, y: 15, width: 440, height: 355, fill: "none", stroke: "#d8d0c0", "stroke-width": 1 });
+  mk("line", { x1: 30, y1: CY, x2: 470, y2: CY, stroke: "#8a8175", "stroke-width": 1.5 });
+  mk("line", { x1: CX, y1: 15, x2: CX, y2: 370, stroke: "#8a8175", "stroke-width": 1.5 });
+  mkText(462, CY - 6, "x", { "font-size": 13, fill: "#5c554b" });
+  mkText(CX + 8, 28, "y", { "font-size": 13, fill: "#5c554b" });
+  /* 虚线单位圆（参照） */
+  mk("circle", { cx: CX, cy: CY, r: SC, fill: "none", stroke: "#c9c0ae", "stroke-width": 1, "stroke-dasharray": "3 4" });
+  /* 两条等高线路径 */
+  var pathPos = mk("path", { fill: "none", stroke: "#1d4ed8", "stroke-width": 2 });
+  var pathNeg = mk("path", { fill: "none", stroke: "#b45309", "stroke-width": 2 });
+  mkText(40, 34, "蓝：Q = 1　　橙：Q = −1　（虚线圆：参照）", { "font-size": 11.5, fill: "#5c554b" });
+  /* 右侧面板 */
+  var tTitle = mkText(500, 45, "Sylvester 读数", { "font-size": 14, fill: "#2b2620", "font-weight": "bold" });
+  var tD1 = mkText(500, 75, "", { "font-size": 13.5, fill: "#15803d" });
+  var tD2 = mkText(500, 100, "", { "font-size": 13.5, fill: "#15803d" });
+  var tLam = mkText(500, 132, "", { "font-size": 12.5, fill: "#5c554b" });
+  var tMat1 = mkText(500, 165, "", { "font-size": 12.5, fill: "#5c554b" });
+  var tMat2 = mkText(500, 184, "", { "font-size": 12.5, fill: "#5c554b" });
+  var tVerdict = mkText(500, 225, "", { "font-size": 17, fill: "#2b2620", "font-weight": "bold" });
+  var tSub1 = mkText(500, 252, "", { "font-size": 11.5, fill: "#5c554b" });
+  var tSub2 = mkText(500, 270, "", { "font-size": 11.5, fill: "#5c554b" });
+
+  function fmt(v) { return (Math.abs(v) < 0.005 ? 0 : v).toFixed(2); }
+
+  function buildCurve(l1, l2, ux, uy, vx, vy, s) {
+    var d = "", started = false;
+    var eps = 1e-9 * Math.max(1, Math.abs(l1) + Math.abs(l2));
+    function seg(u, v) {
+      var X = CX + SC * (u * ux + v * vx);
+      var Y = CY - SC * (u * uy + v * vy);
+      var inb = X > -90 && X < W + 90 && Y > -90 && Y < H + 90;
+      d += (inb && started ? "L" : "M") + X.toFixed(1) + " " + Y.toFixed(1);
+      started = inb;
+    }
+    var i, t;
+    if (Math.abs(l1) < eps && Math.abs(l2) < eps) return "";
+    if (Math.abs(l2) < eps) {
+      if (s / l1 > 0) {
+        var u0 = Math.sqrt(s / l1);
+        for (i = 0; i <= 60; i++) { t = -4.5 + 9 * i / 60; seg(u0, t); }
+        started = false;
+        for (i = 0; i <= 60; i++) { t = -4.5 + 9 * i / 60; seg(-u0, t); }
+      }
+      return d;
+    }
+    if (Math.abs(l1) < eps) {
+      if (s / l2 > 0) {
+        var v0 = Math.sqrt(s / l2);
+        for (i = 0; i <= 60; i++) { t = -4.5 + 9 * i / 60; seg(t, v0); }
+        started = false;
+        for (i = 0; i <= 60; i++) { t = -4.5 + 9 * i / 60; seg(t, -v0); }
+      }
+      return d;
+    }
+    var q1 = s / l1, q2 = s / l2;
+    if (q1 > 0 && q2 > 0) {
+      var ru = Math.sqrt(q1), rv = Math.sqrt(q2);
+      for (i = 0; i <= 120; i++) {
+        t = 2 * Math.PI * i / 120;
+        seg(ru * Math.cos(t), rv * Math.sin(t));
+      }
+    } else if (q1 > 0) {
+      var ru2 = Math.sqrt(q1), rv2 = Math.sqrt(-q2);
+      [1, -1].forEach(function (br) {
+        started = false;
+        for (var j = 0; j <= 72; j++) {
+          var tt = -1.8 + 3.6 * j / 72;
+          seg(br * ru2 * Math.cosh(tt), rv2 * Math.sinh(tt));
+        }
+      });
+    } else if (q2 > 0) {
+      var ru3 = Math.sqrt(-q1), rv3 = Math.sqrt(q2);
+      [1, -1].forEach(function (br) {
+        started = false;
+        for (var j = 0; j <= 72; j++) {
+          var tt = -1.8 + 3.6 * j / 72;
+          seg(ru3 * Math.sinh(tt), br * rv3 * Math.cosh(tt));
+        }
+      });
+    }
+    return d;
+  }
+
+  function update() {
+    var a = parseFloat(sA.value), b = parseFloat(sB.value), c = parseFloat(sC.value);
+    var m = (a + c) / 2, dd = (a - c) / 2;
+    var r = Math.sqrt(dd * dd + b * b);
+    var l1 = m + r, l2 = m - r;
+    var ux, uy;
+    if (Math.abs(b) < 1e-12 && Math.abs(l1 - a) < 1e-12) { ux = 1; uy = 0; }
+    else {
+      ux = b; uy = l1 - a;
+      var n = Math.sqrt(ux * ux + uy * uy);
+      if (n < 1e-12) { ux = 1; uy = 0; } else { ux /= n; uy /= n; }
+    }
+    var vx = -uy, vy = ux;
+    pathPos.setAttribute("d", buildCurve(l1, l2, ux, uy, vx, vy, 1));
+    pathNeg.setAttribute("d", buildCurve(l1, l2, ux, uy, vx, vy, -1));
+
+    var det = a * c - b * b;
+    var okD1 = a > 1e-9, okD2 = det > 1e-9;
+    tD1.textContent = "Δ₁ = a = " + fmt(a) + (okD1 ? "  ✓" : "  ✗");
+    tD1.setAttribute("fill", okD1 ? "#15803d" : "#be123c");
+    tD2.textContent = "Δ₂ = ac − b² = " + fmt(det) + (okD2 ? "  ✓" : "  ✗");
+    tD2.setAttribute("fill", okD2 ? "#15803d" : "#be123c");
+    tLam.textContent = "λ₁ ≈ " + fmt(l1) + "，λ₂ ≈ " + fmt(l2);
+    tMat1.textContent = "A = ⎡ " + fmt(a) + "  " + fmt(b) + " ⎤";
+    tMat2.textContent = "      ⎣ " + fmt(b) + "  " + fmt(c) + " ⎦";
+
+    var verdict, sub1, sub2, color;
+    if (det > 1e-9 && a > 0) {
+      verdict = "正定"; color = "#15803d";
+      sub1 = "Δ₁ > 0 且 Δ₂ > 0，Sylvester 全绿";
+      sub2 = "Q = 1 是椭圆：碗状，原点取唯一最小值";
+    } else if (det > 1e-9 && a < 0) {
+      verdict = "负定"; color = "#1d4ed8";
+      sub1 = "Δ₁ < 0 且 Δ₂ > 0（符号交替：负、正）";
+      sub2 = "椭圆出现在 Q = −1 一侧";
+    } else if (det < -1e-9) {
+      verdict = "不定"; color = "#b45309";
+      sub1 = "Δ₂ < 0：b² 已越过 ac";
+      sub2 = "Q = ±1 都是双曲线：马鞍，能正能负";
+    } else {
+      var tr = a + c;
+      if (tr > 1e-9) {
+        verdict = "半正定"; color = "#7c3aed";
+        sub1 = "Δ₂ = 0：退化，平行直线（λ₂ = 0）";
+        sub2 = "恒 ≥ 0 但摸得到 0——严格判据差一口气";
+      } else if (tr < -1e-9) {
+        verdict = "半负定"; color = "#7c3aed";
+        sub1 = "Δ₂ = 0 且迹为负（λ₁ < 0 = λ₂ 的搭档）";
+        sub2 = "恒 ≤ 0 但摸得到 0";
+      } else {
+        verdict = "零形式"; color = "#5c554b";
+        sub1 = "a = b = c = 0";
+        sub2 = "Q 恒为 0——恒号三档中的「0 二次型」";
+      }
+    }
+    tVerdict.textContent = verdict;
+    tVerdict.setAttribute("fill", color);
+    tSub1.textContent = sub1;
+    tSub2.textContent = sub2;
+    out.innerHTML = "当前 Q(x,y) = " + fmt(a) + "x² + " + fmt(2 * b) + "xy + " + fmt(c) + "y²，判定：<strong style=\"color:" + color + "\">" + verdict + "</strong>。Sylvester 两关：Δ₁ = " + fmt(a) + "，Δ₂ = ac − b² = " + fmt(det) + "。";
+  }
+  sA.addEventListener("input", update);
+  sB.addEventListener("input", update);
+  sC.addEventListener("input", update);
+  update();
+})();
+</script>
+
+</body>
+</html>

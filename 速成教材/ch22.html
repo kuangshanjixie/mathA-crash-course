@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>解几第 1 章 · 向量法通解：空间直线与平面 —— 数学A速成讲义</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+<div class="wrap">
+
+<div class="bookbar">
+  <span><a href="index.html">← 返回首页</a></span>
+  <span>卷三 · 解析几何 · 第 1 章</span>
+</div>
+
+<div class="chapter-kicker">CHAPTER 22 · 解析几何（卷三开篇）</div>
+<h1>向量法通解：空间直线与平面</h1>
+
+<div class="exam box" data-tag="本章导览">
+  <p><strong>这一章在整张卷子上的位置</strong>：解析几何占初赛 15%，雷打不动是<strong>题一，15 分</strong>——第 11–17 届连续七届全部如此。而这七届里，直接靠本章工具（三种积 + 距离公式）开门的有六届：第 15 届题一就是点到直线距离公式 $d=\dfrac{|\overrightarrow{OM}\times\vec v|}{|\vec v|}$ 的一次裸用（本章真题节选完整复盘），第 17 届题一考混合积的符号，第 12 届题一考混合积求体积。这是全卷<strong>套路化程度最高的 15 分</strong>，目标是稳拿。</p>
+  <p><strong>学完你能</strong>：① 把"垂直 / 平行 / 共面 / 相切"全部翻译成内积 $=0$、叉积 $=\vec 0$、混合积 $=0$、距离等式；② 用行列式算法三行算出任何叉积，并说出它的"面积"与"法向"两层身份；③ 默写三个距离公式（点线 / 点面 / 异面）并讲清每个的来历；④ 跑通轨迹题标准流程：建系 → 设点 → 距离等式 → 化简 → 认曲面；⑤ 独立拿下第 15 届题一。</p>
+  <p><strong>前置</strong>：高数下册的向量代数（点乘、叉乘见过面即可，本章负责把手感练成反射）；三阶行列式会按对角线法则展开；第 0.5 章的证明程序（拆目标 / 盘点 / 会师 / 定型）。</p>
+</div>
+
+<h2>§1 开场谜题：球心的藏身之处</h2>
+
+<div class="hook box" data-tag="开场谜题">
+  <p>第 15 届（2023）初赛题一，15 分，原题：</p>
+  <p><strong>在空间中给定直线 $L$ 及直线外定点 $P$。设 $M$ 是过 $P$ 点且与直线 $L$ 相切的球面的球心。问：所有可能的球心 $M$ 构成何种曲面？证明你的结论。</strong></p>
+  <p>先别往下看，闭眼猜十秒钟：球可以有大有小，绕着直线 $L$ 团团转，球心们会聚成什么？一个球面？一个圆柱面？一对圆锥？——几乎没有人第一眼猜得对。官方答案：<strong>抛物柱面</strong>，一条抛物线沿着与 $L$ 平行的方向"扫"出来的曲面。</p>
+  <p>但官方解答连建系带化简<strong>只有几行</strong>。差距不在空间想象力，在于会不会把题面<strong>翻译</strong>成向量方程：这道题不是"想"出来的，是"翻译"出来的。</p>
+</div>
+
+<p>把题面逐句拆开。球心 $M$ 管着球的一切，而题面对球提了两个要求：</p>
+<ul>
+  <li>"球面<strong>过</strong> $P$" ⟺ 半径 $r=|MP|$（球心到球面上一点的距离）；</li>
+  <li>"球面与 $L$ <strong>相切</strong>" ⟺ 半径 $r=d(M,L)$（球心到切线的距离恰好等于半径）。</li>
+</ul>
+<p>两句一碰，半径 $r$ 退场：</p>
+<p>$$|MP|=d(M,L)\qquad\text{（到定点的距离 = 到定直线的距离）}$$</p>
+<p>几何条件全部消失，剩下一个<strong>距离等式</strong>。后面的事全是计算：选个好坐标系，设 $M=(x,y,z)$，把两个距离分别写出来，令其相等，化简，认曲面。"到定点的距离"你小学就会（两点距离公式）；唯一陌生的角色是"<strong>到直线的距离</strong>"——它就是本章的当家公式，15 分里有 10 分挂在它身上。</p>
+
+<p>这就是卷三的开场白：<strong>三维题的秘密不是空间想象力，是把一切翻译成向量方程。</strong>垂直、平行、共面、相切、夹角、距离——每一个几何词都有一句对应的向量黑话。本章把这本翻译词典一次给全。</p>
+
+<h2>§2 先看见它：两把尺与一个老熟人</h2>
+
+<div class="vision box" data-tag="直觉与图像">
+  <p>把球心 $M$ 想成一个头顶挂着两把尺的点：一把量"我离 $P$ 多远"，一把量"我离 $L$ 多远"。轨迹 = <strong>两把尺读数恰好相等</strong>的所有点。</p>
+  <p>这个条件你是个老熟人——<strong>平面</strong>上"到定点距离 = 到定直线距离"正是<strong>抛物线</strong>的定义（焦点与准线）。空间版只是把这条抛物线沿着与 $L$ 平行的方向整体平移：曲面方程里 $y$ 不出现，每个截面 $y=c$ 都是同一条抛物线，于是抛物线"扫"成了<strong>抛物柱面</strong>。这也是"为什么是柱面而不是抛物面"的直观答案——真题节选的梯子问题 (iii) 还会再碰到它。</p>
+</div>
+
+<figure>
+<svg viewBox="0 0 720 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="球心轨迹：到点距离等于到线距离">
+  <defs>
+    <marker id="arrv" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#2b2620"/>
+    </marker>
+  </defs>
+  <!-- 坐标轴：L 取作 x 轴 -->
+  <line x1="30" y1="190" x2="690" y2="190" stroke="#2b2620" stroke-width="2" marker-end="url(#arrv)"/>
+  <text x="684" y="212" font-size="14" fill="#2b2620" text-anchor="middle">x（直线 L）</text>
+  <line x1="60" y1="190" x2="60" y2="22" stroke="#2b2620" stroke-width="2" marker-end="url(#arrv)"/>
+  <text x="42" y="32" font-size="14" fill="#2b2620" text-anchor="middle">z</text>
+  <text x="42" y="196" font-size="13" fill="#2b2620" text-anchor="middle">O</text>
+  <text x="300" y="240" font-size="12.5" fill="#8a8175" text-anchor="middle">y 轴穿出纸面——图上画的是截面 y = 0</text>
+  <!-- P 点与 OP -->
+  <line x1="60" y1="190" x2="60" y2="70" stroke="#b45309" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="52" y="135" font-size="13" fill="#b45309" text-anchor="end">a</text>
+  <circle cx="60" cy="70" r="5" fill="#be123c"/>
+  <text x="74" y="66" font-size="14" fill="#be123c" font-weight="bold">P = (0, 0, a)</text>
+  <!-- 抛物线（截面轨迹） -->
+  <polyline points="10,120 35,127 60,130 85,127 110,120 135,107 156,92 185,65 210,36 230,10" fill="none" stroke="#1d4ed8" stroke-width="2.5"/>
+  <text x="252" y="30" font-size="13" fill="#1d4ed8">z = (x² + a²) / (2a)</text>
+  <text x="96" y="146" font-size="12" fill="#1d4ed8">顶点 (0, a/2)</text>
+  <!-- M 点：两把尺 -->
+  <circle cx="156" cy="92" r="5.5" fill="#7c3aed"/>
+  <text x="166" y="88" font-size="14" fill="#7c3aed" font-weight="bold">M = (x, y, z)</text>
+  <line x1="156" y1="92" x2="60" y2="70" stroke="#be123c" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="96" y="72" font-size="13" fill="#be123c">|MP|</text>
+  <line x1="156" y1="92" x2="156" y2="190" stroke="#15803d" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="164" y="150" font-size="13" fill="#15803d">d(M, L)</text>
+  <circle cx="156" cy="190" r="3.5" fill="#15803d"/>
+  <text x="166" y="208" font-size="12" fill="#15803d">垂足 H</text>
+  <text x="330" y="100" font-size="15" fill="#2b2620" font-weight="bold">两把尺读数相等：|MP| = d(M, L)</text>
+  <text x="330" y="122" font-size="12.5" fill="#5c554b">M 被这个等式钉在抛物柱面上</text>
+</svg>
+<figcaption>取 $L$ 为 $x$ 轴、$P$ 到 $L$ 的垂线为 $z$ 轴：两把尺的读数等式，化简后就是那条蓝色抛物线——再沿 $y$ 方向扫成柱面。</figcaption>
+</figure>
+
+<p>注意图里的一个自由：<strong>坐标系是我们自己选的</strong>。题目没给坐标系，官方解答第一件事就是"取 $L$ 为 $x$ 轴"——选系的目标是让 $L$ 的方向向量变成 $(1,0,0)$、$P$ 的坐标只剩一个分量 $a$。建系越懒，计算越短。这是轨迹题的第一道工序，真题节选里还会细说。</p>
+
+<h2>§3 精确定义：三种积与三个距离</h2>
+
+<p>本章的"定义"你在高数都见过，但竞赛口径要求两样高数不强调的东西：<strong>每个公式的几何来历</strong>（它就是证明的骨架）和<strong>坐标下的手算速度</strong>。逐个过一遍，把两样都补齐。</p>
+
+<h3>3.1 内积：投影测量仪</h3>
+
+<div class="def">
+  <p class="def-title">定义（内积 / 点乘）</p>
+  <p>$\vec a\cdot\vec b=|\vec a|\,|\vec b|\cos\theta$（$\theta$ 为夹角）；坐标下 $\vec a=(a_1,a_2,a_3)$，$\vec b=(b_1,b_2,b_3)$：
+  $$\vec a\cdot\vec b=a_1b_1+a_2b_2+a_3b_3.$$</p>
+  <p>四件常用产出：① <strong>长度</strong> $|\vec a|=\sqrt{\vec a\cdot\vec a}$；② <strong>夹角</strong> $\cos\theta=\dfrac{\vec a\cdot\vec b}{|\vec a||\vec b|}$；③ <strong>投影</strong>：$\vec a$ 在 $\vec b$ 方向上的（数量）投影 $=\dfrac{\vec a\cdot\vec b}{|\vec b|}$；④ <strong>垂直判据</strong> $\vec a\perp\vec b\iff\vec a\cdot\vec b=0$。</p>
+</div>
+
+<p>一句话：<strong>内积是投影测量仪</strong>。凡"夹角、垂直、投影、点面距离"，全归它管；它的坐标算法没有任何技巧，对应分量相乘再相加。</p>
+
+<h3>3.2 叉积：面积与法向量的二合一</h3>
+
+<div class="def">
+  <p class="def-title">定义（叉积 / 向量积）</p>
+  <p>$\vec a\times\vec b$ 是一个<strong>向量</strong>：模长 $|\vec a\times\vec b|=|\vec a||\vec b|\sin\theta$（恰为以 $\vec a,\vec b$ 为邻边的<strong>平行四边形面积</strong>）；方向同时垂直于 $\vec a,\vec b$，且 $(\vec a,\vec b,\vec a\times\vec b)$ 成<strong>右手系</strong>。坐标算法（三阶行列式，第一行是三个坐标轴单位向量）：
+  $$\vec a\times\vec b=\begin{vmatrix}\vec i&\vec j&\vec k\\ a_1&a_2&a_3\\ b_1&b_2&b_3\end{vmatrix}=\bigl(a_2b_3-a_3b_2,\ a_3b_1-a_1b_3,\ a_1b_2-a_2b_1\bigr).$$</p>
+  <p>三条硬性质：① <strong>反交换</strong> $\vec b\times\vec a=-(\vec a\times\vec b)$（换序变号——右手定则的后果）；② <strong>平行判据</strong> $\vec a\times\vec b=\vec 0\iff\vec a,\vec b$ 共线（面积为零 ⟺ 平行四边形塌了）；③ <strong>法向量发生器</strong>：$\vec a\times\vec b\perp$ 一切由 $\vec a,\vec b$ 张成的平面。</p>
+</div>
+
+<p>③的直接兑现：<strong>三点定平面</strong>。过 $A,B,C$ 三点的平面，法向量取
+$$\vec n=\overrightarrow{AB}\times\overrightarrow{AC},$$
+$\overrightarrow{AB},\overrightarrow{AC}$ 是面内两个方向，一叉下去，垂直于平面的向量就到手了——配上点法式（§3.6），平面方程两步写完。例 1 与模仿 1 都是这条流水线。</p>
+
+<h3>3.3 混合积：有向体积与共面判据</h3>
+
+<div class="def">
+  <p class="def-title">定义（混合积）</p>
+  <p>$(\vec a\times\vec b)\cdot\vec c$ 称为 $\vec a,\vec b,\vec c$ 的<strong>混合积</strong>，常记 $(\vec a,\vec b,\vec c)$。坐标下就是三阶行列式：
+  $$(\vec a,\vec b,\vec c)=\begin{vmatrix}a_1&a_2&a_3\\ b_1&b_2&b_3\\ c_1&c_2&c_3\end{vmatrix}.$$</p>
+  <p>几何意义：<strong>绝对值 = 以三向量为棱的平行六面体体积</strong>（底面积 $|\vec a\times\vec b|$ × 高 $=\vec c$ 在法向上的投影）；<strong>符号 = 定向</strong>：$(\vec a,\vec b,\vec c)>0$ ⟺ 三向量成右手系，$&lt;0$ ⟺ 左手系。推论：四面体体积 $=\dfrac16\bigl|(\vec a,\vec b,\vec c)\bigr|$。</p>
+  <p>两条运算律：① <strong>共面判据</strong> $(\vec a,\vec b,\vec c)=0\iff$ 三向量共面（体积为零 ⟺ 六面体压扁了）；② <strong>轮换不变、对换变号</strong>：$(\vec a,\vec b,\vec c)=(\vec b,\vec c,\vec a)=(\vec c,\vec a,\vec b)$，交换任意两个则变号。</p>
+</div>
+
+<p>"混合积的符号"不是摆设——第 17 届题一第 (1) 问，考的就是"$A,B$ 在平面两侧 ⟺ 两个混合积异号"。第 12 届题一第 (3) 问的四面体体积，也是 $\frac16|\text{混合积}|$ 一步出。三种积到此齐活：<strong>内积管角度与投影，叉积管面积与法向，混合积管体积与共面</strong>。</p>
+
+<h3>3.4 亲手摸一摸：叉积探索器（交互）</h3>
+
+<div class="widget" id="cross-widget">
+  <p class="w-title">▶ 叉积几何探索器：拖 a、b，看面积、法向与混合积符号</p>
+  <p class="w-row"><strong style="color:#1d4ed8">蓝点 a</strong>、<strong style="color:#b45309">橙点 b</strong> 都可拖动（纸面内的两个向量）。平行四边形实时画出；右侧圆圈显示法向量 $\vec a\times\vec b$ 的方向：<strong style="color:#7c3aed">⊙ = 指出纸面</strong>（右手系），<strong style="color:#7c3aed">⊗ = 指入纸面</strong>。滑块控制第三个向量 $\vec c$ 的出纸面分量 $c_z$，看混合积 $(\vec a\times\vec b)\cdot\vec c$ 的符号与体积。</p>
+  <div class="w-row"><label>c 的出纸面分量 c_z（从 −3 拖到 3，穿过 0 看体积变号）</label>
+  <input type="range" id="cxw-cz" min="-3" max="3" step="0.1" value="2"></div>
+  <svg id="cxw-svg" viewBox="0 0 720 340" xmlns="http://www.w3.org/2000/svg" style="cursor:default;touch-action:none"></svg>
+  <div class="w-verdict" id="cxw-out">加载中……（需要启用 JavaScript）</div>
+  <p class="w-row" style="font-size:0.88em;color:#5c554b">玩出这三个体验再往下走：<strong>①</strong> 把 b 拖到与 a 共线：平行四边形塌成线段、法向指示"熄火"——$\vec a\times\vec b=\vec 0$ ⟺ 平行；<strong>②</strong> 把 b 从 a 的逆时针一侧拖到顺时针一侧：⊙ 翻成 ⊗——右手定则，也就是反交换律 $\vec b\times\vec a=-(\vec a\times\vec b)$；<strong>③</strong> 把 $c_z$ 滑块从左拖到右穿过 0：混合积变号，且 $c_z=0$ 时体积归零——共面 ⟺ 混合积 $=0$（第 17 届题一考的符号）。</p>
+</div>
+
+<h3>3.5 点到直线距离：本章当家公式</h3>
+
+<div class="def">
+  <p class="def-title">定理（点到直线的距离，叉积表达）</p>
+  <p>设直线 $L$ 过点 $P_0$、方向向量 $\vec v$，$M$ 为直线外一点，则 $M$ 到 $L$ 的距离
+  $$d=\frac{\bigl|\overrightarrow{P_0M}\times\vec v\bigr|}{|\vec v|}.$$</p>
+  <p><strong>推导（面积 = 底 × 高，必须会复述）</strong>：设 $\theta$ 为 $\overrightarrow{P_0M}$ 与 $\vec v$ 的夹角。在由 $M$、$P_0$、垂足 $H$ 构成的直角三角形中，斜边是 $\bigl|\overrightarrow{P_0M}\bigr|$，对边是 $d$，故 $d=\bigl|\overrightarrow{P_0M}\bigr|\sin\theta$。另一方面，叉积模长是平行四边形面积：
+  $$\bigl|\overrightarrow{P_0M}\times\vec v\bigr|=\bigl|\overrightarrow{P_0M}\bigr|\,|\vec v|\sin\theta=|\vec v|\cdot d,$$
+  （面积 = 底 $|\vec v|$ × 高 $d$）。两边除以 $|\vec v|$ 即得公式。$\square$</p>
+</div>
+
+<div class="symbol box" data-tag="逐符号朗读">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$\overrightarrow{P_0M}$</td><td>"从<strong>直线上任一点</strong> $P_0$ 指向 $M$ 的向量"</td><td>把"点到直线"翻译成"向量与方向"——$P_0$ 随便挑，哪个好算挑哪个（第 15 届题一挑了原点 $O$）</td></tr>
+    <tr><td>$\times\,\vec v$</td><td>"叉乘方向向量 $\vec v$"</td><td>造出以 $\overrightarrow{P_0M}$、$\vec v$ 为邻边的平行四边形；$d$ 正是它以 $|\vec v|$ 为底时的<strong>高</strong></td></tr>
+    <tr><td>$\bigl|\cdots\bigr|$（分子）</td><td>"叉积的模长"</td><td>读出平行四边形的<strong>面积</strong> $=|\vec v|\cdot d$</td></tr>
+    <tr><td>$\big/\,|\vec v|$</td><td>"除以底边长"</td><td>面积 ÷ 底 = 高——高就是点到直线的距离</td></tr>
+  </table>
+  <p>一句话记住：<strong>点线距 = 平行四边形面积 ÷ 底</strong>。忘记公式时，画出平行四边形，三秒就能重新长出来。第 15 届题一的 10 分计算分，全在这一个面积上。</p>
+</div>
+
+<h3>3.6 平面：三种写法与点面距离</h3>
+
+<div class="def">
+  <p class="def-title">平面方程的三种写法</p>
+  <p>① <strong>点法式</strong>：过 $M_0=(x_0,y_0,z_0)$、法向量 $\vec n=(A,B,C)$：
+  $$A(x-x_0)+B(y-y_0)+C(z-z_0)=0;$$
+  ② <strong>一般式</strong>：$Ax+By+Cz+D=0$（<strong>系数就是法向量</strong> $\vec n=(A,B,C)$，读平面先读法向量）；③ <strong>截距式</strong>：$\dfrac{x}{a}+\dfrac{y}{b}+\dfrac{z}{c}=1$（$a,b,c$ 为三轴上的截距，画草图时好用）。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定理（点到平面的距离）</p>
+  <p>点 $M_0=(x_0,y_0,z_0)$ 到平面 $Ax+By+Cz+D=0$ 的距离
+  $$d=\frac{|Ax_0+By_0+Cz_0+D|}{\sqrt{A^2+B^2+C^2}}.$$</p>
+</div>
+
+<div class="think">
+  <p>别急着背。<strong>拿张纸，用"内积 = 投影测量仪"自己把点面距公式推出来</strong>：在平面内任取一点 $M_1$，$d$ 就是 $\overrightarrow{M_1M_0}$ 在法方向 $\vec n$ 上的投影长度。写完再展开对照。</p>
+  <details class="answer">
+    <summary>对照：三行推导</summary>
+    <p>设 $M_1=(x_1,y_1,z_1)$ 在平面内，即 $Ax_1+By_1+Cz_1+D=0$。则
+    $$d=\left|\overrightarrow{M_1M_0}\cdot\frac{\vec n}{|\vec n|}\right|=\frac{\bigl|A(x_0-x_1)+B(y_0-y_1)+C(z_0-z_1)\bigr|}{\sqrt{A^2+B^2+C^2}}=\frac{|Ax_0+By_0+Cz_0+D|}{\sqrt{A^2+B^2+C^2}}$$
+    （展开后用平面方程把 $-(Ax_1+By_1+Cz_1)$ 换成 $D$）。$\square$</p>
+    <p>对照点线距记：<strong>点面距用内积</strong>（投影到法向），<strong>点线距用叉积</strong>（面积 ÷ 底）——一个投到"垂直于面"的方向，一个量"平行于线"的底上的高。记反的下场见 §10 自测卡 ≠ 项。</p>
+  </details>
+</div>
+
+<h3>3.7 直线：三种写法与位置关系总表</h3>
+
+<div class="def">
+  <p class="def-title">直线方程的三种写法</p>
+  <p>① <strong>参数式</strong>：过 $P_0=(x_0,y_0,z_0)$、方向向量 $\vec v=(l,m,n)$：
+  $$(x,y,z)=(x_0+lt,\ y_0+mt,\ z_0+nt),\quad t\in\mathbb R;$$
+  ② <strong>对称式（点向式）</strong>：$\dfrac{x-x_0}{l}=\dfrac{y-y_0}{m}=\dfrac{z-z_0}{n}$（某个分母为 $0$ 是<strong>约定写法</strong>：表示对应坐标恒定，如 $\frac{x-1}{0}$ 即 $x\equiv1$，不是错误）；③ <strong>一般式（交线式）</strong>：两平面联立
+  $$\begin{cases}A_1x+B_1y+C_1z+D_1=0,\\ A_2x+B_2y+C_2z+D_2=0,\end{cases}\qquad \vec v=\vec n_1\times\vec n_2$$
+  ——交线同时躺在两平面内，故同时垂直两个法向量，这正是叉积的第一份工作。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">位置关系总表（夹角 + 平行垂直判据）</p>
+  <table>
+    <tr><th></th><th>夹角</th><th>平行</th><th>垂直</th></tr>
+    <tr><td>线 · 线（$\vec v_1,\vec v_2$）</td><td>$\cos\theta=\dfrac{|\vec v_1\cdot\vec v_2|}{|\vec v_1||\vec v_2|}$（取锐角）</td><td>$\vec v_1\times\vec v_2=\vec 0$（成比例）</td><td>$\vec v_1\cdot\vec v_2=0$（<strong>异面也可垂直</strong>——只看方向，不要求相交）</td></tr>
+    <tr><td>线 · 面（$\vec v$ / $\vec n$）</td><td>$\sin\theta=\dfrac{|\vec v\cdot\vec n|}{|\vec v||\vec n|}$（线面角是法向夹角的<strong>余角</strong>，用 sin！）</td><td>$\vec v\cdot\vec n=0$ <strong>且</strong> $L$ 上有点不在 $\Pi$ 内（否则是"线在面内"）</td><td>$\vec v\parallel\vec n$（$\vec v\times\vec n=\vec 0$）</td></tr>
+    <tr><td>面 · 面（$\vec n_1,\vec n_2$）</td><td>$\cos\theta=\dfrac{|\vec n_1\cdot\vec n_2|}{|\vec n_1||\vec n_2|}$</td><td>$\vec n_1\parallel\vec n_2$（成比例）</td><td>$\vec n_1\cdot\vec n_2=0$</td></tr>
+  </table>
+  <p>全表只有一句口诀：<strong>垂直与否，内积说话；平行与否，叉积（成比例）说话</strong>——唯独"线面"这对要拧一下：线面<strong>垂直</strong>是 $\vec v\parallel\vec n$（成比例），线面<strong>平行</strong>是 $\vec v\cdot\vec n=0$，与直觉对调，考场最易翻车。</p>
+</div>
+
+<h3>3.8 异面直线距离：混合积的压轴戏</h3>
+
+<div class="calc box" data-tag="公式与推导骨架">
+  <p><strong>公式</strong>　设 $L_1$ 过 $P_1$ 方向 $\vec v_1$，$L_2$ 过 $P_2$ 方向 $\vec v_2$，且两线<strong>异面</strong>，则
+  $$d=\frac{\bigl|\overrightarrow{P_1P_2}\cdot(\vec v_1\times\vec v_2)\bigr|}{|\vec v_1\times\vec v_2|}\qquad\left(\text{分子 }=\text{ 混合积，分母 }=\text{ 叉积模}\right).$$</p>
+  <p><strong>推导骨架（公垂线思想）</strong>：</p>
+  <ol>
+    <li>$\vec n=\vec v_1\times\vec v_2$ 同时垂直两线——它就是<strong>公垂线的方向</strong>（异面保证 $\vec n\ne\vec0$）。</li>
+    <li>公垂线段 $\overrightarrow{M_1M_2}\parallel\vec n$。拆路：$\overrightarrow{M_1M_2}=\overrightarrow{M_1P_1}+\overrightarrow{P_1P_2}+\overrightarrow{P_2M_2}$，两端与 $\vec n$ 作内积；$\overrightarrow{M_1P_1}\parallel\vec v_1$、$\overrightarrow{P_2M_2}\parallel\vec v_2$ 都与 $\vec n$ 垂直，内积归零，得 $\overrightarrow{M_1M_2}\cdot\vec n=\overrightarrow{P_1P_2}\cdot\vec n$。</li>
+    <li>于是 $d=\bigl|\overrightarrow{M_1M_2}\bigr|=\dfrac{|\overrightarrow{M_1M_2}\cdot\vec n|}{|\vec n|}=\dfrac{\bigl|\overrightarrow{P_1P_2}\cdot(\vec v_1\times\vec v_2)\bigr|}{|\vec v_1\times\vec v_2|}$。$\square$</li>
+  </ol>
+  <p class="aside">一句话：<strong>异面距 = 任意一条"跨线连线"在公垂线方向上的投影</strong>。分子是混合积、分母是叉积模——本章三件套一次到齐。副产品：混合积 $\ne0$ 本身就证明了"两线异面"（共面 ⟺ 混合积 $=0$）；若混合积 $=0$ 且 $\vec v_1\times\vec v_2\ne\vec0$，两线共面——相交（$d=0$）或平行（改用点线距公式）。</p>
+</div>
+
+<h2>§4 翻译轨：三个标准动作 + 一间练功房</h2>
+
+<p>解几题面里的每个几何词，都对应一句向量黑话。练熟下面三个动作，15 分的题一就没有生词。</p>
+
+<div class="trans box" data-tag="动作一：垂直 / 平行 → 内积 = 0 / 叉积 = 0">
+  <p><strong>题面</strong>："两直线垂直""直线与平面平行""两平面垂直""证明三点共线"。</p>
+  <p><strong>翻译</strong>：先揪出每个几何对象的<strong>代表向量</strong>（直线 → 方向向量 $\vec v$，平面 → 法向量 $\vec n$），然后查 §3.7 总表：</p>
+  <p>垂直类 ⟹ 内积 $=0$（线面垂直例外：是 $\vec v\parallel\vec n$）；平行类 ⟹ 叉积 $=\vec0$，即坐标<strong>成比例</strong>（线面平行例外：是 $\vec v\cdot\vec n=0$，且要补一句"线上有点不在面内"，否则是包含）。</p>
+  <p><strong>用在哪、值多少</strong>：这是所有解几大题的<strong>开门条件</strong>。第 14 届题一求两直母线夹角，就是把两个方向向量揪出来代 $\cos\theta=\frac{|\vec v_1\cdot\vec v_2|}{|\vec v_1||\vec v_2|}$——公式写对、向量算对，步骤分就进口袋。</p>
+</div>
+
+<div class="trans box" data-tag="动作二：法向量 → 叉积流水线">
+  <p><strong>题面</strong>："求过三点的平面""求过一直线且垂直于已知平面的平面""求两平面的交线方向"。</p>
+  <p><strong>翻译</strong>：法向量不是找的，是<strong>造</strong>的——凑出面内两个方向向量 $\vec u,\vec w$，一叉定音 $\vec n=\vec u\times\vec w$，再点法式收尾：</p>
+  <p>面内方向不够时，把题面其他条件<strong>翻译</strong>成方向（例 1 里"与已知平面垂直"翻译出"已知法向量躺在所求面内"，白送一个方向）。</p>
+  <p><strong>用在哪、值多少</strong>：求平面方程的标准两步（叉积 + 点法式），约值 4–6 分；第 12 届题一 (1) 的连线方程（3 分）是同款流水线的直线版。</p>
+</div>
+
+<div class="trans box" data-tag="动作三：相切 / 等距 / 轨迹 → 距离等式">
+  <p><strong>题面</strong>（第 15 届题一原句）："$M$ 是过 $P$ 点且与直线 $L$ 相切的球面的球心。问：所有可能的球心 $M$ 构成何种曲面？"</p>
+  <p><strong>翻译</strong>："过 $P$" ⟹ $r=|MP|$；"与 $L$ 相切" ⟹ $r=d(M,L)$；消去 $r$：$|MP|=d(M,L)$。然后走轨迹题全流程：<strong>建系</strong>（取 $L$ 为 $x$ 轴）→ 设 $M=(x,y,z)$ → 两个距离各写成坐标式 → 令等 → 化简 → <strong>认曲面</strong>（缺 $y$ ⟹ 柱面；截面是抛物线 ⟹ 抛物柱面）。</p>
+  <p><strong>用在哪、值多少</strong>：整题 15 分——结论（抛物柱面）5 分，建系 + 距离等式 + 化简 10 分。"球与直线相切 ⟺ 球心到直线距离 = 半径"这一句翻译，就是全题的题眼。同类：第 11 届题一"动球与两定球均相切" ⟹ 球心到两球心距离之和为常数 ⟹ 椭球面——同一个动作。</p>
+</div>
+
+<h3>4.4 翻译练功房：像学语言一样，大量互译</h3>
+
+<p>下面 8 句，先全部写在纸上（自然语言→符号，或符号→自然语言），再逐条展开对照。每条不超过 1 分钟。</p>
+
+<div class="trans box" data-tag="互译 8 句">
+  <p><strong>T1</strong>　自然→符号："直线 $L_1$ 与 $L_2$ 垂直。"（小心：它们不相交）</p>
+  <details class="answer"><summary>对照</summary><p>$\vec v_1\cdot\vec v_2=0$（方向向量内积为零）。<strong>关键</strong>：空间中"垂直"只看方向，<strong>不要求相交</strong>——异面直线照样可以垂直。高数里"垂直 ⟹ 相交"的平面直觉要在这里卸载。</p></details>
+  <p><strong>T2</strong>　自然→符号："直线 $L$ 平行于平面 $\Pi$。"（有坑：少写一个条件就变成另一句话）</p>
+  <details class="answer"><summary>对照</summary><p>$\vec v\cdot\vec n=0$ <strong>且</strong> $L$ 上（任）一点不满足 $\Pi$ 的方程。只写 $\vec v\cdot\vec n=0$ 说的是"$L$ 平行于 $\Pi$ <strong>或躺在 $\Pi$ 内</strong>"——两件事。竞赛卷面漏掉后半句，判错。</p></details>
+  <p><strong>T3</strong>　符号→自然："$(\vec a\times\vec b)\cdot\vec c=0$。"并说出它在体积语言里的样子。</p>
+  <details class="answer"><summary>对照</summary><p>"$\vec a,\vec b,\vec c$ 共面"。体积语言：以三者为棱的平行六面体体积为零——被压扁了，$\vec c$ 没有"高出" $\vec a,\vec b$ 所在平面的分量。若 $\vec a\times\vec b\ne\vec0$，还可改写为"$\vec c$ 落在 $\vec a,\vec b$ 张成的平面内"。</p></details>
+  <p><strong>T4</strong>　自然→符号："求过 $A,B,C$ 三点的平面方程。"（写出完整流水线）</p>
+  <details class="answer"><summary>对照</summary><p>$\vec n=\overrightarrow{AB}\times\overrightarrow{AC}=(A_0,B_0,C_0)$，点法式 $A_0(x-x_A)+B_0(y-y_A)+C_0(z-z_A)=0$，展开成一般式。三步：造方向 → 叉积 → 点法式。<strong>易错</strong>：叉积算错一个分量而不回代验证——算完把 $A,B,C$ 逐一代入，零成本排雷。</p></details>
+  <p><strong>T5</strong>　判断（说理由）："若 $\vec a\times\vec b=\vec0$，则 $\vec a=\vec0$ 或 $\vec b=\vec0$。"对吗？</p>
+  <details class="answer"><summary>对照</summary><p>不对。$\vec a\times\vec b=\vec0\iff|\vec a||\vec b|\sin\theta=0\iff$ 共线（或其一为零向量）——$(1,0,0)\times(2,0,0)=\vec0$，两个都非零。<strong>叉积没有消去律</strong>，它判的是"共线"不是"零"。</p></details>
+  <p><strong>T6</strong>　符号→自然："$d=\dfrac{\bigl|\overrightarrow{P_1P_2}\cdot(\vec v_1\times\vec v_2)\bigr|}{|\vec v_1\times\vec v_2|}$。"</p>
+  <details class="answer"><summary>对照</summary><p>"异面直线 $L_1,L_2$ 的距离"：任取跨线连线 $\overrightarrow{P_1P_2}$，投影到公垂线方向 $\vec v_1\times\vec v_2$ 上。分子混合积是"六面体体积"，分母叉积模是"底面积"，体积 ÷ 底面积 = 高——三个公式其实是同一个"体积 = 底 × 高"。</p></details>
+  <p><strong>T7</strong>　自然→符号（第 15 届题一题眼）："球面过 $P$ 且与直线 $L$ 相切，$M$ 为球心。"</p>
+  <details class="answer"><summary>对照</summary><p>$|MP|=d(M,L)$，即 $|MP|=\dfrac{|\overrightarrow{OM}\times\vec v|}{|\vec v|}$（$O$ 为 $L$ 上任取点）。<strong>易错</strong>：把球半径 $r$ 一直背着走——两句话各自都是 $r$，一碰面就该消掉，$r$ 在最终方程里不出现。</p></details>
+  <p><strong>T8</strong>　判断（说理由）：直线 $\dfrac{x-1}{0}=\dfrac{y-2}{-1}=\dfrac{z+1}{2}$ 的写法合法吗？方向向量是谁？</p>
+  <details class="answer"><summary>对照</summary><p>合法。分母为 $0$ 是约定写法：$x\equiv1$，方向向量 $\vec v=(0,-1,2)$。对称式只是参数式的"连等号缩写"，分母即方向向量的分量，允许为零；真正非法的是把它当成普通分数去通分。</p></details>
+</div>
+
+<h2>§5 类型识别：什么信号在召唤哪件工具</h2>
+
+<div class="recog box" data-tag="识别反射表">
+  <table>
+    <tr><th>题面信号</th><th>反射</th></tr>
+    <tr><td>"构成何种曲面 / 轨迹 / 所有可能的……"</td><td>轨迹题流程：建系 → 设 $M=(x,y,z)$ → 几何条件译成距离等式 → 化简 → 认曲面</td></tr>
+    <tr><td>"法向量 / 求平面方程"</td><td>凑两个面内方向，叉积 $\vec n=\vec u\times\vec w$，点法式收尾，回代验证</td></tr>
+    <tr><td>"垂直（线线 / 面面）"</td><td>内积 $=0$；线面垂直例外：$\vec v\parallel\vec n$（成比例）</td></tr>
+    <tr><td>"平行 / 共线 / 成比例"</td><td>叉积 $=\vec0$ 或坐标成比例；线面平行例外：$\vec v\cdot\vec n=0$ + 点不在面内</td></tr>
+    <tr><td>"共面 / 四点共面 / 三线共面"</td><td>混合积 $=0$（体积被压扁）</td></tr>
+    <tr><td>"点到直线距离 / 球与直线相切"</td><td>$d=\dfrac{|\overrightarrow{P_0M}\times\vec v|}{|\vec v|}$——面积 ÷ 底（叉积）</td></tr>
+    <tr><td>"点到平面距离 / 球与平面相切"</td><td>$d=\dfrac{|Ax_0+By_0+Cz_0+D|}{\sqrt{A^2+B^2+C^2}}$——投影到法向（内积）</td></tr>
+    <tr><td>"异面直线 / 公垂线"</td><td>$d=\dfrac{|\text{混合积}|}{|\vec v_1\times\vec v_2|}$；混合积 $\ne0$ 顺带证明"异面"</td></tr>
+  </table>
+</div>
+
+<h2>§6 考法定位：题一的 15 分长什么样</h2>
+
+<div class="exam box" data-tag="考法定位">
+  <table>
+    <tr><th>出处</th><th>题号</th><th>本章工具扮演什么角色</th><th>分值权重</th></tr>
+    <tr><td>第 11 届（2019）</td><td>题一</td><td>动球与两定球相切 ⟹ 距离等式（距离和 = 常数）⟹ 椭球面——动作三同款</td><td>15 分（直接）</td></tr>
+    <tr><td>第 12 届（2020）</td><td>题一</td><td>(1) 两点式直线方程（3 分）；(3) 四面体体积 $=\frac16|$混合积$|$</td><td>15 分（直接）</td></tr>
+    <tr><td>第 13 届（2021）</td><td>题一</td><td>旋转曲面分类：先用混合积判两线共面 / 异面，再分平行、相交讨论</td><td>15 分（直接）</td></tr>
+    <tr><td>第 14 届（2022）</td><td>题一</td><td>两直母线夹角：方向向量内积 $\cos\theta=\frac{|\vec v_1\cdot\vec v_2|}{|\vec v_1||\vec v_2|}$</td><td>15 分（直接）</td></tr>
+    <tr><td>第 15 届（2023）</td><td>题一</td><td>点线距叉积公式 + 轨迹方程 ⟹ 抛物柱面（本章真题节选）</td><td>15 分（直接）</td></tr>
+    <tr><td>第 16 届（2024）</td><td>题一</td><td>切锥面：直线参数式代入曲面、相切判别式——直线工具打底（主场在第 2–3 章）</td><td>15 分（部分）</td></tr>
+    <tr><td>第 17 届（2025）</td><td>题一</td><td>混合积的符号（定向）与 $\frac16$ 体积；与叉积作内积消元</td><td>15 分（直接）</td></tr>
+  </table>
+  <p><strong>规律</strong>：七届连看，解几<strong>永远坐在题一，永远 15 分</strong>；其中六届的开门工具就是本章的三种积与三个距离公式。它不考偏难怪，考的是"翻译 + 坐标计算"的熟练度——是全卷<strong>投入产出比最高</strong>的 15 分。复习目标不该是"会做"，而是"<strong>稳拿</strong>"：考场上 20 分钟内写完、写完即对。本章所有训练（翻卡、默写、计时）都按这个标准设计。</p>
+</div>
+
+<h2>§7 关系网：一个谜题，三件套，一整族距离公式</h2>
+
+<p>本章全部角色的来龙去脉：<span style="color:#b45309">三角形</span>是来源与动机，<span style="color:#1d4ed8">圆角矩形</span>是定义，<span style="color:#15803d">矩形</span>是公式定理，<span style="color:#7c3aed">六边形</span>是方法动作，<span style="color:#0f766e">椭圆</span>是应用出口。顺着箭头走一遍：谜题逼出三件套，三件套长出距离公式族，公式族沉淀成三个动作，动作通向出口。</p>
+
+<figure>
+<svg viewBox="0 0 720 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="向量法关系网地图">
+  <defs>
+    <marker id="arr22" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+
+  <!-- 图例 -->
+  <polygon points="30,16 22,30 38,30" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5"/>
+  <text x="44" y="28" font-size="11.5" fill="#5c554b">来源·动机</text>
+  <rect x="116" y="17" width="22" height="13" rx="6.5" fill="#eef3fe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="144" y="28" font-size="11.5" fill="#5c554b">定义</text>
+  <rect x="196" y="17" width="22" height="13" fill="#ecf8f0" stroke="#15803d" stroke-width="1.5"/>
+  <text x="224" y="28" font-size="11.5" fill="#5c554b">公式·定理</text>
+  <polygon points="296,23.5 302,16 316,16 322,23.5 316,31 302,31" fill="#f4effd" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="328" y="28" font-size="11.5" fill="#5c554b">方法·动作</text>
+  <ellipse cx="416" cy="23.5" rx="12" ry="7" fill="#ecf8f5" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="434" y="28" font-size="11.5" fill="#5c554b">应用·出口</text>
+
+  <!-- 来源三角：轨迹谜题 -->
+  <polygon points="120,52 56,140 184,140" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="120" y="98" font-size="12.5" fill="#7a4a12" text-anchor="middle" font-weight="bold">轨迹谜题</text>
+  <text x="120" y="114" font-size="10.5" fill="#7a4a12" text-anchor="middle">过 P 切 L 的球心</text>
+  <text x="120" y="128" font-size="10.5" fill="#7a4a12" text-anchor="middle">（15 届题一）</text>
+
+  <!-- 来源 → 三件套 -->
+  <line x1="190" y1="96" x2="258" y2="96" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr22)"/>
+  <text x="224" y="86" font-size="11" fill="#5c554b" text-anchor="middle">逼出工具</text>
+
+  <!-- 三件套（圆角矩形） -->
+  <rect x="266" y="52" width="230" height="88" rx="20" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="381" y="76" font-size="14.5" fill="#1d4ed8" text-anchor="middle" font-weight="bold">三种积（定义）</text>
+  <text x="381" y="95" font-size="11.5" fill="#1d4ed8" text-anchor="middle">内积：角度·投影</text>
+  <text x="381" y="111" font-size="11.5" fill="#1d4ed8" text-anchor="middle">叉积：面积·法向</text>
+  <text x="381" y="127" font-size="11.5" fill="#1d4ed8" text-anchor="middle">混合积：体积·共面</text>
+
+  <!-- 三件套 → 距离公式族 -->
+  <polyline points="330,140 330,176 150,176 150,196" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr22)"/>
+  <polyline points="381,140 381,196" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr22)"/>
+  <polyline points="430,140 430,176 600,176 600,196" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr22)"/>
+  <text x="446" y="168" font-size="11" fill="#5c554b">面积·投影·体积各出一个</text>
+
+  <!-- 距离公式族（矩形 ×3） -->
+  <rect x="52" y="202" width="196" height="58" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="150" y="225" font-size="12.5" fill="#15803d" text-anchor="middle" font-weight="bold">点线距（叉积）</text>
+  <text x="150" y="243" font-size="10.5" fill="#4a7c59" text-anchor="middle">d = |P₀M×v| / |v|</text>
+  <rect x="284" y="202" width="196" height="58" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="382" y="225" font-size="12.5" fill="#15803d" text-anchor="middle" font-weight="bold">点面距（内积投影）</text>
+  <text x="382" y="243" font-size="10.5" fill="#4a7c59" text-anchor="middle">d = |Ax₀+By₀+Cz₀+D| / √Σ</text>
+  <rect x="502" y="202" width="196" height="58" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="600" y="225" font-size="12.5" fill="#15803d" text-anchor="middle" font-weight="bold">异面距（混合积 ÷ 底）</text>
+  <text x="600" y="243" font-size="10.5" fill="#4a7c59" text-anchor="middle">d = |P₁P₂·(v₁×v₂)| / |v₁×v₂|</text>
+
+  <!-- 公式族 → 方法动作 -->
+  <line x1="150" y1="260" x2="150" y2="312" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr22)"/>
+  <line x1="382" y1="260" x2="382" y2="312" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr22)"/>
+  <line x1="600" y1="260" x2="600" y2="312" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr22)"/>
+  <text x="392" y="292" font-size="11" fill="#5c554b">沉淀成反射动作</text>
+
+  <!-- 方法（六边形 ×3） -->
+  <polygon points="62,344 86,316 214,316 238,344 214,372 86,372" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="150" y="340" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">建系翻译</text>
+  <text x="150" y="357" font-size="10.5" fill="#6a55a3" text-anchor="middle">取 L 为坐标轴</text>
+  <polygon points="294,344 318,316 446,316 470,344 446,372 318,372" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="382" y="340" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">叉积求法向量</text>
+  <text x="382" y="357" font-size="10.5" fill="#6a55a3" text-anchor="middle">三点定平面 · 交线方向</text>
+  <polygon points="512,344 536,316 664,316 688,344 664,372 536,372" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="600" y="340" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">混合积判共面</text>
+  <text x="600" y="357" font-size="10.5" fill="#6a55a3" text-anchor="middle">异面验证 · 体积</text>
+
+  <!-- 动作 → 出口 -->
+  <line x1="150" y1="372" x2="150" y2="412" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr22)"/>
+  <line x1="382" y1="372" x2="382" y2="412" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr22)"/>
+  <line x1="600" y1="372" x2="600" y2="412" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr22)"/>
+
+  <!-- 出口（椭圆 ×3） -->
+  <ellipse cx="150" cy="436" rx="120" ry="26" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="150" y="432" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">轨迹题（题一 15 分）</text>
+  <text x="150" y="448" font-size="10.5" fill="#3d7a70" text-anchor="middle">11 届 · 15 届同款动作</text>
+  <ellipse cx="382" cy="436" rx="120" ry="26" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="382" y="432" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">第 2 章 · 二次曲面</text>
+  <text x="382" y="448" font-size="10.5" fill="#3d7a70" text-anchor="middle">认出抛物柱面只是入场</text>
+  <ellipse cx="600" cy="436" rx="112" ry="26" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="600" y="432" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">第 3 章 · 切平面</text>
+  <text x="600" y="448" font-size="10.5" fill="#3d7a70" text-anchor="middle">法向量 = 梯度的几何化</text>
+</svg>
+<figcaption>本章地图：谜题逼出三种积，三种积长出距离公式族，公式沉淀成三个反射动作，动作通向轨迹题与后面两章。</figcaption>
+</figure>
+
+<div class="net box" data-tag="画面感锚点（记这些，不记条文）">
+  <table>
+    <tr><th>节点</th><th>一句话画面</th><th>擅长场景</th></tr>
+    <tr><td>内积</td><td>投影测量仪：报出"在对方方向上的分量"</td><td>夹角、垂直、点面距</td></tr>
+    <tr><td>叉积</td><td>右手一拧：模长是面积，方向是法向</td><td>求法向量、点线距、判平行</td></tr>
+    <tr><td>混合积</td><td>六面体的有向体积：零 = 被压扁</td><td>判共面 / 异面、异面距、四面体体积</td></tr>
+    <tr><td>点线距</td><td>平行四边形面积 ÷ 底 = 高</td><td>与直线相切、15 届题一</td></tr>
+    <tr><td>异面距</td><td>跨线连线在公垂线方向上的投影</td><td>异面直线、公垂线</td></tr>
+    <tr><td>建系</td><td>坐标系是选出来的：让 $L$ 当 $x$ 轴，让 $P$ 只带一个参数</td><td>一切轨迹题的第一道工序</td></tr>
+  </table>
+  <p><strong>和你已学知识的焊接点</strong>：叉积坐标算法就是三阶行列式按第一行展开——卷二高代的行列式在这里直接上岗；混合积的"轮换不变、对换变号"是行列式换行变号的几何版；"到定点 = 到定直线"是初中抛物线定义的空间推广。没有新大陆，全是旧工具的重新编组。</p>
+</div>
+
+<h2>§8 计算示范：先看真人怎么想，再看卷面怎么写</h2>
+
+<p>解几例题的两层同样是<strong>思路揭秘</strong>（按总纲拆解）+ <strong>卷面书写</strong>（分步给分格式）。注意：解几的"证明"大多是"算给他看"——但每一步计算背后都要有一句几何理由，那句理由才是分点。</p>
+
+<h3>例 1 · 求平面方程 + 点面距离（约 10 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>"求平面方程"=<strong>存在且唯一</strong>型：交出一个点 + 一个法向量就算完工。目标形态决定骨架：$\vec n$ 用构造（叉积），方程用点法式，最后<strong>回代验证</strong>。"再求距离"是第二问，划归公式。</p>
+  <p><span class="stage">【盘点】</span>库存三条，逐条展开产出：<br>
+  ① 过 $A,B$ 两点 ⟹ $\overrightarrow{AB}$ 是所求平面 $\Pi'$ 的<strong>面内方向</strong>（白送）；<br>
+  ② 与 $\Pi:x-y+2z-1=0$ 垂直 ⟹ $\Pi$ 的法向量 $\vec n=(1,-1,2)$ 与 $\Pi'$ 的法向量垂直 ⟹ $\vec n$ <strong>躺在 $\Pi'$ 内</strong>——"面面垂直"的正确产出方式：又白送一个面内方向；<br>
+  ③ $Q=(0,2,0)$：第二问才用的存货。</p>
+  <p><span class="stage">【会师】</span>倒推链：要平面方程 ⟸ 只需一点 + 法向量 ⟸ 点取 $A$，法向量要同时垂直 $\overrightarrow{AB}$ 与 $\vec n$ ⟸ <strong>垂直于两个已知方向的向量 = 叉积</strong>（§3.2 ③），取 $\vec n'=\overrightarrow{AB}\times\vec n$。链条闭合，两环库存一碰就成——这是<strong>工具六 · 划归</strong>：把"面面垂直"划归为"法向量互相垂直"，再把"求法向量"划归为"叉积"。</p>
+  <p><span class="stage">【定型前 · 特殊化侦察】</span><strong>工具三</strong>：算完 $\vec n'$ 立刻回代——$A,B$ 都该满足方程，$\vec n'\cdot\vec n$ 该为 $0$。三个检查十秒钟，叉积算错当场现形。这个习惯在考场上值整题的分。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 平面 = 一点 + 法向量，法向量 = 面内两方向的叉积</strong>：一切"求平面"题都沿这条流水线走；题面条件的翻译目标只有一个——<strong>凑齐两个面内方向</strong>。"过两点"给一个，"与已知平面垂直"给一个，"包含已知直线"给一个……凑齐就叉。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 1</strong>　求过点 $A=(1,0,1)$、$B=(2,1,3)$ 且与平面 $\Pi:x-y+2z-1=0$ 垂直的平面 $\Pi'$ 的方程；并求点 $Q=(0,2,0)$ 到 $\Pi'$ 的距离。</p>
+  <hr>
+  <p class="proof-line"><strong>解　第一步（凑方向）</strong>：$\overrightarrow{AB}=(1,1,2)$ 在 $\Pi'$ 内。设 $\vec n=(1,-1,2)$ 为 $\Pi$ 的法向量；$\Pi'\perp\Pi$ ⟹ $\vec n\perp\Pi'$ 的法向量 ⟹ $\vec n$ 也是 $\Pi'$ 内的方向向量。<span class="step-score">（3 分）</span></p>
+  <p class="proof-line"><strong>第二步（叉积造法向量）</strong>：
+  $$\vec n'=\overrightarrow{AB}\times\vec n=\begin{vmatrix}\vec i&\vec j&\vec k\\ 1&1&2\\ 1&-1&2\end{vmatrix}=\bigl(1\cdot2-2\cdot(-1),\ 2\cdot1-1\cdot2,\ 1\cdot(-1)-1\cdot1\bigr)=(4,0,-2),$$
+  取 $\vec n'=(2,0,-1)$。<span class="step-score">（5 分）</span></p>
+  <p class="proof-line"><strong>第三步（点法式 + 验证）</strong>：$\Pi':2(x-1)-(z-1)=0$，即
+  $$2x-z-1=0.$$
+  验证：$A$：$2-1-1=0$ ✓；$B$：$4-3-1=0$ ✓；$\vec n'\cdot\vec n=2-2=0$ ✓（确与 $\Pi$ 垂直）。<span class="step-score">（8 分）</span></p>
+  <p class="proof-line"><strong>第四步（点面距）</strong>：
+  $$d=\frac{|2\cdot0-0-1|}{\sqrt{2^2+(-1)^2}}=\frac{1}{\sqrt5}=\frac{\sqrt5}{5}.\ \square$$<span class="step-score">（10 分）</span></p>
+  <p class="aside">书写点评：第一步的"$\vec n$ 是 $\Pi'$ 内方向"是全题唯一的<strong>翻译分</strong>——只写"两平面垂直所以法向量垂直"不给全分，必须落到"$\vec n$ 在 $\Pi'$ 内（所以可以作为叉积原料）"。第三步的回代验证写在卷面上不扣分、还能救分：叉积错一个符号，验证立刻报警。</p>
+</div>
+
+<h3>例 2 · 异面直线距离与公垂线（约 10 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>"求异面直线距离"= 数值型计算，但<strong>题面只说两条直线，"异面"本身要我们先判</strong>——判断 + 计算两小段，骨架由 §3.8 直接给出：混合积 $\ne0$（判异面）⟹ 同一份混合积顺手就是距离公式的分子（算距离）。<strong>判据与公式共用一份货</strong>，这是本题最省力的结构。</p>
+  <p><span class="stage">【盘点】</span>$P_1=(1,0,0)$，$\vec v_1=(1,1,0)$；$P_2=(0,1,1)$，$\vec v_2=(0,1,1)$。产出：$\vec v_1\times\vec v_2$（公垂线方向 + 分母）、$\overrightarrow{P_1P_2}$（跨线连线）、二者内积（分子）。<br>
+  <span class="stage">【会师】</span>倒推：要 $d$ ⟸ 公式 $\frac{|\overrightarrow{P_1P_2}\cdot(\vec v_1\times\vec v_2)|}{|\vec v_1\times\vec v_2|}$ ⟸ 三份原料全在库存。工具六 · 划归——整个异面距问题划归为"一次叉积 + 一次混合积"。公垂线垂足（若题目追问）另起炉灶：设 $M_1=P_1+t\vec v_1$、$M_2=P_2+s\vec v_2$，令 $\overrightarrow{M_1M_2}$ 与 $\vec v_1,\vec v_2$ 同时垂直（两个内积 $=0$），解二元方程组。</p>
+  <p><span class="stage">【定型】</span>卷面顺序：先判异面（混合积 $\ne0$），再套公式，最后（可选）用垂足坐标验证距离——验证步既加分又排雷。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 一份混合积，两处用</strong>：混合积 $\ne0$ 是"异面"的判据，它的绝对值同时又是距离公式的分子。判位置关系和算距离不要分两次算——先算 $\vec v_1\times\vec v_2$，再算一次内积，判据与答案同时到手。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 2</strong>　设 $L_1:(x,y,z)=(1,0,0)+t(1,1,0)$，$L_2:(x,y,z)=(0,1,1)+s(0,1,1)$。判断 $L_1$ 与 $L_2$ 的位置关系；若异面，求其距离与公垂线垂足。</p>
+  <hr>
+  <p class="proof-line"><strong>解　第一步（判异面）</strong>：$\vec v_1\times\vec v_2=\begin{vmatrix}\vec i&\vec j&\vec k\\ 1&1&0\\ 0&1&1\end{vmatrix}=(1,-1,1)\ne\vec0$，故两线不平行。又 $\overrightarrow{P_1P_2}=(-1,1,1)$，
+  $$\overrightarrow{P_1P_2}\cdot(\vec v_1\times\vec v_2)=-1-1+1=-1\ne0,$$
+  三向量不共面，故 $L_1,L_2$ <strong>异面</strong>。<span class="step-score">（3 分）</span></p>
+  <p class="proof-line"><strong>第二步（距离）</strong>：由异面直线距离公式，
+  $$d=\frac{\bigl|\overrightarrow{P_1P_2}\cdot(\vec v_1\times\vec v_2)\bigr|}{|\vec v_1\times\vec v_2|}=\frac{|-1|}{\sqrt{1+1+1}}=\frac{1}{\sqrt3}=\frac{\sqrt3}{3}.$$<span class="step-score">（6 分）</span></p>
+  <p class="proof-line"><strong>第三步（公垂线垂足，兼作验证）</strong>：设 $M_1=(1+t,t,0)\in L_1$，$M_2=(0,1+s,1+s)\in L_2$。令 $\overrightarrow{M_1M_2}=(-1-t,\ 1+s-t,\ 1+s)$ 与两线同时垂直：
+  $$\overrightarrow{M_1M_2}\cdot\vec v_1=s-2t=0,\qquad \overrightarrow{M_1M_2}\cdot\vec v_2=2+2s-t=0,$$
+  解得 $t=-\dfrac23$，$s=-\dfrac43$，即 $M_1=\left(\dfrac13,-\dfrac23,0\right)$，$M_2=\left(0,-\dfrac13,-\dfrac13\right)$。
+  验证：$\bigl|\overrightarrow{M_1M_2}\bigr|=\sqrt{\dfrac19+\dfrac19+\dfrac19}=\dfrac{\sqrt3}{3}=d$ ✓。$\square$<span class="step-score">（10 分）</span></p>
+  <p class="aside">书写点评：第一步"<strong>不平行 + 混合积非零</strong>"两句缺一不可——只说混合积非零，逻辑上已经够了（它蕴含不平行），但把 $\vec v_1\times\vec v_2\ne\vec0$ 明写出来是分点语言。第三步若题目没问垂足可以不写；写了就是双重保险。注意第三步的两个方程就是"内积 $=0$"动作一连用两次——垂直条件永远翻译成内积。</p>
+</div>
+
+<h2>§9 配套题目</h2>
+
+<p>铁律：<strong>先写在纸上，写到写不动再展开答案</strong>。模仿题照例 1、例 2 的卷面格式写；变式题没有现成模板，先问自己"条件能翻译成什么向量黑话"。</p>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 1</span>求过三点 $A=(1,1,0)$、$B=(0,1,1)$、$C=(1,0,1)$ 的平面方程，并求原点 $O$ 到该平面的距离。</p>
+  <details class="answer">
+    <summary>参考答案（约 8 分书写量）</summary>
+    <p>$\overrightarrow{AB}=(-1,0,1)$，$\overrightarrow{AC}=(0,-1,1)$（2 分）。</p>
+    <p>$\vec n=\overrightarrow{AB}\times\overrightarrow{AC}=\begin{vmatrix}\vec i&\vec j&\vec k\\ -1&0&1\\ 0&-1&1\end{vmatrix}=\bigl(0\cdot1-1\cdot(-1),\ 1\cdot0-(-1)\cdot1,\ (-1)(-1)-0\bigr)=(1,1,1)$（5 分）。</p>
+    <p>点法式：$(x-1)+(y-1)+z=0$，即 $x+y+z-2=0$。验证 $B$：$0+1+1-2=0$ ✓，$C$：$1+0+1-2=0$ ✓（7 分）。</p>
+    <p>$d=\dfrac{|0+0+0-2|}{\sqrt3}=\dfrac{2\sqrt3}{3}$（8 分）。</p>
+    <p><strong>易错点</strong>：叉积第二分量符号——按第一行展开时 $\vec j$ 项带负号，建议直接用结果公式 $(a_2b_3-a_3b_2,\ a_3b_1-a_1b_3,\ a_1b_2-a_2b_1)$ 并回代验证。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 2</span>求点 $M=(1,0,2)$ 到直线 $L:\dfrac{x}{2}=\dfrac{y}{1}=\dfrac{z}{2}$ 的距离，并求垂足坐标。</p>
+  <details class="answer">
+    <summary>参考答案（约 8 分书写量）</summary>
+    <p>$L$ 过 $O=(0,0,0)$，方向 $\vec v=(2,1,2)$，$\overrightarrow{OM}=(1,0,2)$（1 分）。</p>
+    <p>$\overrightarrow{OM}\times\vec v=\bigl(0\cdot2-2\cdot1,\ 2\cdot2-1\cdot2,\ 1\cdot1-0\cdot2\bigr)=(-2,2,1)$（4 分）。</p>
+    <p>$d=\dfrac{|\overrightarrow{OM}\times\vec v|}{|\vec v|}=\dfrac{\sqrt{4+4+1}}{\sqrt{4+1+4}}=\dfrac{3}{3}=1$（6 分）。</p>
+    <p>垂足：$t=\dfrac{\overrightarrow{OM}\cdot\vec v}{|\vec v|^2}=\dfrac{2+0+4}{9}=\dfrac23$，垂足 $H=\left(\dfrac43,\dfrac23,\dfrac43\right)$。验证 $\bigl|\overrightarrow{HM}\bigr|=\sqrt{\frac19+\frac49+\frac49}=1$ ✓（8 分）。</p>
+    <p><strong>自查</strong>：垂足参数 $t=\dfrac{\overrightarrow{OM}\cdot\vec v}{|\vec v|^2}$ 是"内积投影"的坐标版——分母是 $|\vec v|^2$ 不是 $|\vec v|$，别丢平方。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 1</span>求空间中到 $A=(1,0,0)$ 与 $B=(0,1,2)$ 等距的点 $M$ 的轨迹，并说明它是什么曲面。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：轨迹题流程第一遍独立运行——"等距"就是距离等式 $|MA|=|MB|$；设 $M=(x,y,z)$，两边平方消根号。</p>
+    <p><strong>解</strong>：$(x-1)^2+y^2+z^2=x^2+(y-1)^2+(z-2)^2$，展开消去平方项：
+    $$-2x+1=-2y-4z+5\ \Longrightarrow\ x-y-2z+2=0.$$
+    这是平面——$AB$ 的<strong>垂直平分面</strong>（法向量 $(1,-1,-2)\parallel\overrightarrow{AB}=(-1,1,2)$，且过 $AB$ 中点 $\left(\frac12,\frac12,1\right)$：$\frac12-\frac12-2+2=0$ ✓）。$\square$</p>
+    <p><strong>点评</strong>：到两点等距 ⟹ 垂直平分面；到定点定直线等距 ⟹ 抛物柱面（15 届题一）。"等距"类轨迹全部一个打法：距离等式 + 平方消根号。本题也是下一章认曲面的热身：$x,y,z$ 都是一次 ⟹ 平面。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 2</span>证明直线 $L:(x,y,z)=(1,0,2)+t(1,1,0)$ 与平面 $\Pi:x-y+z=5$ 平行，并求 $L$ 到 $\Pi$ 的距离。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>："平行"要证两件事（T2 的坑）：$\vec v\cdot\vec n=0$ <strong>且</strong> 线上有点不在面内。平行后，"线面距离"转化为"线上任一点的点面距"——距离转化是平行白送的。</p>
+    <p><strong>证明</strong>：$\vec v=(1,1,0)$，$\vec n=(1,-1,1)$，$\vec v\cdot\vec n=1-1+0=0$。又 $P_0=(1,0,2)\in L$ 代入：$1-0+2=3\ne5$，$P_0\notin\Pi$。故 $L\parallel\Pi$。$\square$</p>
+    <p><strong>距离</strong>：$d=\dfrac{|1-0+2-5|}{\sqrt{1+1+1}}=\dfrac{2}{\sqrt3}=\dfrac{2\sqrt3}{3}$。</p>
+    <p><strong>点评</strong>：漏掉"$P_0\notin\Pi$"这句，证的是"$L$ 平行于 $\Pi$ 或含于 $\Pi$"——方向垂直法向的直线也可能躺在面内。位置关系题里，<strong>向量条件管方向，点的代入管位置</strong>，两层都要。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv3">真题节选</span><strong>（第 15 届题一，15 分）</strong>在空间中给定直线 $L$ 及直线外定点 $P$。设 $M$ 是过 $P$ 点且与直线 $L$ 相切的球面的球心。问：所有可能的球心 $M$ 构成何种曲面？证明你的结论。</p>
+  <p>先回答三个梯子问题（写在纸上）：</p>
+  <p>（i）"球面过 $P$ 且与 $L$ 相切"翻译成关于球心 $M$ 的什么距离等式？半径 $r$ 去哪了？<br>
+  （ii）坐标系怎么选最省事？（官方怎么取 $L$ 和 $P$ 的？这样取让 $\vec v$ 和 $P$ 的坐标变成什么样？）<br>
+  （iii）化出的方程里 $y$ 为什么不出现？这解释了轨迹为什么是"抛物<strong>柱</strong>面"而不是"抛物面"？</p>
+  <details class="answer">
+    <summary>梯子参考答案</summary>
+    <p>（i）$|MP|=d(M,L)$（过 $P$ ⟹ $r=|MP|$；与 $L$ 相切 ⟹ $r=d(M,L)$）。$r$ 被两句各表一次后消去——最终方程里没有 $r$，球的大小本就任意。</p>
+    <p>（ii）取 $L$ 为 $x$ 轴，$P$ 到 $L$ 的垂线为 $z$ 轴，垂足为原点。于是 $\vec v=(1,0,0)$，$P=(0,0,a)$——叉积只剩两个分量，$P$ 只带一个参数。建系原则：<strong>让题面的几何对象躺在坐标轴上</strong>。</p>
+    <p>（iii）两个距离 $|MP|$、$d(M,L)$ 都与 $y$ 无关（$|MP|^2=x^2+y^2+(z-a)^2$ 里 $y^2$ 与 $d^2=y^2+z^2$ 里的 $y^2$ 恰好对消）。方程不含 $y$ ⟺ 曲面上的点沿 $y$ 方向平移仍在曲面上 ⟺ 柱面；截面 $y=c$ 上都是同一条抛物线 $z=\frac{x^2+a^2}{2a}$ ⟹ 抛物柱面。"抛物面"要求两个方向都弯曲，这里有一个方向是平的。</p>
+  </details>
+  <details class="answer">
+    <summary>官方解答全文（转录自官方参考答案）</summary>
+    <p>结论：是一个<strong>抛物柱面</strong>。<span class="step-score">（5 分）</span></p>
+    <p>建立直角坐标系：取 $L$ 为 $x$ 轴，$P$ 到 $L$ 的垂线为 $z$ 轴，垂足 $O=(0,0,0)$ 为原点，则 $P=(0,0,a)$（$a>0$），$L$ 的方向向量 $\vec v=(1,0,0)$。</p>
+    <p>设 $M=(x,y,z)$。球半径 $PM$ 等于 $M$ 到 $L$ 的距离：
+    $$PM=\frac{|\overrightarrow{OM}\times\vec v|}{|\vec v|}.$$</p>
+    <p>计算 $PM^2=x^2+y^2+(z-a)^2$，$\overrightarrow{OM}\times\vec v=(0,z,-y)$，故有
+    $$x^2+y^2+(z-a)^2=z^2+y^2\ \Longrightarrow\ z=\frac{1}{2a}\left(x^2+a^2\right),$$
+    为抛物柱面。$\square$<span class="step-score">（15 分）</span></p>
+    <p><strong>复盘</strong>：全题 = 本章动作三（相切 ⟹ 距离等式）+ 当家公式（点线距叉积）+ 建系自由。15 分里没有一个动作超出本章 §3–§4。注意官方先写结论"抛物柱面"再推导——结论分 5 分是<strong>独立的</strong>：哪怕后面算错，猜对曲面名字也有 5 分；而猜的底气来自 §2 那个平面版老熟人（抛物线定义）。<em>（题目与解答转录自第 15 届官方 PDF，见 <a href="真题索引/第15届_2023.md">真题索引</a>。）</em></p>
+  </details>
+</div>
+
+<h2>§9.5 熟练度训练场</h2>
+
+<p>解几的 15 分拼的是<strong>手速与零失误</strong>：叉积 30 秒一个、距离公式脱口而出。两种训练，每天 10 分钟：</p>
+
+<h3>训练一 · 翻卡快测（目标：每卡 10 秒内出答案）</h3>
+<div class="quiz" data-quiz="ch22-drill"></div>
+
+<h3>训练二 · 计时默写（写在纸上，掐表）</h3>
+<div class="calc box" data-tag="默写清单">
+  <p>① <strong>90 秒</strong>：默写三个距离公式——点线距 $d=\dfrac{|\overrightarrow{P_0M}\times\vec v|}{|\vec v|}$、点面距 $d=\dfrac{|Ax_0+By_0+Cz_0+D|}{\sqrt{A^2+B^2+C^2}}$、异面距 $d=\dfrac{\bigl|\overrightarrow{P_1P_2}\cdot(\vec v_1\times\vec v_2)\bigr|}{|\vec v_1\times\vec v_2|}$，每个配一句来历（面积÷底 / 投影到法向 / 体积÷底面积）；</p>
+  <p>② <strong>60 秒</strong>：默写叉积的行列式算法与结果公式，并算出 $(2,1,0)\times(1,1,1)$（答案 $(1,-2,1)$）；</p>
+  <p>③ <strong>3 分钟</strong>：默写第 15 届题一全解——结论、建系、$PM=\frac{|\overrightarrow{OM}\times\vec v|}{|\vec v|}$、$\overrightarrow{OM}\times\vec v=(0,z,-y)$、化出 $z=\frac{x^2+a^2}{2a}$、答"抛物柱面"。</p>
+  <p><strong>过关标准</strong>：连续两天全对才算过。做不到就回到 §3 对应小节重读，再默。</p>
+</div>
+
+<h2>§10 六方向自测卡</h2>
+
+<div class="selftest">
+  <h3>合上书，拿张白纸，默写以下六项</h3>
+  <div class="st-item">
+    <p class="st-q"><em>=（它是什么）</em>　写出叉积的定义（模长 + 方向）与三个距离公式。</p>
+    <details><summary>对照</summary><p>模 $|\vec a\times\vec b|=|\vec a||\vec b|\sin\theta$（平行四边形面积），方向：同时垂直 $\vec a,\vec b$ 且成右手系。点线距 $\frac{|\overrightarrow{P_0M}\times\vec v|}{|\vec v|}$；点面距 $\frac{|Ax_0+By_0+Cz_0+D|}{\sqrt{A^2+B^2+C^2}}$；异面距 $\frac{|\overrightarrow{P_1P_2}\cdot(\vec v_1\times\vec v_2)|}{|\vec v_1\times\vec v_2|}$。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>←（什么带来它）</em>　点线距公式是从哪个几何事实长出来的？异面距公式呢？</p>
+    <details><summary>对照</summary><p>点线距：平行四边形面积 = 底 × 高（$|\overrightarrow{P_0M}\times\vec v|$ 既是面积又等于 $|\vec v|\cdot d$）。异面距：公垂线方向 $\vec n=\vec v_1\times\vec v_2$ 上，跨线连线的投影（$\overrightarrow{M_1P_1},\overrightarrow{P_2M_2}$ 与 $\vec n$ 垂直被消去）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>→（它带来什么）</em>　混合积一个式子能换来哪四样东西？</p>
+    <details><summary>对照</summary><p>① 共面判据（$=0$ ⟺ 共面）；② 异面判据（$\ne0$ ⟺ 异面）；③ 异面距的分子；④ 体积（六面体 $=|$混合积$|$，四面体 $=\frac16|$混合积$|$）；外加符号 = 定向（17 届题一）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>∈（实例）</em>　各举一个本章工具的实战例：叉积、内积、混合积。</p>
+    <details><summary>对照</summary><p>叉积：三点定平面求 $\vec n$（模仿 1）/ 点线距（15 届题一）；内积：两直母线夹角（14 届题一）/ 点面距（例 1 第四步）；混合积：异面距（例 2）/ 四面体体积（12 届题一 (3)）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>≠（区分）</em>　两对最易混：① 线面平行 vs 线面垂直的向量条件；② 点线距 vs 点面距各用哪种积？</p>
+    <details><summary>对照</summary><p>① 线面<strong>平行</strong>：$\vec v\cdot\vec n=0$（且点不在面内）；线面<strong>垂直</strong>：$\vec v\parallel\vec n$（成比例）——与直觉对调。② 点线距用<strong>叉积</strong>（面积÷底），点面距用<strong>内积</strong>（投影到法向）——记反的直接后果：15 届题一全盘皆输。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>（为何要有它）</em>　为什么三维题必须翻译成向量方程，而不是靠空间想象力硬想？</p>
+    <details><summary>对照</summary><p>15 届题一的答案（抛物柱面）几乎无人能一眼猜中，但翻译成 $|MP|=d(M,L)$ 后三行化出。向量法把"位置关系"全部变成可计算的代数条件：垂直、平行、共面、相切各有黑话，翻译完只剩坐标算术——算术可以检查，想象力没法检查。</p></details>
+  </div>
+</div>
+
+<div class="net box" data-tag="间隔复习安排">
+  <p><strong>1 天后</strong>：重做六方向自测卡（不翻书）+ 翻卡快测第二轮；<strong>3 天后</strong>：重做模仿 2、变式 2 与真题节选的三个梯子问题 + 计时默写①③；<strong>1 周后</strong>：把 §3.7 位置关系总表默写一遍（线面两行的"对调"是重点），确认翻卡全部"会了"。</p>
+  <p>本章是<strong>解几第 2 章</strong>（二次曲面——15 届题一的抛物柱面在那里认祖归宗）和<strong>解几第 3 章</strong>（切平面与切锥面——法向量从叉积升级为梯度）的直接地基。</p>
+</div>
+
+<div class="chapnav">
+  <span><a href="ch21.html">← 卷二 · 高等代数</a></span>
+  <span><a href="index.html">首页</a></span>
+  <span><a href="ch23.html">第 2 章 · 二次曲面：标准形、分类与主轴化 →</a></span>
+</div>
+
+</div>
+
+<script src="assets/quiz.js"></script>
+<script>
+/* §9.5 翻卡数据 */
+registerQuiz("ch22-drill", [
+  { q: "$\\vec a\\cdot\\vec b=0$ 说明什么？", a: "$\\vec a\\perp\\vec b$（垂直；含零向量的退化情形）。内积是投影测量仪：投影为零 ⟺ 垂直。" },
+  { q: "$\\vec a\\times\\vec b=\\vec 0$ 说明什么？能推出有一个是零向量吗？", a: "$\\vec a,\\vec b$ 共线（平行）——面积塌成零。不能推出零向量：$(1,0,0)\\times(2,0,0)=\\vec0$。叉积判「共线」不判「零」。" },
+  { q: "$|\\vec a\\times\\vec b|$ 的几何意义？方向呢？", a: "模长 = 平行四边形面积；方向 = 同时垂直 $\\vec a,\\vec b$ 的法向，$(\\vec a,\\vec b,\\vec a\\times\\vec b)$ 成右手系。" },
+  { q: "混合积 $(\\vec a\\times\\vec b)\\cdot\\vec c=0$ ⟺ 什么？符号呢？", a: "三向量共面（六面体被压扁）。$>0$ 右手系，$<0$ 左手系——17 届题一 (1) 考的就是异号。" },
+  { q: "点到直线距离公式（默写 + 来历）？", a: "$d=\\dfrac{|\\overrightarrow{P_0M}\\times\\vec v|}{|\\vec v|}$。来历：平行四边形面积 ÷ 底 = 高。" },
+  { q: "点到平面距离公式（默写 + 来历）？", a: "$d=\\dfrac{|Ax_0+By_0+Cz_0+D|}{\\sqrt{A^2+B^2+C^2}}$。来历：$\\overrightarrow{M_1M_0}$ 在法向 $\\vec n$ 上的投影（内积）。" },
+  { q: "异面直线距离公式（默写 + 来历）？", a: "$d=\\dfrac{|\\overrightarrow{P_1P_2}\\cdot(\\vec v_1\\times\\vec v_2)|}{|\\vec v_1\\times\\vec v_2|}$。来历：跨线连线在公垂线方向上的投影 = 六面体体积 ÷ 底面积。" },
+  { q: "算：$(2,1,0)\\times(1,1,1)$ = ？", a: "$(1\\cdot1-0\\cdot1,\\ 0\\cdot1-2\\cdot1,\\ 2\\cdot1-1\\cdot1)=(1,-2,1)$。验：与 $(1,1,1)$ 内积 $=1-2+1=0$ ✓。" },
+  { q: "直线与平面平行的完整判据？", a: "$\\vec v\\cdot\\vec n=0$ 且 $L$ 上有点不在 $\\Pi$ 内。只写前半句 = 「平行或含于面内」，判错。" },
+  { q: "15 届题一：「球面过 $P$ 且与直线 $L$ 相切」翻译成什么？", a: "球心 $M$ 满足 $|MP|=d(M,L)$（两个表达式都等于半径 $r$，$r$ 消去）。再套点线距叉积公式坐标化。" }
+]);
+</script>
+
+<script>
+/* §3.4 叉积几何探索器 */
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  var svg = document.getElementById("cxw-svg");
+  var out = document.getElementById("cxw-out");
+  var czSlider = document.getElementById("cxw-cz");
+  var W = 720, H = 340, OX = 200, OY = 180, SC = 40;
+  function px(x) { return OX + x * SC; }
+  function py(y) { return OY - y * SC; }
+  function mk(tag, attrs, parent) {
+    var el = document.createElementNS(NS, tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    (parent || svg).appendChild(el);
+    return el;
+  }
+  function mkText(x, y, str, attrs, parent) {
+    var t = mk("text", attrs || {}, parent);
+    t.setAttribute("x", x); t.setAttribute("y", y);
+    t.textContent = str;
+    return t;
+  }
+  /* 箭头标记 */
+  var defs = mk("defs", {});
+  [["cx-arrax", "#8a8175"], ["cx-arra", "#1d4ed8"], ["cx-arrb", "#b45309"]].forEach(function (mc) {
+    var m = mk("marker", { id: mc[0], viewBox: "0 0 10 10", refX: 8, refY: 5, markerWidth: 6.5, markerHeight: 6.5, orient: "auto-start-reverse" }, defs);
+    mk("path", { d: "M 0 1 L 9 5 L 0 9 z", fill: mc[1] }, m);
+  });
+  /* 网格与坐标轴 */
+  for (var gx = 40; gx <= 360; gx += 40) mk("line", { x1: gx, y1: 20, x2: gx, y2: 340, stroke: "#ece5d8", "stroke-width": 1 });
+  for (var gy = 20; gy <= 340; gy += 40) mk("line", { x1: 40, y1: gy, x2: 360, y2: gy, stroke: "#ece5d8", "stroke-width": 1 });
+  mk("line", { x1: 36, y1: OY, x2: 378, y2: OY, stroke: "#8a8175", "stroke-width": 1.5, "marker-end": "url(#cx-arrax)" });
+  mk("line", { x1: OX, y1: 344, x2: OX, y2: 14, stroke: "#8a8175", "stroke-width": 1.5, "marker-end": "url(#cx-arrax)" });
+  mkText(372, OY + 18, "x", { "font-size": 13, fill: "#8a8175" });
+  mkText(OX + 8, 26, "y", { "font-size": 13, fill: "#8a8175" });
+  mkText(OX - 16, OY + 18, "O", { "font-size": 12, fill: "#8a8175" });
+  /* 平行四边形与向量 */
+  var para = mk("polygon", { stroke: "none", opacity: 0.16 });
+  var vecs = [
+    { x: 2.2, y: 1.0, color: "#1d4ed8", name: "a", marker: "cx-arra" },
+    { x: 0.8, y: 1.6, color: "#b45309", name: "b", marker: "cx-arrb" }
+  ];
+  var parts = vecs.map(function (v) {
+    var line = mk("line", { x1: OX, y1: OY, stroke: v.color, "stroke-width": 3, "marker-end": "url(#" + v.marker + ")" });
+    var handle = mk("circle", { r: 10, fill: v.color, stroke: "#ffffff", "stroke-width": 2, cursor: "grab" });
+    var label = mkText(0, 0, v.name, { "font-size": 15, "font-weight": "bold", fill: v.color });
+    return { line: line, handle: handle, label: label };
+  });
+  /* 右侧面板：法向指示与数值 */
+  mkText(420, 46, "法向量 a×b（垂直纸面）", { "font-size": 13, fill: "#7c3aed", "font-weight": "bold" });
+  var nCircle = mk("circle", { cx: 492, cy: 104, r: 30, fill: "#f4effd", stroke: "#7c3aed", "stroke-width": 2.5 });
+  var nDot = mk("circle", { cx: 492, cy: 104, r: 6, fill: "#7c3aed" });
+  var nCross1 = mk("line", { x1: 483, y1: 95, x2: 501, y2: 113, stroke: "#7c3aed", "stroke-width": 3 });
+  var nCross2 = mk("line", { x1: 501, y1: 95, x2: 483, y2: 113, stroke: "#7c3aed", "stroke-width": 3 });
+  var dirLabel = mkText(492, 152, "", { "font-size": 12.5, fill: "#7c3aed", "text-anchor": "middle" });
+  var formulaText = mkText(420, 190, "", { "font-size": 13, fill: "#2b2620" });
+  var areaBar = mk("rect", { x: 420, y: 202, height: 14, opacity: 0.55 });
+  var areaLabel = mkText(420, 238, "", { "font-size": 12.5, fill: "#2b2620" });
+  var tripleText = mkText(420, 268, "", { "font-size": 12.5, fill: "#2b2620" });
+  var volText = mkText(420, 294, "", { "font-size": 12.5, fill: "#2b2620" });
+  mkText(420, 324, "c = (1.1, 0.7, c_z)：纸面内分量对体积无贡献", { "font-size": 11, fill: "#8a8175" });
+
+  function update() {
+    var a = vecs[0], b = vecs[1];
+    var cz = a.x * b.y - a.y * b.x;
+    var area = Math.abs(cz);
+    var c_z = parseFloat(czSlider.value);
+    var triple = cz * c_z;
+    var vol = Math.abs(triple);
+    var pos = cz > 0.06, neg = cz < -0.06, zero = !pos && !neg;
+    /* 画向量与平行四边形 */
+    vecs.forEach(function (v, i) {
+      parts[i].line.setAttribute("x2", px(v.x));
+      parts[i].line.setAttribute("y2", py(v.y));
+      parts[i].handle.setAttribute("cx", px(v.x));
+      parts[i].handle.setAttribute("cy", py(v.y));
+      parts[i].label.setAttribute("x", px(v.x) + 12);
+      parts[i].label.setAttribute("y", py(v.y) - 10);
+    });
+    var pStr = OX + "," + OY + " " + px(a.x) + "," + py(a.y) + " " + px(a.x + b.x) + "," + py(a.y + b.y) + " " + px(b.x) + "," + py(b.y);
+    para.setAttribute("points", pStr);
+    var signColor = pos ? "#1d4ed8" : (neg ? "#be123c" : "#8a8175");
+    para.setAttribute("fill", signColor);
+    /* 法向指示 */
+    nDot.style.display = pos ? "" : "none";
+    nCross1.style.display = neg ? "" : "none";
+    nCross2.style.display = neg ? "" : "none";
+    nCircle.setAttribute("stroke", zero ? "#b9b2a5" : "#7c3aed");
+    nCircle.setAttribute("stroke-dasharray", zero ? "5 4" : "");
+    dirLabel.textContent = pos ? "⊙ 出纸面（右手系）" : (neg ? "⊗ 入纸面（左手系）" : "a×b = 0：法向熄火");
+    formulaText.textContent = "a×b = (0, 0, " + cz.toFixed(2) + ")";
+    areaBar.setAttribute("width", Math.min(area * 8, 262));
+    areaBar.setAttribute("fill", signColor);
+    areaLabel.textContent = "平行四边形面积 |a×b| = " + area.toFixed(2);
+    tripleText.textContent = "(a×b)·c = (" + cz.toFixed(2) + ") × (" + c_z.toFixed(1) + ") = " + triple.toFixed(2);
+    volText.textContent = "体积 |(a×b)·c| = " + vol.toFixed(2);
+    /* 反馈文本 */
+    var coords = "a=(" + a.x.toFixed(2) + ", " + a.y.toFixed(2) + ")　b=(" + b.x.toFixed(2) + ", " + b.y.toFixed(2) + ")　c_z=" + c_z.toFixed(1);
+    var msg1;
+    if (zero) msg1 = '<span class="no">a ∥ b：叉积为零</span>——平行四边形塌成线段，这就是平行判据。';
+    else if (pos) msg1 = '<span class="ok">⊙ a×b 指出纸面</span>——(a, b, a×b) 成右手系。';
+    else msg1 = '<span class="no">⊗ a×b 指入纸面</span>——(b, a, a×b) 才是右手系：b×a = −(a×b)。';
+    var msg2;
+    if (Math.abs(c_z) < 0.05) msg2 = '<span class="ok">c_z = 0：c 躺在纸面内，混合积 = 0</span>——三向量共面（共面判据）。';
+    else if (zero) msg2 = '混合积 = 0——但原因是 a ∥ b（底面积为零），不是 c 共面。';
+    else if (triple > 0.05) msg2 = '(a, b, c) 成右手系，有向体积 &gt; 0。';
+    else if (triple < -0.05) msg2 = '(a, b, c) 成左手系，有向体积 &lt; 0——17 届题一考的就是这个符号。';
+    else msg2 = '混合积 ≈ 0：接近共面。';
+    out.innerHTML = coords + "<br>" + msg1 + "<br>" + msg2;
+  }
+  /* 拖动 */
+  var dragIdx = -1;
+  function toMath(e) {
+    var r = svg.getBoundingClientRect();
+    var sx = (e.clientX - r.left) * W / r.width;
+    var sy = (e.clientY - r.top) * H / r.height;
+    return { x: (sx - OX) / SC, y: (OY - sy) / SC };
+  }
+  parts.forEach(function (p, i) {
+    p.handle.addEventListener("pointerdown", function (e) {
+      dragIdx = i;
+      svg.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    });
+  });
+  svg.addEventListener("pointermove", function (e) {
+    if (dragIdx < 0) return;
+    var m = toMath(e);
+    m.x = Math.max(-3.8, Math.min(3.8, m.x));
+    m.y = Math.max(-3.8, Math.min(3.8, m.y));
+    vecs[dragIdx].x = m.x;
+    vecs[dragIdx].y = m.y;
+    update();
+  });
+  svg.addEventListener("pointerup", function () { dragIdx = -1; });
+  svg.addEventListener("pointercancel", function () { dragIdx = -1; });
+  czSlider.addEventListener("input", update);
+  update();
+})();
+</script>
+
+</body>
+</html>

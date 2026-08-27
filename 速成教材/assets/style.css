@@ -1,0 +1,443 @@
+/* ============================================================
+   《从能算到能证——数学A速成讲义》共用样式
+   视觉系统：每种教学成分有固定的颜色语言，全书一致
+   ============================================================ */
+
+:root {
+  --paper: #faf8f4;
+  --ink: #2b2620;
+  --ink-soft: #5c554b;
+  --line: #e3ddd2;
+
+  /* 五轨 + 教学成分配色 */
+  --c-hook: #b45309;      --c-hook-bg: #fdf3e3;      /* 开场谜题 */
+  --c-vision: #0f766e;    --c-vision-bg: #ecf8f5;    /* 直觉与图像 */
+  --c-symbol: #1d4ed8;    --c-symbol-bg: #eef3fe;    /* 符号轨 */
+  --c-trans: #7c3aed;     --c-trans-bg: #f4effd;     /* 翻译轨 */
+  --c-recog: #c2410c;     --c-recog-bg: #fdf1e8;     /* 类型识别轨 */
+  --c-exam: #be123c;      --c-exam-bg: #fdeef2;      /* 考法定位 */
+  --c-calc: #15803d;      --c-calc-bg: #ecf8f0;      /* 计算轨 */
+  --c-net: #475569;       --c-net-bg: #f0f3f7;       /* 关系网 */
+  --c-warn: #a16207;      --c-warn-bg: #fdf6e0;      /* 陷阱/警告 */
+  --c-dark: #1e293b;                                 /* 自测卡 */
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", Georgia, serif;
+  font-size: 17px;
+  line-height: 1.95;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 32px 26px 90px;
+}
+
+/* ---------- 标题 ---------- */
+h1, h2, h3, h4 {
+  line-height: 1.5;
+  font-weight: 700;
+}
+h1 { font-size: 1.85em; margin: 0.4em 0 0.6em; }
+h2 {
+  font-size: 1.42em;
+  margin: 2.2em 0 0.8em;
+  padding-top: 0.55em;
+  border-top: 2px solid var(--line);
+}
+h3 { font-size: 1.14em; margin: 1.8em 0 0.5em; }
+h4 { font-size: 1.02em; margin: 1.4em 0 0.4em; }
+
+p { margin: 0.75em 0; }
+
+a { color: var(--c-symbol); text-decoration: none; border-bottom: 1px dotted var(--c-symbol); }
+a:hover { border-bottom-style: solid; }
+
+/* ---------- 顶部书眉 ---------- */
+.bookbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 0.85em;
+  color: var(--ink-soft);
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 10px;
+  margin-bottom: 8px;
+}
+.bookbar a { color: var(--ink-soft); border: none; }
+.bookbar a:hover { color: var(--c-symbol); }
+
+.chapter-kicker {
+  font-size: 0.88em;
+  letter-spacing: 0.18em;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+}
+
+/* ---------- 成分盒子（五轨） ---------- */
+.box {
+  border-radius: 10px;
+  padding: 14px 20px 12px;
+  margin: 1.3em 0;
+  border: 1px solid;
+  position: relative;
+}
+.box::before {
+  content: attr(data-tag);
+  position: absolute;
+  top: -0.85em;
+  left: 14px;
+  font-size: 0.78em;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.1em 0.65em;
+  border-radius: 999px;
+  color: #fff;
+}
+.box > :first-child { margin-top: 0.3em; }
+
+.hook     { background: var(--c-hook-bg);   border-color: #ecd9b8; }
+.hook::before     { background: var(--c-hook); }
+.vision   { background: var(--c-vision-bg); border-color: #bfe3dc; }
+.vision::before   { background: var(--c-vision); }
+.symbol   { background: var(--c-symbol-bg); border-color: #c6d6f7; }
+.symbol::before   { background: var(--c-symbol); }
+.trans    { background: var(--c-trans-bg);  border-color: #d9cbf6; }
+.trans::before    { background: var(--c-trans); }
+.recog    { background: var(--c-recog-bg);  border-color: #f0d3bd; }
+.recog::before    { background: var(--c-recog); }
+.exam     { background: var(--c-exam-bg);   border-color: #f2c7d2; }
+.exam::before     { background: var(--c-exam); }
+.calc     { background: var(--c-calc-bg);   border-color: #bfe4ca; }
+.calc::before     { background: var(--c-calc); }
+.net      { background: var(--c-net-bg);    border-color: #ccd5df; }
+.net::before      { background: var(--c-net); }
+.warn     { background: var(--c-warn-bg);   border-color: #ead9a8; }
+.warn::before     { background: var(--c-warn); }
+
+/* ---------- 定义块 ---------- */
+.def {
+  border-left: 4px solid var(--c-symbol);
+  background: #fff;
+  padding: 12px 20px;
+  margin: 1.2em 0;
+  border-radius: 0 10px 10px 0;
+  box-shadow: 0 1px 4px rgba(60, 50, 30, 0.06);
+}
+.def .def-title {
+  font-weight: 700;
+  color: var(--c-symbol);
+  margin-bottom: 0.2em;
+}
+
+/* ---------- 逐符号朗读表 ---------- */
+table { border-collapse: collapse; width: 100%; margin: 1em 0; font-size: 0.96em; }
+th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; }
+th { background: #f2ede3; font-weight: 700; }
+tr:nth-child(even) td { background: rgba(0,0,0,0.015); }
+
+/* ---------- 步骤分标记（仿真题） ---------- */
+.step-score {
+  float: right;
+  color: var(--c-exam);
+  font-size: 0.85em;
+  font-weight: 700;
+}
+.proof-line { margin: 0.35em 0; }
+
+/* ---------- 折叠答案 ---------- */
+details {
+  border: 1px dashed #c9bfae;
+  border-radius: 10px;
+  padding: 10px 18px;
+  margin: 0.9em 0;
+  background: #fffdf8;
+}
+details[open] { border-style: solid; background: #fff; }
+summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--c-calc);
+  list-style: none;
+}
+summary::before { content: "▸ "; }
+details[open] summary::before { content: "▾ "; }
+summary:hover { text-decoration: underline; }
+details.answer summary { color: #92600a; }
+
+/* ---------- 题目编号 ---------- */
+.exq {
+  border-left: 3px solid var(--c-calc);
+  padding: 4px 0 4px 16px;
+  margin: 1.4em 0;
+}
+.exq .qlevel {
+  display: inline-block;
+  font-size: 0.75em;
+  font-weight: 700;
+  padding: 0.1em 0.6em;
+  border-radius: 999px;
+  margin-right: 0.6em;
+  vertical-align: 2px;
+}
+.lv1 { background: #d9ecd9; color: #166534; }
+.lv2 { background: #fde9c8; color: #9a5b07; }
+.lv3 { background: #f9d7dd; color: #a1132f; }
+
+/* ---------- 六方向自测卡 ---------- */
+.selftest {
+  background: var(--c-dark);
+  color: #e8eef6;
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin: 2em 0;
+}
+.selftest h3 { color: #f8c471; margin-top: 0; }
+.selftest .st-item {
+  border-top: 1px solid rgba(255,255,255,0.14);
+  padding: 10px 0;
+}
+.selftest .st-q { font-weight: 700; }
+.selftest .st-q em { color: #8fd0ff; font-style: normal; }
+.selftest details { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.2); }
+.selftest summary { color: #9fd3a8; }
+.selftest details[open] { background: rgba(255,255,255,0.1); }
+
+/* ---------- 关系网 ---------- */
+.netnode {
+  background: #fff;
+  border: 1.5px solid var(--c-net);
+  border-radius: 8px;
+  padding: 6px 14px;
+  display: inline-block;
+  margin: 4px;
+  font-size: 0.95em;
+}
+.netarrow { color: var(--c-net); font-weight: 700; }
+
+/* ---------- 旁注/思考泡 ---------- */
+.aside {
+  border-left: 3px solid #d6cbb8;
+  color: var(--ink-soft);
+  padding: 2px 0 2px 16px;
+  margin: 1em 0;
+  font-size: 0.94em;
+}
+.think {
+  background: #fff;
+  border: 1.5px dashed var(--c-vision);
+  border-radius: 10px;
+  padding: 10px 18px;
+  margin: 1.1em 0;
+}
+.think::before {
+  content: "✍ 先动手";
+  display: block;
+  font-size: 0.8em;
+  font-weight: 700;
+  color: var(--c-vision);
+  letter-spacing: 0.06em;
+}
+
+/* ---------- SVG 图 ---------- */
+figure { text-align: center; margin: 1.4em 0; }
+figcaption { font-size: 0.86em; color: var(--ink-soft); margin-top: 4px; }
+svg { max-width: 100%; height: auto; }
+
+/* ---------- 首页目录 ---------- */
+.toc-vol { margin: 1.6em 0; }
+.toc-vol > h3 {
+  border-left: 5px solid var(--c-hook);
+  padding-left: 12px;
+}
+.toc-item {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: 8px;
+}
+.toc-item:hover { background: rgba(0,0,0,0.03); }
+.toc-item .no { color: var(--ink-soft); font-size: 0.88em; min-width: 3.2em; }
+.toc-item .st { margin-left: auto; font-size: 0.78em; white-space: nowrap; }
+.st-done { color: var(--c-calc); }
+.st-wip  { color: var(--ink-soft); }
+.toc-item input[type="checkbox"] { transform: scale(1.15); accent-color: var(--c-calc); }
+
+.progress-outer {
+  background: #e9e2d5;
+  border-radius: 999px;
+  height: 14px;
+  overflow: hidden;
+  margin: 6px 0;
+}
+.progress-inner {
+  background: linear-gradient(90deg, #1d4ed8, #15803d);
+  height: 100%;
+  width: 0%;
+  transition: width 0.4s;
+  border-radius: 999px;
+}
+
+/* ---------- 章末导航 ---------- */
+.chapnav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 3.5em;
+  border-top: 2px solid var(--line);
+  padding-top: 1.2em;
+  font-size: 0.95em;
+}
+
+/* ---------- KaTeX ---------- */
+.katex { font-size: 1.06em; }
+.katex-display { margin: 0.9em 0; overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
+
+/* ---------- 其他 ---------- */
+hr { border: none; border-top: 1px dashed var(--line); margin: 2em 0; }
+strong { color: #1a1610; }
+code {
+  background: #f0ebe1;
+  border-radius: 5px;
+  padding: 0.1em 0.4em;
+  font-size: 0.9em;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+blockquote {
+  margin: 1.2em 0;
+  padding: 4px 20px;
+  border-left: 4px solid #d6cbb8;
+  color: var(--ink-soft);
+}
+.tagline { font-size: 0.95em; color: var(--ink-soft); }
+
+@media (max-width: 640px) {
+  body { font-size: 16px; }
+  .wrap { padding: 20px 16px 70px; }
+}
+
+@media print {
+  .bookbar, .chapnav { display: none; }
+  details { border-style: solid; }
+  details > * { display: block; }
+}
+
+/* ---------- 思路揭秘（真人思考过程） ---------- */
+.mind {
+  background: #fff;
+  border: 2px dashed var(--c-recog);
+  border-radius: 10px;
+  padding: 14px 20px 12px;
+  margin: 1.3em 0;
+  position: relative;
+}
+.mind::before {
+  content: attr(data-tag);
+  position: absolute;
+  top: -0.85em;
+  left: 14px;
+  font-size: 0.78em;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.1em 0.65em;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--c-recog);
+}
+.mind .stage { color: var(--c-recog); font-weight: 700; }
+.scratch {
+  background: #fffef2;
+  border: 1px solid #ead9a8;
+  border-radius: 8px;
+  padding: 8px 14px;
+  margin: 0.6em 0;
+}
+.scratch::before {
+  content: "草稿纸 · 卷面上不出现";
+  display: block;
+  font-size: 0.75em;
+  font-weight: 700;
+  color: #a16207;
+  letter-spacing: 0.1em;
+}
+.keymove {
+  background: var(--c-dark);
+  color: #ffe3b3;
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin: 1em 0;
+  font-size: 0.96em;
+}
+.keymove strong { color: #ffc46b; }
+
+/* ---------- 交互小部件 ---------- */
+.widget {
+  background: #fff;
+  border: 1.5px solid var(--c-vision);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin: 1.4em 0;
+}
+.widget .w-title { font-weight: 700; color: var(--c-vision); margin-bottom: 0.2em; }
+.widget .w-row { margin: 0.4em 0; font-size: 0.95em; }
+.widget input[type="range"] { width: 100%; accent-color: var(--c-vision); }
+.widget label { font-size: 0.88em; color: var(--ink-soft); }
+.w-verdict {
+  margin-top: 0.6em;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: var(--c-vision-bg);
+  font-size: 0.96em;
+}
+.w-verdict .ok { color: var(--c-calc); font-weight: 700; }
+.w-verdict .no { color: var(--c-exam); font-weight: 700; }
+
+/* ---------- 熟练度训练场（翻卡快测） ---------- */
+.quiz {
+  background: #fffdf5;
+  border: 1.5px solid var(--c-hook);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin: 1.4em 0;
+}
+.quiz .q-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85em;
+  color: var(--ink-soft);
+  margin-bottom: 0.4em;
+}
+.quiz .q-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 16px 18px;
+  min-height: 70px;
+}
+.quiz .q-a { border-top: 1px dashed var(--line); margin-top: 10px; padding-top: 10px; }
+.quiz .q-btns { margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap; }
+.quiz button {
+  font-family: inherit;
+  font-size: 0.92em;
+  padding: 6px 18px;
+  border-radius: 999px;
+  border: 1.5px solid var(--c-hook);
+  background: #fff;
+  color: var(--c-hook);
+  cursor: pointer;
+}
+.quiz button:hover { background: var(--c-hook); color: #fff; }
+.quiz button.primary { background: var(--c-hook); color: #fff; }
+.quiz button.primary:hover { opacity: 0.85; }
+.quiz .q-score { font-size: 1.05em; font-weight: 700; color: var(--c-calc); }

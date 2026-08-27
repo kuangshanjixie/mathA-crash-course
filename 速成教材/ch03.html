@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数分第 3 章 · 递推数列与单调有界：从 e 到不动点 —— 数学A速成讲义</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+<div class="wrap">
+
+<div class="bookbar">
+  <span><a href="index.html">← 返回首页</a></span>
+  <span>卷一 · 数学分析 · 第 3 章</span>
+</div>
+
+<div class="chapter-kicker">CHAPTER 3 · 数学分析</div>
+<h1>递推数列与单调有界：从 e 到不动点</h1>
+
+<div class="exam box" data-tag="本章导览">
+  <p><strong>这一章在整张卷子上的位置</strong>：递推数列 $x_{n+1}=f(x_n)$ 是数学 A 初赛<strong>压轴题六的常客</strong>——第 15 届题六（20 分）整题就是本章内容（$x_{n+1}=(\sqrt[3]{3})^{x_n}$：单调有界证存在 + 极限值辨析，官方给三种证法）；第 16 届题六（20 分）是它的压缩升级版（函数迭代列 + 中值定理估值）；第 11 届题五（15 分）是"归纳 + 确界"的阶估计变体（$c=\inf h_n$）。再往根上说：你高数里 $e$ 的定义"$\lim(1+\frac1n)^n$ 存在"，严格证明用的就是本章定理——它是单调有界定理的历史原型。</p>
+  <p><strong>学完你能</strong>：① 默写单调有界定理，并说出它与确界公理的等价关系（一句话回顾 ch0m §5 的证明）；② 对 $x_{n+1}=f(x_n)$ 型跑通"猜 → 证单调 → 证有界 → 取极限"四步程序；③ 上界不靠背——会倒推：解 $f(B)\le B$，必要时造辅助函数（如 $x^{1/x}$）；④ 做"极限值辨析"：用界与保号性排除不动点方程的多余根，用 $f'(L)$ 与 $1$ 的大小判断吸引 / 排斥；⑤ 写压缩估计 $|x_{n+1}-L|\le q\,|x_n-L|$，应对不单调的迭代。</p>
+  <p><strong>前置</strong>：第 1 章（确界的两副面孔、动作二"取 $\varepsilon=\frac1n$"）；第 0.5 章 §5（单调有界定理已在那里被程序生产出来，本章不重复证明、直接调用）；高数的求导与拉格朗日中值定理（本章先借用结论，第 5 章系统证明）。</p>
+</div>
+
+<h2>§1 开场谜题：朝着 3 爬，却永远到不了 3</h2>
+
+<div class="hook box" data-tag="开场谜题">
+  <p>第 15 届（2023）数学 A 初赛，题六，20 分——与题三并列全卷最大题。原题：</p>
+  <p>设 $a=\sqrt[3]{3}$，$x_1=a$，$x_{n+1}=a^{x_n}\ (n=1,2,\ldots)$。证明：数列 $\{x_n\}$ 极限存在，<strong>但不是 $3$</strong>。</p>
+  <p>先算几项看看（$a\approx1.4422$）：</p>
+  <p>$$x_1\approx1.4422,\ \ x_2\approx1.6958,\ \ x_3\approx1.8608,\ \ x_4\approx1.9767,\ \ x_5\approx2.0624,\ \ \dots$$</p>
+  <p>一路向上爬。而且 $3$ 明明是这个迭代的<strong>不动点</strong>：$a^3=(\sqrt[3]{3})^3=3$——数列要是爬到 $3$，$3$ 会把它稳稳接住（$x_n=3\Rightarrow x_{n+1}=a^3=3$）。再证它单调递增、有上界 $3$，都不算难（本章例 2 完整书写）。</p>
+  <p>于是每个直觉正常的人第一反应都是：极限当然是 $3$。<strong>但官方答案说：极限存在，却不是 $3$——事实上所有项都不超过 $\frac52$（法 I），甚至不超过 $e$（法 II）。</strong></p>
+  <p>为什么"朝着一个点爬"却"永远到不了它"？$3$ 到底哪里出了问题？</p>
+  <p>本章给出全部答案，先一句话剧透：$3$ 是一个<strong>排斥</strong>的不动点（$f'(3)=\ln3&gt;1$，它把附近的点统统推开）；数列真正爬向的是另一个<strong>吸引</strong>的不动点 $\approx2.478$——它也满足 $L=a^L$，只是你一开始没看见它。"极限存在"与"极限等于你想的那个不动点"，是两件事。拆开这个痒点需要四件工具：单调有界定理、递推四步程序、极限值辨析、压缩思想。这就是本章。</p>
+</div>
+
+<h2>§2 先看见它：蛛网图——把递推画出来</h2>
+
+<div class="vision box" data-tag="直觉与图像">
+  <p>递推 $x_{n+1}=f(x_n)$ 有一幅标准画像——<strong>蛛网图（cobweb）</strong>。在同一坐标系里画 $y=f(x)$ 与 $y=x$，从 $x$ 轴上的 $x_1$ 出发：</p>
+  <p><strong>竖直</strong>走到曲线（高度就是 $x_2=f(x_1)$）→ <strong>水平</strong>走到对角线（横坐标变成 $x_2$）→ 再竖直、再水平……阶梯自动把迭代一步一步画出来。曲线与对角线的交点，就是不动点 $L=f(L)$。</p>
+</div>
+
+<figure>
+<svg viewBox="0 0 720 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="蛛网图：阶梯爬向不动点">
+  <!-- 坐标轴 -->
+  <line x1="80" y1="340" x2="398" y2="340" stroke="#2b2620" stroke-width="2"/>
+  <polygon points="408,340 396,335 396,345" fill="#2b2620"/>
+  <line x1="80" y1="340" x2="80" y2="48" stroke="#2b2620" stroke-width="2"/>
+  <polygon points="80,38 75,50 85,50" fill="#2b2620"/>
+  <!-- 刻度 -->
+  <line x1="173.3" y1="334" x2="173.3" y2="346" stroke="#2b2620" stroke-width="1.5"/>
+  <text x="173.3" y="364" font-size="13" fill="#5c554b" text-anchor="middle">1</text>
+  <line x1="266.7" y1="334" x2="266.7" y2="346" stroke="#2b2620" stroke-width="1.5"/>
+  <text x="266.7" y="364" font-size="13" fill="#5c554b" text-anchor="middle">2</text>
+  <line x1="360" y1="334" x2="360" y2="346" stroke="#2b2620" stroke-width="1.5"/>
+  <text x="360" y="364" font-size="13" fill="#5c554b" text-anchor="middle">3</text>
+  <line x1="74" y1="246.7" x2="86" y2="246.7" stroke="#2b2620" stroke-width="1.5"/>
+  <text x="68" y="251" font-size="13" fill="#5c554b" text-anchor="end">1</text>
+  <line x1="74" y1="153.3" x2="86" y2="153.3" stroke="#2b2620" stroke-width="1.5"/>
+  <text x="68" y="158" font-size="13" fill="#5c554b" text-anchor="end">2</text>
+  <!-- y = x -->
+  <line x1="80" y1="340" x2="360" y2="60" stroke="#8a8175" stroke-width="1.8" stroke-dasharray="7 5"/>
+  <text x="330" y="98" font-size="14" fill="#8a8175" font-style="italic">y = x</text>
+  <!-- y = √(2+x) -->
+  <path d="M80.0 208.0 L103.3 200.0 L126.7 192.4 L150.0 185.2 L173.3 178.3 L196.7 171.7 L220.0 165.4 L243.3 159.3 L266.7 153.3 L290.0 147.6 L313.3 142.0 L336.7 136.6 L360.0 131.3"
+        fill="none" stroke="#1d4ed8" stroke-width="2.5"/>
+  <text x="100" y="228" font-size="14" fill="#1d4ed8" font-style="italic">y = √(2+x)</text>
+  <!-- 不动点 -->
+  <circle cx="266.7" cy="153.3" r="5.5" fill="#fff" stroke="#15803d" stroke-width="2.5"/>
+  <text x="280" y="142" font-size="13.5" fill="#15803d" font-weight="bold">不动点 (2, 2)</text>
+  <!-- 蛛网阶梯 -->
+  <polyline points="212.0,340 212.0,167.5 252.4,167.5 252.4,156.9 263.1,156.9 263.1,154.2 265.8,154.2 265.8,153.4 266.4,153.4"
+            fill="none" stroke="#be123c" stroke-width="2"/>
+  <circle cx="212" cy="340" r="5" fill="#be123c"/>
+  <text x="212" y="322" font-size="13" fill="#be123c" text-anchor="middle" font-weight="bold">x₁ = √2</text>
+  <text x="300" y="318" font-size="12.5" fill="#be123c">阶梯：竖直到曲线，水平到对角线</text>
+</svg>
+<figcaption>蛛网图读法：从 $x_1$ 竖直到曲线得 $x_2=f(x_1)$，水平贴回对角线把输出变成下一步输入。阶梯一路上行、被交点 $(2,2)$ 吸住——这就是"单调递增有上界"的几何像。</figcaption>
+</figure>
+
+<p>读图三条反射，正好对应本章的三件工具：</p>
+<ul>
+  <li>阶梯一路上行 / 下行 ⟺ 数列<strong>单调</strong>；</li>
+  <li>阶梯被一堵看不见的墙挡住 ⟺ <strong>有界</strong>——单调有界定理说：这样的阶梯必停在某个高度；</li>
+  <li>交点处曲线比对角线<strong>平缓</strong>（$|f'(L)|&lt;1$），阶梯被吸进去；比对角线<strong>陡</strong>（$|f'(L)|&gt;1$），阶梯被弹开——这就是吸引与排斥，§4 动作三用中值定理把它严格化。</li>
+</ul>
+
+<h3>2.1 亲手摸一摸吸引与排斥（交互）</h3>
+
+<div class="widget" id="cobweb-widget">
+  <p class="w-title">▶ 蛛网图探索器：拖动 x₁，亲眼看「吸引」与「排斥」</p>
+  <p class="w-row">蓝色曲线 $y=f(x)$，灰色虚线 $y=x$，交点就是不动点。<strong style="color:#be123c">红色折线</strong>是迭代轨迹。<strong style="color:#15803d">绿圈</strong> = 吸引不动点（$|f'|&lt;1$），<strong style="color:#7c3aed">紫圈</strong> = 排斥不动点（$f'&gt;1$）。$x$ 轴上的<strong>红点可以直接拖</strong>。</p>
+  <div class="w-row">
+    <button type="button" id="cw-fa" style="border:1.5px solid #0f766e;border-radius:999px;padding:4px 16px;font-family:inherit;font-size:0.92em;cursor:pointer;margin-right:8px;background:#fff;color:#0f766e">f(x)=√(2+x)</button>
+    <button type="button" id="cw-fb" style="border:1.5px solid #0f766e;border-radius:999px;padding:4px 16px;font-family:inherit;font-size:0.92em;cursor:pointer;background:#0f766e;color:#fff">f(x)=(∛3)^x</button>
+  </div>
+  <div class="w-row"><label>起点 x₁（也可以直接拖图上 x 轴的红点）</label>
+  <input type="range" id="cw-x1" min="0.05" max="4.4" step="0.01" value="1.44"></div>
+  <div class="w-row"><label>迭代步数 k（拖到 40 以上看收敛）</label>
+  <input type="range" id="cw-k" min="1" max="60" step="1" value="10"></div>
+  <svg id="cw-svg" viewBox="0 0 720 420" xmlns="http://www.w3.org/2000/svg" style="touch-action:none"></svg>
+  <div class="w-verdict" id="cw-out">加载中……（需要启用 JavaScript）</div>
+  <p class="w-row" style="font-size:0.88em;color:#5c554b">玩出这三个体验再往下走：<strong>①</strong> 模式 $(\sqrt[3]{3})^x$，把 $x_1$ 拖到 $1.44$（$\approx\sqrt[3]{3}$，第 15 届题六的起点），$k$ 拖大——阶梯爬向 $\approx2.478$，<strong>不是 $3$</strong>；<strong>②</strong> 同模式，$x_1$ 拖到 $3.05$——被 $3$ 排斥、冲出画面（$f'(3)=\ln3&gt;1$）；再试 $2.9$：先被推离 $3$，再滑回 $2.478$；<strong>③</strong> 切到 $\sqrt{2+x}$，随便拖 $x_1$——永远被 $2$ 吸住（$f'(2)=\frac14&lt;1$）。吸引与排斥，只差一个 $|f'(L)|$ 与 $1$ 的大小关系。</p>
+</div>
+
+<h2>§3 精确定义：定理、不动点、压缩</h2>
+
+<h3>3.1 单调有界定理（陈述 + 来历一句话）</h3>
+
+<div class="def">
+  <p class="def-title">定理（单调有界定理）</p>
+  <p>若 $\{x_n\}$ <strong>单调递增且有上界</strong>，则 $\lim x_n$ 存在，且 $\lim x_n=\sup\{x_n\}$；若 $\{x_n\}$ <strong>单调递减且有下界</strong>，则 $\lim x_n$ 存在，且 $\lim x_n=\inf\{x_n\}$。</p>
+</div>
+
+<p><strong>来历（一句话回顾，不重复细节）</strong>：第 0.5 章 §5 已经用程序把它从确界公理<strong>生产</strong>出来——取 $M=\sup\{x_n\}$（公理白送候选），压不下给 $x_N&gt;M-\varepsilon$，单调性把它传递到所有 $n\ge N$，夹逼收尾；三个条件各用一次。它与确界公理是<strong>等价面孔</strong>（第 1 章地图）：公理生出它，它也能反推出公理——所以本章定理与第 1 章公理"平级"，都是"实数没有洞"这同一事实的化身。</p>
+
+<div class="symbol box" data-tag="逐符号朗读">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$x_n\le x_{n+1}\ (\forall n)$</td><td>"每一项都不超过它的下一项"</td><td>单调递增：方向锁死，队伍只朝一个方向走</td></tr>
+    <tr><td>$\exists M,\ \forall n,\ x_n\le M$</td><td>"存在某个数 $M$，罩住所有项"</td><td>有上界：前方有一堵天花板</td></tr>
+    <tr><td>$\lim x_n=L$ 存在</td><td>"数列收敛到某个实数 $L$"</td><td>白送的存在性——不知道 $L$ 是谁，先拿下"有极限"这件事</td></tr>
+    <tr><td>$L=\sup\{x_n\}$</td><td>"$L$ 就是全体项的上确界"</td><td>极限的身份：天花板的最低点（第 1 章的两副面孔在此值班）</td></tr>
+  </table>
+  <p>注意这个定理的"商业模式"：<strong>用两个初等不等式（单调 + 有界），换一个存在性结论</strong>。递推数列没有通项公式，$\varepsilon$-$N$ 无从下手；单调有界绕开通项，先证"收敛"、再算"收敛到谁"——这正是开场谜题的破局点。</p>
+</div>
+
+<div class="think">
+  <p>别急着往下翻。<strong>拿张纸，不重新证明，用递增版推出递减版</strong>："单调递减有下界 ⟹ 收敛于 $\inf$"。提示：对 $\{-x_n\}$ 套递增版。写完再展开对照。</p>
+  <details class="answer">
+    <summary>对照：递减版的推导</summary>
+    <p>设 $\{x_n\}$ 单调递减有下界。令 $y_n=-x_n$，则 $\{y_n\}$ 单调递增且有上界，由递增版，$y_n\to\sup\{y_n\}$。于是
+    $$x_n=-y_n\to-\sup\{-x_n\}=\inf\{x_n\}$$
+    （用到 $\sup(-E)=-\inf E$：$-E$ 的最小上界 $=$ $E$ 的最大下界加负号）。$\square$</p>
+    <p>记忆锚点：递增撞天花板（$\sup$），递减压地板（$\inf$）。镜像关系，证一得二。</p>
+  </details>
+</div>
+
+<h3>3.2 不动点：极限的候选名单</h3>
+
+<div class="def">
+  <p class="def-title">定义（递推数列与不动点）</p>
+  <p>由 $x_{n+1}=f(x_n)\ (n=1,2,\dots)$ 生成的数列称为<strong>递推数列（迭代列）</strong>，$f$ 叫迭代函数。若 $f(L)=L$，称 $L$ 为 $f$ 的<strong>不动点</strong>——蛛网图上，就是 $y=f(x)$ 与 $y=x$ 的交点。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">关键引理（极限必为不动点）</p>
+  <p>若 $x_{n+1}=f(x_n)$，$x_n\to L$，且 $f$ 在 $L$ 连续，则 $L=f(L)$。</p>
+  <p>证明两行：$x_{n+1}\to L$（$\{x_{n+1}\}$ 是 $\{x_n\}$ 的子列）；又 $x_{n+1}=f(x_n)\to f(L)$（$f$ 在 $L$ 连续）。极限唯一，故 $L=f(L)$。$\square$</p>
+</div>
+
+<p>引理的价值是双向的：它给你"<strong>猜</strong>"的原料（候选极限全在不动点名单上），也埋下本章最大的坑——<strong>名单上可能有好几个名字</strong>（§4 警告框、例 2）。第 15 届题六里，$x=a^x$ 即 $x^{1/x}=3^{1/3}$ 在 $(0,+\infty)$ 上有两个解：$\approx2.478$ 与 $3$，全是候选。</p>
+
+<h3>3.3 压缩映射：误差的几何衰减</h3>
+
+<div class="def">
+  <p class="def-title">定义（压缩映射）</p>
+  <p>称 $f$ 为区间 $I$ 上的<strong>压缩映射</strong>，如果存在常数 $q\in(0,1)$，使
+  $$|f(x)-f(y)|\le q\,|x-y|,\qquad \forall x,y\in I.$$</p>
+</div>
+
+<div class="calc box" data-tag="压缩收敛定理（陈述 + 证明骨架）">
+  <p><strong>定理</strong>　设 $f$ 在 $I$ 上压缩（常数 $q&lt;1$），且迭代 $x_{n+1}=f(x_n)$ 的轨道不离开 $I$。则 $\{x_n\}$ 收敛到 $f$ 在 $I$ 中的<strong>唯一</strong>不动点 $L$，且有几何速度
+  $$|x_n-L|\le q^{\,n-1}\,|x_1-L|.$$</p>
+  <p><strong>证明骨架</strong>：① 作差：$|x_{n+1}-x_n|=|f(x_n)-f(x_{n-1})|\le q\,|x_n-x_{n-1}|\le\cdots\le q^{\,n-1}|x_2-x_1|$；② 分段求和：$|x_{n+p}-x_n|\le(q^{\,n-1}+\cdots+q^{\,n+p-2})\,|x_2-x_1|\le\dfrac{q^{\,n-1}}{1-q}|x_2-x_1|\to0$，故 $\{x_n\}$ 为 Cauchy 列（第 1 章地图上的等价面孔之一），收敛；③ 设极限为 $L$，压缩 ⟹ $f$ 连续，由关键引理 $L=f(L)$；④ 唯一性：若 $L'=f(L')$，则 $|L-L'|=|f(L)-f(L')|\le q\,|L-L'|$，而 $q&lt;1$，故 $L'=L$。$\square$</p>
+</div>
+
+<p>和第 15 届题六对照着看：<strong>单调有界管"单调的迭代"，压缩管"不单调的迭代"</strong>。第 16 届题六官方注记特意点明"$\{|F_k(x)-\bar x|\}$ 不见得单调下降"，就是在提醒你：那道题单调有界失灵，必须换压缩赛道（§4 动作三）。</p>
+
+<h2>§4 翻译轨：三个标准动作 + 一间练功房</h2>
+
+<p>递推数列在卷面上只有三种考法：证存在（四步程序）、找界（倒推）、辨析极限值 / 非单调迭代（压缩与中值定理）。练成反射，本章毕业。</p>
+
+<div class="trans box" data-tag="动作一：证极限存在并求值（四步程序）">
+  <p><strong>题面</strong>："设 $x_1=\cdots$，$x_{n+1}=f(x_n)$。证明 $\{x_n\}$ 极限存在，并求其值。"</p>
+  <p><strong>翻译</strong>：没有通项公式，$\varepsilon$-$N$ 无从下手——换成单调有界语言，固定四步：</p>
+  <p>第 ① 步 · <strong>猜</strong>（草稿纸行为）：形式地两边取极限，解 $L=f(L)$，同时得到候选极限与候选界；<br>
+  第 ② 步 · <strong>证单调</strong>：归纳（基例比较 $x_1,x_2$ + $f$ 单调传递），或作差 $x_{n+1}-x_n$，或作比（正项时）；<br>
+  第 ③ 步 · <strong>证有界</strong>：归纳。界从倒推来（动作二）；<br>
+  第 ④ 步 · <strong>取极限</strong>：单调有界定理给存在性；对递推式两边取极限（需 $f$ 连续）解方程，<strong>用界与保号性排除多余根</strong>。</p>
+  <p><strong>用在哪、值多少</strong>：第 15 届题六第一问（5 分）就是第 ②③ 步；完整演示见 §8 例 1。</p>
+  <p><strong>归纳书写规范（双向归纳）</strong>：单调性和有界性是<strong>两次独立的归纳</strong>，各写基例 + 归纳假设 + 归纳步。若单调性的证明要用到界（如 $x_{n+1}=\sqrt{2x_n}$ 型：$x_{n+1}&lt;x_n\iff x_n&gt;2$），必须先证界、再证单调，或同步归纳 $P(n)$："$x_n\le M$ 且 $x_{n+1}\ge x_n$"。<strong>头号事故：循环论证</strong>——用还没证的界推单调、再用单调回推界。</p>
+</div>
+
+<div class="trans box" data-tag="动作二：上界不会从天而降——倒推找界">
+  <p><strong>题面</strong>：四步程序卡在第 ③ 步：上界取谁？</p>
+  <p><strong>翻译</strong>：候选界 $B$ 只需满足两条：$x_1\le B$ 且 $f(B)\le B$（设 $f$ 递增）。后者保证归纳传递：
+  $$x_n\le B\ \Longrightarrow\ x_{n+1}=f(x_n)\le f(B)\le B.$$</p>
+  <p><strong>找法</strong>：① 首选<strong>不动点本身</strong>——$f(L)=L$ 自然满足 $f(L)\le L$；② 解不等式 $f(B)\le B$：第 15 届题六把它化成 $3^{1/3}\le B^{1/B}$，于是研究辅助函数 $f(x)=x^{1/x}$（工具八），发现 $B=e$（甚至 $B=\frac52$）都合格。倒推全过程见例 2 的草稿纸。</p>
+  <p><strong>用在哪、值多少</strong>：这一步是第 15 届题六法 I / 法 II 的核心分——找到 $\frac52$ 或 $e$，"极限不是 3"立刻到手。</p>
+</div>
+
+<div class="trans box" data-tag="动作三：极限值辨析与非单调迭代——中值定理压缩估计">
+  <p><strong>题面</strong>："证明极限不是 3"（第 15 届题六）；"证明极限存在且与 $x$ 无关"（第 16 届题六）；$f$ 不单调。</p>
+  <p><strong>翻译</strong>：对不动点 $L$，由拉格朗日中值定理（第 5 章系统讲，本章先借用），在 $x_n$ 与 $L$ 之间存在 $\xi_n$：
+  $$|x_{n+1}-L|=|f(x_n)-f(L)|=|f'(\xi_n)|\cdot|x_n-L|.$$
+  读法：<strong>每迭代一步，与不动点的误差乘以某点的 $|f'|$</strong>。</p>
+  <p>· 一片区间上 $|f'|\le q&lt;1$ ⟹ <strong>压缩</strong>：$|x_n-L|\le q^{\,n-1}|x_1-L|\to0$，几何速度收敛。第 16 届题六(1)：$f_1'=\frac12,\ f_2'=\frac13$，公共不动点 $3$，$|F_k(x)-3|\le\frac1{2^k}|x-3|$；<br>
+  · $f'(L)&gt;1$ ⟹ <strong>排斥</strong>：$L$ 附近的误差被放大，递增数列到不了 $L$——第 15 届法 III：$f'(3)=\ln3&gt;1$，反证排除 $L=3$；<br>
+  · $|f'(L)|&lt;1$ ⟹ <strong>吸引</strong>：蛛网图里阶梯被吸进交点。</p>
+  <p><strong>记忆</strong>：吸引 / 排斥的分界线是 $|f'(L)|$ 与 $1$ 比大小——本章 widget 玩的就是这条线。</p>
+</div>
+
+<div class="warn box" data-tag="头号陷阱：极限存在 ≠ 极限等于你想的不动点">
+  <p>"两边取极限得 $L=f(L)$，代入 $L=3$ 成立，故极限为 $3$"——三处违法：</p>
+  <p>① <strong>先斩后奏</strong>：没证极限存在就取极限。反例：$x_1=1$，$x_{n+1}=2x_n$，形式取极限得 $L=2L$ 即 $L=0$——数列其实奔向 $+\infty$；<br>
+  ② <strong>方程多根</strong>：$L=f(L)$ 只是<strong>候选名单</strong>。第 15 届题六：$3$ 与 $\approx2.478$ 都在名单上；<br>
+  ③ <strong>没对身份</strong>：极限还有别的身份证——它是 $\sup$（界的约束）且受保号性管辖。<strong>真正的极限 = 名单上同时满足界约束的那一个</strong>。</p>
+  <p>一句话：不动点方程负责"提名"，单调、有界、保号负责"任命"。</p>
+</div>
+
+<h3>4.4 翻译练功房：像学语言一样，大量互译</h3>
+
+<p>学翻译和学外语一样：<strong>看 3 个示范是输入，写 8 个互译才是输出</strong>。下面 8 句，先全部写在纸上，再逐条展开对照。每条不超过 1 分钟。</p>
+
+<div class="trans box" data-tag="互译 8 句">
+  <p><strong>T1</strong>　自然→符号："数列 $\{x_n\}$ 单调递增且有上界。"</p>
+  <details class="answer"><summary>对照</summary><p>$(\forall n,\ x_n\le x_{n+1})\ \land\ (\exists M,\ \forall n,\ x_n\le M)$。<strong>易错</strong>：把有上界写成"$\exists n$"——那是"存在一项不超过 $M$"，什么都没说。上界要罩住<strong>所有</strong>项。</p></details>
+  <p><strong>T2</strong>　符号→自然 + 追问："$x_{n+1}=f(x_n)$，$f$ 连续，$x_n\to L$。"能推出什么？两个前提各管什么？</p>
+  <details class="answer"><summary>对照</summary><p>"若递推数列收敛且迭代函数连续，则极限必为不动点：$L=f(L)$。"$x_n\to L$ 管"有极限可取"，$f$ 连续管"$f$ 与 $\lim$ 可交换"——两者缺一不可：没有存在性是"先斩后奏"，没有连续性取极限进不了 $f$。</p></details>
+  <p><strong>T3</strong>　判断（说理由）："解 $L=f(L)$ 得 $L=2$ 或 $L=-1$，所以极限是 $2$ 或 $-1$。"</p>
+  <details class="answer"><summary>对照</summary><p>错两处。① 先后顺序：必须先证极限存在，才谈得上对它取极限；② 极限<strong>唯一</strong>：候选名单上的名字要靠界与保号性排除——$x_n\ge x_1&gt;0$ 给出 $L&gt;0$，$-1$ 出局，$L=2$（例 1 第四步）。</p></details>
+  <p><strong>T4</strong>　自然→符号 + 追问："$f$ 是压缩映射。"它直接给出关于 $x_n$ 的什么结论？</p>
+  <details class="answer"><summary>对照</summary><p>$\exists q\in(0,1),\ \forall x,y:\ |f(x)-f(y)|\le q\,|x-y|$。对迭代列直接给出 $|x_{n+1}-L|\le q\,|x_n-L|$，从而 $|x_n-L|\le q^{\,n-1}|x_1-L|\to0$——收敛且是<strong>几何速度</strong>（第 16 届题六(1) 的 $q=\frac12$）。</p></details>
+  <p><strong>T5</strong>　找坑："$x_{n+1}=a^{x_n}$ 两边取极限得 $L=a^L$；代入 $L=3$ 成立，故极限为 $3$。"（$a=\sqrt[3]{3}$）找出三个坑。</p>
+  <details class="answer"><summary>对照</summary><p>① 极限存在性未证就取极限；② 方程 $L=a^L$ 多根（$3$ 与 $\approx2.478$ 都满足），代入验证一个根不等于极限是它；③ 没有核对界：$x_n\le\frac52$（法 I）或 $x_n\le e$（法 II）直接排除 $3$。<strong>极限存在 ≠ 极限等于你想的不动点。</strong></p></details>
+  <p><strong>T6</strong>　符号→自然："$|x_{n+1}-L|=|f'(\xi_n)|\cdot|x_n-L|$，其中 $\xi_n$ 在 $x_n$ 与 $L$ 之间。"</p>
+  <details class="answer"><summary>对照</summary><p>"每迭代一步，与不动点的误差乘以某一点的 $|f'|$。"若一片区间上 $|f'|\le q&lt;1$，误差几何衰减（吸引）；若 $f'(L)&gt;1$，由 $f'$ 连续，$L$ 的某个邻域内 $f'&gt;1$，误差被放大（排斥）——15 届法 III 的严格化全靠 $\xi_n$ 落进这个邻域。</p></details>
+  <p><strong>T7</strong>　书写规范："双向归纳"指什么？什么时候必须"先证界、再证单调"？</p>
+  <details class="answer"><summary>对照</summary><p>单调性与有界性<strong>分别</strong>归纳，各写基例与归纳步。当单调性的归纳步要用到界时（如 $x_{n+1}=\sqrt{2x_n}$：$x_{n+1}&lt;x_n\iff x_n&gt;2$），必须先证下界 $2$，再证单调减——顺序反了就循环论证；也可以打包成同步归纳 $P(n)$："$x_n\ge2$ 且 $x_{n+1}\le x_n$"。</p></details>
+  <p><strong>T8</strong>　判断（说理由）：第 16 届题六官方注记："$\{|F_k(x)-\bar x|\}$ 不见得是单调下降的。"这句话在提示什么？</p>
+  <details class="answer"><summary>对照</summary><p>提示单调有界程序失灵：误差列不单调，"单调 + 有界 ⟹ 收敛"用不上。但压缩估计 $|F_k(x)-3|\le\frac1{2^k}|x-3|$ 不经过单调性，直接给出极限——<strong>非单调迭代，换压缩赛道</strong>。这也正是本题考"与 $x$ 无关"的用意：压缩把任何初值吸到同一不动点。</p></details>
+</div>
+
+<h2>§5 类型识别：什么信号在召唤哪件武器</h2>
+
+<div class="recog box" data-tag="识别反射表">
+  <table>
+    <tr><th>题面信号</th><th>反射</th></tr>
+    <tr><td>"$x_{n+1}=f(x_n)$，证明极限存在并求极限"</td><td>四步程序：猜 → 单调 → 界 → 取极限（动作一）</td></tr>
+    <tr><td>"$f$ 单调递增"</td><td>单调性白送：基例 $x_2\gtrless x_1$ 定方向 + 归纳传递</td></tr>
+    <tr><td>"证明极限 ≠ 某个不动点"</td><td>反证 + $f'(L)&gt;1$ 排斥（法 III，动作三）</td></tr>
+    <tr><td>"$f$ 不单调 / 两个函数任选复合 $F_k$ / 极限与初值无关"</td><td>单调有界失灵，压缩估计接棒：$|f'|\le q&lt;1$ + 中值定理（第 16 届题六）</td></tr>
+    <tr><td>"递推含 $n$（非自治）/ 证 $\{n^\delta x_n\}$ 有界"</td><td>不能取极限解方程；确界取常数 $c=\inf h_n$ + 归纳配凑（第 11 届题五）</td></tr>
+    <tr><td>"记 $c=\inf h_n$ / $\sup$ / $\inf$"</td><td>确界两副面孔取货（第 1 章动作）：$\forall n,\ h_n\ge c$ 直接放缩</td></tr>
+    <tr><td>"正项递推，$\frac{x_{n+1}}{x_n}$ 好算"</td><td>作比判单调；一般情形作差 $x_{n+1}-x_n$</td></tr>
+    <tr><td>"不动点方程 $L=f(L)$ 多根"</td><td>用界 + 保号性排除，唯一化（第 15 届题六：$L\le\frac52$ 排除 $3$）</td></tr>
+  </table>
+</div>
+
+<h2>§6 考法定位：它藏在哪里、值多少分</h2>
+
+<div class="exam box" data-tag="考法定位">
+  <table>
+    <tr><th>出处</th><th>题号</th><th>本章内容扮演什么角色</th><th>分值权重</th></tr>
+    <tr><td>第 15 届（2023）</td><td>题六</td><td><strong>整题主场</strong>：单调有界证存在（5 分）+ 极限值辨析三种证法（15 分：归纳放缩 / $x^{1/x}$ 辅助函数 / 中值定理反证）</td><td>20 分（压轴，与题三并列最大）</td></tr>
+    <tr><td>第 16 届（2024）</td><td>题六</td><td><strong>压缩升级</strong>：两函数任选复合的迭代列，中值定理压缩估计直通极限；官方注记"不必单调"正说明单调有界失灵、压缩接棒</td><td>20 分（压轴）</td></tr>
+    <tr><td>第 11 届（2019）</td><td>题五</td><td><strong>归纳 + 确界变体</strong>：非自治递推的阶估计，$c=\inf h_n&gt;0$ 提供一致下界，归纳配凑常数 $C=\max\{N^\delta|x_N|,\frac2c\}$</td><td>15 分</td></tr>
+    <tr><td>课本原型</td><td>—</td><td>$e=\lim(1+\frac1n)^n$ 的存在性：单调有界定理的第一个历史应用</td><td>地基（不直接考，处处用）</td></tr>
+  </table>
+  <p><strong>规律</strong>：15、16 两届的压轴题六（各 20 分）连续落在本章主题上，且呈现清晰的升级线：从"单调的迭代"（单调有界程序）到"不单调的迭代"（压缩估计）。共同写法是<strong>先估值、后极限</strong>：存在性与误差估计先行，极限值反而最后登场。把四步程序和压缩估计练成反射，这 20 分的基本盘就稳了。</p>
+</div>
+
+<h2>§7 关系网：从公理到两个 20 分</h2>
+
+<p>本章角色的来龙去脉画成一张地图：<span style="color:#b45309">三角形</span>是来源与动机，<span style="color:#1d4ed8">圆角矩形</span>是公理与定义，<span style="color:#15803d">矩形</span>是定理，<span style="color:#7c3aed">六边形</span>是方法动作，<span style="color:#0f766e">椭圆</span>是应用出口。顺着箭头走一遍，就是本章的全部逻辑。</p>
+
+<figure>
+<svg viewBox="0 0 720 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="递推数列关系网地图">
+  <defs>
+    <marker id="arr3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+
+  <!-- 图例 -->
+  <polygon points="30,16 22,30 38,30" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5"/>
+  <text x="44" y="28" font-size="11.5" fill="#5c554b">来源·动机</text>
+  <rect x="116" y="17" width="22" height="13" rx="6.5" fill="#eef3fe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="144" y="28" font-size="11.5" fill="#5c554b">公理·定义</text>
+  <rect x="222" y="17" width="22" height="13" fill="#ecf8f0" stroke="#15803d" stroke-width="1.5"/>
+  <text x="250" y="28" font-size="11.5" fill="#5c554b">定理</text>
+  <polygon points="300,23.5 306,16 320,16 326,23.5 320,31 306,31" fill="#f4effd" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="332" y="28" font-size="11.5" fill="#5c554b">方法·动作</text>
+  <ellipse cx="420" cy="23.5" rx="12" ry="7" fill="#ecf8f5" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="438" y="28" font-size="11.5" fill="#5c554b">应用·出口</text>
+
+  <!-- 来源：e 的悬念（三角） -->
+  <polygon points="105,48 45,120 165,120" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="105" y="88" font-size="12" fill="#7a4a12" text-anchor="middle" font-weight="bold">e 的存在性</text>
+  <text x="105" y="104" font-size="11" fill="#7a4a12" text-anchor="middle">如何严格保证</text>
+
+  <!-- 来源：15 届谜题（三角） -->
+  <polygon points="615,48 555,120 675,120" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="615" y="88" font-size="12" fill="#7a4a12" text-anchor="middle" font-weight="bold">极限存在</text>
+  <text x="615" y="104" font-size="11" fill="#7a4a12" text-anchor="middle">却不是 3？</text>
+
+  <!-- 来源A → 确界公理 -->
+  <line x1="168" y1="96" x2="213" y2="94" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr3)"/>
+  <text x="190" y="80" font-size="10.5" fill="#5c554b" text-anchor="middle">呼唤完备性</text>
+
+  <!-- 确界公理（圆角矩形） -->
+  <rect x="215" y="62" width="195" height="58" rx="29" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="312" y="86" font-size="14" fill="#1d4ed8" text-anchor="middle" font-weight="bold">确界公理（第 1 章）</text>
+  <text x="312" y="105" font-size="11" fill="#3a5cae" text-anchor="middle">非空有上界 ⟹ 有 sup</text>
+
+  <!-- 确界公理 → 单调有界定理 -->
+  <line x1="312" y1="120" x2="312" y2="166" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr3)"/>
+  <text x="322" y="146" font-size="11" fill="#5c554b">ch0m §5 程序生产</text>
+
+  <!-- 单调有界定理（矩形） -->
+  <rect x="230" y="168" width="190" height="54" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="325" y="190" font-size="13.5" fill="#15803d" text-anchor="middle" font-weight="bold">单调有界定理</text>
+  <text x="325" y="207" font-size="10.5" fill="#4a7c59" text-anchor="middle">单调 + 有界 ⟹ 收敛于 sup / inf</text>
+
+  <!-- 不动点（圆角矩形） -->
+  <rect x="480" y="168" width="170" height="54" rx="27" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="565" y="190" font-size="13.5" fill="#1d4ed8" text-anchor="middle" font-weight="bold">不动点 L = f(L)</text>
+  <text x="565" y="207" font-size="10.5" fill="#3a5cae" text-anchor="middle">极限的候选名单</text>
+
+  <!-- 谜题 → 四步程序（肘形） -->
+  <polyline points="580,120 580,145 445,145 445,256 340,288" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr3)"/>
+  <text x="512" y="138" font-size="11" fill="#5c554b" text-anchor="middle">本章要拆的谜</text>
+
+  <!-- 单调有界定理 → 四步程序 -->
+  <line x1="270" y1="222" x2="270" y2="286" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr3)"/>
+  <text x="258" y="258" font-size="11" fill="#5c554b" text-anchor="end">落地成程序</text>
+
+  <!-- 不动点 → 四步程序 -->
+  <line x1="505" y1="222" x2="330" y2="286" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr3)"/>
+  <text x="415" y="262" font-size="11" fill="#5c554b" text-anchor="middle">提供猜想（第 ① 步）</text>
+
+  <!-- 四步程序（六边形） -->
+  <polygon points="180,320 205,288 335,288 360,320 335,352 205,352" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="270" y="314" font-size="13" fill="#7c3aed" text-anchor="middle" font-weight="bold">四步程序</text>
+  <text x="270" y="331" font-size="10" fill="#6a55a3" text-anchor="middle">猜 → 单调 → 界 → 取极限</text>
+
+  <!-- 压缩估计（六边形） -->
+  <polygon points="495,320 520,288 650,288 675,320 650,352 520,352" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="585" y="314" font-size="13" fill="#7c3aed" text-anchor="middle" font-weight="bold">压缩估计</text>
+  <text x="585" y="331" font-size="10" fill="#6a55a3" text-anchor="middle">中值定理：误差 ×|f′|</text>
+
+  <!-- 不动点 → 压缩估计 -->
+  <line x1="565" y1="222" x2="565" y2="286" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr3)"/>
+  <text x="575" y="258" font-size="11" fill="#5c554b">|f′(L)| 与 1 比大小</text>
+
+  <!-- 四步程序 → 压缩估计 -->
+  <line x1="360" y1="320" x2="493" y2="320" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr3)"/>
+  <text x="427" y="312" font-size="11" fill="#5c554b" text-anchor="middle">f 不单调时接棒</text>
+
+  <!-- 单调有界定理 → e -->
+  <polyline points="240,222 240,250 115,250 115,416" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr3)"/>
+  <text x="128" y="242" font-size="11" fill="#5c554b">第一次立功：证存在性</text>
+
+  <!-- 四步程序 → 15 届 -->
+  <line x1="285" y1="352" x2="315" y2="416" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr3)"/>
+  <text x="278" y="392" font-size="11" fill="#5c554b" text-anchor="end">主场</text>
+
+  <!-- 压缩估计 → 15 届（法 III） -->
+  <polyline points="545,352 545,388 400,388 385,416" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr3)"/>
+  <text x="470" y="380" font-size="11" fill="#5c554b" text-anchor="middle">法 III 排斥反证</text>
+
+  <!-- 压缩估计 → 16 届 -->
+  <line x1="605" y1="352" x2="605" y2="416" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr3)"/>
+  <text x="615" y="388" font-size="11" fill="#5c554b">直通</text>
+
+  <!-- 三出口（椭圆） -->
+  <ellipse cx="115" cy="448" rx="100" ry="30" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="115" y="444" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">e 的严格定义</text>
+  <text x="115" y="460" font-size="10.5" fill="#3d7a70" text-anchor="middle">(1+1/n)ⁿ 收敛：历史原型</text>
+  <ellipse cx="345" cy="448" rx="108" ry="30" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="345" y="444" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">第 15 届题六 · 20 分</text>
+  <text x="345" y="460" font-size="10.5" fill="#3d7a70" text-anchor="middle">存在性 + 极限值辨析</text>
+  <ellipse cx="590" cy="448" rx="105" ry="30" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="590" y="444" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">第 16 届题六 · 20 分</text>
+  <text x="590" y="460" font-size="10.5" fill="#3d7a70" text-anchor="middle">压缩映射 + 中值定理</text>
+</svg>
+<figcaption>本章地图：确界公理生出单调有界定理，落地成四步程序；不动点提供猜想，压缩估计接管非单调迭代；终点是两个 20 分压轴与 $e$ 的严格定义。</figcaption>
+</figure>
+
+<div class="net box" data-tag="画面感锚点（记这些，不记条文）">
+  <table>
+    <tr><th>节点</th><th>一句话画面</th></tr>
+    <tr><td>确界公理</td><td>天花板的最低点永远在场（第 1 章）</td></tr>
+    <tr><td>单调有界定理</td><td>爬楼梯撞天花板，必然停在某一级</td></tr>
+    <tr><td>不动点</td><td>曲线与对角线的交点：极限的候选名单</td></tr>
+    <tr><td>四步程序</td><td>猜 → 单调 → 界 → 取极限：存在性先拿下，值后算</td></tr>
+    <tr><td>压缩估计</td><td>每步误差乘 $|f'|$：小于 1 吸入，大于 1 弹出</td></tr>
+    <tr><td>$e$</td><td>历史原型：第一个"先证存在、不问是谁"的极限</td></tr>
+    <tr><td>第 15 届题六</td><td>主场：5 分存在性 + 15 分极限值辨析（三种证法）</td></tr>
+    <tr><td>第 16 届题六</td><td>升级：$f$ 不单调时，压缩接棒，极限与初值无关</td></tr>
+  </table>
+  <p><strong>和你已学知识的焊接点</strong>：本章把三条已学焊在一起——第 1 章的确界（单调有界定理是它的亲儿子）、ch0m §5 的程序（定理是那台机器的第一个产品）、第 2 章的极限语言（保号性负责排除多余根）。向前：拉格朗日中值定理（第 5 章系统证明）把 $f'$ 变成压缩常数，直通第 16 届题六；单调有界与确界会在第 4 章连续函数四大定理里再次并肩作战。</p>
+</div>
+
+<h2>§8 计算示范：先看真人怎么想，再看卷面怎么写</h2>
+
+<h3>例 1 · 标准四步程序完整演示（约 10 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>"证明极限存在，并求其值"——<strong>递推存在型</strong>：没有通项公式，$\varepsilon$-$N$ 无从下手，骨架 = 四步程序（猜 → 单调 → 界 → 取极限）。这个骨架不需要灵感，是题型决定的。</p>
+  <p><span class="stage">【盘点】</span>① $x_1=\sqrt2&gt;0$；② $f(x)=\sqrt{2+x}$ 在 $[0,+\infty)$ 连续、严格递增——产出两条：归纳能传递不等式（第 ② 步的引擎）、取极限合法（第 ④ 步的执照）；③ 不动点方程 $L=\sqrt{2+L}\iff L^2-L-2=0$，根为 $2$ 与 $-1$——候选名单。</p>
+  <p><span class="stage">【会师】</span>猜（第 ① 步）：名单上唯一非负的是 $2$；<strong>工具三 · 特殊化侦察</strong>：$x_2\approx1.848$，$x_3\approx1.962$，$x_4\approx1.990$——朝 $2$ 爬，猜想通过侦察。单调（第 ② 步）：基例 $x_2=\sqrt{2+\sqrt2}&gt;\sqrt2=x_1$；归纳步由 $f$ 递增传递。界（第 ③ 步）：<strong>工具一 · 倒推</strong>——若候选极限 $2$ 能当界，需要 $f(2)\le2$，而 $f(2)=2$ 恰好成立（不动点是天然候选界）：$x_n&lt;2\Rightarrow x_{n+1}=f(x_n)&lt;f(2)=2$。取极限（第 ④ 步）：单调有界定理给存在；连续性允许两边取极限；保号性（$x_n\ge\sqrt2$）排除 $-1$。</p>
+  <p><span class="stage">【定型】</span>卷面按"单调 → 有界 → 存在 → 求值"四段写；侦察与倒推痕迹全部删除。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 不动点是天然候选界</strong>：$f$ 递增且 $f(L)=L$，则 $x_n&lt;L\Rightarrow x_{n+1}=f(x_n)&lt;f(L)=L$。解不动点方程一石二鸟：既给极限候选，又给界候选。以后见到递推式，先在草稿纸上解 $L=f(L)$。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 1</strong>　设 $x_1=\sqrt2$，$x_{n+1}=\sqrt{2+x_n}$。证明数列 $\{x_n\}$ 极限存在，并求其值。</p>
+  <hr>
+  <p class="proof-line"><strong>解</strong>　<strong>第一步（单调性）</strong>：$x_2=\sqrt{2+\sqrt2}&gt;\sqrt2=x_1$。设 $x_n&gt;x_{n-1}$（$n\ge2$），则
+  $$x_{n+1}=\sqrt{2+x_n}&gt;\sqrt{2+x_{n-1}}=x_n.$$
+  由数学归纳法，$\{x_n\}$ 严格递增。<span class="step-score">（3 分）</span></p>
+  <p class="proof-line"><strong>第二步（有上界）</strong>：$x_1=\sqrt2&lt;2$。设 $x_n&lt;2$，则 $x_{n+1}=\sqrt{2+x_n}&lt;\sqrt{2+2}=2$。由归纳法，$x_n&lt;2$ 对一切 $n$ 成立。<span class="step-score">（6 分）</span></p>
+  <p class="proof-line"><strong>第三步（存在性）</strong>：$\{x_n\}$ 单调递增且有上界，由单调有界定理，$\lim x_n$ 存在，设为 $L$。<span class="step-score">（8 分）</span></p>
+  <p class="proof-line"><strong>第四步（求值）</strong>：$f(x)=\sqrt{2+x}$ 连续，对 $x_{n+1}=\sqrt{2+x_n}$ 两边取极限得 $L=\sqrt{2+L}$，即 $L^2-L-2=0$，$L=2$ 或 $L=-1$。又 $x_n\ge x_1=\sqrt2$，由极限保号性 $L\ge\sqrt2&gt;0$，排除 $-1$。故 $\lim x_n=2$。$\square$<span class="step-score">（10 分）</span></p>
+  <p class="aside">书写点评：第一、二步是两次<strong>独立</strong>的归纳（双向归纳规范），顺序可换但缺一不可；第四步没有"保号性排除 $-1$"这句，求值分拿不满——不动点方程只负责提名，界与保号性负责任命。</p>
+</div>
+
+<h3>例 2 · 第 15 届题六的简化版分析（20 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>两句话：①"极限存在"——递推存在型，四步程序（第 ②③ 步是全部工作量）；②"极限不是 $3$"——<strong>否定句</strong>，查拆目标总表：首选反证（工具四）。</p>
+  <p><span class="stage">【盘点】</span>① $a=\sqrt[3]{3}&gt;1$ ⟹ $a^t$ 关于 $t$ 严格递增（归纳传递的引擎）；② $a^3=3$ ⟹ $3$ 是不动点（$g(3)=3$，反证的靶子）；③ $x_1=a&gt;1$（基例原料）；④ $g(x)=a^x$ 连续可导，$g'(3)=a^3\ln a=\ln3&gt;1$（排斥的证据，先记在库存里）。</p>
+  <p><span class="stage">【会师 · 存在性】</span>单调：基例 $x_2=a^a&gt;a=x_1$（$a&gt;1$），归纳步用 $a^t$ 递增传递。界：$3$ 白送（$x_n\le3\Rightarrow x_{n+1}\le a^3=3$）。单调有界定理收工——到这里 5 分。</p>
+  <p><span class="stage">【会师 · 紧界侦察】</span>$L\le3$ 只把 $3$ 圈进候选名单，要除名需更紧的界。<strong>工具一 · 倒推</strong>：找 $B$ 使 $a^B\le B$——见草稿纸。</p>
+  <div class="scratch">
+    <p>目标：找 $B$ 使 $a^B\le B$，即 $3^{B/3}\le B$。两边开 $B$ 次方（$B&gt;0$）：$3^{1/3}\le B^{1/B}$。</p>
+    <p>右边长成 $f(B)=B^{1/B}$ 的样子 ⟹ <strong>工具八 · 辅助函数</strong>：研究 $f(x)=x^{1/x}$：
+    $$f'(x)=x^{1/x-2}(1-\ln x)\ \Longrightarrow\ (0,e]\text{ 严格增、}[e,+\infty)\text{ 严格减，最大值 }f(e)=e^{1/e}.$$</p>
+    <p>要 $f(B)\ge f(3)$，取 $B=e$ 必行（最大值点）：$e^{1/e}\ge3^{1/3}\iff a^e\le e$。✓</p>
+    <p>数值侦察（工具三）：方程 $B^{1/B}=3^{1/3}$ 还有一根 $\approx2.478$（二分可得）——那是最紧的界，也是极限的真身。</p>
+  </div>
+  <p><span class="stage">【会师 · 排除 3】</span>否定句上反证：设 $L=3$。库存里能制造矛盾的货：$g(3)=3$、$g'(3)=\ln3&gt;1$、$x_n&lt;3$（严格递增 ⟹ 每项小于 $\sup$）。$g'(3)&gt;1$ 意味着"$3$ 附近输出比输入跑得快"——<strong>工具六 · 划归</strong>：中值定理把它翻译成 $|x_{n+1}-3|&gt;|x_n-3|$，距离越拉越大，与 $x_n\to3$ 矛盾。</p>
+  <p><span class="stage">【定型】</span>卷面四段：单调、界、存在性、排除 $3$。倒推与侦察一个字都不写。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 ×2</strong>：① <strong>倒推找界</strong>：目标不等式 $a^B\le B$ 化到已知函数的单调性上（此处 $x^{1/x}$），$B=e$ 这种"天上掉下来的界"全是这么来的；② <strong>$f'(L)&gt;1$ 排斥的严格化</strong>：$f'$ 连续给邻域 $f'&gt;1$ → 中值定理把"导数大于 1"翻成"距离放大" → 与收敛矛盾。以后凡 $f'(L)&gt;1$ 的不动点，照此办理。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 2</strong>　设 $a=\sqrt[3]{3}$，$x_1=a$，$x_{n+1}=a^{x_n}$。证明 $\{x_n\}$ 极限存在，但极限不是 $3$。</p>
+  <hr>
+  <p class="proof-line"><strong>第一步（单调性）</strong>：$a=\sqrt[3]{3}&gt;1$，故 $x_2=a^{x_1}=a^a&gt;a^1=x_1$。设 $x_n&gt;x_{n-1}$（$n\ge2$），则
+  $$x_{n+1}=a^{x_n}&gt;a^{x_{n-1}}=x_n.$$
+  由归纳法，$\{x_n\}$ 严格递增。<span class="step-score">（2 分）</span></p>
+  <p class="proof-line"><strong>第二步（上界与存在性）</strong>：$x_1=a=\sqrt[3]{3}&lt;3$。设 $x_n\le3$，则 $x_{n+1}=a^{x_n}\le a^3=3$。由归纳法，$x_n\le3$ 对一切 $n$ 成立。$\{x_n\}$ 单调递增有上界，由单调有界定理收敛，记极限为 $L$，且 $L\le3$。<span class="step-score">（5 分）</span></p>
+  <p class="proof-line"><strong>第三步（紧的界：法 II 路线）</strong>：设 $f(x)=x^{1/x}\ (x&gt;0)$，则 $f'(x)=x^{1/x-2}(1-\ln x)$，故 $f$ 在 $(0,e]$ 严格增、$[e,+\infty)$ 严格减。因 $3&gt;e$，由递减侧 $3^{1/3}=f(3)&lt;f(e)=e^{1/e}$。<span class="step-score">（7 分）</span></p>
+  <p class="proof-line">归纳证 $x_n&lt;e$：$x_1=3^{1/3}&lt;e^{1/e}&lt;e$；设 $x_n&lt;e$，则
+  $$x_{n+1}=\left(3^{1/3}\right)^{x_n}&lt;\left(e^{1/e}\right)^{x_n}=e^{x_n/e}&lt;e.$$
+  故 $L\le e&lt;3$——$L$ 不可能是 $3$。<span class="step-score">（10 分）</span></p>
+  <p class="proof-line"><strong>第四步（独立路线：法 III，排斥的严格化）</strong>：反设 $L=3$。$\{x_n\}$ 严格递增 ⟹ $x_n&lt;L=3$ 对一切 $n$ 成立。记 $g(x)=a^x$，则 $g(3)=a^3=3$，$g'(x)=a^x\ln a$，$g'(3)=a^3\ln a=\ln3&gt;1$。由 $g'$ 连续，存在 $\delta&gt;0$，使 $x\in(3-\delta,3+\delta)$ 时 $g'(x)&gt;1$。<span class="step-score">（13 分）</span></p>
+  <p class="proof-line">由 $x_n\to3$ 且 $x_n&lt;3$，存在 $N$，$n\ge N$ 时 $3-\delta&lt;x_n&lt;3$。对 $n\ge N$，由拉格朗日中值定理，存在 $\xi_n\in(x_n,3)\subset(3-\delta,3+\delta)$，使
+  $$3-x_{n+1}=g(3)-g(x_n)=g'(\xi_n)\,(3-x_n)&gt;3-x_n,$$
+  于是 $3-x_n\ge3-x_N&gt;0$ 对一切 $n\ge N$ 成立——与 $x_n\to3$ 矛盾。故 $L\ne3$。$\square$<span class="step-score">（20 分）</span></p>
+  <p class="aside">书写点评：逻辑上第三步已足够排除 $3$（$L\le e&lt;3$）；官方把法 I / II / III 并列，是展示三套工具——考场上"存在性（5 分）+ 任一法（15 分）"就是满分路线。第四步有两个易扣分点：$\xi_n$ 必须落进 $(3-\delta,3+\delta)$（所以先取 $N$ 的论证不能省）；"$x_n&lt;L$"（严格递增 ⟹ 每项小于 $\sup$）也必须写，否则 $g(3)-g(x_n)$ 的符号没着落。</p>
+</div>
+
+<h2>§9 配套题目</h2>
+
+<p>铁律：<strong>先写在纸上，写到写不动再展开答案</strong>。模仿题照例 1、例 2 的卷面格式写；变式题开始没有模板，先问自己"第一反应是什么、能拿什么东西做小实验"。</p>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 1</span>设 $x_1=\sqrt6$，$x_{n+1}=\sqrt{6+x_n}$。证明 $\{x_n\}$ 极限存在，并求其值。</p>
+  <details class="answer">
+    <summary>参考答案（约 10 分书写量）</summary>
+    <p><strong>单调性</strong>：$x_2=\sqrt{6+\sqrt6}&gt;\sqrt6=x_1$；设 $x_n&gt;x_{n-1}$，则 $x_{n+1}=\sqrt{6+x_n}&gt;\sqrt{6+x_{n-1}}=x_n$。归纳得严格递增（3 分）。</p>
+    <p><strong>有上界</strong>：$x_1=\sqrt6&lt;3$；设 $x_n&lt;3$，则 $x_{n+1}=\sqrt{6+x_n}&lt;\sqrt{6+3}=3$。归纳得 $x_n&lt;3$（6 分）。</p>
+    <p><strong>存在性</strong>：由单调有界定理，$\lim x_n=L$ 存在（8 分）。</p>
+    <p><strong>求值</strong>：两边取极限，$L=\sqrt{6+L}$，即 $L^2-L-6=0$，$L=3$ 或 $L=-2$；由保号性 $L\ge\sqrt6&gt;0$，故 $L=3$（10 分）。</p>
+    <p><strong>易错点</strong>：忘记排除 $-2$——方程提名，保号性任命。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 2</span>设 $x_1=3$，$x_{n+1}=\sqrt{2x_n}$。证明 $\{x_n\}$ 极限存在，并求其值。</p>
+  <details class="answer">
+    <summary>参考答案（约 10 分书写量）</summary>
+    <p><strong>有下界</strong>（先证界！）：$x_1=3&gt;2$；设 $x_n&gt;2$，则 $x_{n+1}=\sqrt{2x_n}&gt;\sqrt4=2$。归纳得 $x_n&gt;2$（3 分）。</p>
+    <p><strong>单调递减</strong>：由 $x_n&gt;2$ 得 $x_n^2&gt;2x_n$，即 $x_{n+1}=\sqrt{2x_n}&lt;x_n$（5 分）。</p>
+    <p><strong>存在性</strong>：单调递减有下界，由单调有界定理，$\lim x_n=L$ 存在（7 分）。</p>
+    <p><strong>求值</strong>：$L=\sqrt{2L}$，$L^2=2L$，$L=0$ 或 $L=2$；由保号性 $L\ge2$，故 $L=2$（10 分）。</p>
+    <p><strong>易错点</strong>：单调性的证明<strong>用到了下界</strong> $x_n&gt;2$——必须先证界、再证单调，顺序反了就循环论证（练功房 T7）。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 1</span>设 $x_1=1$，$x_{n+1}=1+\dfrac{x_n}{1+x_n}$。证明 $\{x_n\}$ 收敛，并求极限。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：四步程序照跑，但注意<strong>界可以不是不动点</strong>：不动点 $\frac{1+\sqrt5}{2}$ 带根号，而粗界 $2$ 一行就够——界只要够归纳用，不必是最紧的（当然，$f$ 递增时不动点本身也能当界：$x_n&lt;\varphi\Rightarrow f(x_n)&lt;f(\varphi)=\varphi$）。</p>
+    <p><strong>证明</strong>：$f(x)=1+\frac{x}{1+x}$，$f'(x)=\frac1{(1+x)^2}&gt;0$（$x\ge0$），$f$ 递增。基例 $x_2=1+\frac12=\frac32&gt;1=x_1$；设 $x_n&gt;x_{n-1}$，则 $x_{n+1}=f(x_n)&gt;f(x_{n-1})=x_n$，归纳得严格递增。又显然 $x_n\ge0$，故 $x_{n+1}=1+\frac{x_n}{1+x_n}&lt;1+1=2$，$\{x_n\}$ 有上界 $2$。由单调有界定理，$\lim x_n=L$ 存在。两边取极限：$L=1+\frac{L}{1+L}$，即 $L^2-L-1=0$，$L=\frac{1\pm\sqrt5}{2}$；由保号性 $L\ge x_1=1&gt;0$，故 $L=\dfrac{1+\sqrt5}{2}$。$\square$</p>
+    <p><strong>点评</strong>：上界 $2$ 不是极限 $\varphi\approx1.618$——这不丢人：界的职责是让归纳通过，极限的身份由方程 + 保号性最后确认。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 2</span>设 $x_1=1$，$x_{n+1}=\cos x_n$（弧度）。证明 $\{x_n\}$ 收敛。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：第一反应上单调有界——但 <strong>工具三 · 特殊化侦察</strong>：$x_1=1$，$x_2=\cos1\approx0.540$，$x_3\approx0.858$，$x_4\approx0.654$，上下振荡，<strong>不单调</strong>。换压缩赛道（动作三）：$\cos$ 把 $\mathbb R$ 送进 $[-1,1]$，在其上 $|\sin x|\le\sin1&lt;1$。</p>
+    <p><strong>证明</strong>：$x_2=\cos1\in[\cos1,1]$；若 $x_n\in[\cos1,1]$，由 $\cos$ 在 $[0,\pi]$ 递减，$x_{n+1}=\cos x_n\in[\cos1,\cos(\cos1)]\subset[\cos1,1]$。故 $n\ge2$ 时 $x_n\in[\cos1,1]$。</p>
+    <p>对 $n\ge2$，由拉格朗日中值定理，$\xi_n$ 在 $x_n$ 与 $x_{n-1}$ 之间（$\subset[\cos1,1]$）：
+    $$|x_{n+1}-x_n|=|\cos x_n-\cos x_{n-1}|=|\sin\xi_n|\cdot|x_n-x_{n-1}|\le q\,|x_n-x_{n-1}|,\quad q=\sin1&lt;1.$$
+    于是 $|x_{n+1}-x_n|\le q^{\,n-2}|x_3-x_2|$，对 $p\ge1$：
+    $$|x_{n+p}-x_n|\le\left(q^{\,n-2}+\cdots+q^{\,n+p-3}\right)|x_3-x_2|\le\frac{q^{\,n-2}}{1-q}|x_3-x_2|\to0,$$
+    $\{x_n\}$ 为 Cauchy 列，故收敛。设极限为 $L$，由 $\cos$ 连续，$L=\cos L$（唯一解 $\approx0.739$，由 $h(x)=\cos x-x$ 在 $[\cos1,1]$ 上 $h'=-\sin x-1&lt;0$ 严格减保证唯一）。$\square$</p>
+    <p><strong>点评</strong>：单调有界与压缩是两条赛道——$f$ 不单调时，作差 + 中值定理 + Cauchy 是标准替补。第 16 届题六(2)（$t-\arctan t$ 型）是这条赛道的加强版：那里 $|f'|$ 只在一点等于 1，需要在闭子区间上取 $\ell&lt;1$ 再反证。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv3">真题节选</span><strong>（第 15 届题六，20 分）</strong>设 $a=\sqrt[3]{3}$，$x_1=a$，$x_{n+1}=a^{x_n}\ (n=1,2,\ldots)$。证明：数列 $\{x_n\}_{n=1}^{\infty}$ 极限存在，但不是 $3$。</p>
+  <p>这是本章的开场谜题，现在亲手拆掉它。先回答三个梯子问题（写在纸上）：</p>
+  <p>（i）"极限存在"对应四步程序的哪几步？单调性与有界性各自的归纳基例是什么？<br>
+  （ii）上界 $3$ 好找（$x_n\le3\Rightarrow x_{n+1}\le a^3=3$），但它只给出 $L\le3$。要把 $3$ 从候选名单上除名，需要更紧的界——法 I 的 $\frac52$ 是怎么倒推出来的？（提示：验证 $a^{5/2}&lt;\frac52$，即 $243&lt;\left(\frac52\right)^6$。）<br>
+  （iii）法 III 反设 $L=3$，由中值定理得 $3-x_{n+1}=f'(\xi_n)(3-x_n)$。$f'(3)=\ln3&gt;1$ 为什么意味着"数列到不了 $3$"？$\xi_n$ 落在哪儿、为什么这很重要？</p>
+  <details class="answer">
+    <summary>梯子参考答案</summary>
+    <p>（i）第 ②③ 步。单调性基例：$x_2=a^a&gt;a=x_1$（$a&gt;1$）；有界性基例：$x_1=a=\sqrt[3]{3}&lt;3$。</p>
+    <p>（ii）候选界 $B$ 需满足 $a^B\le B$（动作二）。试 $B=\frac52$：$a^{5/2}=3^{5/6}=\sqrt[6]{243}$，而 $\left(\frac52\right)^6=\left(\frac{25}{4}\right)^3=\left(6+\frac14\right)^3=216+3\cdot6^2\cdot\frac14+\cdots=243+\cdots&gt;243$，故 $\sqrt[6]{243}&lt;\frac52$，$B=\frac52$ 合格。归纳：$x_n&lt;\frac52\Rightarrow x_{n+1}=a^{x_n}&lt;a^{5/2}&lt;\frac52$，于是 $L\le\frac52&lt;3$。$B$ 越取越紧，$B\approx2.478$ 就是极限真身。</p>
+    <p>（iii）$f'(3)&gt;1$ 且 $f'$ 连续 ⟹ 存在邻域 $(3-\delta,3+\delta)$ 使其中 $f'&gt;1$。$\xi_n\in(x_n,3)$ <strong>必须落进这个邻域</strong>，估计 $f'(\xi_n)&gt;1$ 才合法——所以要先取 $N$ 使 $n\ge N$ 时 $3-\delta&lt;x_n&lt;3$。于是 $3-x_{n+1}&gt;3-x_n\ge\cdots\ge3-x_N&gt;0$：与 $3$ 的距离有正下界，$x_n\to3$ 不可能。直观：$f'(L)&gt;1$ 的不动点把附近的点推得更远，递增数列自然到不了它。</p>
+  </details>
+  <details class="answer">
+    <summary>官方解答骨架（三种证法，转录自官方参考答案）</summary>
+    <p><strong>第一步（极限存在，5 分点）</strong>　归纳证数列单调上升且有上界 $3$：$a=x_1=\sqrt[3]{3}&gt;1$，$x_2=a^{x_1}&gt;a=x_1$；归纳得 $x_{n+1}=a^{x_n}&gt;a^{x_{n-1}}=x_n\ (n\ge2)$。又 $a^3=3$，归纳得 $x_n\le3\ (n\ge1)$。由单调有界原理，极限存在。</p>
+    <p><strong>法 I（归纳放缩，20 分点）</strong>　归纳证 $1&lt;x_1&lt;x_2&lt;\cdots&lt;x_n&lt;\cdots&lt;\frac52$。基例 $1&lt;x_1=\sqrt[3]{3}=\sqrt[3]{\frac{24}{8}}&lt;\sqrt[3]{\frac{125}{8}}=\frac52$；若 $1&lt;x_n&lt;\frac52$，则
+    $$x_{n+1}=a^{x_n}&lt;\left(\sqrt[3]{3}\right)^{\frac52}=\sqrt[6]{243},\qquad \left(\tfrac52\right)^6=\left(\tfrac{25}{4}\right)^3=\left(6+\tfrac14\right)^3=216+3\cdot6^2\cdot\tfrac14+\cdots=243+\cdots&gt;243,$$
+    故 $\sqrt[6]{243}&lt;\frac52$。所有项不超过 $\frac52$，极限不可能为 $3$。</p>
+    <p><strong>法 II（辅助函数 $x^{1/x}$，20 分点）</strong>　找上界 $L$ 使 $3^{L/3}\le L$，即 $3^{1/3}\le L^{1/L}$。考察 $f(x)=x^{1/x}\ (x&gt;0)$：$f'(x)=x^{1/x-2}(1-\ln x)$，$f$ 在 $(0,e]$ 严格单增、$[e,+\infty)$ 严格单减。归纳证 $x_n&lt;e$：$x_1=3^{1/3}&lt;e^{1/e}&lt;e$；若 $x_n&lt;e$，则 $x_{n+1}=3^{x_n/3}&lt;e^{x_n/e}&lt;e$。故 $e$ 是 $\{x_n\}$ 的上界，极限不可能为 $3$。<br><em>（校注：真题索引转录稿中 $f'$ 的符号有笔误，此处已按正确的 $1-\ln x$ 转录；单调区间不变。）</em></p>
+    <p><strong>法 III（中值定理反证，20 分点）</strong>　设极限为 $L$。由单调性证明知 $\{x_n\}$ 严格单增，$x_n&lt;L\ (\forall n\ge1)$。记 $f(x)=a^x$，则 $f'(3)=a^3\ln a=\ln3&gt;1$。若 $L=3$，由 $f$ 连续可导，存在 $\delta&gt;0$ 使 $x\in(3-\delta,3+\delta)$ 时 $f'(x)&gt;1$；取 $N$ 使 $n\ge N$ 时 $3-\delta&lt;x_n&lt;3$，由中值定理有 $\xi_n\in(x_n,L)$ 使
+    $$|x_{n+1}-3|=f(3)-f(x_n)=f'(\xi_n)(3-x_n)\ge3-x_n,\qquad n\ge N,$$
+    归纳得 $|x_n-3|\ge3-x_N&gt;0\ (\forall n\ge N)$，与 $x_n\to3$ 矛盾。故极限不可能是 $3$。</p>
+    <p><strong>复盘</strong>：第一步 5 分 = 本章四步程序的第 ②③ 步（双向归纳各一次）；三种证法对应本章三条路线——法 I = 倒推找更紧的界（动作二），法 II = 辅助函数 $x^{1/x}$（工具八），法 III = $f'(L)&gt;1$ 排斥的严格化（动作三）。考场上任选一条写全即满分。<em>（题目与解答转录自第 15 届官方 PDF，见 <a href="真题索引/第15届_2023.md">真题索引</a>。）</em></p>
+  </details>
+</div>
+
+<h2>§9.5 熟练度训练场</h2>
+
+<p>理解只是入场券，<strong>考场上拼的是基本动作的速度</strong>。两种训练，每天 10 分钟：</p>
+
+<h3>训练一 · 翻卡快测（目标：每卡 10 秒内出答案）</h3>
+<div class="quiz" data-quiz="ch03-drill"></div>
+
+<h3>训练二 · 计时默写（写在纸上，掐表）</h3>
+<div class="calc box" data-tag="默写清单">
+  <p>① <strong>60 秒</strong>：默写单调有界定理（递增版 + 递减版，含极限 $=\sup/\inf$ 的身份）；</p>
+  <p>② <strong>90 秒</strong>：默写四步程序（猜 → 证单调 → 证有界 → 取极限），每步配方法清单（单调：归纳/作差/作比；界：倒推 $f(B)\le B$）；</p>
+  <p>③ <strong>3 分钟</strong>：默写压缩估计全链：$|x_{n+1}-L|=|f(x_n)-f(L)|=|f'(\xi_n)|\cdot|x_n-L|\le q\,|x_n-L|\le\cdots\le q^{\,n}|x_1-L|$，并写出收敛结论与唯一性一句话。</p>
+  <p><strong>过关标准</strong>：连续两天全对才算过。做不到就回到对应小节重读，再默。</p>
+</div>
+
+<h2>§10 六方向自测卡</h2>
+
+<div class="selftest">
+  <h3>合上书，拿张白纸，默写以下六项</h3>
+  <div class="st-item">
+    <p class="st-q"><em>=（它是什么）</em>　写出单调有界定理（双向）的完整陈述，以及不动点的定义。</p>
+    <details><summary>对照</summary><p>递增有上界 ⟹ 收敛于 $\sup$；递减有下界 ⟹ 收敛于 $\inf$。不动点：$f(L)=L$ 的解 $L$，即 $y=f(x)$ 与 $y=x$ 的交点。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>←（它从哪来）</em>　单调有界定理是怎么被生产出来的？它和确界公理是什么关系？</p>
+    <details><summary>对照</summary><p>ch0m §5 的五步程序：$M=\sup\{x_n\}$（确界公理给候选）→ 压不下给 $x_N&gt;M-\varepsilon$ → 单调性传递到 $n\ge N$ → 夹逼收尾；三条件各用一次。它与确界公理互为等价面孔（第 1 章地图），都是"实数没有洞"的化身。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>→（它带来什么）</em>　说出单调有界定理的三条直接出口。</p>
+    <details><summary>对照</summary><p>① 四步程序：递推数列存在性 + 求值的考场流水线（第 15 届题六 20 分）；② $e$ 的严格定义：$\lim(1+\frac1n)^n$ 存在的历史原型；③ 与压缩估计组成双赛道：单调迭代用它，非单调迭代换压缩（第 16 届题六）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>∈（实例）</em>　默写三个递推数列及其极限（一个标准、一个陷阱、一个历史原型）。</p>
+    <details><summary>对照</summary><p>① $x_1=\sqrt2$，$x_{n+1}=\sqrt{2+x_n}\to2$；② $x_1=\sqrt[3]{3}$，$x_{n+1}=(\sqrt[3]{3})^{x_n}\to\approx2.478$——不是 $3$（$3$ 是排斥不动点）；③ $x_n=(1+\frac1n)^n\to e$（单调有界定理的第一个应用）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>≠（区分）</em>　最易混的一对："不动点方程 $L=f(L)$ 的根" 与 "数列的极限"。</p>
+    <details><summary>对照</summary><p>方程给<strong>候选名单</strong>（第 15 届：$3$ 与 $\approx2.478$ 都在名单上）；极限是名单上<strong>同时满足界约束与保号性的唯一者</strong>（$\approx2.478$，因 $L\le\frac52$）。判别工具：界的约束 + $f'(L)$ 与 $1$ 比大小（$&gt;1$ 排斥，除非数列恒等于 $L$，否则到不了它）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>（为何要有它）</em>　为什么不用 $\varepsilon$-$N$ 直接证递推数列收敛？历史上它先为谁服务？</p>
+    <details><summary>对照</summary><p>递推数列没有通项公式，$\varepsilon$-$N$ 需要对 $|x_n-L|$ 显式估计，无从下手；单调有界把"收敛吗"换成"单调吗 + 有界吗"两个初等不等式问题——不知道极限是谁，先拿下存在性。历史上它先为 $e$ 服务：$\lim(1+\frac1n)^n$ 的存在性靠它兜底。</p></details>
+  </div>
+</div>
+
+<div class="net box" data-tag="间隔复习安排">
+  <p><strong>1 天后</strong>：重做六方向自测卡（不翻书）+ 翻卡快测第二轮；<strong>3 天后</strong>：重做变式 2 与真题节选的梯子问题 + 计时默写②③；<strong>1 周后</strong>：把四步程序与压缩估计各默写一遍，并打开蛛网图探索器用 $(\sqrt[3]{3})^x$ 复现"$2.478$ 吸引 / $3$ 排斥"。</p>
+  <p>本章借用的拉格朗日中值定理将在<strong>第 5 章</strong>系统证明；单调有界与确界会在<strong>第 4 章</strong>（闭区间上的连续函数）再次并肩作战。</p>
+</div>
+
+<div class="chapnav">
+  <span><a href="ch02.html">← 第 2 章 · 极限的严格语言</a></span>
+  <span><a href="index.html">首页</a></span>
+  <span><a href="ch04.html">第 4 章 · 闭区间上的连续函数：四大定理与两大证法 →</a></span>
+</div>
+
+</div>
+
+<script src="assets/quiz.js"></script>
+<script>
+/* §9.5 翻卡数据 */
+registerQuiz("ch03-drill", [
+  { q: "默写：单调有界定理（递增版）", a: "若 $\\{x_n\\}$ 单调递增且有上界，则 $\\lim x_n$ 存在，且 $\\lim x_n=\\sup\\{x_n\\}$。（递减有下界 ⟹ 收敛于 $\\inf$。）" },
+  { q: "递推数列 $x_{n+1}=f(x_n)$ 的四步程序？", a: "猜：解 $L=f(L)$ 得候选；证单调：归纳/作差/作比；证有界：归纳，界靠倒推 $f(B)\\le B$；取极限：两边取极限解方程，用界与保号性排除多根。" },
+  { q: "为什么不能一上来就「两边取极限」？", a: "极限存在才有 $L$ 可谈。反例：$x_1=1,\\ x_{n+1}=2x_n$，形式取极限得 $L=2L$ 即 $L=0$，但数列其实奔向 $+\\infty$。先证存在，再取极限。" },
+  { q: "$f$ 递增且 $x_2\\ge x_1$，单调性怎么归纳？", a: "设 $x_n\\ge x_{n-1}$，则 $x_{n+1}=f(x_n)\\ge f(x_{n-1})=x_n$——$f$ 递增把不等式从 $n-1$ 传递到 $n$。基例 $x_2\\ge x_1$ 单独验证。" },
+  { q: "上界怎么「倒推」出来？", a: "找 $B$ 使 $f(B)\\le B$（且 $x_1\\le B$）。$f$ 递增时 $x_n\\le B\\Rightarrow x_{n+1}=f(x_n)\\le f(B)\\le B$，归纳白送。不动点本身是首选候选。" },
+  { q: "压缩映射：定义一句话 + 结论一句话", a: "$\\exists q\\in(0,1)$：$|f(x)-f(y)|\\le q|x-y|$ ⟹ 迭代列收敛到唯一不动点 $L$，且 $|x_n-L|\\le q^{\\,n-1}|x_1-L|$（几何速度）。" },
+  { q: "中值定理怎样给出压缩估计？", a: "$|x_{n+1}-L|=|f(x_n)-f(L)|=|f'(\\xi_n)|\\cdot|x_n-L|$；若一片区间上 $|f'|\\le q&lt;1$，误差每步缩到 $q$ 倍。" },
+  { q: "$f'(L)>1$ 的不动点会怎样？15 届题六里是谁？", a: "排斥：附近误差被放大，迭代列到不了它。15 届：$g(x)=(\\sqrt[3]{3})^x$，$g'(3)=a^3\\ln a=\\ln 3>1$，故极限不是 $3$。" },
+  { q: "15 届题六真正的极限满足什么条件？", a: "$L=(\\sqrt[3]{3})^L$ 且 $L\\le\\frac52$（法 I）或 $L\\le e$（法 II）——方程 $x^{1/x}=3^{1/3}$ 在 $(0,e)$ 内的唯一根，约 $2.478$，不是 $3$。" },
+  { q: "$f(x)=x^{1/x}$ 的单调区间？", a: "$f'(x)=x^{1/x-2}(1-\\ln x)$：$(0,e]$ 严格增，$[e,+\\infty)$ 严格减，$x=e$ 取最大值 $e^{1/e}$。15 届题六法 II 的钥匙。" }
+]);
+</script>
+
+<script>
+/* §2.1 蛛网图探索器 */
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  var svg = document.getElementById("cw-svg");
+  var out = document.getElementById("cw-out");
+  var x1Slider = document.getElementById("cw-x1");
+  var kSlider = document.getElementById("cw-k");
+  var btnA = document.getElementById("cw-fa");
+  var btnB = document.getElementById("cw-fb");
+  var LN3 = Math.log(3);
+
+  /* (∛3)^x = x 在 (0,e) 内的根：二分法 */
+  function g2(x) { return Math.pow(3, x / 3) - x; }
+  function smallRoot() {
+    var lo = 1.5, hi = 2.9;
+    for (var i = 0; i < 90; i++) {
+      var mid = (lo + hi) / 2;
+      if (g2(mid) > 0) lo = mid; else hi = mid;
+    }
+    return (lo + hi) / 2;
+  }
+  var R2 = smallRoot();
+
+  var CFG = {
+    a: { X: 3.0, xmin: 0.05,
+         f: function (x) { return Math.sqrt(2 + x); },
+         label: "f(x) = √(2+x)",
+         fps: [ { x: 2, der: 0.25, kind: "att" } ] },
+    b: { X: 4.4, xmin: 0.05,
+         f: function (x) { return Math.pow(3, x / 3); },
+         label: "f(x) = (∛3)^x",
+         fps: [ { x: R2, der: (LN3 / 3) * R2, kind: "att" },
+                { x: 3, der: LN3, kind: "rep" } ] }
+  };
+  var state = { mode: "b", x1: 1.44, k: 10 };
+
+  var L = 70, T = 55, S = 320;   /* 绘图方块：左边距、上边距、边长 */
+  function C() { return CFG[state.mode]; }
+  function px(v) { return L + v * (S / C().X); }
+  function py(v) { return T + S - v * (S / C().X); }
+
+  function mk(tag, attrs) {
+    var el = document.createElementNS(NS, tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    svg.appendChild(el);
+    return el;
+  }
+  function tx(x, y, str, attrs) {
+    var t = mk("text", attrs || {});
+    t.setAttribute("x", x); t.setAttribute("y", y);
+    t.textContent = str;
+    return t;
+  }
+
+  function drawStatic() {
+    /* 坐标轴 */
+    mk("line", { x1: L, y1: py(0), x2: px(C().X) + 12, y2: py(0), stroke: "#2b2620", "stroke-width": 2 });
+    mk("polygon", { points: (px(C().X) + 20) + "," + py(0) + " " + (px(C().X) + 8) + "," + (py(0) - 5) + " " + (px(C().X) + 8) + "," + (py(0) + 5), fill: "#2b2620" });
+    mk("line", { x1: L, y1: py(0), x2: L, y2: py(C().X) - 12, stroke: "#2b2620", "stroke-width": 2 });
+    mk("polygon", { points: L + "," + (py(C().X) - 20) + " " + (L - 5) + "," + (py(C().X) - 8) + " " + (L + 5) + "," + (py(C().X) - 8), fill: "#2b2620" });
+    tx(px(C().X) + 14, py(0) + 18, "x", { "font-size": 14, fill: "#2b2620" });
+    tx(L - 16, py(C().X) - 14, "y", { "font-size": 14, fill: "#2b2620" });
+    /* 整数刻度 */
+    for (var i = 1; i <= Math.floor(C().X); i++) {
+      mk("line", { x1: px(i), y1: py(0) - 5, x2: px(i), y2: py(0) + 5, stroke: "#2b2620", "stroke-width": 1.5 });
+      tx(px(i), py(0) + 22, String(i), { "font-size": 12.5, fill: "#5c554b", "text-anchor": "middle" });
+      mk("line", { x1: L - 5, y1: py(i), x2: L + 5, y2: py(i), stroke: "#2b2620", "stroke-width": 1.5 });
+      tx(L - 10, py(i) + 4, String(i), { "font-size": 12.5, fill: "#5c554b", "text-anchor": "end" });
+    }
+    /* y = x */
+    mk("line", { x1: px(0), y1: py(0), x2: px(C().X), y2: py(C().X), stroke: "#8a8175", "stroke-width": 1.8, "stroke-dasharray": "7 5" });
+    tx(px(C().X) - 36, py(C().X) + 22, "y = x", { "font-size": 14, fill: "#8a8175", "font-style": "italic" });
+    /* y = f(x)（超出画面部分截断） */
+    var d = "", pen = false;
+    for (var j = 0; j <= 260; j++) {
+      var xv = C().X * j / 260, yv = C().f(xv);
+      if (yv <= C().X * 1.001) {
+        d += (pen ? " L" : "M") + px(xv).toFixed(1) + " " + py(yv).toFixed(1);
+        pen = true;
+      } else pen = false;
+    }
+    mk("path", { d: d, fill: "none", stroke: "#1d4ed8", "stroke-width": 2.5 });
+    tx(px(0.12), py(C().f(0.12)) - 10, C().label, { "font-size": 14, fill: "#1d4ed8", "font-style": "italic" });
+    /* 不动点标记 */
+    C().fps.forEach(function (p) {
+      var col = p.kind === "att" ? "#15803d" : "#7c3aed";
+      mk("circle", { cx: px(p.x), cy: py(p.x), r: 6, fill: "#fff", stroke: col, "stroke-width": 3 });
+    });
+  }
+
+  function orbit() {
+    var pts = [[state.x1, 0]];
+    var x = state.x1, escaped = false;
+    for (var i = 0; i < state.k; i++) {
+      var y = C().f(x);
+      pts.push([x, y]); pts.push([y, y]);
+      x = y;
+      if (y > C().X * 1.02) { escaped = true; break; }
+    }
+    return { pts: pts, xk: x, escaped: escaped };
+  }
+
+  function redraw() {
+    svg.innerHTML = "";
+    drawStatic();
+    var ob = orbit();
+    var d = "";
+    ob.pts.forEach(function (p) {
+      d += (d ? " L" : "M") + px(p[0]).toFixed(1) + " " + py(Math.min(p[1], C().X * 1.03)).toFixed(1);
+    });
+    mk("path", { d: d, fill: "none", stroke: "#be123c", "stroke-width": 2 });
+    var last = ob.pts[ob.pts.length - 1];
+    mk("circle", { cx: px(last[0]), cy: py(Math.min(last[1], C().X * 1.03)), r: 4.5, fill: "#be123c" });
+    /* 可拖手柄（监听挂在持久的 svg 上） */
+    mk("circle", { cx: px(state.x1), cy: py(0), r: 8, fill: "#be123c", stroke: "#fff", "stroke-width": 2, cursor: "ew-resize" });
+    tx(px(state.x1), py(0) + 38, "x₁=" + state.x1.toFixed(2), { "font-size": 13, fill: "#be123c", "text-anchor": "middle", "font-weight": "bold" });
+    /* 右侧面板 */
+    var px0 = 425;
+    tx(px0, 84, C().label + "，k = " + state.k, { "font-size": 14.5, fill: "#2b2620", "font-weight": "bold" });
+    var yy = 112;
+    C().fps.forEach(function (p) {
+      var col = p.kind === "att" ? "#15803d" : "#7c3aed";
+      var word = p.kind === "att" ? "吸引" : "排斥";
+      var rel = p.der < 1 ? " < 1 " : " > 1 ";
+      tx(px0, yy, "不动点 " + p.x.toFixed(3) + "：f′≈" + p.der.toFixed(3) + rel + word, { "font-size": 13.5, fill: col });
+      yy += 24;
+    });
+    tx(px0, yy, "x_k = " + (ob.escaped ? "冲出画面" : ob.xk.toFixed(4)), { "font-size": 13.5, fill: "#be123c", "font-weight": "bold" });
+
+    /* 反馈文本 */
+    var msg;
+    if (state.mode === "a") {
+      msg = "x<sub>" + state.k + "</sub> ≈ <strong>" + ob.xk.toFixed(4) + "</strong>。f′(2)=1/4&lt;1：误差每步约缩到 1/4，不动点 2 把一切都吸进去——随便拖 x₁，结局不变。";
+    } else if (ob.escaped) {
+      msg = "<span class='no'>x_k 冲出画面，发散到 +∞</span>：x₁=" + state.x1.toFixed(2) + " 在 3 的上方，f′(3)=ln3≈1.099&gt;1 把点向上推，越推越远。";
+    } else if (Math.abs(state.x1 - 3) < 0.005) {
+      msg = "x₁=3：钉在排斥不动点上纹丝不动。但把 x₁ 稍微挪开一点点，它就会离开 3——这就是「排斥」。";
+    } else if (state.x1 > R2 && state.x1 < 3) {
+      msg = "从 3 的左邻域出发：与 3 的距离先被拉大（f′(3)&gt;1，排斥），随后一路滑向吸引点 L≈" + R2.toFixed(3) + "。";
+    } else {
+      msg = "x<sub>" + state.k + "</sub> ≈ <strong>" + ob.xk.toFixed(4) + "</strong>，爬向 L≈" + R2.toFixed(4) + "——方程 x=(∛3)<sup>x</sup> 在 (0,e) 内的唯一根（f′(L)≈" + ((LN3 / 3) * R2).toFixed(3) + "&lt;1，吸引）。<strong>不是 3</strong>：3 也是不动点，但它排斥。";
+    }
+    out.innerHTML = msg;
+  }
+
+  /* 拖动手柄：监听挂在 svg 上，redraw 重建圆点也不丢捕获 */
+  var dragging = false;
+  function evToData(ev) {
+    var r = svg.getBoundingClientRect();
+    var vx = (ev.clientX - r.left) * (720 / r.width);
+    return (vx - L) / (S / C().X);
+  }
+  svg.addEventListener("pointerdown", function (ev) {
+    var v = evToData(ev);
+    if (Math.abs(v - state.x1) < C().X * 0.06) {
+      dragging = true;
+      svg.setPointerCapture(ev.pointerId);
+      ev.preventDefault();
+    }
+  });
+  svg.addEventListener("pointermove", function (ev) {
+    if (!dragging) return;
+    var v = evToData(ev);
+    v = Math.max(C().xmin, Math.min(C().X, v));
+    state.x1 = v;
+    x1Slider.value = v;
+    redraw();
+  });
+  svg.addEventListener("pointerup", function () { dragging = false; });
+
+  function setMode(m) {
+    state.mode = m;
+    x1Slider.min = C().xmin; x1Slider.max = C().X; x1Slider.step = 0.01;
+    if (state.x1 > C().X) state.x1 = C().X;
+    if (state.x1 < C().xmin) state.x1 = C().xmin;
+    x1Slider.value = state.x1;
+    btnA.style.background = m === "a" ? "#0f766e" : "#fff";
+    btnA.style.color = m === "a" ? "#fff" : "#0f766e";
+    btnB.style.background = m === "b" ? "#0f766e" : "#fff";
+    btnB.style.color = m === "b" ? "#fff" : "#0f766e";
+    redraw();
+  }
+  btnA.addEventListener("click", function () { setMode("a"); });
+  btnB.addEventListener("click", function () { setMode("b"); });
+  x1Slider.addEventListener("input", function () { state.x1 = parseFloat(x1Slider.value); redraw(); });
+  kSlider.addEventListener("input", function () { state.k = parseInt(kSlider.value, 10); redraw(); });
+  setMode("b");
+})();
+</script>
+
+</body>
+</html>

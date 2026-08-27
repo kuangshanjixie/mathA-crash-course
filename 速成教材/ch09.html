@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数分第 9 章 · 级数：判敛、一致收敛与幂级数 —— 数学A速成讲义</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+<div class="wrap">
+
+<div class="bookbar">
+  <span><a href="index.html">← 返回首页</a></span>
+  <span>卷一 · 数学分析 · 第 9 章</span>
+</div>
+
+<div class="chapter-kicker">CHAPTER 9 · 数学分析</div>
+<h1>级数：判敛、一致收敛与幂级数</h1>
+
+<div class="exam box" data-tag="本章导览">
+  <p><strong>这一章在整张卷子上的位置</strong>：级数是数分卷的常客，两种出场形态。一种是<strong>直接主场</strong>——第 16 届题五（15 分）：判别两个分母含 $(-1)^{[\sqrt n]}$ 的级数的收敛性，官方用 Leibniz 判别、差比较、加括号、Abel 分部求和四件武器；另一种是<strong>求和引擎</strong>——第 16 届题二（15 分）的收尾：把 $-\ln(1-s)$ 展成幂级数、逐项积分，算出 $\varphi(1)=\sum\frac{1}{2n^2}=\frac{\pi^2}{12}$。一致收敛则是本章与第 8 章共享的通行证：第 13 届题五(1) 用 Weierstrass 判别法证含参积分一致收敛（M 判别的积分版）；第 17 届题二靠三角函数系正交性 $\int_0^1 e^{2\pi ikx}dx=0$ 起步（Fourier 级数基础性质的口音）。主场约值 <strong>15 分</strong>，工具形态再值 3–5 分步骤。</p>
+  <p><strong>学完你能</strong>：① 默写一致收敛的定义与 sup 判据，并逐符号朗读量词链；② 看通项长相 10 秒内选对判敛武器（含 $n!$ 用比值、含 $n^n$ 用根值、代数式找 p 级数当尺……）；③ 用 Weierstrass M 判别证一致收敛，并正确调用"连续 / 逐项积分 / 逐项求导"三大遗产（各自的<strong>条件</strong>）；④ 求幂级数收敛半径、单独判端点，用逐项运算求和（$\zeta(2)$ 路径）；⑤ 把"绝对收敛 vs 条件收敛"的分流判断做成反射。</p>
+  <p><strong>前置</strong>：第 1 章 sup / inf（sup 判据就是它）；第 2 章极限语言与量词顺序通则（一致收敛的命门）；第 3 章单调有界定理（正项级数 = 单调部分和）；第 7 章积分（积分判别法、逐项积分）；第 8 章含参积分（M 判别的积分孪生）。</p>
+</div>
+
+<h2>§1 开场谜题：两个"不信"</h2>
+
+<div class="hook box" data-tag="开场谜题">
+  <p><strong>第一个不信</strong>。$1+\frac12+\frac14+\frac18+\cdots=2$，你信——每加一项，离 2 的距离减半，肉眼可见。那么
+  $$1+\frac12+\frac13+\frac14+\cdots=\ ?$$
+  很多人第一反应："每项都趋于零了，越加越小，总和应该是个数吧？"<strong>它是无穷大。</strong>而且不需要什么高等工具就能看见：把项按 2 的幂一捆一捆打包，
+  $$1+\frac12+\underbrace{\left(\frac13+\frac14\right)}_{>\,\frac12}+\underbrace{\left(\frac15+\cdots+\frac18\right)}_{>\,\frac12}+\underbrace{\left(\frac19+\cdots+\frac1{16}\right)}_{>\,\frac12}+\cdots$$
+  每一捆都超过 $\frac12$（捆内最小的一项 × 捆内项数），而这样的捆<strong>要多少有多少</strong>。加到第 $2^{10}=1024$ 项，和已经超过 $1+10\times\frac12=6$；加到第 $2^{20}$ 项，超过 $11$。它涨得比蜗牛还慢——大约 $\ln n$ 的速度——但它<strong>从不停下</strong>。</p>
+  <p>对比：$1+\frac14+\frac19+\frac1{16}+\cdots=\sum\frac1{n^2}$，同样"每项趋于零"，却乖乖收敛到 $\frac{\pi^2}{6}\approx1.645$。同样是无限加下去，一个炸一个不炸——<strong>分界线画在哪？拿什么判？</strong>这是本章第一件货：数项级数的判敛武器库。</p>
+  <p><strong>第二个不信</strong>。看函数列 $f_n(x)=x^n$，$x\in[0,1]$。每一项都是再乖不过的连续函数。逐点取极限：$x\in[0,1)$ 时 $x^n\to0$，$x=1$ 时 $1^n\to1$——极限函数
+  $$f(x)=\begin{cases}0, & 0\le x&lt;1\\ 1, & x=1\end{cases}$$
+  <strong>在 $x=1$ 处断开</strong>。一列连续函数，"每个点都收敛"，极限却不连续——"每个点都收敛"到底漏掉了什么？</p>
+  <p>漏掉的就是"<strong>一致</strong>"：点态收敛允许每个 $x$ 各走各的进度（$N$ 可以依赖 $x$），而 $x=1$ 附近的点进度无限拖延——这正是极限断开的全部原因。把"$N$ 不许依赖 $x$"加回去，就是<strong>一致收敛</strong>。注意这个味道：第 2 章一致连续是"$\delta$ 不许依赖 $x$"，第 8 章含参积分的一致收敛是"$N$ 不许依赖参数"——<strong>同一条量词顺序通则的第三次显形</strong>。这是本章第二件货，也是它换来三大遗产（和函数连续、逐项积分、逐项求导）的门票。</p>
+</div>
+
+<h2>§2 先看见它：部分和、积分与那把 p 尺</h2>
+
+<div class="vision box" data-tag="直觉与图像">
+  <p>级数 $\sum a_n$ 不是什么新对象——它就是<strong>部分和数列</strong> $S_n=a_1+a_2+\cdots+a_n$。"级数收敛" $=$ "数列 $\{S_n\}$ 收敛"，第 3 章的全套家伙（单调有界、Cauchy 准则、夹逼）直接继承。立刻读出三件事：</p>
+  <ul>
+    <li><strong>通项趋于零只是门票</strong>：$a_n=S_n-S_{n-1}\to L-L=0$ 是收敛的必要条件——通项不趋于零直接判死刑；但趋于零不保证收敛，调和级数就是头号反例。</li>
+    <li><strong>正项级数 = 单调递增的部分和</strong>：$S_n$ 单调，由单调有界定理，<strong>收敛 ⟺ 部分和有上界</strong>。所以正项级数的所有判别法，本质都是同一件事：想办法证明 $S_n$ 有上界（或没有）。</li>
+    <li><strong>$\sum f(n)$ 与 $\int f$ 是同一块面积的两种算法</strong>：$f$ 正且递减时，矩形（级数）与曲边梯形（积分）互相盖住对方——谁收敛另一个也收敛。调和级数与 $\sum\frac1{n^2}$ 的分界线，用这张图一眼看见。</li>
+  </ul>
+</div>
+
+<figure>
+<svg viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="积分判别法：矩形与曲边梯形互相覆盖">
+  <!-- 面板 A：p=1 调和级数 -->
+  <line x1="30" y1="165" x2="344" y2="165" stroke="#2b2620" stroke-width="1.6"/>
+  <line x1="40" y1="172" x2="40" y2="20" stroke="#2b2620" stroke-width="1.6"/>
+  <!-- 左端点矩形 n=1..6，区间 [n,n+1]，高 1/n -->
+  <rect x="83"  y="35"    width="40" height="130"   fill="#1d4ed8" opacity="0.22"/>
+  <rect x="125" y="100"   width="40" height="65"    fill="#1d4ed8" opacity="0.22"/>
+  <rect x="167" y="121.7" width="40" height="43.3"  fill="#1d4ed8" opacity="0.22"/>
+  <rect x="209" y="132.5" width="40" height="32.5"  fill="#1d4ed8" opacity="0.22"/>
+  <rect x="251" y="139"   width="40" height="26"    fill="#1d4ed8" opacity="0.22"/>
+  <rect x="293" y="143.3" width="40" height="21.7"  fill="#1d4ed8" opacity="0.22"/>
+  <!-- 曲线 y=1/x -->
+  <polyline points="82,35 103,78.3 124,100 145,113 166,121.7 187,127.9 208,132.5 229,136.1 250,139 271,141.4 292,143.3 313,145 334,146.4"
+    fill="none" stroke="#be123c" stroke-width="2.2"/>
+  <text x="180" y="14" font-size="13" fill="#2b2620" text-anchor="middle" font-weight="bold">p = 1：矩形盖住曲线 y=1/x</text>
+  <text x="180" y="188" font-size="12" fill="#1d4ed8" text-anchor="middle">1+1/2+…+1/N ≥ ln(N+1) → ∞（发散）</text>
+  <!-- 面板 B：p=2 -->
+  <line x1="390" y1="165" x2="704" y2="165" stroke="#2b2620" stroke-width="1.6"/>
+  <line x1="400" y1="172" x2="400" y2="20" stroke="#2b2620" stroke-width="1.6"/>
+  <!-- 右端点矩形 n=1..6，区间 [n,n+1]，高 1/(n+1)² -->
+  <rect x="443" y="132.5" width="40" height="32.5" fill="#15803d" opacity="0.25"/>
+  <rect x="485" y="150.6" width="40" height="14.4" fill="#15803d" opacity="0.25"/>
+  <rect x="527" y="156.9" width="40" height="8.1"  fill="#15803d" opacity="0.25"/>
+  <rect x="569" y="159.8" width="40" height="5.2"  fill="#15803d" opacity="0.25"/>
+  <rect x="611" y="161.4" width="40" height="3.6"  fill="#15803d" opacity="0.25"/>
+  <rect x="653" y="162.3" width="40" height="2.7"  fill="#15803d" opacity="0.25"/>
+  <!-- 曲线 y=1/x² -->
+  <polyline points="442,35 452.5,81.8 463,107.2 484,132.5 505,144.2 526,150.6 547,154.4 568,156.9 589,158.6 610,159.8 631,160.9 652,161.4 673,161.9 694,162.3"
+    fill="none" stroke="#be123c" stroke-width="2.2"/>
+  <text x="540" y="14" font-size="13" fill="#2b2620" text-anchor="middle" font-weight="bold">p = 2：曲线 y=1/x² 盖住矩形</text>
+  <text x="540" y="188" font-size="12" fill="#15803d" text-anchor="middle">Σ 1/k² ≤ 1 + ∫₁^∞ dx/x² = 2（收敛）</text>
+</svg>
+<figcaption>积分判别法的全部直觉：递减正函数，左端点矩形盖住曲线（$\sum f(n)\ge\int_1^{N+1}f$），右端点矩形被曲线盖住（$\sum_{n\ge2}f(n)\le\int_1^{N}f$）——级数与积分同敛散。p 级数 $\sum\frac1{n^p}$ 的生死线 $p=1$ 就是这么画出来的。</figcaption>
+</figure>
+
+<p>于是手里有了第一把尺：<strong>p 级数</strong> $\sum\frac1{n^p}$（$p>1$ 收敛，$p\le1$ 发散）。判一个正项级数，最高频的动作就是"它长得像哪个 $\frac1{n^p}$"——比一比阶，结论就有了。这把尺会贯穿 §3 的整个武器库。</p>
+
+<h2>§3 精确定义：逐符号朗读</h2>
+
+<h3>3.1 级数收敛：部分和说了算</h3>
+
+<div class="def">
+  <p class="def-title">定义（级数的收敛与发散）</p>
+  <p>给定数列 $\{a_n\}$，称 $S_n=\sum\limits_{k=1}^{n}a_k$ 为<strong>部分和</strong>。若 $\lim\limits_{n\to\infty}S_n=S$ 存在，称级数 $\sum\limits_{n=1}^\infty a_n$ <strong>收敛</strong>于 $S$，记 $\sum a_n=S$；否则称<strong>发散</strong>。</p>
+  <p><strong>Cauchy 准则（级数形）</strong>：$\sum a_n$ 收敛 $\iff$ $\forall\varepsilon>0,\ \exists N,\ \forall n\ge N,\ \forall p\ge1:\ |a_{n+1}+a_{n+2}+\cdots+a_{n+p}|&lt;\varepsilon$。<strong>一句话</strong>：任意长的尾巴都能任意小。取 $p=1$ 即得必要条件 $a_n\to0$——通项不趋于零，立刻判发散。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定义（绝对收敛与条件收敛）</p>
+  <p>若 $\sum|a_n|$ 收敛，称 $\sum a_n$ <strong>绝对收敛</strong>；若 $\sum a_n$ 收敛但 $\sum|a_n|$ 发散，称<strong>条件收敛</strong>。</p>
+  <p><strong>定理（绝对收敛 ⟹ 收敛）</strong>：由 Cauchy 准则 + 三角不等式一行证完：$|a_{n+1}+\cdots+a_{n+p}|\le|a_{n+1}|+\cdots+|a_{n+p}|&lt;\varepsilon$。</p>
+</div>
+
+<div class="warn box" data-tag="条件收敛 = 求和顺序有意义">
+  <p>头牌公民：$\sum\frac{(-1)^n}{n}=-\ln2$——Leibniz 判别法给收敛，$\sum\frac1n$ 发散，故<strong>条件收敛</strong>。</p>
+  <p><strong>Riemann 重排定理（一句警告）</strong>：条件收敛的级数，把项重新排列可以收敛到<strong>任何</strong>指定的数（也可以排散）。所以碰见条件收敛级数，<strong>交换求和顺序、加括号、拆项之前必须先论证合法性</strong>——第 16 届题五官方解答特意写明"一般项趋于零，相邻两项加括号不改变敛散性"，就是在买这张通行证。绝对收敛的级数则随便重排，和不变。</p>
+</div>
+
+<h3>3.2 判敛武器库：六件兵器与适用信号</h3>
+
+<div class="def">
+  <p class="def-title">正项级数四件 + 交错一件 + 兜底一件</p>
+  <table>
+    <tr><th>武器</th><th>陈述</th><th>适用信号（看通项长相）</th></tr>
+    <tr><td><strong>比较 / 比阶</strong></td><td>$0\le a_n\le b_n$ 且 $\sum b_n$ 敛 ⟹ $\sum a_n$ 敛；若 $a_n\sim\dfrac{c}{n^p}$（$c>0$），则 $\sum a_n$ 与 p 级数同敛散（$p>1$ 敛，$p\le1$ 散）</td><td>通项是 $n$ 的代数式（多项式、根式之比）——找 p 级数当尺</td></tr>
+    <tr><td><strong>比值 d'Alembert</strong></td><td>$\lim\dfrac{a_{n+1}}{a_n}=\rho$：$\rho&lt;1$ 敛，$\rho>1$ 散，$\rho=1$ 失效</td><td>含 $n!$、$a^n$（阶乘与指数在比值里相消）</td></tr>
+    <tr><td><strong>根值 Cauchy</strong></td><td>$\limsup\sqrt[n]{a_n}=\rho$：$\rho&lt;1$ 敛，$\rho>1$ 散（比比值法更强，比值能判的根值都能判）</td><td>含 $n^n$，或整个通项罩着 $n$ 次方</td></tr>
+    <tr><td><strong>积分判别</strong></td><td>$f\ge0$ 单调递减，则 $\sum f(n)$ 与 $\int_1^{+\infty}f(x)dx$ 同敛散</td><td>$\dfrac{1}{n\ln^p n}$ 型；$f(n)$ 的原函数好算</td></tr>
+    <tr><td><strong>Leibniz</strong></td><td>$a_n$ 单调递减且 $a_n\to0$ ⟹ $\sum(-1)^{n-1}a_n$ 收敛，且余项 $|r_n|\le a_{n+1}$</td><td>交错级数（$\sum(-1)^n a_n$ 长相）</td></tr>
+    <tr><td><strong>绝对收敛兜底</strong></td><td>$\sum|a_n|$ 敛 ⟹ $\sum a_n$ 敛</td><td>符号无规律的任意项级数：先加绝对值，化归正项四件</td></tr>
+  </table>
+  <p>精细场合还有 <strong>Raabe / Gauss 判别法</strong>（专治比值极限 $\rho=1$ 的疑难杂症，如 $\sum\frac{(2n-1)!!}{(2n)!!}\cdot\frac1{2n+1}$）——竞赛罕见，知道名字与用途即可。</p>
+</div>
+
+<div class="calc box" data-tag="关键例子：p 尺的两端各示范一次">
+  <p><strong>发散端</strong>（$p=1$）：$\sum\frac1n$。$f(x)=\frac1x$ 正、递减，$\int_1^{N+1}\frac{dx}{x}=\ln(N+1)\to+\infty$，由积分判别法，调和级数发散——这就是开场谜题第一问的第二只眼睛（加括号法是第一只）。</p>
+  <p><strong>收敛端</strong>（$p=2$）：$\sum\frac1{n^2}$。$\sum_{n=2}^{N}\frac1{n^2}\le\int_1^{N}\frac{dx}{x^2}=1-\frac1N&lt;1$，部分和有上界 $1+1=2$，由积分判别法（或单调有界）收敛。<strong>记住这两个原函数</strong>：$\int\frac{dx}{x}=\ln x$（发散源），$\int\frac{dx}{x^2}=-\frac1x$（收敛源）——p 尺的生死线 $p=1$ 就是 $\ln x$ 画的。</p>
+</div>
+
+<h3>3.3 一致收敛：本章的命门定义</h3>
+
+<p>把每一项换成函数：$\sum u_n(x)$（或函数列 $f_n(x)$），$x\in D$。<strong>点态收敛</strong>是"每个 $x$ 各自收敛"——$\forall x\in D,\ \forall\varepsilon>0,\ \exists N=N(x,\varepsilon)$。开场谜题第二问已经演示过它的无力。<strong>一致收敛</strong>只做一处手术：把 $N$ 提到 $\forall x$ 前面——$N$ 不许认识 $x$。</p>
+
+<div class="def">
+  <p class="def-title">定义（一致收敛）</p>
+  <p>函数列 $f_n$ 在 $D$ 上<strong>一致收敛</strong>于 $f$，记 $f_n\rightrightarrows f$，如果
+  $$\forall\varepsilon>0,\ \exists N,\ \forall n\ge N,\ \forall x\in D:\ |f_n(x)-f(x)|&lt;\varepsilon.$$
+  级数 $\sum u_n(x)$ 一致收敛，指其部分和函数列 $S_n(x)=\sum_{k=1}^n u_k(x)$ 一致收敛。</p>
+  <p><strong>sup 判据（第 1 章上岗）</strong>：
+  $$f_n\rightrightarrows f\iff \sup_{x\in D}|f_n(x)-f(x)|\to0\quad(n\to\infty).$$
+  <strong>一句话</strong>：把"每点的误差"打包成"最坏点的误差"，再看这个打包值趋于不趋于零。几何上：整条曲线 $f_n$ 躺进极限函数两侧 $\varepsilon$ 宽的带子里。</p>
+</div>
+
+<div class="symbol box" data-tag="逐符号朗读">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$S_n(x)=\sum_{k=1}^n u_k(x)$</td><td>"前 $n$ 项的和函数"</td><td>级数问题翻译成函数列问题的桥梁；固定 $x$ 它就是普通数列</td></tr>
+    <tr><td>$\forall\varepsilon>0$</td><td>"随便给误差预算 $\varepsilon$"</td><td>老规矩：考验必须任意严格</td></tr>
+    <tr><td>$\exists N$</td><td>"存在一条<strong>统一的</strong>进度线 $N$"</td><td>全章命门：$N$ 只许依赖 $\varepsilon$，<strong>不许依赖 $x$</strong>——这就是"一致"二字的全部含义</td></tr>
+    <tr><td>$\forall n\ge N,\ \forall x\in D$</td><td>"进度线之后，所有点同时达标"</td><td>对比点态收敛：点态是 $\forall x\ \exists N(x)$，每个点各有进度线，可以无限拖延</td></tr>
+    <tr><td>$|S_n(x)-S(x)|&lt;\varepsilon$</td><td>"和函数与部分和的距离小于预算"</td><td>对所有 $x$ 同时成立 ⟺ $\sup_x|S_n-S|\le\varepsilon$——sup 判据的由来</td></tr>
+  </table>
+  <p><strong>量词顺序通则（第三次显形）</strong>：点态收敛是 $\forall x\ \forall\varepsilon\ \exists N$（$N$ 可依赖 $x$），一致收敛是 $\forall\varepsilon\ \exists N\ \forall x$（$N$ 与 $x$ 无关）。第 2 章一致连续（$\delta$ 与 $x$ 无关）、第 8 章含参积分一致收敛（$A_0$ 与参数无关）是同一条通则的另外两次显形。</p>
+</div>
+
+<div class="think">
+  <p>别急着往下翻。<strong>用第 0.5 章的工具四（量词否定），自己写出"$f_n$ 在 $D$ 上不一致收敛"的完整定义</strong>，再用它证明 $f_n(x)=x^n$ 在 $[0,1)$ 上不一致收敛于 $0$。写完再展开对照。</p>
+  <details class="answer">
+    <summary>对照：否定 + 证人</summary>
+    <p>否定（$\forall\leftrightarrow\exists$ 互换，结论取反）：
+    $$\exists\varepsilon_0>0,\ \forall N,\ \exists n\ge N,\ \exists x\in D:\ |f_n(x)-f(x)|\ge\varepsilon_0.$$</p>
+    <p>用于 $x^n$：取 $\varepsilon_0=\frac12$。任给 $N$，取 $n=N$（随便哪个 $\ge N$ 的 $n$），取<strong>证人</strong> $x^*=2^{-1/n}\in(0,1)$，则 $(x^*)^n=\frac12\ge\frac12$。证毕。$\square$</p>
+    <p>注意证人 $x^*=2^{-1/n}$ 的长相：$n=10$ 时 $x^*\approx0.933$，$n=50$ 时 $x^*\approx0.986$——<strong>它随 $n$ 爬向角点 $x=1$</strong>。不一致的全部麻烦都藏在这个角点的任意小邻域里。下面的探索器让你亲手拖动它。</p>
+  </details>
+</div>
+
+<h3>3.4 亲手摸一摸"一致"（交互）</h3>
+
+<div class="widget" id="unif-widget">
+  <p class="w-title">▶ 一致收敛探索器：拖 $n$ 和区间右端 $r$，亲眼看带子压不压得扁</p>
+  <p class="w-row"><strong style="color:#1d4ed8">蓝线</strong>是 $f_n(x)=x^n$ 在 $[0,r]$ 上的图像（灰色虚线是它在 $[0,1]$ 其余部分的参照），<strong style="color:#15803d">绿线</strong>是极限函数 $f$（在 $[0,1)$ 上是 $0$，$x=1$ 处是孤立的 $1$），<strong style="color:#b45309">橙色带子</strong>是 $|y-f(x)|\le\sup_{[0,r]}|f_n-f|$ 的几何带，<strong style="color:#be123c">红点</strong>是"最坏点" $x=r$（误差 $\sup=r^n$ 在此处达到）。</p>
+  <div class="w-row"><label>n（从 1 拖到 50，观察曲线怎么趴下、最坏点怎么爬）</label>
+  <input type="range" id="unif-n" min="1" max="50" step="1" value="3"></div>
+  <div class="w-row"><label>区间右端 r（先试 r = 1，再拖到 0.9，对比带子命运）</label>
+  <input type="range" id="unif-r" min="0.5" max="1" step="0.01" value="1"></div>
+  <svg id="unif-svg" viewBox="0 0 720 330" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div class="w-verdict" id="unif-out">加载中……（需要启用 JavaScript）</div>
+  <p class="w-row" style="font-size:0.88em;color:#5c554b">玩出这三个体验再往下走：<strong>①</strong> $r=1$，$n$ 从 1 拖到 50：sup 读数恒为 1，带子永不压扁——角点 $x=1$ 附近收敛越来越慢（证人 $x^*=2^{-1/n}$ 爬向 1），这就是不一致的来源；<strong>②</strong> $r$ 拖到 $0.9$，再把 $n$ 拖大：$0.9^n\to0$，带子压扁——砍掉角点的一小段，一致收敛立刻恢复；<strong>③</strong> 固定 $n=10$，把 $r$ 从 1 慢慢拖小，找到 sup 首次低于 $0.1$ 的 $r$（理论值 $0.1^{1/10}\approx0.794$）——体会"麻烦的从来不是区间内部，只是那个角点"。</p>
+</div>
+
+<div class="calc box" data-tag="标准反例（讲透）：xⁿ 在三种区间上的三种命运">
+  <p>$f_n(x)=x^n$，极限函数 $f$ 如谜题所述。用 sup 判据逐区间审判：</p>
+  <p><strong>在 $[0,1]$ 上</strong>：$\sup_{[0,1]}|f_n-f|=\sup_{[0,1)}x^n=1\not\to0$（$x^n$ 连续、$x\to1^-$ 时趋于 1）——<strong>不一致收敛</strong>。极限函数在 $x=1$ 间断，与 §3.5 遗产一（一致收敛保连续）互为印证。</p>
+  <p><strong>在 $[0,1)$ 上</strong>：同样 $\sup_{[0,1)}x^n=1$——仍不一致收敛。开区间也救不了它：麻烦不在"包不包含 1"，而在"能不能把角点邻域砍掉"。</p>
+  <p><strong>在 $[0,r]$（$r&lt;1$）上</strong>：$\sup_{[0,r]}x^n=r^n\to0$——<strong>一致收敛</strong>！同一个函数列，砍掉角点的任意小一段就恢复一致。这就是"内闭一致收敛"思想的雏形，§3.6 幂级数全靠它吃饭。</p>
+</div>
+
+<h3>3.5 一致收敛怎么证 + 证出来能换什么</h3>
+
+<div class="def">
+  <p class="def-title">判别法三件套（Cauchy / Weierstrass / Dirichlet–Abel）</p>
+  <p>① <strong>Cauchy 准则（一致版）</strong>：$\sum u_n(x)$ 在 $D$ 上一致收敛 $\iff$ $\forall\varepsilon>0,\ \exists N,\ \forall n\ge N,\ \forall p\ge1,\ \forall x\in D:\ |u_{n+1}(x)+\cdots+u_{n+p}(x)|&lt;\varepsilon$。理论底座，证明其它判别法都靠它。</p>
+  <p>② <strong>Weierstrass M 判别（考场绝对主力）</strong>：若存在<strong>与 $x$ 无关</strong>的数列 $a_n\ge0$ 使
+  $$|u_n(x)|\le a_n\quad(\forall x\in D,\ \forall n),\qquad\text{且}\ \sum a_n\ \text{收敛},$$
+  则 $\sum u_n(x)$ 在 $D$ 上<strong>一致收敛且绝对收敛</strong>。<strong>一行证</strong>：尾巴 $|u_{n+1}(x)+\cdots+u_{n+p}(x)|\le a_{n+1}+\cdots+a_{n+p}&lt;\varepsilon$——右端与 $x$ 无关，Cauchy 准则收下。<strong>一句话</strong>：给每一项找一顶"数字帽子"，帽子们组成的数项级数收敛，就一致收敛。</p>
+  <p>③ <strong>Dirichlet / Abel 判别（报名字 + 信号）</strong>：处理 $\sum a_n(x)b_n(x)$ 型、M 判别套不上的场合。<strong>Dirichlet</strong>：$\sum a_n(x)$ 部分和<strong>一致有界</strong>，$b_n(x)$ 对每个 $x$ 单调且<strong>一致趋于 0</strong> ⟹ 一致收敛（信号：$\sum\frac{\sin nx}{n}$ 型，$\sum\sin nx$ 部分和有界）；<strong>Abel</strong>：$\sum a_n(x)$ 一致收敛，$b_n(x)$ 单调且一致有界 ⟹ 一致收敛。两者共用同一把刀：<strong>Abel 分部求和</strong>——第 16 届题五方法 2 就是它的数项版。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">三大遗产（一致收敛换来的，各带各的条件）</p>
+  <p>设 $u_n\in C(D)$ 且 $\sum u_n(x)$ 在 $D$ 上一致收敛于 $S(x)$（函数列版本把 $S_n$ 换成 $f_n$）：</p>
+  <p><strong>遗产一 · 和函数连续</strong>：$S\in C(D)$。——一致收敛把每个 $u_n$ 的连续"传"给了和。$x^n$ 反例说明：点态收敛传不动。</p>
+  <p><strong>遗产二 · 逐项积分</strong>：在 $[a,b]\subset D$ 上 $\displaystyle\int_a^b S(x)\,dx=\sum_{n=1}^\infty\int_a^b u_n(x)\,dx$。——$\int$ 与 $\sum$ 换序，理由：$|S-S_n|$ 一致小，积出来至多差 $\varepsilon(b-a)$。</p>
+  <p><strong>遗产三 · 逐项求导</strong>：若 $u_n\in C^1(D)$，$\sum u_n$（至少点点）收敛，<strong>且导数级数 $\sum u_n'(x)$ 一致收敛</strong>，则 $S\in C^1(D)$ 且 $S'(x)=\sum u_n'(x)$。</p>
+  <p><strong>条件差异是头号陷阱</strong>：逐项求导要求的是<strong>导数级数</strong>一致收敛，不是原级数。反例：$\sum\frac{\sin(n^2x)}{n^2}$ 由 M 判别（$\frac1{n^2}$）一致收敛，但导数级数 $\sum\cos(n^2x)$ 通项不趋于零、处处发散——求导换序直接非法。</p>
+</div>
+
+<h3>3.6 幂级数：半径之内是天堂</h3>
+
+<div class="def">
+  <p class="def-title">定义与定理（收敛半径、内闭一致收敛、逐项运算）</p>
+  <p>幂级数 $\sum\limits_{n=0}^\infty a_n(x-x_0)^n$（下设 $x_0=0$）。<strong>收敛半径</strong>
+  $$R=\frac{1}{\limsup\limits_{n\to\infty}\sqrt[n]{|a_n|}}\qquad\text{（Cauchy–Hadamard）},$$
+  若 $\lim\left|\dfrac{a_n}{a_{n+1}}\right|$ 存在，它也等于 $R$（比值版，更好算）。约定 $\frac10=+\infty$，$\frac1{+\infty}=0$。</p>
+  <p><strong>三条铁律</strong>：① $|x|&lt;R$ 时绝对收敛，$|x|>R$ 时发散，<strong>端点 $x=\pm R$ 单独判</strong>（动用 §3.2 数项武器库）；② 对任意 $r&lt;R$，在 $[-r,r]$ 上<strong>一致收敛</strong>（M 判别：$|a_nx^n|\le|a_n|r^n$，右端是收敛的数项级数）——"内闭一致收敛"；③ 因此在 $(-R,R)$ 内和函数连续、可逐项积分、可逐项求导，<strong>且求导/积分后收敛半径不变</strong>。</p>
+  <p><strong>端点三兄弟</strong>（同半径 $R=1$，三种端点命运）：$\sum x^n$ 两端发散，收敛域 $(-1,1)$；$\sum\frac{x^n}{n}$ 在 $x=1$ 调和发散、$x=-1$ Leibniz 条件收敛，收敛域 $[-1,1)$；$\sum\frac{x^n}{n^2}$ 两端绝对收敛，收敛域 $[-1,1]$。</p>
+</div>
+
+<div class="calc box" data-tag="真题口音：逐项运算求和（ζ(2) 路径）">
+  <p>几何级数 $\frac1{1-x}=\sum\limits_{n=0}^\infty x^n$（$|x|&lt;1$）逐项积分：
+  $$-\ln(1-x)=\sum_{n=1}^\infty\frac{x^n}{n},\qquad x\in[-1,1).$$
+  再除以 $x$ 逐项积分（$x\in(0,1)$）：$\displaystyle\int_0^x\frac{-\ln(1-t)}{t}dt=\sum_{n=1}^\infty\frac{x^n}{n^2}$。令 $x\to1^-$（左端由 Abel 连续性/单调收敛取极限）即得
+  $$\int_0^1\frac{-\ln(1-t)}{t}dt=\sum_{n=1}^\infty\frac1{n^2}=\zeta(2)=\frac{\pi^2}{6}.$$
+  <strong>第 16 届题二官方解答的第 4 步就是这条路</strong>：展开 $-\ln(1-s)=\sum\frac{s^n}{n}$，逐项积分取极限，得 $\varphi(1)=\sum\frac1{2n^2}=\frac{\pi^2}{12}$，$\varphi(2)=\sum\frac1{(2n+1)^2}=\frac{\pi^2}{8}$。幂级数的逐项运算合法，靠的正是②的内闭一致收敛。</p>
+</div>
+
+<h3>3.7 Fourier 级数：考纲只要基础性质（一段话）</h3>
+
+<div class="def">
+  <p class="def-title">Fourier 级数基础性质（知道这些就够）</p>
+  <p><strong>正交性</strong>：三角函数系 $\{1,\cos nx,\sin nx\}$ 在 $[-\pi,\pi]$ 上两两正交，如 $\int_{-\pi}^{\pi}\cos mx\cos nx\,dx=\pi\delta_{mn}$（$m,n\ge1$），$\int_{-\pi}^{\pi}\sin mx\cos nx\,dx=0$。<strong>系数公式</strong>：正交性使"形式展开 $f\sim\frac{a_0}{2}+\sum(a_n\cos nx+b_n\sin nx)$"的系数被唯一挤出——$a_n=\frac1\pi\int_{-\pi}^{\pi}f(x)\cos nx\,dx$，$b_n=\frac1\pi\int_{-\pi}^{\pi}f(x)\sin nx\,dx$（两边乘 $\cos nx$ 再积分，除一项外全部正交归零）。<strong>逐点收敛</strong>：Dirichlet 收敛定理——$f$ 分段光滑（或分段单调有界）时，其 Fourier 级数逐点收敛于 $\frac{f(x^+)+f(x^-)}{2}$（连续点处即 $f(x)$）。第 17 届题二的第一步 $\int_0^1 e^{2\pi ikx}dx=0$（$k\ne0$）就是复数形正交性的直接使用。</p>
+</div>
+
+<h2>§4 翻译轨：三个标准动作 + 一间练功房</h2>
+
+<p>级数在卷面上只有三种用法：判（数项判敛）、证（一致收敛 + 遗产）、算（幂级数求和）。练成反射，本章毕业。</p>
+
+<div class="trans box" data-tag="动作一：判敛决策树（先看长相，再选武器）">
+  <p><strong>题面</strong>："讨论级数 $\sum a_n$ 的收敛性（若收敛，指出绝对收敛还是条件收敛）"。</p>
+  <p><strong>翻译</strong>——按固定顺序过闸，不要思考人生：</p>
+  <p>第 ① 闸：<strong>$a_n\to0$ 吗？</strong>不趋于零 → 发散，收工（必要条件）。<br>
+  第 ② 闸：<strong>正项吗？</strong>含 $n!$、$a^n$ → 比值；含 $n^n$ / 整体 $n$ 次方 → 根值；$n$ 的代数式 → 比阶找 p 尺；$\frac1{n\ln^p n}$ 型 → 积分判别。<br>
+  第 ③ 闸：<strong>交错吗？</strong>$\sum(-1)^n a_n$ 且 $a_n\downarrow0$ → Leibniz 给收敛；再查 $\sum a_n$（去绝对值后回第 ② 闸）——敛则绝对，散则条件。<br>
+  第 ④ 闸：<strong>符号无规律</strong>（如含 $(-1)^{[\sqrt n]}$）→ 两条路：与某个已知级数<strong>作差</strong>（差级数若绝对收敛则同敛散，16 届题五级数一）；或 <strong>Abel 分部求和 / 加括号</strong>（16 届题五级数二）。</p>
+  <p>完整示范在 §8 例 1；第 ④ 闸的完整实战在 §9 真题节选。</p>
+</div>
+
+<div class="trans box" data-tag="动作二：证一致收敛（M 判别 + 遗产调用）">
+  <p><strong>题面</strong>："证明 $\sum u_n(x)$ 在 $D$ 上一致收敛" / "证明和函数 $S(x)$ 连续（可积、可导）"。</p>
+  <p><strong>翻译</strong>：证一致收敛 = <strong>找一顶数字帽子</strong>：把 $|u_n(x)|$ 里含 $x$ 的部分放大成它的 sup（$|\sin nx|\le1$、$|x^n|\le r^n$、$|\arctan|\le\frac{\pi}{2}$），得到 $|u_n(x)|\le a_n$；再证 $\sum a_n$ 收敛（回动作一）。要证和函数连续/逐项积分/逐项求导，先 M 判别拿一致收敛，再查三大遗产各自的<strong>条件</strong>——尤其逐项求导，要证的是<strong>导数级数</strong>的一致收敛。</p>
+  <p><strong>分值提醒</strong>：只写"由 M 判别一致收敛"而不写出具体的 $a_n$ 与 $\sum a_n$ 的收敛依据，跳步归零；遗产的条件不核对（比如不验证 $u_n$ 连续），同样扣分。</p>
+</div>
+
+<div class="trans box" data-tag="动作三：幂级数求和（造级数，算积分，取极限）">
+  <p><strong>题面</strong>："求 $\sum a_n$ 的值"（数项级数求和，常藏在大题收尾）。</p>
+  <p><strong>翻译</strong>：第 ① 步：造幂级数 $S(x)=\sum a_n x^n$，算出收敛半径 $R$（$1$ 落在半径内或端点上才有戏）；第 ② 步：半径内逐项求导/积分，把 $S(x)$ 化成熟识函数（$\frac1{1-x}$、$-\ln(1-x)$、$e^x$、$\arctan x$）；第 ③ 步：代 $x=1$ 或取 $x\to1^-$ 极限。<strong>真题原句</strong>（第 16 届题二）："展开 $-\ln(1-s)=\sum\frac{s^n}{n}$，逐项积分取极限得 $\varphi(1)=\sum_{n=1}^\infty\frac1{2n^2}=\frac{\pi^2}{12}$"——三步一次走完，12 分点落袋。</p>
+</div>
+
+<h3>4.4 翻译练功房：像学语言一样，大量互译</h3>
+
+<p>老规矩：<strong>先全部写在纸上，再逐条展开对照</strong>。每条不超过 1 分钟。</p>
+
+<div class="trans box" data-tag="互译 8 句">
+  <p><strong>T1</strong>　自然→符号："$\sum u_n(x)$ 在 $D$ 上一致收敛于 $S(x)$。"</p>
+  <details class="answer"><summary>对照</summary><p>$\forall\varepsilon>0,\ \exists N,\ \forall n\ge N,\ \forall x\in D:\ |S_n(x)-S(x)|&lt;\varepsilon$。<strong>易错</strong>：把 $\forall x\in D$ 挪到 $\exists N$ 前面——那就退化成点态收敛，"一致"丢了。默写时心里念：$N$ 不许认识 $x$。</p></details>
+  <p><strong>T2</strong>　符号→自然 + 追问："$\sup\limits_{x\in D}|f_n(x)-f(x)|\to0$。"$x^n$ 在 $[0,r]$ 与 $[0,1)$ 上这个 sup 各是多少？</p>
+  <details class="answer"><summary>对照</summary><p>"误差的最坏情形趋于零"（一致收敛的 sup 判据）。$[0,r]$：sup $=r^n\to0$，一致收敛；$[0,1)$：sup $=1$（$x^n$ 随 $x\to1^-$ 趋于 1），不趋于零，不一致收敛。</p></details>
+  <p><strong>T3</strong>　武器选择 + 执行：判 $\sum\dfrac{n^2}{2^n}$ 的敛散性。</p>
+  <details class="answer"><summary>对照</summary><p>含 $2^n$ → 比值：$\dfrac{a_{n+1}}{a_n}=\dfrac{(n+1)^2}{2n^2}\to\dfrac12&lt;1$，收敛。（根值同样顺手：$\sqrt[n]{a_n}=\frac{(\sqrt[n]{n})^2}{2}\to\frac12$。）多项式因子在比值/根值里都是 1，指数因子定生死。</p></details>
+  <p><strong>T4</strong>　绝对 vs 条件：判 $\sum(-1)^n\ln\!\left(1+\frac1n\right)$。</p>
+  <details class="answer"><summary>对照</summary><p>$\ln(1+\frac1n)$ 随 $\frac1n$ 递减而递减、趋于 $0$ → Leibniz 给收敛；又 $\ln(1+\frac1n)\sim\frac1n$（比阶，$p=1$）→ $\sum|\cdot|$ 发散。结论：<strong>条件收敛</strong>。反射：交错级数判完 Leibniz，必须再走一趟"去符号判绝对"。</p></details>
+  <p><strong>T5</strong>　自然→符号 + 执行："证明 $\sum\frac{\sin nx}{n^2}$ 在 $\mathbb{R}$ 上一致收敛。"</p>
+  <details class="answer"><summary>对照</summary><p>翻译：找数字帽子。$\forall x\in\mathbb{R}:\ \left|\frac{\sin nx}{n^2}\right|\le\frac1{n^2}$，$\sum\frac1{n^2}$ 收敛（$p=2$）→ M 判别 → 一致收敛。三个零件缺一不可：帽子与 $x$ 无关、帽子级数收敛、结论写"一致收敛"。</p></details>
+  <p><strong>T6</strong>　找坑："$\sum u_n(x)$ 一致收敛 ⟹ 可逐项求导"错在哪？给个反例。</p>
+  <details class="answer"><summary>对照</summary><p>逐项求导要求<strong>导数级数</strong> $\sum u_n'$ 一致收敛，原级数一致收敛不够。反例：$\sum\frac{\sin(n^2x)}{n^2}$ 由 M 判别一致收敛，导数级数 $\sum\cos(n^2x)$ 通项不趋于零，处处发散——换序非法。</p></details>
+  <p><strong>T7</strong>　符号→自然："$\forall\varepsilon>0,\ \exists N,\ \forall n\ge N,\ \forall p\ge1,\ \forall x\in D:\ |u_{n+1}(x)+\cdots+u_{n+p}(x)|&lt;\varepsilon$。"</p>
+  <details class="answer"><summary>对照</summary><p>"任意长的尾巴，在所有点处一致地小"——一致收敛的 Cauchy 准则。它是 M 判别的证明底座；看到"$N$ 与 $p$、$x$ 都无关"要认出这是一致收敛的口音。</p></details>
+  <p><strong>T8</strong>　幂级数：求 $\sum\frac{x^n}{n^2}$ 的收敛域。</p>
+  <details class="answer"><summary>对照</summary><p>半径：$\left|\frac{a_n}{a_{n+1}}\right|=\frac{(n+1)^2}{n^2}\to1$，$R=1$。端点单独判：$x=1$ 得 $\sum\frac1{n^2}$ 收敛；$x=-1$ 得 $\sum\frac{(-1)^n}{n^2}$ 绝对收敛。收敛域 $[-1,1]$。<strong>易错</strong>：收敛域不是 $(-R,R)$ 就完事——端点必须单独过一遍数项武器库。</p></details>
+</div>
+
+<h2>§5 类型识别：什么信号在召唤哪件武器</h2>
+
+<div class="recog box" data-tag="识别反射表">
+  <table>
+    <tr><th>题面信号</th><th>反射</th></tr>
+    <tr><td>通项含 $n!$ 或 $a^n$</td><td>比值 d'Alembert：阶乘、指数在 $\frac{a_{n+1}}{a_n}$ 里相消</td></tr>
+    <tr><td>通项含 $n^n$ / 整体 $n$ 次方</td><td>根值 Cauchy：$\sqrt[n]{\phantom{a}}$ 把 $n$ 次方开掉</td></tr>
+    <tr><td>通项是 $n$ 的代数式（多项式/根式之比）</td><td>比阶：抓最高次，$a_n\sim\frac{c}{n^p}$，与 p 级数同命</td></tr>
+    <tr><td>$\frac1{n\ln^p n}$、$\frac1{n\ln n\,(\ln\ln n)^p}$ 型</td><td>积分判别：$\int\frac{dx}{x\ln^p x}$ 一代原函数见分晓（$p>1$ 敛）</td></tr>
+    <tr><td>$\sum(-1)^n a_n$ 交错长相</td><td>Leibniz（查 $a_n\downarrow0$）+ 去符号查绝对收敛 → 绝对/条件分流</td></tr>
+    <tr><td>$(-1)^{[\sqrt n]}$ 等不规则符号</td><td>作差法（与已知级数配平）或 Abel 分部求和 / 加括号——16 届题五</td></tr>
+    <tr><td>"证和函数连续 / 逐项积分"</td><td>M 判别拿一致收敛 → 遗产一/二；逐项求导先查<strong>导数级数</strong>一致收敛</td></tr>
+    <tr><td>"求 $\sum a_n$ 的值"</td><td>幂级数化：$S(x)=\sum a_nx^n$，逐项运算，端点取极限（$\zeta(2)$ 路径）</td></tr>
+  </table>
+</div>
+
+<h2>§6 考法定位：它藏在哪里、值多少分</h2>
+
+<div class="exam box" data-tag="考法定位">
+  <table>
+    <tr><th>出处</th><th>题号</th><th>本章内容扮演什么角色</th><th>分值权重</th></tr>
+    <tr><td>第 16 届（2024）</td><td>题五</td><td><strong>主场</strong>：两个分母含 $(-1)^{[\sqrt n]}$ 的级数判敛——Leibniz、差比较、加括号（合法性：一般项 $\to0$）、Abel 分部求和、条件 vs 绝对收敛</td><td>15 分（直接）</td></tr>
+    <tr><td>第 16 届（2024）</td><td>题二</td><td><strong>求和引擎</strong>：$-\ln(1-s)=\sum\frac{s^n}{n}$ 逐项积分取极限，$\varphi(1)=\frac{\pi^2}{12}$、$\varphi(2)=\frac{\pi^2}{8}$（$\zeta(2)$ 家族，12 分点与 15 分点各调用一次）；前半程的一致收敛论证与第 8 章共享</td><td>15 分中约 3–6 分步骤</td></tr>
+    <tr><td>第 13 届（2021）</td><td>题五(1)</td><td>Weierstrass 判别法证含参反常积分一致收敛——M 判别的积分版孪生</td><td>步骤分（第 8 章主场）</td></tr>
+    <tr><td>第 17 届（2025）</td><td>题二</td><td>三角和正交性 $\int_0^1 e^{2\pi ikx}dx=0$（$k\ne0$）开局——Fourier 级数基础性质的口音</td><td>3 分步骤</td></tr>
+  </table>
+  <p><strong>规律</strong>：数项级数判敛是"判"字辈代表，直接出题时坐镇大题（16 届题五 15 分，全卷唯二的纯判敛大题）；更多时候拆成两种零件藏进别的大题——<strong>一致收敛零件</strong>（M 判别 / 优函数控制，第 8 章含参积分全程在用）与<strong>求和零件</strong>（幂级数逐项运算 + 端点取极限，16 届题二的收尾 4 分）。判敛本身的基本功（比值、比阶、Leibniz）则是求和题的底层操作，不单独设分但处处设卡。</p>
+</div>
+
+<h2>§7 关系网：一条通则，两次升级，三处出口</h2>
+
+<p>本章所有角色挂在一条线上：量词顺序通则（来源）→ 数项判敛武器库（对 $n$ 的离散战场）→ 一致收敛（函数项化，通则第三次显形）→ 三件判别兵器 → 三个出口。<span style="color:#b45309">三角形</span>是来源与动机，<span style="color:#1d4ed8">圆角矩形</span>是定义，<span style="color:#15803d">矩形</span>是定理，<span style="color:#7c3aed">六边形</span>是方法动作，<span style="color:#0f766e">椭圆</span>是应用出口。</p>
+
+<figure>
+<svg viewBox="0 0 720 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="级数关系网地图">
+  <defs>
+    <marker id="arr9" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+
+  <!-- 图例 -->
+  <polygon points="30,16 22,30 38,30" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5"/>
+  <text x="44" y="28" font-size="11.5" fill="#5c554b">来源·动机</text>
+  <rect x="116" y="17" width="22" height="13" rx="6.5" fill="#eef3fe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="144" y="28" font-size="11.5" fill="#5c554b">定义</text>
+  <rect x="196" y="17" width="22" height="13" fill="#ecf8f0" stroke="#15803d" stroke-width="1.5"/>
+  <text x="224" y="28" font-size="11.5" fill="#5c554b">定理</text>
+  <polygon points="272,23.5 278,16 292,16 298,23.5 292,31 278,31" fill="#f4effd" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="304" y="28" font-size="11.5" fill="#5c554b">方法·动作</text>
+  <ellipse cx="390" cy="23.5" rx="12" ry="7" fill="#ecf8f5" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="408" y="28" font-size="11.5" fill="#5c554b">应用·出口</text>
+
+  <!-- 来源三角 -->
+  <polygon points="100,48 46,122 154,122" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="100" y="88" font-size="12" fill="#7a4a12" text-anchor="middle" font-weight="bold">量词顺序通则</text>
+  <text x="100" y="104" font-size="10.5" fill="#7a4a12" text-anchor="middle">第 2 章 · 第 8 章</text>
+
+  <!-- 三角 → 武器库 -->
+  <line x1="158" y1="85" x2="204" y2="85" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr9)"/>
+  <text x="181" y="74" font-size="11" fill="#5c554b" text-anchor="middle">离散战场</text>
+
+  <!-- 数项判敛武器库（矩形家族） -->
+  <rect x="208" y="48" width="300" height="76" rx="8" fill="none" stroke="#15803d" stroke-width="1.4" stroke-dasharray="5 4"/>
+  <text x="358" y="64" font-size="11.5" fill="#15803d" text-anchor="middle" font-weight="bold">数项判敛武器库</text>
+  <rect x="216" y="74" width="52" height="42" fill="#ecf8f0" stroke="#15803d" stroke-width="1.6"/>
+  <text x="242" y="91" font-size="10.5" fill="#15803d" text-anchor="middle" font-weight="bold">比较/比阶</text>
+  <text x="242" y="106" font-size="9.5" fill="#4a7c59" text-anchor="middle">p 级数尺</text>
+  <rect x="274" y="74" width="52" height="42" fill="#ecf8f0" stroke="#15803d" stroke-width="1.6"/>
+  <text x="300" y="91" font-size="10.5" fill="#15803d" text-anchor="middle" font-weight="bold">比值</text>
+  <text x="300" y="106" font-size="9.5" fill="#4a7c59" text-anchor="middle">n! · aⁿ</text>
+  <rect x="332" y="74" width="52" height="42" fill="#ecf8f0" stroke="#15803d" stroke-width="1.6"/>
+  <text x="358" y="91" font-size="10.5" fill="#15803d" text-anchor="middle" font-weight="bold">根值</text>
+  <text x="358" y="106" font-size="9.5" fill="#4a7c59" text-anchor="middle">nⁿ</text>
+  <rect x="390" y="74" width="52" height="42" fill="#ecf8f0" stroke="#15803d" stroke-width="1.6"/>
+  <text x="416" y="91" font-size="10.5" fill="#15803d" text-anchor="middle" font-weight="bold">积分判别</text>
+  <text x="416" y="106" font-size="9.5" fill="#4a7c59" text-anchor="middle">1/(n lnᵖn)</text>
+  <rect x="448" y="74" width="52" height="42" fill="#ecf8f0" stroke="#15803d" stroke-width="1.6"/>
+  <text x="474" y="91" font-size="10.5" fill="#15803d" text-anchor="middle" font-weight="bold">Leibniz</text>
+  <text x="474" y="106" font-size="9.5" fill="#4a7c59" text-anchor="middle">交错</text>
+
+  <!-- 武器库 → 一致收敛 -->
+  <line x1="358" y1="124" x2="358" y2="160" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr9)"/>
+  <text x="368" y="146" font-size="11" fill="#5c554b">每项带上 x：函数项化</text>
+
+  <!-- 一致收敛（圆角矩形） -->
+  <rect x="228" y="164" width="260" height="62" rx="31" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="358" y="188" font-size="14.5" fill="#1d4ed8" text-anchor="middle" font-weight="bold">一致收敛（定义）</text>
+  <text x="358" y="207" font-size="11" fill="#1d4ed8" text-anchor="middle">∀ε ∃N ∀n≥N ∀x∈D ｜ sup 判据：sup|fₙ−f|→0</text>
+
+  <!-- 一致收敛 → 三方法 -->
+  <polyline points="300,226 300,248 150,248 150,266" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr9)"/>
+  <line x1="358" y1="226" x2="358" y2="266" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr9)"/>
+  <polyline points="420,226 420,248 566,248 566,266" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr9)"/>
+  <text x="432" y="241" font-size="11" fill="#5c554b">怎么证？</text>
+
+  <!-- 三方法（六边形） -->
+  <polygon points="75,300 100,270 200,270 225,300 200,330 100,330" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="150" y="296" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">M 判别</text>
+  <text x="150" y="313" font-size="10" fill="#6a55a3" text-anchor="middle">数字帽子 Σaₙ</text>
+  <polygon points="283,300 308,270 408,270 433,300 408,330 308,330" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="358" y="296" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">加括号</text>
+  <text x="358" y="313" font-size="10" fill="#6a55a3" text-anchor="middle">前提：一般项→0</text>
+  <polygon points="491,300 516,270 616,270 641,300 616,330 516,330" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="566" y="296" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">Abel 求和</text>
+  <text x="566" y="313" font-size="10" fill="#6a55a3" text-anchor="middle">部分和有界 × 单调趋零</text>
+  <text x="462" y="348" font-size="10.5" fill="#a1132f" text-anchor="middle">16 届题五主场（15 分）</text>
+
+  <!-- M 判别 → 幂级数 -->
+  <line x1="150" y1="330" x2="150" y2="384" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr9)"/>
+  <text x="160" y="360" font-size="11" fill="#5c554b">内闭一致收敛</text>
+
+  <!-- 三出口（椭圆） -->
+  <ellipse cx="150" cy="414" rx="112" ry="30" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="150" y="410" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">幂级数</text>
+  <text x="150" y="426" font-size="10" fill="#3d7a70" text-anchor="middle">R 内逐项运算合法</text>
+  <ellipse cx="420" cy="414" rx="100" ry="30" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="420" y="410" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">ζ(2) = π²/6</text>
+  <text x="420" y="426" font-size="10" fill="#3d7a70" text-anchor="middle">16 届题二：逐项积分</text>
+  <ellipse cx="640" cy="414" rx="76" ry="30" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="640" y="410" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">第 8 章含参积分</text>
+  <text x="640" y="426" font-size="10" fill="#3d7a70" text-anchor="middle">M 判别的积分版</text>
+
+  <!-- 幂级数 → ζ(2) -->
+  <line x1="262" y1="414" x2="316" y2="414" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr9)"/>
+  <text x="289" y="404" font-size="11" fill="#5c554b" text-anchor="middle">x → 1⁻</text>
+  <!-- 一致收敛 → 第 8 章（右侧竖线对接） -->
+  <polyline points="488,195 640,195 640,382" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr9)"/>
+  <text x="628" y="185" font-size="10.5" fill="#5c554b" text-anchor="end">同一通则，镜像对接</text>
+</svg>
+<figcaption>本章地图：量词顺序通则第三次显形为一致收敛；数项武器库管"判"，M 判别管"证"，幂级数管"算"，三个出口分别通向 ζ(2) 与第 8 章。</figcaption>
+</figure>
+
+<div class="net box" data-tag="画面感锚点（记这些，不记条文）">
+  <table>
+    <tr><th>节点</th><th>一句话画面</th><th>擅长场景</th></tr>
+    <tr><td>量词顺序通则</td><td>"$N$ 不许认识 $x$"——第三次显形</td><td>一致连续、含参积分、一致收敛的共同命门</td></tr>
+    <tr><td>数项武器库</td><td>六件兵器挂墙上，看通项长相取件</td><td>一切"讨论收敛性"的题面</td></tr>
+    <tr><td>p 级数尺</td><td>$\ln x$ 画出生死线 $p=1$</td><td>比阶的参照系；积分判别两端示范</td></tr>
+    <tr><td>一致收敛</td><td>整条曲线躺进 $\varepsilon$ 带子</td><td>函数项级数的"及格线"，三大遗产的门票</td></tr>
+    <tr><td>M 判别</td><td>给每项找一顶与 $x$ 无关的数字帽子</td><td>$|\sin nx|\le1$、$|x^n|\le r^n$ 一盖了之</td></tr>
+    <tr><td>加括号</td><td>两项一捆，前提是散件先趋于零</td><td>16 届题五级数二；条件收敛级数的合法操作</td></tr>
+    <tr><td>Abel 求和</td><td>把符号包袱甩给部分和，用 $\frac1{k(k+1)}$ 埋单</td><td>$\sum a_kb_k$：符号乱但部分和长得慢</td></tr>
+    <tr><td>幂级数</td><td>半径之内是天堂，端点单独过海关</td><td>求和、积分、展函数的全部合法性</td></tr>
+    <tr><td>$\zeta(2)$</td><td>逐项积分树上结的果子</td><td>16 届题二：$\varphi(1)=\frac{\pi^2}{12}$</td></tr>
+  </table>
+  <p><strong>和你已学知识的焊接点</strong>：sup 判据就是第 1 章的确界（最坏点的误差）；正项级数"部分和有界即收敛"就是第 3 章单调有界定理；积分判别、逐项积分站在第 7 章；M 判别与第 8 章的优函数控制是同一动作在离散/连续两侧的长相——<strong>本章与第 8 章互为镜像</strong>。</p>
+</div>
+
+<h2>§8 计算示范：先看真人怎么想，再看卷面怎么写</h2>
+
+<p>两道例题分别覆盖本章"判"与"证"两条主线，老规矩：<strong>按总纲拆解</strong>（程序见第 0.5 章）+ <strong>卷面书写</strong>（分步给分格式）。</p>
+
+<h3>例 1 · 判敛组合：决策树的一次完整运行（约 10 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>"讨论收敛性"不是 $\forall\exists$ 型命题，没有逻辑骨架可套——它是<strong>选择型问题</strong>：结论是"敛 / 散"二选一（交错题还有"绝对 / 条件"的子分类）。程序对应位置：拆目标总表之外的<strong>分类任务</strong>，动作是"先走决策树分类，再<strong>工具六 · 划归</strong>——写'由某某判别法'，把定理名当图章盖"。</p>
+  <p><span class="stage">【盘点】</span>三个通项的长相就是全部库存：(a) $\frac{n!}{n^n}$——含阶乘 + $n^n$，比值法的天菜（阶乘在 $\frac{a_{n+1}}{a_n}$ 里相消）；(b) $\frac1{n\ln^2 n}$——积分判别法的标准长相（$\int\frac{dx}{x\ln^2x}$ 原函数 $-\frac1{\ln x}$ 一眼可见）；(c) $(-1)^n\ln(1+\frac1n)$——交错长相，先 Leibniz，再去符号查绝对收敛。</p>
+  <p><span class="stage">【会师】</span>(a) 倒推一下比值极限：$\frac{a_{n+1}}{a_n}=\frac{(n+1)n^n}{(n+1)^{n+1}}=\left(\frac{n}{n+1}\right)^n=\frac1{(1+\frac1n)^n}\to\frac1e&lt;1$——$\frac1e$ 不是天上掉下来的，是 $(1+\frac1n)^n\to e$（第 2 章重要极限）的直接调用。$\frac1e&lt;1$ 落进比值法收敛区，链条闭合。(b) $f(x)=\frac1{x\ln^2x}$ 正、递减（$x\ge2$），$\int_2^{+\infty}\frac{dx}{x\ln^2x}=\left[-\frac1{\ln x}\right]_2^{+\infty}=\frac1{\ln 2}$ 收敛——划归积分判别法。(c) 两道工序：$\ln(1+\frac1n)$ 递减趋于 $0$（$\frac1n$ 递减、$\ln(1+t)$ 递增的复合）→ Leibniz 收；$\ln(1+\frac1n)\sim\frac1n$（第 2 章等价量 $\ln(1+t)\sim t$）→ 比阶 $p=1$ 发散 → 条件收敛。每一步都是库存取货。</p>
+  <p><span class="stage">【定型】</span>卷面上决策树一个字都不写——只写"由比值判别法……""由积分判别法……""由 Leibniz 判别法……"，每个图章后面跟一行验证。选择过程是草稿纸上的事。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 判敛决策树</strong>：① $a_n\to0$？② 正项 → 看长相选武器（$n!$→比值，$n^n$→根值，代数式→比阶，$\frac1{n\ln^pn}$→积分）；③ 交错 → Leibniz + 去符号判绝对；④ 符号无规律 → 作差 / Abel。<strong>考场上不要在武器之间犹豫</strong>——犹豫说明长相没读对，回去重读通项。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 1</strong>　讨论下列级数的收敛性（收敛时指出绝对收敛或条件收敛）：</p>
+  <p>$$\text{(a)}\ \sum_{n=1}^\infty\frac{n!}{n^n};\qquad \text{(b)}\ \sum_{n=2}^\infty\frac{1}{n\ln^2 n};\qquad \text{(c)}\ \sum_{n=1}^\infty(-1)^n\ln\!\left(1+\frac1n\right).$$</p>
+  <hr>
+  <p class="proof-line"><strong>解 (a)</strong>　$a_n=\frac{n!}{n^n}>0$，用比值判别法：
+  $$\frac{a_{n+1}}{a_n}=\frac{(n+1)!\,n^n}{(n+1)^{n+1}n!}=\left(\frac{n}{n+1}\right)^n=\frac{1}{\left(1+\frac1n\right)^n}\longrightarrow\frac1e&lt;1,$$
+  由比值判别法，级数收敛。<span class="step-score">（3 分）</span></p>
+  <p class="proof-line"><strong>解 (b)</strong>　设 $f(x)=\frac1{x\ln^2x}$（$x\ge2$），则 $f$ 正、单调递减。又
+  $$\int_2^{+\infty}\frac{dx}{x\ln^2x}=\left[-\frac{1}{\ln x}\right]_2^{+\infty}=\frac{1}{\ln 2}&lt;+\infty,$$
+  由积分判别法，$\sum\frac1{n\ln^2n}$ 收敛。<span class="step-score">（6 分）</span></p>
+  <p class="proof-line"><strong>解 (c)</strong>　先收敛性：$\ln(1+\frac1n)$ 随 $n$ 单调递减且趋于 $0$，由 Leibniz 判别法，$\sum(-1)^n\ln(1+\frac1n)$ 收敛。</p>
+  <p class="proof-line">再绝对性：由 $\ln(1+t)\sim t$（$t\to0$），
+  $$\lim_{n\to\infty}\frac{\ln(1+\frac1n)}{\frac1n}=1,$$
+  而 $\sum\frac1n$ 发散，由比阶判别法 $\sum\ln(1+\frac1n)$ 发散。</p>
+  <p class="proof-line">故该级数<strong>条件收敛</strong>。<span class="step-score">（10 分）</span></p>
+  <p class="aside">书写点评：(c) 是两道工序——只写 Leibniz 收敛而不查绝对收敛，"条件收敛"这 2 分就没了；反过来只证 $\sum|\cdot|$ 发散也不能得出原级数收敛（发散的绝对值不蕴含本身发散）。判别法名前的那行验证（递减、趋于零、比阶极限 $=1$）是分点，不是客套话。</p>
+</div>
+
+<h3>例 2 · M 判别 + 三大遗产：一致收敛证出来，遗产才有得领（约 10 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>结论两条：① $\sum u_n(x)$ 在 $\mathbb{R}$ 上一致收敛；② 和函数 $S$ 连续、可在 $[0,\pi]$ 上逐项积分。①是"存在优级数"的<strong>构造型</strong>命题（$\exists a_n$）；②是<strong>划归型</strong>：条件凑齐，盖遗产定理的章。</p>
+  <p><span class="stage">【盘点】</span>$u_n(x)=\frac{\sin nx}{n^2}$。库存第一件货白送：$|\sin nx|\le1$（$\forall x$）——含 $x$ 的部分被常数盖帽，$|u_n(x)|\le\frac1{n^2}$。库存第二件：$\sum\frac1{n^2}$ 收敛（$p=2$，p 尺）。库存第三件：$u_n$ 连续（$\sin$ 复合多项式），为遗产一备货。库存第四件：$\int_0^\pi\sin nx\,dx=\frac{1-(-1)^n}{n}$ 可显式算，为逐项积分的结果备货。</p>
+  <p><span class="stage">【会师】</span>①：要证一致收敛 $\Longleftarrow$ M 判别 $\Longleftarrow$ 找数字帽子 $\frac1{n^2}$ + 帽子级数收敛——两条都在库存里，链条闭合（<strong>工具六 · 划归</strong>）。②：连续 $\Longleftarrow$ 遗产一（条件：$u_n$ 连续 ✓ + 一致收敛 ✓）；逐项积分 $\Longleftarrow$ 遗产二（同条件 ✓）。倒推注意一件事：如果题目还要逐项<strong>求导</strong>，就得验导数级数 $\sum\frac{\cos nx}{n}$ 的一致收敛——它在 $x=0$ 处是调和级数，直接发散，遗产三领不到。<strong>遗产三兄弟各带各的条件，调用前先点名。</strong></p>
+  <p><span class="stage">【定型】</span>卷面顺序：帽子不等式 → 帽子级数收敛 → "由 Weierstrass M 判别，一致收敛" → "由遗产一，$S$ 连续" → "由遗产二，逐项积分" → 算出积分值。每个图章前都有验证行。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 盖帽</strong>：把 $|u_n(x)|$ 中含 $x$ 的因子放大成它在 $D$ 上的 sup——$|\sin nx|\le1$、$|\cos nx|\le1$、$|x^n|\le r^n$（$x\in[-r,r]$）、$|\arctan nx|\le\frac{\pi}{2}$——剩下的数字部分若能凑成收敛级数，M 判别收工。<strong>盖帽的目标是"与 $x$ 无关"，不是"放得越小越好"。</strong>
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 2</strong>　证明 $\displaystyle S(x)=\sum_{n=1}^\infty\frac{\sin nx}{n^2}$ 在 $\mathbb{R}$ 上一致收敛，$S$ 在 $\mathbb{R}$ 上连续，并求 $\displaystyle\int_0^\pi S(x)\,dx$。</p>
+  <hr>
+  <p class="proof-line"><strong>第一步（M 判别）</strong>：对一切 $x\in\mathbb{R}$ 与 $n\ge1$，
+  $$\left|\frac{\sin nx}{n^2}\right|\le\frac{1}{n^2},$$
+  右端与 $x$ 无关，且 $\sum\frac1{n^2}$ 收敛（$p=2>1$）。由 Weierstrass M 判别，$\sum\frac{\sin nx}{n^2}$ 在 $\mathbb{R}$ 上一致收敛。<span class="step-score">（4 分）</span></p>
+  <p class="proof-line"><strong>第二步（遗产一：连续）</strong>：每项 $u_n(x)=\frac{\sin nx}{n^2}$ 在 $\mathbb{R}$ 上连续，又级数一致收敛，故和函数 $S\in C(\mathbb{R})$。<span class="step-score">（6 分）</span></p>
+  <p class="proof-line"><strong>第三步（遗产二：逐项积分）</strong>：$[0,\pi]$ 上一致收敛且各项连续，可逐项积分：
+  $$\int_0^\pi S(x)\,dx=\sum_{n=1}^\infty\frac{1}{n^2}\int_0^\pi\sin nx\,dx=\sum_{n=1}^\infty\frac{1-(-1)^n}{n^3}=2\sum_{k=1}^\infty\frac{1}{(2k-1)^3}.$$
+  <span class="step-score">（10 分）</span></p>
+  <p class="aside">书写点评：第一步的三个零件——帽子不等式、"与 $x$ 无关"、$\sum a_n$ 收敛——各占分量，只写"由 M 判别"四字是跳步。注意本题<strong>不能</strong>顺手逐项求导：导数级数 $\sum\frac{\cos nx}{n}$ 在 $x=0$ 处即调和级数，遑论一致收敛——遗产三的条件不满足，写了反而暴露概念不清。</p>
+</div>
+
+<h2>§9 配套题目</h2>
+
+<p>铁律：<strong>先写在纸上，写到写不动再展开答案</strong>。模仿题照例 1、例 2 的卷面格式写；变式题没有模板，先走决策树、再检查每件武器的前提。</p>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 1</span>讨论下列级数的收敛性：$\text{(a)}\ \displaystyle\sum_{n=1}^\infty\frac{2^n n!}{n^n}$；$\text{(b)}\ \displaystyle\sum_{n=2}^\infty\frac{1}{n\ln n}$。</p>
+  <details class="answer">
+    <summary>参考答案（约 8 分书写量）</summary>
+    <p><strong>(a)</strong> $\dfrac{a_{n+1}}{a_n}=\dfrac{2^{n+1}(n+1)!\,n^n}{(n+1)^{n+1}\,2^nn!}=\dfrac{2}{\left(1+\frac1n\right)^n}\to\dfrac{2}{e}&lt;1$（$2&lt;e$），由比值判别法收敛（4 分）。</p>
+    <p><strong>(b)</strong> $f(x)=\frac1{x\ln x}$（$x\ge2$）正、递减，$\displaystyle\int_2^{+\infty}\frac{dx}{x\ln x}=\bigl[\ln\ln x\bigr]_2^{+\infty}=+\infty$，由积分判别法<strong>发散</strong>（8 分）。</p>
+    <p><strong>易错点</strong>：(a) 忘记与 $1$ 比较——$\frac{2}{e}\approx0.736$，必须写明 $&lt;1$ 才判收敛；(b) 原函数写错：$\int\frac{dx}{x\ln x}=\ln\ln x$，不是 $\frac{1}{\ln^2x}$ 之类。对照 (b) 与例 1(b) 的 $\ln^2$——指数差 $1$，生死两隔，这正是 $p$ 尺的 $\ln$ 版。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 2</span>证明：对任意 $R>0$，$\displaystyle S(x)=\sum_{n=0}^\infty\frac{x^n}{n!}$ 在 $[-R,R]$ 上一致收敛，$S$ 在 $\mathbb{R}$ 上连续，且 $S'(x)=S(x)$。</p>
+  <details class="answer">
+    <summary>参考答案（约 10 分书写量）</summary>
+    <p><strong>① M 判别</strong>：$x\in[-R,R]$ 时 $\left|\frac{x^n}{n!}\right|\le\frac{R^n}{n!}$（与 $x$ 无关），$\sum\frac{R^n}{n!}=e^R$ 收敛（比值：$\frac{R^{n+1}/(n+1)!}{R^n/n!}=\frac{R}{n+1}\to0$），故一致收敛（4 分）。</p>
+    <p><strong>② 连续</strong>：每项连续 + 一致收敛 ⟹ $S$ 在 $[-R,R]$ 连续；由 $R$ 任意，$S\in C(\mathbb{R})$（6 分）。</p>
+    <p><strong>③ 逐项求导</strong>：导数级数 $\sum_{n\ge1}\frac{x^{n-1}}{(n-1)!}$ 与原级数同形，同样在 $[-R,R]$ 一致收敛，遗产三条件齐备，故 $S'(x)=\sum_{n\ge1}\frac{x^{n-1}}{(n-1)!}=S(x)$（10 分）。</p>
+    <p><strong>点评</strong>：③是遗产三的规范使用——验的是<strong>导数级数</strong>的一致收敛，而它恰好还是它自己。（由此 $S(x)=e^x$：$S'=S$ 且 $S(0)=1$ 的唯一解。）</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 1</span>讨论 $\displaystyle\sum_{n=2}^\infty\frac{(-1)^n}{n+(-1)^n}$ 的收敛性（收敛时指出绝对或条件）。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：$a_n=\frac1{n+(-1)^n}$ 不单调（$n=2:\frac13$；$n=3:\frac12$；$n=4:\frac15$——上下抖动），Leibniz 直接套不上。换动作：<strong>作差法</strong>（16 届题五级数一的迷你版）——与已知收敛的 $\sum\frac{(-1)^n}{n}$ 配平。</p>
+    <p><strong>证明</strong>：
+    $$\frac{(-1)^n}{n+(-1)^n}-\frac{(-1)^n}{n}=\frac{(-1)^n\bigl(n-(n+(-1)^n)\bigr)}{n(n+(-1)^n)}=\frac{-1}{n(n+(-1)^n)},$$
+    故 $\left|\cdots\right|=\frac1{n(n+(-1)^n)}\le\frac1{n(n-1)}$，差级数绝对收敛。而 $\sum\frac{(-1)^n}{n}$ 由 Leibniz 收敛，两级数之差绝对收敛，故原级数收敛。</p>
+    <p>又 $\frac1{n+(-1)^n}\ge\frac1{n+1}$，$\sum\frac1{n+1}$ 发散 ⟹ 不绝对收敛。结论：<strong>条件收敛</strong>。$\square$</p>
+    <p><strong>点评</strong>：本题是决策树第 ④ 闸的预演——符号节奏被打乱时，不要硬套 Leibniz，先问"它和哪个已知级数只差一个绝对收敛的尾巴"。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 2</span>设 $\sum a_n^2$ 与 $\sum b_n^2$ 都收敛，证明 $\sum a_nb_n$ 绝对收敛。</p>
+  <details class="answer">
+    <summary>参考答案</summary>
+    <p>由均值不等式，$|a_nb_n|\le\frac{a_n^2+b_n^2}{2}$。$\sum\frac{a_n^2+b_n^2}{2}=\frac12\sum a_n^2+\frac12\sum b_n^2$ 收敛（收敛级数的线性组合），由比较判别法 $\sum|a_nb_n|$ 收敛，即 $\sum a_nb_n$ 绝对收敛。$\square$</p>
+    <p><strong>点评</strong>：两个动作的组合——均值不等式造界 + 比较判别划归。它是 Cauchy–Schwarz 不等式 $\bigl(\sum|a_nb_n|\bigr)^2\le\sum a_n^2\sum b_n^2$ 的级数版一角；第 13 届题三考过它的代数形。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv3">真题节选</span><strong>（第 16 届题五，15 分）</strong>讨论以下级数的收敛性：
+  $$\sum_{n=2}^{\infty}\frac{(-1)^n}{n+(-1)^{[\sqrt{n}]}},\qquad \sum_{n=2}^{\infty}\frac{(-1)^n}{\sqrt{n}+(-1)^{[\sqrt{n}]}},$$
+  其中 $[x]$ 表示 $x$ 的整数部分。</p>
+  <p>两个级数都是"交错节奏被 $(-1)^{[\sqrt n]}$ 打乱"的长相——先回答三个梯子问题（写在纸上）：</p>
+  <p>（i）$(-1)^{[\sqrt n]}$ 的符号节奏是什么？它在哪些 $n$ 处翻转？为什么这让 Leibniz 判别法无法直接使用？<br>
+  （ii）级数二的官方方法 1 把相邻两项加括号。加括号为什么不改变敛散性？需要验证哪个前提？<br>
+  （iii）方法 2 用 Abel 分部求和：官方把哪部分取作 $a_k$、哪部分取作 $b_k$？为什么 $|S_n|\le2+2\sqrt n$ 这种"慢增长"估计就够用？</p>
+  <details class="answer">
+    <summary>梯子参考答案</summary>
+    <p>（i）$[\sqrt n]=m$ 在 $n\in[m^2,(m+1)^2)$ 上恒定，故 $(-1)^{[\sqrt n]}$ 在每块上恒为 $(-1)^m$，仅在 $n$ 为平方数时翻转；块长 $2m+1\to\infty$。于是 $\frac1{\sqrt n+(-1)^{[\sqrt n]}}$ 不单调（块内随块符号整体上下挪），Leibniz 的单调性条件不满足。</p>
+    <p>（ii）一般项 $\frac{(-1)^n}{\sqrt n+(-1)^{[\sqrt n]}}\to0$（分母 $\to\infty$）。一般项趋于零时，两两加括号后若新级数收敛，则原级数收敛（奇偶两个子列的部分和相差一个趋于零的项）。前提正是"一般项 $\to0$"——官方解答开篇就写它。</p>
+    <p>（iii）$a_k=(-1)^{k+[\sqrt k]}$（符号包袱），$b_k=\frac1k$（单调趋零）。同一块内 $(-1)^{[\sqrt k]}$ 恒定，$(-1)^k$ 交错相消，每块贡献至多 $1$，块数不超过 $\sqrt n$，故 $|S_n|\le2+2\sqrt n$。分部求和后得到 $\frac{S_n}{n}\to0$ 与 $\sum\frac{S_k}{k(k+1)}$——$\frac{2+2\sqrt k}{k(k+1)}=O(k^{-3/2})$ 绝对收敛，所以"慢增长"已足够：$S_n$ 不必有界，只要涨得比 $k$ 慢。</p>
+  </details>
+  <details class="answer">
+    <summary>官方解答全文（转录自官方参考答案）</summary>
+    <p><strong>级数一</strong>　由 Leibniz 判别法，$\sum\frac{(-1)^n}{n}$ 收敛。作差：
+    $$\left|\frac{(-1)^n}{n+(-1)^{[\sqrt n]}}-\frac{(-1)^n}{n}\right|=\frac{1}{n\left(n+(-1)^{[\sqrt n]}\right)}\le\frac{1}{n(n-1)},$$
+    差级数绝对收敛，故原级数 $=$ 收敛级数 $+$ 绝对收敛级数，收敛。又 $\frac1{n+(-1)^{[\sqrt n]}}\sim\frac1n$（比阶极限为 $1$），$\sum|\cdot|$ 发散。故级数一<strong>条件收敛</strong>。<span class="step-score">（8 分）</span></p>
+    <p><strong>级数二（方法 1 · 加括号）</strong>　一般项趋于零，相邻两项加括号不改变敛散性，只需证
+    $$\sum_{n=1}^\infty\left(\frac{1}{\sqrt{2n}+(-1)^{[\sqrt{2n}]}}-\frac{1}{\sqrt{2n+1}+(-1)^{[\sqrt{2n+1}]}}\right)$$
+    收敛。通分后分子为
+    $$\bigl(\sqrt{2n+1}-\sqrt{2n}\bigr)+\bigl((-1)^{[\sqrt{2n+1}]}-(-1)^{[\sqrt{2n}]}\bigr).$$
+    第一部分：$\sqrt{2n+1}-\sqrt{2n}=\frac1{\sqrt{2n+1}+\sqrt{2n}}=O(n^{-1/2})$，除以量级为 $2n$ 的分母后为 $O(n^{-3/2})$，对应级数绝对收敛。</p>
+    <p>符号差部分：$(-1)^{[\sqrt{2n+1}]}-(-1)^{[\sqrt{2n}]}\ne0$ 当且仅当 $[\sqrt{2n+1}]-[\sqrt{2n}]=1$，即 $2n+1$ 为平方数；$2n+1$ 为奇数，故 $2n+1=(2m+1)^2$，亦即 $n=2m^2+2m$。此时 $[\sqrt{2n+1}]=2m+1$、$[\sqrt{2n}]=2m$，符号差 $=-2$，相应项绝对值之和
+    $$\sum_{m=1}^\infty\frac{2}{\sqrt{4m^2+4m+1}\,\cdot\,2m}&lt;+\infty,$$
+    故符号差部分也绝对收敛。加括号级数收敛 ⟹ 级数二收敛；又通项绝对值 $\sim\frac1{\sqrt n}$ 发散，故级数二<strong>条件收敛</strong>。<span class="step-score">（15 分）</span></p>
+    <p><strong>级数二（方法 2 · Abel 求和）</strong>　记 $S_1=0$，$S_n=\sum_{k=2}^n(-1)^{k+[\sqrt k]}$：同一块 $[m^2,(m+1)^2)$ 内 $(-1)^{[\sqrt k]}$ 恒定、$(-1)^k$ 交错相消，每块贡献绝对值不超过 $1$，块数不超过 $\sqrt n$，故 $|S_n|\le2+2\sqrt n$。分部求和得
+    $$\sum_{k=2}^n\frac{(-1)^{k+[\sqrt k]}}{k}=\frac{S_n}{n}+\sum_{k=2}^{n-1}\frac{S_k}{k(k+1)},$$
+    $\frac{S_n}{n}\to0$，且 $\sum\frac{|S_k|}{k(k+1)}\le\sum\frac{2+2\sqrt k}{k(k+1)}$ 收敛，故 $\sum\frac{(-1)^{n+[\sqrt n]}}{n}$ 收敛。再配平：
+    $$\frac{(-1)^n}{\sqrt n+(-1)^{[\sqrt n]}}=\frac{(-1)^n}{\sqrt n}-\frac{(-1)^{n+[\sqrt n]}}{n}+\frac{(-1)^n}{n\left(\sqrt n+(-1)^{[\sqrt n]}\right)},$$
+    第一项 Leibniz 收敛，第二项刚证收敛，第三项绝对值 $\le\frac1{n(\sqrt n-1)}$ 绝对收敛，故级数二条件收敛。</p>
+    <p><strong>复盘</strong>：级数一考<strong>作差法</strong>（决策树第 ④ 闸）：与 Leibniz 头牌 $\sum\frac{(-1)^n}{n}$ 配平，差落在 $\frac1{n(n-1)}$ 的绝对收敛区。级数二考两个非常规动作——<strong>加括号</strong>（前提：一般项 $\to0$）与 <strong>Abel 分部求和</strong>（把符号包袱甩给慢增长的部分和）；核心技术其实是同一招：把不规则符号 $(-1)^{[\sqrt n]}$ 的"块结构"（$[\sqrt n]$ 在 $[m^2,(m+1)^2)$ 上恒定）翻译成长期相消。官方注：若没有讨论绝对收敛性，不扣分——但"条件收敛"的完整结论需要你走完比阶那一步。<em>（题目与解答转录自第 16 届官方 PDF，见 <a href="真题索引/第16届_2024.md">真题索引</a>。）</em></p>
+  </details>
+</div>
+
+<h2>§9.5 熟练度训练场</h2>
+
+<p>理解只是入场券，<strong>考场上拼的是基本动作的速度</strong>。两种训练，每天 10 分钟：</p>
+
+<h3>训练一 · 翻卡快测（目标：每卡 10 秒内出答案）</h3>
+<div class="quiz" data-quiz="ch09-drill"></div>
+
+<h3>训练二 · 计时默写（写在纸上，掐表）</h3>
+<div class="calc box" data-tag="默写清单">
+  <p>① <strong>90 秒</strong>：默写六大判据（名称 + 一句话陈述 + 适用信号）：比较/比阶、比值、根值、积分判别、Leibniz、绝对收敛 ⟹ 收敛；</p>
+  <p>② <strong>90 秒</strong>：默写 M 判别（含"与 $x$ 无关"四个字）+ 三大遗产各自的条件（逐项求导：导数级数一致收敛）；</p>
+  <p>③ <strong>3 分钟</strong>：默写收敛半径两个公式（Cauchy–Hadamard 与比值版）+ "$x^n$ 在 $[0,1]$ 上点态收敛但不一致收敛"的完整论证（极限函数、$\sup=1$、证人 $x^*=2^{-1/n}$；$[0,r]$ 上 $\sup=r^n\to0$）。</p>
+  <p><strong>过关标准</strong>：连续两天全对才算过。做不到就回到对应小节重读，再默。</p>
+</div>
+
+<h2>§10 六方向自测卡</h2>
+
+<div class="selftest">
+  <h3>合上书，拿张白纸，默写以下六项</h3>
+  <div class="st-item">
+    <p class="st-q"><em>=（它是什么）</em>　写出一致收敛的完整定义（量词链）与 sup 判据，各配一句大白话。</p>
+    <details><summary>对照</summary><p>$\forall\varepsilon>0,\ \exists N,\ \forall n\ge N,\ \forall x\in D:\ |f_n(x)-f(x)|&lt;\varepsilon$（存在统一进度线，$N$ 不许认识 $x$）；$\sup_{x\in D}|f_n(x)-f(x)|\to0$（误差的最坏情形趋于零）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>←（什么带来它）</em>　点态收敛哪里不够用？一致收敛是修哪个量词？</p>
+    <details><summary>对照</summary><p>$x^n$ 在 $[0,1]$：每项连续、点点收敛，极限在 $x=1$ 断开——点态允许 $N$ 依赖 $x$，角点进度无限拖延。一致收敛把 $\exists N$ 提到 $\forall x$ 前面，与第 2 章一致连续、第 8 章含参积分同一条量词顺序通则。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>→（它带来什么）</em>　说出三大遗产及各自条件；再说幂级数从中得到什么。</p>
+    <details><summary>对照</summary><p>和函数连续（各项连续 + 一致收敛）；逐项积分（$[a,b]$ 上一致收敛 + 连续）；逐项求导（导数级数一致收敛 + 原级数收敛）。幂级数在 $[-r,r]$（$r&lt;R$）内闭一致收敛 ⟹ 半径内三遗产全兑现，且求导积分不改变 $R$。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>∈（实例）</em>　各默一例：一致收敛的级数；点态收敛但不一致收敛的函数列；条件收敛的级数。</p>
+    <details><summary>对照</summary><p>$\sum\frac{\sin nx}{n^2}$（M 判别，$\mathbb{R}$ 上一致收敛）；$x^n$ 在 $[0,1]$（sup $=1$）；$\sum\frac{(-1)^n}{n}$（Leibniz 收敛，调和发散）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>≠（区分）</em>　绝对收敛 vs 条件收敛：定义、头牌实例、以及为什么条件收敛"求和顺序有意义"。</p>
+    <details><summary>对照</summary><p>$\sum|a_n|$ 敛 = 绝对收敛；$\sum a_n$ 敛而 $\sum|a_n|$ 散 = 条件收敛（头牌 $\sum\frac{(-1)^n}{n}$）。Riemann 重排定理：条件收敛级数重排可得任何和，故加括号/换序前必须论证合法性（16 届题五加括号的通行证是"一般项 $\to0$"）；绝对收敛随便排。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>（为何要有它）</em>　级数理论在解决什么"合法性危机"？</p>
+    <details><summary>对照</summary><p>无限求和不是有限和的自动推广：不判敛，$\sum$ 可能根本不是数（调和级数）；不判一致收敛，和函数可能不连续、不能逐项积分求导。判敛回答"它是不是一个数"，一致收敛回答"和函数继承多少性质"，幂级数把这两件武器兑现成"能算"（$\zeta(2)=\frac{\pi^2}{6}$）。</p></details>
+  </div>
+</div>
+
+<div class="net box" data-tag="间隔复习安排">
+  <p><strong>1 天后</strong>：重做六方向自测卡（不翻书）+ 翻卡快测第二轮；<strong>3 天后</strong>：重做变式 1（作差法）与真题节选的三个梯子问题 + 计时默写②③；<strong>1 周后</strong>：把判敛决策树四道闸默写一遍，用 16 届题五原题限时 25 分钟全真模拟一次。</p>
+  <p>本章是<strong>数分卷的收官接口</strong>：从第 1 章 sup 出发的"无限运算合法化"主线在这里收拢——sup → 量词顺序 → 单调有界 → Darboux 和 → 一致收敛。它与<strong>第 8 章互为镜像</strong>：级数 ↔ 积分是离散/连续对偶（M 判别 ↔ 优函数控制，逐项积分 ↔ 积分号下求导，Abel 求和 ↔ 分部积分），复习时两章对照着过，一遍顶两遍。下一章多元微积分是数分最后的版图。</p>
+</div>
+
+<div class="chapnav">
+  <span><a href="ch08.html">← 第 8 章 · 反常积分与含参变量积分</a></span>
+  <span><a href="index.html">首页</a></span>
+  <span><a href="ch10.html">第 10 章 · 多元微积分与三大公式：Green / Gauss / Stokes →</a></span>
+</div>
+
+</div>
+
+<script src="assets/quiz.js"></script>
+<script>
+/* §9.5 翻卡数据 */
+registerQuiz("ch09-drill", [
+  { q: "通项含 $n!$ 或 $a^n$ → 哪件武器？", a: "比值 d'Alembert。例：$\\sum\\frac{n!}{n^n}$：$\\frac{a_{n+1}}{a_n}=(1+\\frac1n)^{-n}\\to\\frac1e\\lt 1$，收敛。" },
+  { q: "通项含 $n^n$ / 整体 $n$ 次方 → ？", a: "根值 Cauchy：$\\rho=\\limsup\\sqrt[n]{a_n}$，$\\rho\\lt 1$ 敛、$\\rho>1$ 散。" },
+  { q: "$\\sum\\frac{1}{n\\ln n}$ 敛散？凭什么？", a: "发散。积分判别：$\\int_2^\\infty\\frac{dx}{x\\ln x}=\\ln\\ln x\\big|_2^\\infty=\\infty$。（对照：$\\ln^2$ 就收敛——$p$ 尺的 $\\ln$ 版生死线也是 1。）" },
+  { q: "$\\sum\\frac{(-1)^n}{n}$：绝对收敛还是条件收敛？", a: "条件收敛：Leibniz 给收敛（$\\frac1n\\downarrow0$），$\\sum\\frac1n$ 调和发散。" },
+  { q: "M 判别怎么陈述？", a: "$|u_n(x)|\\le a_n$（$a_n$ 与 $x$ 无关）且 $\\sum a_n$ 收敛 ⟹ $\\sum u_n(x)$ 在 $D$ 上一致收敛（且绝对收敛）。" },
+  { q: "sup 判据？", a: "$f_n\\rightrightarrows f\\iff\\sup_{x\\in D}|f_n(x)-f(x)|\\to0$。$x^n$ 在 $[0,1]$ 上 sup 恒 $=1$ → 不一致；在 $[0,r]$ 上 sup $=r^n\\to0$ → 一致。" },
+  { q: "逐项求导的条件是什么？", a: "$u_n\\in C^1$，$\\sum u_n$ 收敛，且导数级数 $\\sum u_n'$ 一致收敛——验的是导数级数，不是原级数。" },
+  { q: "$\\sum\\frac{x^n}{n^2}$ 的收敛域？", a: "$R=1$；$x=\\pm1$ 时 $\\sum\\frac1{n^2}$（绝对）收敛 ⟹ 收敛域 $[-1,1]$。端点单独判！" },
+  { q: "Cauchy–Hadamard 公式？", a: "$R=\\dfrac{1}{\\limsup\\sqrt[n]{|a_n|}}$；若 $\\lim\\left|\\frac{a_n}{a_{n+1}}\\right|$ 存在，它也等于 $R$。" },
+  { q: "判敛决策树第①闸是什么？", a: "$a_n\\to0$ 吗？通项不趋于零 → 直接发散（必要条件，来自 $a_n=S_n-S_{n-1}$）。" }
+]);
+</script>
+
+<script>
+/* §3.4 一致收敛探索器 */
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  var svg = document.getElementById("unif-svg");
+  var out = document.getElementById("unif-out");
+  var nSlider = document.getElementById("unif-n");
+  var rSlider = document.getElementById("unif-r");
+  function px(x) { return 70 + x * 580; }
+  function py(y) { return 290 - y * 230; }
+  function mk(tag, attrs) {
+    var el = document.createElementNS(NS, tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    svg.appendChild(el);
+    return el;
+  }
+  function mkText(x, y, str, attrs) {
+    var t = mk("text", attrs || {});
+    t.setAttribute("x", x); t.setAttribute("y", y);
+    t.textContent = str;
+    return t;
+  }
+  /* 坐标轴 */
+  mk("line", { x1: 60, y1: 290, x2: 668, y2: 290, stroke: "#2b2620", "stroke-width": 2 });
+  mk("polygon", { points: "678,290 666,285 666,295", fill: "#2b2620" });
+  mk("line", { x1: 70, y1: 300, x2: 70, y2: 26, stroke: "#2b2620", "stroke-width": 2 });
+  mk("polygon", { points: "70,16 65,28 75,28", fill: "#2b2620" });
+  [[0, "0"], [1, "1"]].forEach(function (tk) {
+    mk("line", { x1: px(tk[0]), y1: 284, x2: px(tk[0]), y2: 296, stroke: "#2b2620", "stroke-width": 2 });
+    mkText(px(tk[0]), 312, tk[1], { "font-size": 13, fill: "#2b2620", "text-anchor": "middle" });
+  });
+  mk("line", { x1: 64, y1: py(1), x2: 76, y2: py(1), stroke: "#2b2620", "stroke-width": 2 });
+  mkText(58, py(1) + 4, "1", { "font-size": 13, fill: "#2b2620", "text-anchor": "end" });
+  mkText(676, 296, "x", { "font-size": 13, fill: "#2b2620" });
+  mkText(58, 24, "y", { "font-size": 13, fill: "#2b2620" });
+  /* 极限函数 f：绿线 y=0 + 孤立点 (1,1) */
+  mk("line", { x1: px(0), y1: 288, x2: px(1), y2: 288, stroke: "#15803d", "stroke-width": 3 });
+  mk("circle", { cx: px(1), cy: py(1), r: 5, fill: "#15803d" });
+  mkText(84, 40, "极限函数 f：在 [0,1) 上是 0，在 x = 1 处是 1（绿）", { "font-size": 12.5, fill: "#15803d" });
+  /* 误差带 */
+  var band = mk("rect", { fill: "#b45309", opacity: 0.22 });
+  var bandEdge = mk("line", { stroke: "#b45309", "stroke-width": 1.5, "stroke-dasharray": "5 4" });
+  /* 曲线 */
+  var curveGrey = mk("polyline", { fill: "none", stroke: "#a39e93", "stroke-width": 1.6, "stroke-dasharray": "4 3" });
+  var curveBlue = mk("polyline", { fill: "none", stroke: "#1d4ed8", "stroke-width": 2.6 });
+  /* 最坏点 */
+  var wline = mk("line", { stroke: "#be123c", "stroke-width": 1.5, "stroke-dasharray": "5 4" });
+  var wdot = mk("circle", { r: 5.5, fill: "#be123c" });
+  var wlabel = mkText(0, 0, "", { "font-size": 12, fill: "#be123c", "font-weight": "bold" });
+  function update() {
+    var n = parseInt(nSlider.value, 10);
+    var r = parseFloat(rSlider.value);
+    var sup = (r >= 1) ? 1 : Math.pow(r, n);
+    var s = Math.min(1, sup);
+    band.setAttribute("x", px(0));
+    band.setAttribute("width", Math.max(0, px(r) - px(0)));
+    band.setAttribute("y", py(s));
+    band.setAttribute("height", 290 - py(s));
+    bandEdge.setAttribute("x1", px(0)); bandEdge.setAttribute("x2", px(r));
+    bandEdge.setAttribute("y1", py(s)); bandEdge.setAttribute("y2", py(s));
+    /* 曲线：在 r 处分成蓝/灰两段 */
+    var ptsB = [], ptsG = [];
+    for (var i = 0; i <= 240; i++) {
+      var x = i / 240;
+      var y = (x === 0 && n > 0) ? 0 : Math.pow(x, n);
+      var pt = px(x).toFixed(1) + "," + py(y).toFixed(1);
+      if (x <= r) ptsB.push(pt); else ptsG.push(pt);
+    }
+    var bnd = px(r).toFixed(1) + "," + py(Math.pow(r, n)).toFixed(1);
+    ptsB.push(bnd); ptsG.unshift(bnd);
+    curveBlue.setAttribute("points", ptsB.join(" "));
+    curveGrey.setAttribute("points", ptsG.length > 1 ? ptsG.join(" ") : "");
+    /* 最坏点 x = r */
+    wline.setAttribute("x1", px(r)); wline.setAttribute("x2", px(r));
+    wline.setAttribute("y1", py(s)); wline.setAttribute("y2", 290);
+    wdot.setAttribute("cx", px(r)); wdot.setAttribute("cy", py(Math.pow(r, n)));
+    wlabel.setAttribute("x", Math.min(px(r) - 8, 560));
+    wlabel.setAttribute("y", Math.max(py(s) - 10, 40));
+    wlabel.textContent = "最坏点 (r, rⁿ)";
+    /* 判决 */
+    var head = "n = " + n + "，区间 [0, " + r.toFixed(2) + "]：sup |fₙ − f| = rⁿ = " + sup.toFixed(4) + "　";
+    if (r >= 1) {
+      var xs = Math.pow(2, -1 / n);
+      out.innerHTML = head + '<span class="no">✗ 不一致收敛</span><br>' +
+        "带子高度恒为 1，拖多大 n 都压不扁。证人 x* = 2^(−1/n) = " + xs.toFixed(4) +
+        "（fₙ(x*) = 1/2）：它随 n 爬向角点 x = 1——「角点附近收敛越来越慢」就是不一致的来源。";
+    } else if (sup < 0.05) {
+      out.innerHTML = head + '<span class="ok">✓ 一致收敛</span><br>' +
+        "sup = rⁿ → 0：整条曲线躺进带子，继续拖 n 看带子彻底压扁。砍掉角点的一小段，「一致」立刻恢复。";
+    } else {
+      out.innerHTML = head + '<span class="no">sup 尚未小于 0.05</span><br>' +
+        "r 固定（r 小于 1）时 rⁿ → 0：拖大 n，带子会压扁——试试。";
+    }
+  }
+  nSlider.addEventListener("input", update);
+  rSlider.addEventListener("input", update);
+  update();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高代第 10 章 · 多项式：整除、不可约与数域 —— 数学A速成讲义</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+<div class="wrap">
+
+<div class="bookbar">
+  <span><a href="index.html">← 返回首页</a></span>
+  <span>卷二 · 高等代数 · 第 10 章</span>
+</div>
+
+<div class="chapter-kicker">CHAPTER 10 · 高等代数</div>
+<h1>多项式：整除、不可约与数域</h1>
+
+<div class="exam box" data-tag="本章导览">
+  <p><strong>这一章在整张卷子上的位置</strong>：多项式是高代大题的<strong>常客</strong>——第 12、13、14 届连续三届各出一道多项式大题：第 14 届题四（20 分）证 $x^n-x-1$ 在 $\mathbb{Q}$ 上不可约（本章真题节选）；第 13 届题三（15 分）用 Vieta 与反转多项式证"系数有界 $\Rightarrow$ 根不可能全为实数"；第 12 届题四（20 分）用 Vieta 刻画首一多项式的分解。第 15 届题三（20 分）的第 18–20 分点"各因子两两互素 $\Rightarrow f(x)\mid p(x)$"就是本章互素第二用。正面撞上大约 <strong>15–20 分</strong>，作步骤分另算。</p>
+  <p><strong>学完你能</strong>：① 默写并逐符号朗读带余除法、互素（Bezout）、不可约、Eisenstein 判别；② 形成"证不可约"的三招反射——Eisenstein 直用、移位 $x=y+1$、有理根排除 + 次数分解讨论；③ 互素三用（消去、分解、构造）随手调；④ 用 Gauss 引理搭"$\mathbb{Q}\leftrightarrow\mathbb{Z}$"的桥，看懂第 14 届题四全程；⑤ 背出数域三分定律：同一个多项式在 $\mathbb{C}$、$\mathbb{R}$、$\mathbb{Q}$ 上的三种命运。</p>
+  <p><strong>前置</strong>：整数的整除与辗转相除（小学奥数级别的直觉即可）；多项式次数的基本感觉。读过第 6 章 <a href="ch16.html">Cayley-Hamilton 与最小多项式</a>更好——本章是它的"地基返修"。</p>
+</div>
+
+<h2>§1 开场谜题：同一个多项式，三种命运</h2>
+
+<div class="hook box" data-tag="开场谜题">
+  <p>拿一个干干净净的多项式：</p>
+  <p>$$f(x)=x^4+1.$$</p>
+  <p>问：它能拆成更低次多项式的乘积吗？</p>
+  <p>在复数域 $\mathbb{C}$ 上，它<strong>稀碎</strong>——四个根 $\zeta=\frac{\sqrt2}{2}(1+i)$、$\bar\zeta$、$-\zeta$、$-\bar\zeta$，拆成四个一次因子：
+  $$x^4+1=(x-\zeta)(x-\bar\zeta)(x+\zeta)(x+\bar\zeta).$$</p>
+  <p>在实数域 $\mathbb{R}$ 上，它只肯拆一半——两个二次因子，再也拆不动：
+  $$x^4+1=(x^2+\sqrt2\,x+1)(x^2-\sqrt2\,x+1).$$</p>
+  <p>而在有理数域 $\mathbb{Q}$ 上，它<strong>居然一个因子都拆不下来</strong>——没有有理根（候选 $\pm1$ 代入都不是零），也没有任何一对有理系数二次因子能拼出它（§8 例 1 会当场验证）。</p>
+  <p>同一个多项式，"能不能拆"的答案随数域变脸。所以多项式问题的第一句话永远不是"怎么拆"，而是：<strong>你在哪个数域上？</strong>"不可约"三个字必须挂在数域上才有意义，就像"大""小"必须挂在参照系上。</p>
+  <p>更妙的是，判不可约的钥匙简单得不像话。<strong>Eisenstein 判别</strong>说：盯着一个素数 $p$ 看它怎么分配系数——首项系数不被 $p$ 整除、其余全被 $p$ 整除、常数项不被 $p^2$ 整除——三条凑齐，不可约立刻判死。而 $x^4+1$ 这种"直接看不出 $p$"的硬骨头，只需一个动作——<strong>把 $x$ 换成 $y+1$</strong>——$p=2$ 就自动现身（例 1）。这一章，就把这套"整除 $\to$ 互素 $\to$ 不可约 $\to$ 数域"的机器装到你手上。</p>
+</div>
+
+<h2>§2 先看见它：整数的高配版 + 三域分解树</h2>
+
+<div class="vision box" data-tag="直觉与图像">
+  <p>多项式环 $F[x]$ 是整数环 $\mathbb{Z}$ 的<strong>高配版</strong>，整套算术平行搬过去，只换一件度量工具：</p>
+  <table>
+    <tr><th>整数 $\mathbb{Z}$</th><th>多项式 $F[x]$（$F$ 为数域）</th></tr>
+    <tr><td>带余除法 $a=bq+r$，$0\le r&lt;|b|$</td><td>带余除法 $f=qg+r$，$\deg r&lt;\deg g$ 或 $r=0$</td></tr>
+    <tr><td>大小：绝对值 $|b|$</td><td>大小：<strong>次数</strong> $\deg g$</td></tr>
+    <tr><td>辗转相除求 $\gcd$</td><td>辗转相除求 $(f,g)$（一字不差）</td></tr>
+    <tr><td>Bezout：$\gcd(a,b)=ua+vb$</td><td>Bezout：$(f,g)=uf+vg$</td></tr>
+    <tr><td>素数 $p$：拆不动</td><td><strong>不可约多项式</strong>：拆不动——但"拆不动"随数域而变！</td></tr>
+    <tr><td>算术基本定理：唯一分解</td><td>唯一分解定理：分解到不可约因子，本质唯一</td></tr>
+  </table>
+  <p>唯一多出来的旋钮是最后一行：<strong>"素数"的名单取决于系数住在哪个数域</strong>。下面这棵树把 $x^4+1$ 在三个数域上的命运画在一起——域越大，拆得越碎；拆到的那一层"尽头"，就是那个域上的不可约因子。</p>
+</div>
+
+<figure>
+<svg viewBox="0 0 720 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="x^4+1 在三个数域上的分解树">
+  <defs>
+    <marker id="arr20" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+  <!-- 左：主角 -->
+  <rect x="24" y="140" width="110" height="52" rx="8" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="79" y="163" font-size="16" fill="#7a4a12" text-anchor="middle" font-weight="bold">x⁴ + 1</text>
+  <text x="79" y="181" font-size="10.5" fill="#7a4a12" text-anchor="middle">同一个多项式</text>
+  <!-- 箭头 -->
+  <line x1="134" y1="156" x2="200" y2="72" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr20)"/>
+  <line x1="134" y1="166" x2="200" y2="166" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr20)"/>
+  <line x1="134" y1="176" x2="200" y2="258" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr20)"/>
+  <!-- ℚ 行 -->
+  <text x="212" y="52" font-size="14" fill="#a1132f" font-weight="bold">ℚ 上：不可约</text>
+  <rect x="212" y="60" width="150" height="34" rx="6" fill="#fbeeee" stroke="#a1132f" stroke-width="2"/>
+  <text x="287" y="81" font-size="12.5" fill="#a1132f" text-anchor="middle">x⁴ + 1（一整块）</text>
+  <text x="380" y="81" font-size="11.5" fill="#5c554b">连一个二次因子都拆不出来（例 1）</text>
+  <!-- ℝ 行 -->
+  <text x="212" y="146" font-size="14" fill="#b45309" font-weight="bold">ℝ 上：拆到二次为止</text>
+  <rect x="212" y="154" width="108" height="34" rx="6" fill="#fdf6ec" stroke="#b45309" stroke-width="2"/>
+  <text x="266" y="175" font-size="12" fill="#7a4a12" text-anchor="middle">x² + √2x + 1</text>
+  <rect x="330" y="154" width="108" height="34" rx="6" fill="#fdf6ec" stroke="#b45309" stroke-width="2"/>
+  <text x="384" y="175" font-size="12" fill="#7a4a12" text-anchor="middle">x² − √2x + 1</text>
+  <text x="452" y="175" font-size="11.5" fill="#5c554b">两个二次的判别式均为负，到此为止</text>
+  <!-- ℂ 行 -->
+  <text x="212" y="240" font-size="14" fill="#1d4ed8" font-weight="bold">ℂ 上：稀碎，四个一次</text>
+  <rect x="212" y="248" width="82" height="34" rx="6" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="253" y="269" font-size="12" fill="#1d4ed8" text-anchor="middle">x − ζ</text>
+  <rect x="302" y="248" width="82" height="34" rx="6" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="343" y="269" font-size="12" fill="#1d4ed8" text-anchor="middle">x − ζ̄</text>
+  <rect x="392" y="248" width="82" height="34" rx="6" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="433" y="269" font-size="12" fill="#1d4ed8" text-anchor="middle">x + ζ</text>
+  <rect x="482" y="248" width="82" height="34" rx="6" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="523" y="269" font-size="12" fill="#1d4ed8" text-anchor="middle">x + ζ̄</text>
+  <text x="578" y="269" font-size="11.5" fill="#5c554b">ζ = √2/2·(1+i)</text>
+  <!-- 底部小结 -->
+  <text x="360" y="318" font-size="12.5" fill="#5c554b" text-anchor="middle">数域越大，拆得越碎；「不可约」= 拆到某个数域上的尽头</text>
+</svg>
+<figcaption>同一棵分解树，在 $\mathbb{Q}$ 上只有一块、在 $\mathbb{R}$ 上两块、在 $\mathbb{C}$ 上四块——"不可约"是相对于数域的性质。</figcaption>
+</figure>
+
+<h2>§3 精确定义：逐符号朗读</h2>
+
+<h3>3.1 带余除法与整除：次数就是多项式的"绝对值"</h3>
+
+<div class="def">
+  <p class="def-title">定理（带余除法）与定义（整除）</p>
+  <p>设 $f,g\in F[x]$（$F$ 为某个数域），$g\ne0$。则存在<strong>唯一</strong>的 $q,r\in F[x]$ 使</p>
+  <p>$$f=qg+r,\qquad r=0\ \text{或}\ \deg r&lt;\deg g.$$</p>
+  <p>若 $r=0$，称 $g$ <strong>整除</strong> $f$，记 $g\mid f$，即 $\exists\,q\in F[x]$ 使 $f=qg$。</p>
+</div>
+
+<div class="symbol box" data-tag="逐符号朗读">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$f=qg+r$</td><td>"$f$ 等于 $q$ 乘 $g$ 加 $r$"</td><td>$q$ 是商式、$r$ 是余式——长除法的产物，每次削掉最高次项</td></tr>
+    <tr><td>$\deg r&lt;\deg g$</td><td>"余式次数<strong>严格小于</strong>除式次数"</td><td>余式必须比除式"矮一截"——次数就是多项式世界的绝对值，带余除法靠它刹车</td></tr>
+    <tr><td>$g\mid f$</td><td>"$g$ 整除 $f$"</td><td>$\exists\,q,\ f=qg$。注意方向：竖线左边是因子，右边是被除的那个</td></tr>
+  </table>
+  <p><strong>一句预警</strong>：整除关系也随数域变——$x-1\mid x^2-1$ 在 $\mathbb{Q}$、$\mathbb{R}$、$\mathbb{C}$ 上都成立，但 $x^2+1$ 在 $\mathbb{R}$ 上谁都整除不了它（除常数和它自己），到 $\mathbb{C}$ 上就被 $x-i$ 整除了。<strong>一切结论先报数域。</strong></p>
+</div>
+
+<h3>3.2 最大公因式与互素：Bezout 一句话养活三种用法</h3>
+
+<div class="def">
+  <p class="def-title">定义（最大公因式、辗转相除、互素、Bezout）</p>
+  <p>$f,g\in F[x]$ 不全为零。它们的首一公因式中次数最大者称为<strong>最大公因式</strong>，记 $(f,g)$。</p>
+  <p><strong>辗转相除</strong>（和整数一字不差）：由带余除法 $f=qg+r$ 得 $(f,g)=(g,r)$——余式次数严格下降，有限步后余式为 $0$，最后一个非零余式首一化即 $(f,g)$。</p>
+  <p><strong>Bezout 定理</strong>：存在 $u,v\in F[x]$ 使 $uf+vg=(f,g)$（辗转相除倒代回去即得）。特别地</p>
+  <p>$$(f,g)=1\ \iff\ \exists\,u,v\in F[x]:\ uf+vg=1,$$</p>
+  <p>此时称 $f$ 与 $g$ <strong>互素</strong>。</p>
+</div>
+
+<div class="net box" data-tag="互素三用（一张产出清单，考场直接取货）">
+  <table>
+    <tr><th>用法</th><th>内容</th><th>一句话画面</th></tr>
+    <tr><td><strong>消去</strong></td><td>$(f,g)=1$ 且 $f\mid gh$ ⟹ $f\mid h$</td><td>$f$ 与 $g$ 没有共同零件，$f$ 要藏进 $gh$ 只能整个藏进 $h$（素数版的"$p\mid ab\Rightarrow p\mid a$ 或 $p\mid b$"）</td></tr>
+    <tr><td><strong>分解 / 整除合并</strong></td><td>$f\mid h$、$g\mid h$ 且 $(f,g)=1$ ⟹ $fg\mid h$</td><td>两条互不重叠的整除可以合并成一条——第 15 届题三 18–20 分点"各因子两两互素 $\Rightarrow f\mid p$"就是这个的 $s$ 元版</td></tr>
+    <tr><td><strong>构造 / 公共根</strong></td><td>$f,g$ 在 $\mathbb{C}$ 中有公共根 $\iff$ $(f,g)\ne1$（在 $\mathbb{C}[x]$ 里）</td><td>公共根 $\alpha$ ⟺ $x-\alpha$ 是公因式。两个多项式"有没有共同零点"是个<strong>代数问题</strong>，不需要真的解出根——第 14 届题四第 5 步靠它收尾</td></tr>
+  </table>
+</div>
+
+<div class="think">
+  <p>别急着往下翻。<strong>拿张纸，自己把"消去"证出来</strong>：已知 $uf+vg=1$ 且 $f\mid gh$，证 $f\mid h$。提示只有一个动作：把 $1$ 乘到 $h$ 头上。写完再展开对照。</p>
+  <details class="answer">
+    <summary>对照：三行证明</summary>
+    <p>$h=h\cdot1=h(uf+vg)=u\,(hf)+v\,(hg)$。</p>
+    <p>$f\mid hf$ 显然；$f\mid gh$ 是已知。右边两项都被 $f$ 整除，故 $f\mid h$。$\square$</p>
+    <p>记忆锚点：Bezout 的用法九成是"<strong>把 $1=uf+vg$ 乘到目标对象头上</strong>"——$1$ 是个撬棍，$u,v$ 是两个支点。</p>
+  </details>
+</div>
+
+<h3>3.3 不可约与重根：定义里必须挂着数域</h3>
+
+<div class="def">
+  <p class="def-title">定义（不可约多项式）</p>
+  <p>设 $p(x)\in F[x]$，$\deg p\ge1$。若 $p$ 在 $F[x]$ 中<strong>不能分解为两个次数更低的多项式之积</strong>（即 $p=ab$ 时 $\deg a=0$ 或 $\deg b=0$），称 $p$ 在 $F$ 上<strong>不可约</strong>；否则可约。</p>
+  <p>不可约多项式就是 $F[x]$ 的"素数"：唯一分解定理说，每个次数 $\ge1$ 的 $f$ 分解为不可约因子之积，且在"差非零常数倍、不计次序"的意义下唯一。</p>
+</div>
+
+<div class="warn box" data-tag="头号陷阱：不可约必须挂数域">
+  <p>"$x^2-2$ 不可约"这句话<strong>不完整</strong>——在 $\mathbb{Q}$ 上它对，在 $\mathbb{R}$ 上它错（$x^2-2=(x-\sqrt2)(x+\sqrt2)$）。写"不可约"而不写"在哪个数域上"，等于写"$\varepsilon$ 很小"而不说多小——竞赛卷面上这是定义性错误。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定理（重根判别）</p>
+  <p>$f\in F[x]$ 在其分裂域（比如 $\mathbb{C}$）中<strong>无重根</strong> $\iff$ $(f,f')=1$。</p>
+  <p>画面：$\alpha$ 是 $f$ 的重根 $\iff$ $f(\alpha)=f'(\alpha)=0$ $\iff$ $x-\alpha$ 同时整除 $f$ 与 $f'$ $\iff$ $(f,f')\ne1$。所以"有没有重根"是个<strong>辗转相除能算出来</strong>的代数问题，不用解方程。</p>
+</div>
+
+<h3>3.4 有理根定理：先排雷，再动手</h3>
+
+<div class="def">
+  <p class="def-title">定理（有理根定理）</p>
+  <p>设 $f(x)=a_nx^n+a_{n-1}x^{n-1}+\cdots+a_1x+a_0\in\mathbb{Z}[x]$。若<strong>既约</strong>分数 $\dfrac{p}{q}$（$p,q$ 互素）是 $f$ 的根，则</p>
+  <p>$$p\mid a_0,\qquad q\mid a_n.$$</p>
+  <p>特别地，首一整系数多项式的有理根必为整数，且整除常数项。</p>
+</div>
+
+<div class="symbol box" data-tag="用法（一句话）">
+  <p>有理根定理给出的不是"根"，而是一张<strong>有限候选清单</strong>：$a_0$ 的因子 ÷ $a_n$ 的因子，正负全配上，逐一代入试雷。两档用途：</p>
+  <p>① <strong>求有理根</strong>：清单外的数连候选资格都没有，清单内逐一试（§8 例 2）；<br>
+  ② <strong>排雷判不可约</strong>：$\deg f\le3$ 时，可约 $\iff$ 有一次因子 $\iff$ 有根。清单全灭 $\Rightarrow$ 不可约。<strong>注意：$\deg f\ge4$ 时此路不通</strong>——没有一次因子还可能拆成两个二次（见 §4 练功房 T7）。</p>
+</div>
+
+<h3>3.5 Eisenstein 判别：盯着一个素数看系数分配</h3>
+
+<div class="def">
+  <p class="def-title">定理（Eisenstein 判别法）</p>
+  <p>设 $f(x)=a_nx^n+a_{n-1}x^{n-1}+\cdots+a_1x+a_0\in\mathbb{Z}[x]$。若存在素数 $p$ 同时满足：</p>
+  <p>$$\text{(i)}\ p\nmid a_n;\qquad \text{(ii)}\ p\mid a_i\ (i=0,1,\dots,n-1);\qquad \text{(iii)}\ p^2\nmid a_0,$$</p>
+  <p>则 $f$ 在 $\mathbb{Q}$ 上不可约。</p>
+</div>
+
+<div class="symbol box" data-tag="逐符号朗读">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$p\nmid a_n$</td><td>"首项系数不被 $p$ 整除"</td><td>保住 $\bmod\,p$ 之后多项式不"塌次数"——$\bar f$ 仍是 $n$ 次</td></tr>
+    <tr><td>$p\mid a_i$（其余全部）</td><td>"除首项外，每个系数都被 $p$ 整除"</td><td>$\bmod\,p$ 之后 $f$ 只剩一根独苗：$\bar f\equiv a_nx^n$</td></tr>
+    <tr><td>$p^2\nmid a_0$</td><td>"常数项不被 $p$ 的平方整除"</td><td>防止两个因子"各分一个 $p$"合伙凑出常数项——矛盾的出口</td></tr>
+  </table>
+</div>
+
+<div class="calc box" data-tag="证明思路（mod p 化，四步走）">
+  <p><strong>思路</strong>：反证。设 $f=gh$，$g,h\in\mathbb{Z}[x]$，$1\le\deg g,\deg h&lt;n$（$\mathbb{Q}$ 上可约 ⟹ $\mathbb{Z}$ 上可分解，这座桥见 §3.6 Gauss 引理）。</p>
+  <p class="proof-line"><strong>①</strong> 两边系数模 $p$：由 (i)(ii)，$\bar f\equiv \bar a_n x^n\pmod p$，其中 $\bar a_n\ne0$（在 $\mathbb{F}_p$ 中）。</p>
+  <p class="proof-line"><strong>②</strong> 于是 $\bar g\,\bar h=\bar a_nx^n$。但 $\mathbb{F}_p[x]$ 也有唯一分解（它是域上的多项式环），$x$ 是它的"素数"，所以 $\bar g=c\,x^r$，$\bar h=d\,x^s$，$r=\deg g\ge1$，$s=\deg h\ge1$。</p>
+  <p class="proof-line"><strong>③</strong> $\bar g$ 没有常数项 ⟹ $g$ 的常数项被 $p$ 整除；同理 $h$ 的常数项被 $p$ 整除。</p>
+  <p class="proof-line"><strong>④</strong> 于是 $a_0=g(0)h(0)$ 被 $p^2$ 整除——与 (iii) 矛盾。$\square$</p>
+  <p class="aside">一句话记住它：<strong>模 $p$ 之后 $f$ 变成单项式 $a_nx^n$，两个真因子却各自"贪污"了一个 $x$（即一个 $p$），常数项就被 $p^2$ 污染了。</strong></p>
+</div>
+
+<div class="net box" data-tag="两档经典用法">
+  <p><strong>直用档</strong>：$x^n-p$（$p$ 素数）——系数 $1,0,\dots,0,-p$，取 $p$ 本身三条件全满足 ⟹ $x^n-p$ 在 $\mathbb{Q}$ 上不可约。<strong>$\mathbb{Q}$ 上任意次的不可约多项式都存在</strong>，这就是 §3.6 三分定律里"$\mathbb{Q}$ 顽固"的证据。</p>
+  <p><strong>移位档</strong>：直接看看不出 $p$（比如 $x^4+1$，常数项是 $1$，谁也整除不了它），就<strong>换坐标</strong>：映射 $f(x)\mapsto f(x+1)$ 是 $\mathbb{Q}[x]$ 的自同构（逆映射 $f\mapsto f(x-1)$），所以
+  $$f(x)\ \text{不可约}\ \iff\ f(x+1)\ \text{不可约}.$$
+  平移不改分解结构，却能把系数"摇"出一个素数的倍数。$x^4+1$ 移成 $(y+1)^4+1=y^4+4y^3+6y^2+4y+2$，$p=2$ 自动现身（例 1）；分圆多项式 $\Phi_p(x)=\dfrac{x^p-1}{x-1}$ 一族全靠移位 $x=y+1$ 拿下（§9 变式 1 让你亲手做 $\Phi_5$）。</p>
+</div>
+
+<h3>3.6 数域三分定律 + Gauss 引理：$\mathbb{Q}$ 与 $\mathbb{Z}$ 之间的桥</h3>
+
+<div class="def">
+  <p class="def-title">定理（数域三分定律）</p>
+  <p>① <strong>$\mathbb{C}$ 上（代数基本定理）</strong>：每个 $n\ge1$ 次复系数多项式在 $\mathbb{C}$ 中恰有 $n$ 个根（计重数）。故 $\mathbb{C}$ 上不可约多项式<strong>只有一次的</strong>——彻底拆成一次因子。</p>
+  <p>② <strong>$\mathbb{R}$ 上（虚根成对）</strong>：实系数多项式的虚根共轭成对出现（$\alpha$ 是根 ⟹ $\bar\alpha$ 也是）。故 $\mathbb{R}$ 上不可约多项式<strong>只有一次的，和判别式为负的二次</strong>（$(x-\alpha)(x-\bar\alpha)=x^2-2\operatorname{Re}\alpha\,x+|\alpha|^2$）。</p>
+  <p>③ <strong>$\mathbb{Q}$ 上（顽固）</strong>：<strong>任意次数</strong>都有不可约多项式——Eisenstein 家族 $x^n-p$ 就是铁证。$\mathbb{Q}$ 上"拆不动"没有次数上限。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定义（本原多项式）与 Gauss 引理</p>
+  <p>整系数多项式若其全部系数的最大公约数为 $1$，称为<strong>本原多项式</strong>（首一整系数多项式自动本原）。</p>
+  <p><strong>Gauss 引理</strong>：本原多项式之积仍为本原多项式。</p>
+  <p><strong>推论（$\mathbb{Q}\leftrightarrow\mathbb{Z}$ 的桥）</strong>：设 $f\in\mathbb{Z}[x]$ 本原，则
+  $$f\ \text{在}\ \mathbb{Z}[x]\ \text{中不能分解为两个更低次整系数多项式之积}\ \iff\ f\ \text{在}\ \mathbb{Q}[x]\ \text{中不可约}.$$</p>
+</div>
+
+<div class="net box" data-tag="这座桥干什么用">
+  <p>"在 $\mathbb{Q}$ 上可约"里的因子可以有分数系数，没法比系数。桥的作用：<strong>把 $\mathbb{Q}$ 上的分解"通分去分母"拉回到 $\mathbb{Z}$ 上的分解</strong>——$f$ 在 $\mathbb{Q}$ 上可约 ⟹ 存在 $g,h\in\mathbb{Z}[x]$，$\deg$ 更低，$f=gh$（$f$ 本原时 $g,h$ 也可取本原；$f$ 首一时还可要求 $g,h$ 首项系数均为 $\pm1$，进而都取成 $1$）。</p>
+  <p>第 14 届题四官方解答第 2 步"<strong>由本原性存在 $g,h\in\mathbb{Z}[x]$，$f=gh$，首项系数均为 $1$、常数项均为 $\pm1$</strong>"——这一步 10 分点，就是这座桥加上 $g(0)h(0)=f(0)=-1$ 的观察。有了整系数，后面整套系数比较才使得上劲（§9 真题节选全程演示）。</p>
+</div>
+
+<h3>3.7 亲手摸一摸三个数域（交互）</h3>
+
+<div class="widget" id="field-widget">
+  <p class="w-title">▶ 数域变脸器：同一个多项式，三种命运</p>
+  <p class="w-row">拖动两个滑块：第一个<strong>选多项式</strong>，第二个把<strong>聚光灯</strong>打到 $\mathbb{Q}\to\mathbb{R}\to\mathbb{C}$。左侧三张牌是它在三个数域上的分解结果（聚光灯打亮当前数域），右侧复平面画出它的全部根：<span style="color:#be123c">红</span>=住在当前数域里的根，灰=还没"到账"的根；实心=实根，空心=虚根。</p>
+  <div class="w-row"><label>多项式（拖动选择：x⁴+1 → x²−2 → x²+1 → x³−x−1）</label>
+  <input type="range" id="fw-poly" min="0" max="3" step="1" value="0"></div>
+  <div class="w-row"><label>数域聚光灯（拖动：ℚ → ℝ → ℂ）</label>
+  <input type="range" id="fw-field" min="0" max="2" step="1" value="0"></div>
+  <p class="w-row"><strong id="fw-name">—</strong></p>
+  <svg id="fw-svg" viewBox="0 0 720 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="数域变脸器"></svg>
+  <div class="w-verdict" id="fw-out">加载中……（需要启用 JavaScript）</div>
+  <p class="w-row" style="font-size:0.88em;color:#5c554b">玩出这三个体验再往下走：<strong>①</strong> 选定 $x^4+1$，聚光灯从 $\mathbb{Q}$ 拖到 $\mathbb{C}$：因子 1 块 → 2 块 → 4 块，根从"全灰"到"全红"——数域越大拆得越碎，同一时刻只有一个数域是它们的故乡；<strong>②</strong> 对比 $x^2-2$ 与 $x^2+1$：在 $\mathbb{Q}$ 上都拆不动，但聚光灯打到 $\mathbb{R}$ 时前者立刻瓦解（$\pm\sqrt2$ 到账）、后者依然顽固——<strong>拆不拆得动，看根住在哪一层</strong>；<strong>③</strong> 换 $x^3-x-1$：它在 $\mathbb{Q}$ 上无根、在 $\mathbb{R}$ 上有一个实根 $1.3247\ldots$——实根不是有理根，有理根定理的候选清单 $\pm1$ 早就宣判了。</p>
+</div>
+
+<h3>3.8 Vieta 与互反多项式：根的信息 ⇄ 系数的信息</h3>
+
+<div class="def">
+  <p class="def-title">定理（Vieta，根与系数的关系）</p>
+  <p>设 $f(x)=x^n+a_{n-1}x^{n-1}+\cdots+a_1x+a_0=\prod\limits_{i=1}^{n}(x-x_i)$（在 $\mathbb{C}$ 中展开），则</p>
+  <p>$$\sum_{i=1}^{n}x_i=-a_{n-1},\qquad \sum_{i&lt;j}x_ix_j=a_{n-2},\qquad \sum_{i&lt;j&lt;k}x_ix_jx_k=-a_{n-3},\qquad \dots,\qquad \prod_{i=1}^{n}x_i=(-1)^na_0.$$</p>
+  <p>符号规律：第 $k$ 个初等对称和 $=(-1)^k a_{n-k}$。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定义（互反多项式）</p>
+  <p>设 $f(x)=a_nx^n+a_{n-1}x^{n-1}+\cdots+a_1x+a_0$，$a_0\ne0$。其<strong>互反多项式</strong>为把系数倒过来读：</p>
+  <p>$$\widetilde f(x)=x^nf\!\left(\frac1x\right)=a_0x^n+a_1x^{n-1}+\cdots+a_{n-1}x+a_n.$$</p>
+  <p><strong>三条性质</strong>：① $\widetilde{\widetilde f}=f$（倒两次回到自己，注意 $a_0\ne0$ 保证 $\deg\widetilde f=n$）；② $f=gh\ \Rightarrow\ \widetilde f=\widetilde g\,\widetilde h$（互反保持乘法）；③ <strong>根互为倒数</strong>：$f(\alpha)=0\iff\widetilde f\!\left(\frac1\alpha\right)=0$。</p>
+</div>
+
+<div class="net box" data-tag="它们在哪届卷子上干过活">
+  <p><strong>第 13 届题三</strong>（15 分）：整系数 $f$ 的系数满足 $|a_k|\le40$，证根不全为实数。官方解答连用两次 Vieta：先对 $f$ 得 $\sum x_i^2=a_{2020}^2-2a_{2019}$；再指出 $\dfrac1{x_i}$ 是<strong>反转多项式</strong> $g(x)=x^{2021}f\!\left(\tfrac1x\right)$ 的根，对 $g$ 再用 Vieta 得 $\sum\frac1{x_i^2}=\frac{a_1^2}{a_0^2}-\frac{2a_2}{a_0}$——最后用 Cauchy 不等式夹出矛盾。<strong>系数有界 ⟹ 根的大小被反控制</strong>，Vieta 就是"反控制"的转换器。</p>
+  <p><strong>第 14 届题四</strong>（20 分）：证 $x^n-x-1$ 在 $\mathbb{Q}$ 上不可约。官方解答的关键构造 $k(x)=g(x)\widetilde h(x)$——把因子 $h$ 互反过来和 $g$ 拼，再比较 $k\widetilde k=f\widetilde f$ 的系数（§9 真题节选全程转录）。</p>
+  <p><strong>第 12 届题四</strong>（20 分）：每个复根处都可拆出"第二项系数相等"的两个首一因子——官方用 Vieta 把"第二项系数相等"翻译成根的带 $\pm1$ 系数的线性方程组。</p>
+</div>
+
+<h2>§4 翻译轨：三个标准动作 + 一间练功房</h2>
+
+<p>多项式在卷面上只有三种问法。练成反射，本章毕业。</p>
+
+<div class="trans box" data-tag="动作一：证在 ℚ 上不可约（四档流程）">
+  <p><strong>题面</strong>："证明 $f(x)$ 在有理数域 $\mathbb{Q}$ 上不可约。"</p>
+  <p><strong>翻译</strong>：按下面四档顺序试，绝大多数题倒在前三档：</p>
+  <p>① <strong>$\deg f\le3$？</strong>有理根定理列候选清单（$\pm$ 常数项因子 ÷ 首项因子），全灭即收工——无一次因子就不可能分解；<br>
+  ② <strong>Eisenstein 直用</strong>：逐个素数试三条件（$p\nmid a_n$；$p\mid$ 其余；$p^2\nmid a_0$）；<br>
+  ③ <strong>移位再试</strong>：直接没有 $p$，就令 $x=y+1$（或 $y-1$）展开，回到第 ② 档——自同构保持不可约性；<br>
+  ④ <strong>设分解比系数</strong>：都不行，就假设 $f=gh$（用 Gauss 引理拉到整系数），展开比较系数导出矛盾——第 14 届题四走到这一档，还加了互反构造。</p>
+  <p>值多少分：第 14 届题四 20 分整题走第 ④ 档；前两档通常是小题或大题的开门 3–5 分。</p>
+</div>
+
+<div class="trans box" data-tag="动作二：(f,g)=1 的互素三用">
+  <p><strong>题面</strong>："$(f,g)=1$" / "$f,g$ 互素" / "两两互素"。</p>
+  <p><strong>翻译</strong>：立即写 $1=uf+vg$（Bezout），然后看要哪一用：</p>
+  <p>消去（$f\mid gh\Rightarrow f\mid h$）；合并（$f\mid h,\ g\mid h\Rightarrow fg\mid h$）；公共根（$\mathbb{C}$ 中有公共根 $\iff(f,g)\ne1$）。</p>
+  <p><strong>真题原句</strong>（第 15 届题三，20 分题的第 18–20 分点）："$(x-\lambda_i)^{d_i}\mid p(x)$（$i=1,\dots,s$），各因子两两互素 $\Rightarrow f(x)=\prod(x-\lambda_i)^{d_i}\mid p(x)$。"——这就是"合并"用法的 $s$ 元版，一句话值 2 分，背下来直接写。</p>
+</div>
+
+<div class="trans box" data-tag="动作三：ℚ ↔ ℤ 的桥 与 互反构造">
+  <p><strong>题面</strong>（第 14 届题四官方解答第 2 步）："由本原性存在 $g,h\in\mathbb{Z}[x]$，$f=gh$，首项系数均为 $1$、常数项均为 $\pm1$。"</p>
+  <p><strong>翻译</strong>：这句话 = Gauss 引理（$\mathbb{Q}$ 上可约 ⟹ $\mathbb{Z}$ 上可分解）+ $f$ 首一（因子首项系数 $\pm1$，同取 $-1$ 就同时变号换成 $1$）+ $g(0)h(0)=f(0)=-1$（整数乘积为 $-1$ ⟹ 各为 $\pm1$）。三小句合成一步，10 分点。</p>
+  <p><strong>题面</strong>（第 13 届题三）："$\dfrac{1}{x_i}$ 是反转多项式 $g(x)=x^{2021}f\!\left(\tfrac1x\right)$ 的根。"</p>
+  <p><strong>翻译</strong>：要对根的倒数用 Vieta，不需要新定理——<strong>把多项式系数倒过来读</strong>，倒数就变成正根。互反多项式 = 给"根取倒数"办的身份证。</p>
+</div>
+
+<h3>4.4 翻译练功房：像学语言一样，大量互译</h3>
+
+<p>下面 8 句，先全部写在纸上（自然语言→符号，或符号→自然语言，或判断找坑），再逐条展开对照。每条不超过 1 分钟。</p>
+
+<div class="trans box" data-tag="互译 8 句">
+  <p><strong>T1</strong>　自然→符号："$g$ 整除 $f$（在 $F[x]$ 中）。"</p>
+  <details class="answer"><summary>对照</summary><p>$\exists\,q\in F[x]:\ f=qg$。<strong>易错</strong>：写成 $f\mid g$——方向反了。竖线左边永远是"因子"，右边是"被整除的"。</p></details>
+  <p><strong>T2</strong>　互译：写出 "$(f,g)=1$" 的两个等价说法（一个用因式，一个用等式）。</p>
+  <details class="answer"><summary>对照</summary><p>因式版：$f,g$ 没有次数 $\ge1$ 的公因式；等式版（Bezout）：$\exists\,u,v\in F[x]:\ uf+vg=1$。两个方向都要会：见互素写 Bezout，见 Bezout 读出互素。</p></details>
+  <p><strong>T3</strong>　判断（说理由）："$x^2-2$ 不可约"这句话对吗？</p>
+  <details class="answer"><summary>对照</summary><p><strong>不完整</strong>——没报数域。在 $\mathbb{Q}$ 上对（$\sqrt2$ 无理，2 次无根即不可约）；在 $\mathbb{R}$ 上错（$=(x-\sqrt2)(x+\sqrt2)$）。不可约是相对于数域的性质，句子里必须有"在 __ 上"。</p></details>
+  <p><strong>T4</strong>　自然→符号：默写"$f$ 对素数 $p$ 满足 Eisenstein 条件"的全部内容。</p>
+  <details class="answer"><summary>对照</summary><p>$p\nmid a_n$（首项不染）；$p\mid a_i$，$i=0,\dots,n-1$（其余全染）；$p^2\nmid a_0$（常数项不染 $p^2$）。三句齐 ⟹ $f$ 在 $\mathbb{Q}$ 上不可约。<strong>易错</strong>：把 (ii) 误记成"所有系数"（包括首项）——那样 $\bmod\,p$ 直接塌成零多项式，什么都没了。</p></details>
+  <p><strong>T5</strong>　操作：对 $f(x)=x^4+x^3+x^2+x+1$ 用 Eisenstein。直接看有救吗？下一步动作是什么？</p>
+  <details class="answer"><summary>对照</summary><p>直接看无救：常数项是 $1$，任何素数都不整除它，(ii) 永远凑不齐。<strong>动作：移位</strong> $x=y+1$。$f=\dfrac{x^5-1}{x-1}$，故 $f(y+1)=\dfrac{(y+1)^5-1}{y}=y^4+5y^3+10y^2+10y+5$，取 $p=5$：$5\nmid1$，$5\mid5,10,10,5$，$25\nmid5$ ⟹ 不可约。（这是 $\Phi_5$，§9 变式 1 要你完整书写。）</p></details>
+  <p><strong>T6</strong>　符号→自然："$(f,f')\ne1$" 在说什么？对 $f=2x^3-3x^2+1$ 现场验证。</p>
+  <details class="answer"><summary>对照</summary><p>"$f$ 有重因式（在 $\mathbb{C}$ 中有重根）"。验证：$f'=6x^2-6x=6x(x-1)$，而 $f(1)=0$，故 $x-1$ 同时整除 $f$ 与 $f'$，$(f,f')\ne1$——确实，$f=(x-1)^2(2x+1)$，$1$ 是二重根。不用解方程，辗转相除/求导就查出了重根。</p></details>
+  <p><strong>T7</strong>　找坑："$f$ 无有理根，所以 $f$ 在 $\mathbb{Q}$ 上不可约"——对几次成立？反例？</p>
+  <details class="answer"><summary>对照</summary><p>只对 $\deg f\le3$ 成立（可约必有一次因子 ⟹ 有根）。$\deg f\ge4$ 时<strong>错</strong>：$(x^2+1)(x^2+2)=x^4+3x^2+2$ 无有理根（甚至没有实根），但显然可约。4 次以上排完一次因子还要排二次因子——这就是动作一第 ④ 档存在的原因。</p></details>
+  <p><strong>T8</strong>　自然→符号："$f$ 与 $g$ 在 $\mathbb{C}$ 中有公共根"的两种符号写法。</p>
+  <details class="answer"><summary>对照</summary><p>$\exists\,\alpha\in\mathbb{C}:\ f(\alpha)=g(\alpha)=0$ $\iff$ $x-\alpha\mid f$ 且 $x-\alpha\mid g$ $\iff$ $(f,g)\ne1$（在 $\mathbb{C}[x]$ 中）。<strong>用处</strong>：把"有公共零点"翻成"最大公因式不平凡"——第 14 届题四第 5 步"$h$ 的复根是 $f$ 与 $\widetilde f$ 的公共根"就是用这句话收尾的。</p></details>
+</div>
+
+<h2>§5 类型识别：什么信号在召唤哪件工具</h2>
+
+<div class="recog box" data-tag="识别反射表">
+  <table>
+    <tr><th>题面信号</th><th>反射</th></tr>
+    <tr><td>"证 $f$ 在 $\mathbb{Q}$ 上不可约"</td><td>四档流程：$\le3$ 次有理根排雷 → Eisenstein 直用 → 移位 $x=y+1$ → 设分解比系数（§4 动作一）</td></tr>
+    <tr><td>"求有理根 / 有没有有理根"</td><td>有理根定理列候选清单：$\pm$（$a_0$ 的因子）÷（$a_n$ 的因子），逐一代入</td></tr>
+    <tr><td>"$\sum x_i^2$、$\prod x_i$、根的对称式"或"根与系数"</td><td>Vieta；要对 $\frac1{x_i}$ 用，就先互反 $\widetilde f(x)=x^nf(\frac1x)$（第 13 届题三）</td></tr>
+    <tr><td>"两多项式有公共根 / 公共零点"</td><td>$(f,g)\ne1$（公共根 $\iff$ 公因式 $x-\alpha$）；$\mathbb{Q}$ 上的问题先到 $\mathbb{C}$ 里看根</td></tr>
+    <tr><td>"两两互素 + 各自整除"</td><td>乘积整除：$(f,g)=1,\ f\mid h,\ g\mid h\ ⟹\ fg\mid h$（第 15 届题三 18–20 分点）</td></tr>
+    <tr><td>"$\mathbb{Q}$ 上分解"且要比系数</td><td>Gauss 引理：先拉成整系数本原因子，再动手比（第 14 届题四第 2 步）</td></tr>
+    <tr><td>"重根 / 重因式 / 判别有没有重根"</td><td>算 $(f,f')$：等于 $1$ 无重根，不等于 $1$ 有重根——不解方程，辗转相除</td></tr>
+    <tr><td>"整系数 + 系数有界 + 根的分布"</td><td>Vieta 把系数界翻译成根的对称式之界，配 Cauchy 类不等式夹矛盾（第 13 届题三）</td></tr>
+  </table>
+</div>
+
+<h2>§6 考法定位：它藏在哪里、值多少分</h2>
+
+<div class="exam box" data-tag="考法定位">
+  <table>
+    <tr><th>出处</th><th>题号</th><th>本章内容扮演什么角色</th><th>分值权重</th></tr>
+    <tr><td>第 14 届（2022）</td><td>题四</td><td>$x^n-x-1$ 在 $\mathbb{Q}$ 上不可约：Gauss 引理本原化 + 互反多项式 + 系数比较 + 公共根分析——本章主场</td><td>20 分（直接大题）</td></tr>
+    <tr><td>第 13 届（2021）</td><td>题三</td><td>整系数 + $|a_k|\le40$ ⟹ 根不全实：Vieta 连用两次 + 反转多项式——本章主场</td><td>15 分（直接大题）</td></tr>
+    <tr><td>第 12 届（2020）</td><td>题四</td><td>首一多项式的"第二项系数相等"分解：Vieta（根和 = 第二项系数）翻译成线性方程组——本章主场</td><td>20 分（直接大题）</td></tr>
+    <tr><td>第 15 届（2023）</td><td>题三</td><td>"各因子两两互素 ⟹ $f\mid p$"——互素第二用，收尾步骤</td><td>约 2 分步骤（20 分题内）</td></tr>
+    <tr><td>第 16 届（2024）</td><td>题四</td><td>$\mathbb{R}[x]$ 中 2024 个多项式必线性相关：次数语言 + 消首项递降——次数直觉的外围运用</td><td>15 分（方法相关）</td></tr>
+  </table>
+  <p><strong>规律</strong>：多项式大题在第 12–14 届<strong>连续三届</strong>出现，分值 15–20 分，核心考法三件套——<strong>不可约判别、Vieta、互反构造</strong>——全部在本章。即使不直接出题，互素整除、次数估计也是高代证明的通用零件（第 15、16 届）。注意第 11–17 届的索引里 Eisenstein 没有直接现过身——它是"不可约"概念的<strong>标准入场动作</strong>和训练场主力，但真题如第 14 届题四要对<strong>一切</strong> $n$ 成立：$x^n-x-1$ 的系数里没有一个统一的素数可染，Eisenstein 派不上用场，只能走互反构造 + 系数比较这条更硬核的路。一般化的题目需要一般化的工具，这就是那 20 分的难度所在。</p>
+</div>
+
+<h2>§7 关系网：从一道谜题到三届真题</h2>
+
+<p>本章的逻辑链：<span style="color:#b45309">三角形</span>（来源谜题）逼出<span style="color:#1d4ed8">圆角矩形</span>（整除与互素的公理装置），装置支撑<span style="color:#15803d">矩形</span>（判别定理），定理交给<span style="color:#7c3aed">六边形</span>（手上的方法动作），最后通向<span style="color:#0f766e">椭圆</span>（应用出口）。顺着箭头走一遍，就是本章全部内容。</p>
+
+<figure>
+<svg viewBox="0 0 720 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="多项式章关系网地图">
+  <defs>
+    <marker id="arrN" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+
+  <!-- 图例 -->
+  <polygon points="30,16 22,30 38,30" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5"/>
+  <text x="44" y="28" font-size="11.5" fill="#5c554b">来源·动机</text>
+  <rect x="116" y="17" width="22" height="13" rx="6.5" fill="#eef3fe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="144" y="28" font-size="11.5" fill="#5c554b">公理·定义</text>
+  <rect x="222" y="17" width="22" height="13" fill="#ecf8f0" stroke="#15803d" stroke-width="1.5"/>
+  <text x="250" y="28" font-size="11.5" fill="#5c554b">定理</text>
+  <polygon points="300,23.5 306,16 320,16 326,23.5 320,31 306,31" fill="#f4effd" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="332" y="28" font-size="11.5" fill="#5c554b">方法·动作</text>
+  <ellipse cx="420" cy="23.5" rx="12" ry="7" fill="#ecf8f5" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="438" y="28" font-size="11.5" fill="#5c554b">应用·出口</text>
+
+  <!-- 来源三角 -->
+  <polygon points="110,56 46,140 174,140" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="110" y="104" font-size="12.5" fill="#7a4a12" text-anchor="middle" font-weight="bold">x⁴+1 的三域三命</text>
+  <text x="110" y="121" font-size="10.5" fill="#7a4a12" text-anchor="middle">拆不拆得动随数域变</text>
+
+  <!-- 三角 → 圆角矩形 -->
+  <line x1="178" y1="100" x2="248" y2="100" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arrN)"/>
+  <text x="213" y="90" font-size="11" fill="#5c554b" text-anchor="middle">逼问「不可约」</text>
+
+  <!-- 圆角矩形：整除与互素 -->
+  <rect x="252" y="62" width="216" height="76" rx="30" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="360" y="90" font-size="14.5" fill="#1d4ed8" text-anchor="middle" font-weight="bold">整除与互素</text>
+  <text x="360" y="108" font-size="11" fill="#1d4ed8" text-anchor="middle">带余除法 → 辗转相除 → Bezout</text>
+  <text x="360" y="124" font-size="11" fill="#1d4ed8" text-anchor="middle">(f,g)=1 ⟺ ∃u,v: uf+vg=1</text>
+
+  <!-- 圆角矩形 → 定理 -->
+  <text x="248" y="158" font-size="11" fill="#5c554b" text-anchor="end">撑起判别工具</text>
+
+  <!-- 定理：Eisenstein -->
+  <rect x="70" y="188" width="200" height="62" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="170" y="212" font-size="13.5" fill="#15803d" text-anchor="middle" font-weight="bold">Eisenstein 判别</text>
+  <text x="170" y="229" font-size="10.5" fill="#4a7c59" text-anchor="middle">p∤aₙ，p|其余，p²∤a₀ ⟹ ℚ 上不可约</text>
+  <text x="170" y="243" font-size="10.5" fill="#4a7c59" text-anchor="middle">（含有理根定理、重根判别 (f,f′)=1）</text>
+
+  <!-- 定理：Gauss 引理 -->
+  <rect x="450" y="188" width="200" height="62" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="550" y="212" font-size="13.5" fill="#15803d" text-anchor="middle" font-weight="bold">Gauss 引理</text>
+  <text x="550" y="229" font-size="10.5" fill="#4a7c59" text-anchor="middle">本原×本原=本原</text>
+  <text x="550" y="243" font-size="10.5" fill="#4a7c59" text-anchor="middle">本原时：ℤ 上不可分解 ⟺ ℚ 上不可约</text>
+  <line x1="300" y1="138" x2="205" y2="182" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arrN)"/>
+  <line x1="420" y1="138" x2="515" y2="182" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arrN)"/>
+
+  <!-- 定理 → 方法 -->
+  <line x1="170" y1="250" x2="170" y2="300" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arrN)"/>
+  <line x1="550" y1="250" x2="550" y2="300" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arrN)"/>
+  <line x1="360" y1="138" x2="360" y2="300" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arrN)" stroke-dasharray="4 3"/>
+  <text x="370" y="290" font-size="11" fill="#5c554b">Bezout 也直接下场</text>
+
+  <!-- 方法六边形 ×3 -->
+  <polygon points="90,340 120,306 220,306 250,340 220,374 120,374" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="170" y="335" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">移位 x=y+1</text>
+  <text x="170" y="351" font-size="10.5" fill="#6a55a3" text-anchor="middle">自同构摇出素数</text>
+  <text x="170" y="365" font-size="10.5" fill="#6a55a3" text-anchor="middle">mod p 化判死</text>
+
+  <polygon points="280,340 310,306 410,306 440,340 410,374 310,374" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="360" y="335" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">互反构造 f̃</text>
+  <text x="360" y="351" font-size="10.5" fill="#6a55a3" text-anchor="middle">f̃(x)=xⁿf(1/x)，根取倒数</text>
+  <text x="360" y="365" font-size="10.5" fill="#6a55a3" text-anchor="middle">k=g·h̃ 拼合比较</text>
+
+  <polygon points="470,340 500,306 600,306 630,340 600,374 500,374" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="550" y="335" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">系数比较 + Vieta</text>
+  <text x="550" y="351" font-size="10.5" fill="#6a55a3" text-anchor="middle">f=gh 展开对齐系数</text>
+  <text x="550" y="365" font-size="10.5" fill="#6a55a3" text-anchor="middle">根的对称式 ⇄ 系数</text>
+
+  <!-- 方法 → 出口 -->
+  <line x1="170" y1="374" x2="170" y2="424" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arrN)"/>
+  <line x1="360" y1="374" x2="360" y2="424" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arrN)"/>
+  <line x1="550" y1="374" x2="550" y2="424" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arrN)"/>
+
+  <!-- 出口椭圆 ×3 -->
+  <ellipse cx="170" cy="466" rx="128" ry="36" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="170" y="460" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">数域三分定律</text>
+  <text x="170" y="476" font-size="10.5" fill="#3d7a70" text-anchor="middle">ℂ 全拆一次 · ℝ 到二次 · ℚ 任意次顽固</text>
+  <text x="170" y="490" font-size="10.5" fill="#3d7a70" text-anchor="middle">（含 13 届题三的 Vieta 出口）</text>
+
+  <ellipse cx="385" cy="466" rx="115" ry="36" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="385" y="460" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">第 14 届题四 · 20 分</text>
+  <text x="385" y="476" font-size="10.5" fill="#3d7a70" text-anchor="middle">xⁿ−x−1 在 ℚ 上不可约</text>
+  <text x="385" y="490" font-size="10.5" fill="#3d7a70" text-anchor="middle">（12 届题四、15 届题三同源）</text>
+
+  <ellipse cx="585" cy="466" rx="115" ry="36" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="585" y="460" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">第 6 章最小多项式接口</text>
+  <text x="585" y="476" font-size="10.5" fill="#3d7a70" text-anchor="middle">零化 ⟺ 被最小多项式整除</text>
+  <text x="585" y="490" font-size="10.5" fill="#3d7a70" text-anchor="middle">不可约因子 ↔ 特征值</text>
+</svg>
+<figcaption>本章地图：一道谜题逼出整除装置，装置撑起两大判别定理，定理交给三个动作，动作通向三分定律、三届真题和后面的章节。</figcaption>
+</figure>
+
+<div class="net box" data-tag="画面感锚点（记这些，不记条文）">
+  <table>
+    <tr><th>角色</th><th>一句话画面</th><th>擅长场景</th></tr>
+    <tr><td>带余除法</td><td>刨子：每削一刀，次数至少掉一</td><td>辗转相除、Bezout 的存在性</td></tr>
+    <tr><td>Bezout $uf+vg=1$</td><td>撬棍：把 $1$ 乘到目标头上</td><td>互素三用：消去、合并、公共根</td></tr>
+    <tr><td>不可约</td><td>该数域上的"素数"，名单随域变</td><td>唯一分解的原子；问句先报数域</td></tr>
+    <tr><td>Eisenstein</td><td>一个素数给系数"染色"：首项留白、常数项不染两次</td><td>$x^n-p$ 家族；移位后的 $x^4+1$、$\Phi_5$</td></tr>
+    <tr><td>移位 $x=y+1$</td><td>换个坐标再看——多项式还是那个多项式</td><td>Eisenstein 直接找不到 $p$ 时</td></tr>
+    <tr><td>Gauss 引理</td><td>$\mathbb{Q}$ 与 $\mathbb{Z}$ 之间的桥：通分去分母</td><td>要在"$\mathbb{Q}$ 上分解"里比系数时</td></tr>
+    <tr><td>互反 $\widetilde f$</td><td>把多项式倒过来读，根跟着取倒数</td><td>对 $\frac1{x_i}$ 用 Vieta；14 届题四的 $k=g\widetilde h$</td></tr>
+    <tr><td>三分定律</td><td>$\mathbb{C}$ 稀碎、$\mathbb{R}$ 到二次、$\mathbb{Q}$ 无底洞</td><td>判断"拆到哪一层是尽头"</td></tr>
+  </table>
+  <p><strong>和你已学知识的焊接点</strong>：① 整数的带余除法、Euclid 算法、素数唯一分解——本章全套是它的"次数版"；② <a href="ch16.html">第 6 章最小多项式</a>：$g(\mathbf A)=0\iff m_{\mathbf A}\mid g$，整除语言是矩阵零化问题的母语，最小多项式的不可约因子就是特征值；③ <a href="ch15.html">第 5 章特征值</a>：特征多项式的根 = 特征值，Vieta 把 $\operatorname{tr}$ 与 $\det$ 接到根的和与积上；④ 数分里"实系数虚根成对"你在求积分因式分解时早用过——§3.6 给了它定理身份。</p>
+</div>
+
+<h2>§8 计算示范：先看真人怎么想，再看卷面怎么写</h2>
+
+<h3>例 1 · 证 $x^4+1$ 在 $\mathbb{Q}$ 上不可约（约 10 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>结论是否定句"不能分解"——查拆目标总表，两副骨架可选：<strong>反证</strong>（假设分解，导矛盾）或<strong>划归</strong>（找一条现成判别定理直接判死）。先走划归：目标是 $\mathbb{Q}$ 上 4 次多项式，首选 Eisenstein。</p>
+  <p><span class="stage">【盘点】</span>$f=x^4+1$：首一整系数。直接试 Eisenstein——系数 $1,0,0,0,1$：条件 (ii) 要求 $p\mid a_0=1$，<strong>没有素数整除 $1$</strong>，直用档死路。库存里还剩两条路：移位改造（系数会重新洗牌），或回到反证设二次分解比系数。</p>
+  <p><span class="stage">【会师 · 路一（移位 + Eisenstein）】</span>倒推：要让某个素数染透非首项系数，系数必须先"动"起来——$f(x)\mapsto f(x+1)$ 是自同构，不可约性不变（<strong>工具六 · 划归</strong>到已改造对象）。展开 $(y+1)^4+1=y^4+4y^3+6y^2+4y+2$：二项式系数 $\binom41,\binom42,\binom43=4,6,4$ 全是偶数，常数项 $2$ 恰被 $2$ 染一次——$p=2$ 三条件齐。这不是运气：$f(y+1)$ 的系数就是 $\binom{4}{k}$ 家族，而 $\binom{4}{1},\binom{4}{2},\binom{4}{3}$ 的公共素数只有 $2$（<strong>工具三 · 特殊化侦察</strong>：展开看看，素数自己跳出来）。</p>
+  <p><span class="stage">【会师 · 路二（反证 + 比系数）】</span>4 次在 $\mathbb{Q}$ 上可约只有两种形态：$1+3$（有有理根）或 $2+2$。$1+3$ 被有理根定理排掉（候选 $\pm1$：$f(\pm1)=2\ne0$）。只剩 $2+2$：设 $x^4+1=(x^2+ax+b)(x^2+cx+d)$，$a,b,c,d\in\mathbb{Q}$，展开对齐四个方程，消元导矛盾（草稿纸见下）。</p>
+  <div class="scratch">
+    <p>展开：$x^4+(a+c)x^3+(b+d+ac)x^2+(ad+bc)x+bd$。对齐 $x^4+1$：</p>
+    <p>$a+c=0$ ⟹ $c=-a$；$ad+bc=a(d-b)=0$；$b+d+ac=0$ 即 $b+d=a^2$；$bd=1$。</p>
+    <p>情形 ① $a=0$：则 $c=0$，$b+d=0$，$bd=1$ ⟹ $d=-b$，$-b^2=1$ 即 $b^2=-1$——$\mathbb{Q}$（连 $\mathbb{R}$）里都没有解。</p>
+    <p>情形 ② $a\ne0$：则 $d=b$，$b^2=1$ 故 $b=\pm1$，$a^2=2b=\pm2$。$a^2=2$ 在 $\mathbb{Q}$ 无解（$\sqrt2\notin\mathbb{Q}$），$a^2=-2$ 连 $\mathbb{R}$ 都无解。两情形全灭 ⟹ 矛盾。</p>
+  </div>
+  <p><span class="stage">【定型】</span>卷面写<strong>路一</strong>（短、硬、不给阅卷人留扣缝）：代换 → 展开 → $p=2$ 三条件 → 自同构保持不可约性，四行收工。路二作为对照附后——注意它的情形 ② 在 $\mathbb{R}$ 上<strong>有</strong>解 $a=\pm\sqrt2,\ b=d=1$，正好给出 §1 的实分解 $(x^2+\sqrt2x+1)(x^2-\sqrt2x+1)$：<strong>方程组没变，数域变了，命运就变了</strong>。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 移位 Eisenstein</strong>：$f(x)$ 不可约 $\iff$ $f(x+c)$ 不可约（$x\mapsto x+c$ 是 $\mathbb{Q}[x]$ 的自同构）。Eisenstein 直接找不到素数时，先把多项式平移一格再找——$\Phi_p(x)=\frac{x^p-1}{x-1}$ 全家族都靠这个动作。通用流程：直接试 $p$ → 不行就移 $x=y+1$ 展开 → 再试 $p$。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 1</strong>　证明：$f(x)=x^4+1$ 在有理数域 $\mathbb{Q}$ 上不可约。</p>
+  <hr>
+  <p class="proof-line"><strong>证明</strong>　作代换 $x=y+1$，得
+  $$f(y+1)=(y+1)^4+1=y^4+4y^3+6y^2+4y+2.$$
+  <span class="step-score">（3 分）</span></p>
+  <p class="proof-line">取素数 $p=2$：首项系数 $1$ 不被 $2$ 整除；其余系数 $4,6,4,2$ 均被 $2$ 整除；常数项 $2$ 不被 $2^2=4$ 整除。由 Eisenstein 判别法，$f(y+1)$ 在 $\mathbb{Q}[y]$ 上不可约。<span class="step-score">（7 分）</span></p>
+  <p class="proof-line">若 $f(x)$ 在 $\mathbb{Q}$ 上可约，设 $f(x)=g(x)h(x)$，$\deg g,\deg h\ge1$，则 $f(y+1)=g(y+1)h(y+1)$ 是 $\mathbb{Q}[y]$ 中同型的非平凡分解，与上一步矛盾。故 $x^4+1$ 在 $\mathbb{Q}$ 上不可约。$\square$<span class="step-score">（10 分）</span></p>
+  <p class="aside">书写点评：最后一段"若 $f$ 可约则 $f(y+1)$ 可约"必须写——Eisenstein 判的是代换后的多项式，没有这句回代逻辑链是断的，跳步可能丢掉最后 3 分。代换保持不可约性的理由（自同构）点到即可。</p>
+  <hr>
+  <p><strong>对照写法（反证 + 比系数，同样满分）</strong>　设 $x^4+1$ 在 $\mathbb{Q}$ 上可约。因 $f(\pm1)=2\ne0$，无有理根，故只能分解为两个有理系数二次因子：$x^4+1=(x^2+ax+b)(x^2+cx+d)$。比较系数得 $a+c=0$，$b+d+ac=0$，$ad+bc=0$，$bd=1$。由第一式 $c=-a$，代入第三式 $a(d-b)=0$。若 $a=0$，则 $b+d=0$ 且 $bd=1$，得 $b^2=-1$，矛盾；若 $d=b$，则 $b^2=1$，$b=\pm1$，于是 $a^2=2b=\pm2$，无有理数解，矛盾。故不可约。$\square$</p>
+  <p class="aside">点评：两个证明做的是<strong>同一件事</strong>的两面——情形 $d=b=1$ 给出 $a^2=2$，在 $\mathbb{R}$ 里 $a=\pm\sqrt2$ 恰好拼出实分解 $(x^2+\sqrt2x+1)(x^2-\sqrt2x+1)$。不可约性随数域变脸，在这组方程里看得清清楚楚。</p>
+</div>
+
+<h3>例 2 · Eisenstein 一行判死 + 有理根清单排雷（约 10 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>两小问：(i) "证不可约"——划归 Eisenstein，先试直用档；(ii) "求有理根"——$\exists$ 型的枚举验证：有理根定理给<strong>有限候选清单</strong>，逐一代入，是根就收下、不是就划掉。</p>
+  <p><span class="stage">【盘点】</span>(i) $f=x^5-4x+2$：系数 $1,0,0,0,-4,2$。$p=2$：$2\nmid1$ ✓；$2\mid0,0,0,-4,2$ ✓；$2^2=4\nmid2$ ✓——三条件齐，一行判死。(ii) $g=x^3-2x-5$：首一 ⟹ 有理根必为整数；$a_0=-5$ ⟹ 候选 $\pm1,\pm5$，共四个。</p>
+  <p><span class="stage">【会师】</span>(ii) 逐个试雷：$g(1)=1-2-5=-6$；$g(-1)=-1+2-5=-4$；$g(5)=125-10-5=110$；$g(-5)=-125+10-5=-120$。全灭 ⟹ 无有理根。顺手升级结论：$g$ 是 3 次，无一次因子 ⟹ <strong>$g$ 在 $\mathbb{Q}$ 上也不可约</strong>（$\deg\le3$ 时无根 ⟺ 不可约）。</p>
+  <p><span class="stage">【定型】</span>卷面格式三板斧：引定理（"由有理根定理，候选为……"）→ 列试算值 → 下结论。试算值必须逐个写出来，光写"经检验均不是根"在分步给分下可能白丢分。</p>
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 2</strong>　(i) 证明 $f(x)=x^5-4x+2$ 在 $\mathbb{Q}$ 上不可约；(ii) 求 $g(x)=x^3-2x-5$ 的全部有理根。</p>
+  <hr>
+  <p class="proof-line"><strong>(i)</strong>　取素数 $p=2$。$f$ 的首项系数为 $1$，$2\nmid1$；其余系数 $0,0,0,-4,2$ 均被 $2$ 整除；常数项 $2$ 不被 $4$ 整除。由 Eisenstein 判别法，$f$ 在 $\mathbb{Q}$ 上不可约。$\square$<span class="step-score">（4 分）</span></p>
+  <p class="proof-line"><strong>(ii)</strong>　$g$ 为首一整系数多项式，由有理根定理，其有理根必为整数且整除常数项 $-5$，故候选只有 $\pm1,\pm5$。<span class="step-score">（6 分）</span></p>
+  <p class="proof-line">逐一试算：
+  $$g(1)=-6,\quad g(-1)=-4,\quad g(5)=110,\quad g(-5)=-120,$$
+  均不为 $0$。故 $g$ <strong>没有有理根</strong>。$\square$<span class="step-score">（9 分）</span></p>
+  <p class="proof-line"><strong>附注</strong>　$g$ 为 3 次，无有理根 ⟹ 无一次因子 ⟹ $g$ 在 $\mathbb{Q}$ 上不可约。（它有实根 $\approx2.0946$——实根不必是有理根，候选清单之外的真根多了去了。）<span class="step-score">（10 分）</span></p>
+  <p class="aside">书写点评：(ii) 的分点在三处——候选清单由定理给出（不是猜的）、四个试算值写全、结论明确。常见丢分：候选漏掉负号、或把"有理根定理"误当成"根就是 $\pm1,\pm5$"——定理只给候选资格，不给根。</p>
+</div>
+
+<h2>§9 配套题目</h2>
+
+<p>铁律：<strong>先写在纸上，写到写不动再展开答案</strong>。模仿题照例 1、例 2 的卷面格式写；变式题开始没有模板，先问自己"题面信号触发了哪件工具"。</p>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 1</span>证明：$f(x)=x^3+9x+3$ 在 $\mathbb{Q}$ 上不可约（要求给出两种证法）。</p>
+  <details class="answer">
+    <summary>参考答案（约 6 分书写量）</summary>
+    <p><strong>法一（Eisenstein）</strong>：取 $p=3$。首项系数 $1$，$3\nmid1$；其余系数 $0,9,3$ 均被 $3$ 整除；常数项 $3$ 不被 $9$ 整除。由 Eisenstein 判别法，$f$ 在 $\mathbb{Q}$ 上不可约。$\square$</p>
+    <p><strong>法二（有理根排雷）</strong>：$f$ 首一，有理根候选为 $\pm1,\pm3$（整除常数项 $3$）。$f(1)=13$，$f(-1)=-7$，$f(3)=57$，$f(-3)=-51$，全不为零 ⟹ 无有理根。$\deg f=3$，无一次因子即不可约。$\square$</p>
+    <p><strong>易错点</strong>：法二漏写"$\deg=3$ 时无根 ⟹ 不可约"这句桥——4 次以上这句话是假的（练功房 T7）。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 2</span>求 $f(x)=2x^3-3x^2+1$ 的全部有理根，并写出它在 $\mathbb{Q}[x]$ 中的不可约分解。</p>
+  <details class="answer">
+    <summary>参考答案（约 8 分书写量）</summary>
+    <p><strong>候选清单</strong>：$p\mid a_0=1$ ⟹ $p=\pm1$；$q\mid a_3=2$ ⟹ $q=1,2$。候选：$\pm1,\ \pm\dfrac12$（2 分）。</p>
+    <p><strong>逐一试算</strong>：$f(1)=2-3+1=0$ ✓；$f(-1)=-2-3+1=-4$；$f\!\left(\frac12\right)=\frac14-\frac34+1=\frac12$；$f\!\left(-\frac12\right)=-\frac14-\frac34+1=0$ ✓（5 分）。</p>
+    <p><strong>分解</strong>：$x-1$ 与 $2x+1$ 都是因子。$f=(x-1)(2x^2-x-1)=(x-1)(2x+1)(x-1)=(x-1)^2(2x+1)$（8 分）。</p>
+    <p><strong>注意</strong>：① $q$ 不取 $\pm2$ 只取正数即可（符号已由 $p$ 承担），但分母 $2$ <strong>不能漏</strong>——首项不首一时 $\frac{p}{q}$ 可以带分母；② $1$ 是<strong>二重根</strong>，与重根判别一致：$f'=6x^2-6x=6x(x-1)$，$x-1\mid(f,f')$。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 1</span>证明：分圆多项式 $\Phi_5(x)=x^4+x^3+x^2+x+1$ 在 $\mathbb{Q}$ 上不可约。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：信号"证不可约 + 常数项为 $1$" ⟹ Eisenstein 直用档死路（没有素数整除 $1$）⟹ 触发<strong>移位</strong>动作。利用 $\Phi_5=\dfrac{x^5-1}{x-1}$，代换 $x=y+1$ 后用二项式定理展开 $(y+1)^5$。</p>
+    <p><strong>证明</strong>　由 $\Phi_5(x)=\dfrac{x^5-1}{x-1}$，令 $x=y+1$：
+    $$\Phi_5(y+1)=\frac{(y+1)^5-1}{y}=\frac{y^5+5y^4+10y^3+10y^2+5y}{y}=y^4+5y^3+10y^2+10y+5.$$
+    取素数 $p=5$：$5\nmid1$；$5\mid5,10,10,5$；$25\nmid5$。由 Eisenstein 判别法，$\Phi_5(y+1)$ 在 $\mathbb{Q}[y]$ 上不可约。而 $x\mapsto x+1$ 是 $\mathbb{Q}[x]$ 的自同构，故 $\Phi_5(x)$ 在 $\mathbb{Q}$ 上不可约。$\square$</p>
+    <p><strong>点评</strong>：同一动作对任意素数 $p$ 都成立：$\Phi_p(y+1)=\dfrac{(y+1)^p-1}{y}$ 的系数是 $\binom{p}{k}$（$1\le k\le p-1$），全被 $p$ 整除而常数项 $=p$ 不被 $p^2$ 整除——$\Phi_p$ 全家族一次拿下。这就是"移位"被列为本章六边形的原因。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 2</span>设 $f,g,h\in F[x]$，$(f,g)=1$，且 $f\mid h$，$g\mid h$。证明：$fg\mid h$。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：信号"互素 + 各自整除" ⟹ 互素第二用（合并）。但合并本身不是公理，要回到 Bezout + 消去证出来。</p>
+    <p><strong>证明</strong>　由 $f\mid h$，写 $h=fh_1$。又 $g\mid h=fh_1$，且 $(f,g)=1$，由消去律（§3.2 互素第一用：$(f,g)=1,\ g\mid fh_1\ ⟹\ g\mid h_1$）得 $g\mid h_1$，写 $h_1=gh_2$。于是 $h=fh_1=fgh_2$，即 $fg\mid h$。$\square$</p>
+    <p><strong>点评</strong>：三行证完，链条是 Bezout ⟹ 消去 ⟹ 合并。它的 $s$ 元版"两两互素的因子各自整除 $p$ ⟹ 乘积整除 $p$"就是第 15 届题三的第 18–20 分点——归纳合并，每次并一个因子。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv3">真题节选</span><strong>（第 14 届题四，20 分）</strong>设 $n\ge2$ 为正整数，证明多项式 $f(x)=x^n-x-1$ 在有理数域 $\mathbb{Q}$ 上不可约。</p>
+  <p>这是本章的"毕业设计"：Eisenstein 用不上（$n$ 任意，系数里没有素数可染），得走动作一的第 ④ 档——设分解、Gauss 引理本原化、互反构造、系数比较。先回答三个梯子问题（写在纸上）：</p>
+  <p>（i）反证假设 $f$ 在 $\mathbb{Q}$ 上可约。为什么可以<strong>直接设 $f=gh$ 为整系数</strong>、首项系数均为 $1$、常数项均为 $\pm1$ 的本原分解？<br>
+  （ii）令 $k(x)=g(x)\widetilde h(x)$。$\widetilde h$ 的次数为什么是 $n-r$（$r=\deg g$）而不是更小？于是 $\deg k$ 是多少，这个"次数可控"为什么是整套系数比较的前提？<br>
+  （iii）由 $k\widetilde k=f\widetilde f$ 比较 $x^n$ 项系数得 $\sum b_i^2=3$，这迫使 $k$ 长成什么样？再比较低次项会导出 $k=\pm f$ 或 $k=\pm\widetilde f$——这为什么会逼出 $f$ 与 $\widetilde f$ 的公共根？</p>
+  <details class="answer">
+    <summary>梯子参考答案</summary>
+    <p>（i）$f$ 首一故本原。由 Gauss 引理的推论，$\mathbb{Q}$ 上可约 ⟹ $\mathbb{Z}[x]$ 中可分解为两个更低次整系数之积；通分去分母后可取 $g,h$ 本原。首项系数之积为 $1$（整数）⟹ 同为 $\pm1$，同取 $-1$ 时把 $g,h$ 同时变号即化为 $1$。常数项 $g(0)h(0)=f(0)=-1$，整数乘积为 $-1$ ⟹ 各为 $\pm1$。</p>
+    <p>（ii）$\widetilde h(x)=x^{\deg h}h(\frac1x)$：次数掉档当且仅当常数项为 $0$。$h(0)=\pm1\ne0$ ⟹ $\deg\widetilde h=\deg h=n-r$，故 $\deg k=r+(n-r)=n$。次数可控 ⟹ $k\widetilde k$ 与 $f\widetilde f$ 都是 $2n$ 次，可以逐项比系数——这是整个方法能闭合的前提。</p>
+    <p>（iii）设 $k(x)=b_nx^n+\cdots+b_0$。$k\widetilde k$ 的 $x^n$ 项系数 $=\sum_{i=0}^n b_i^2$（自己与自己的反转点积）。它等于 $f\widetilde f$ 的 $x^n$ 系数 $3$；又 $b_n,b_0=\pm1$（各消耗 $1$），剩下 $1$ 只能由某一个中间系数 $b_i=\pm1$ 提供，其余全 $0$：$k=b_nx^n+b_ix^i+b_0$。再比常数项（$b_nb_0=-1$）与 $x^1$ 项，逼得 $i\in\{1,n-1\}$ 且 $k=\pm f$ 或 $\pm\widetilde f$。于是 $k=g\widetilde h$ 的根同时出现在 $f$ 与 $\widetilde f$ 的根中——公共根诞生，交给 §3.2 的"公共根 ⟺ $(f,\widetilde f)\ne1$"思路收尾。</p>
+  </details>
+  <details class="answer">
+    <summary>官方解答骨架（转录自官方参考答案）</summary>
+    <p><strong>第 1 步</strong>　定义互反多项式 $\widetilde F(x)=a_0x^m+a_1x^{m-1}+\cdots+a_m=x^{\deg F}F\!\left(\frac1x\right)$；性质：$\widetilde{\widetilde F}=F$，且 $F=GH\Rightarrow\widetilde F=\widetilde G\,\widetilde H$。$n=2$ 时 $f=x^2-x-1$ 无有理根（候选 $\pm1$ 均不满足），结论显然。<span class="step-score">（7 分）</span></p>
+    <p><strong>第 2 步</strong>　设 $n\ge3$。若 $f$ 在 $\mathbb{Q}$ 上可约，由本原性存在 $g,h\in\mathbb{Z}[x]$，$f=gh$，$1\le\deg g=r&lt;n$，首项系数均为 $1$、常数项均为 $\pm1$。<span class="step-score">（10 分）</span></p>
+    <p><strong>第 3 步</strong>　令 $k(x)=g(x)\widetilde h(x)\in\mathbb{Z}[x]$，则 $\deg k=n$，且
+    $$k\widetilde k=f\widetilde f=-x^{2n}-x^{2n-1}+x^{n+1}+3x^n+x^{n-1}-x-1.\tag{1}$$
+    记 $k(x)=b_nx^n+b_{n-1}x^{n-1}+\cdots+b_0$，比较式 (1) 两边 $x^n$ 的系数得 $b_0^2+b_1^2+\cdots+b_n^2=3$。而 $b_n,b_0=\pm1$，故 $b_1,\dots,b_{n-1}$ 中恰有一个为 $\pm1$、其余为 $0$：$k(x)=b_nx^n+b_ix^i+b_0$。<span class="step-score">（12 分）</span></p>
+    <p><strong>第 4 步</strong>　比较式 (1) 中次数 $&lt;n$ 的系数：常数项 $b_nb_0=-1$ ⟹ $b_0=-b_n$；由 $n\ge3$ 分 $i=1$ 与 $i=n-1$ 两情形讨论，分别得 $k(x)=b_nf(x)$ 或 $k(x)=-b_n\widetilde f(x)$，即 $k=\pm f$ 或 $k=\pm\widetilde f$。<span class="step-score">（18 分）</span></p>
+    <p><strong>第 5 步</strong>　于是 $h$（或 $g$）的任一复根是 $f$ 与 $\widetilde f$ 的公共根。设 $\alpha$ 为公共根：$\alpha^n=\alpha+1$ 且 $\alpha^n=-\alpha^{n-1}+1$ ⟹ $\alpha^{n-1}=-\alpha$ ⟹ $\alpha^2+\alpha+1=0$ ⟹ $\alpha^3=1$；分别讨论 $\alpha^n\in\{1,\alpha,\alpha^2\}$ 均矛盾（$1=\alpha+1$ 或 $\alpha=\alpha+1$ 或 $\alpha=0$）。故 $f$ 在 $\mathbb{Q}$ 上不可约。<span class="step-score">（20 分）</span>（注：也可用 $f$ 与 $\widetilde f$ 互素说明无公共根。）</p>
+    <p><strong>复盘</strong>：本题用了本章四个动作的接力——<strong>Gauss 引理</strong>（第 2 步，把 $\mathbb{Q}$ 上的问题拉到 $\mathbb{Z}$）、<strong>互反构造</strong>（第 3 步，$k=g\widetilde h$ 是全场唯一的"灵感"，看完要变成自己的库存）、<strong>系数比较</strong>（第 3–4 步，$\sum b_i^2=3$ 把整系数条件压成计数问题）、<strong>公共根 ⟺ 不互素</strong>（第 5 步）。其中第 1、2 步的 10 分是本章 §3.6 的原话默写——先把白送的分拿到手。<em>（题目与解答转录自第 14 届官方 PDF，见 <a href="真题索引/第14届_2022.md">真题索引</a>。）</em></p>
+  </details>
+</div>
+
+<h2>§9.5 熟练度训练场</h2>
+
+<p>理解只是入场券，<strong>考场上拼的是基本动作的速度</strong>。两种训练，每天 10 分钟：</p>
+
+<h3>训练一 · 翻卡快测（目标：每卡 10 秒内出答案）</h3>
+<div class="quiz" data-quiz="ch20-drill"></div>
+
+<h3>训练二 · 计时默写（写在纸上，掐表）</h3>
+<div class="calc box" data-tag="默写清单">
+  <p>① <strong>45 秒</strong>：默写 Eisenstein 判别的完整陈述（三条件 + 结论，一字不差）；</p>
+  <p>② <strong>60 秒</strong>：默写 Bezout 互素等价（$(f,g)=1\iff\exists u,v: uf+vg=1$）与数域三分定律（$\mathbb{C}$ / $\mathbb{R}$ / $\mathbb{Q}$ 上不可约多项式各长什么样）；</p>
+  <p>③ <strong>3 分钟</strong>：默写例 1 的证明骨架（移位 $x=y+1$ → 展开 → $p=2$ 三条验证 → 回代矛盾，四个关键步必须在）。</p>
+  <p><strong>过关标准</strong>：连续两天全对才算过。做不到就回到对应小节重读，再默。</p>
+</div>
+
+<h2>§10 六方向自测卡</h2>
+
+<div class="selftest">
+  <h3>合上书，拿张白纸，默写以下六项</h3>
+  <div class="st-item">
+    <p class="st-q"><em>=（它是什么）</em>　写出"$p(x)$ 在 $F$ 上不可约"的定义，以及 Eisenstein 判别的三条件。</p>
+    <details><summary>对照</summary><p>$\deg p\ge1$ 且 $p$ 不能分解为 $F[x]$ 中两个次数更低的多项式之积。Eisenstein：$\exists$ 素数 $p$：$p\nmid a_n$；$p\mid a_i$（$0\le i\le n-1$）；$p^2\nmid a_0$ ⟹ $f$ 在 $\mathbb{Q}$ 上不可约。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>←（什么带来它）</em>　"不可约"概念从哪来？为什么 $\mathbb{Q}$ 上需要 Eisenstein 这种判别法（而不能像整数一样试除完）？</p>
+    <details><summary>对照</summary><p>类比整数的素数——唯一分解需要"原子"。整数判别素性可以试除到 $\sqrt n$（有限步），但 $\mathbb{Q}$ 上候选因子有无穷多（系数任意），不可能逐个试除，所以需要"一眼判死"的充分条件：Eisenstein 用 mod $p$ 把无穷问题压成一个素数的分配问题。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>→（它带来什么）</em>　不可约 + 整除理论能推出哪三件大事？</p>
+    <details><summary>对照</summary><p>① $F[x]$ 唯一分解定理（分解到不可约因子，本质唯一）；② 最小多项式理论（零化 ⟺ 被最小多项式整除，第 6 章）；③ 数域扩张的语言（$\mathbb{Q}(\sqrt2)\cong\mathbb{Q}[x]/(x^2-2)$，抽象代数的入口），以及三届真题大题的入场券。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>∈（实例）</em>　默写三个不可约性随数域变化的实例。</p>
+    <details><summary>对照</summary><p>$x^2+1$：$\mathbb{R}$、$\mathbb{Q}$ 上不可约，$\mathbb{C}$ 上可约；$x^2-2$：$\mathbb{Q}$ 上不可约，$\mathbb{R}$ 上可约；$x^4+1$：$\mathbb{Q}$ 上不可约（移位 Eisenstein），$\mathbb{R}$ 上拆成两个二次，$\mathbb{C}$ 上四个一次。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>≠（区分）</em>　"无有理根"与"在 $\mathbb{Q}$ 上不可约"——何时等价，何时不等价？</p>
+    <details><summary>对照</summary><p>$\deg f\le3$ 时等价（可约必有一次因子）。$\deg f\ge4$ 时不等价：$(x^2+1)(x^2+2)=x^4+3x^2+2$ 无有理根但可约。反方向恒成立：不可约（次数 $\ge2$）⟹ 无根。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>（为何要有它）</em>　为什么多项式理论的第一句话必须是"在哪个数域上"？</p>
+    <details><summary>对照</summary><p>因为"能不能分解"的答案随数域变：$x^4+1$ 在 $\mathbb{C}$ 上稀碎、在 $\mathbb{R}$ 上拆一半、在 $\mathbb{Q}$ 上拆不动。不报数域，"不可约""整除""有根"全都没有确定含义——数域是多项式问题的参照系，就像 $\varepsilon$ 之于极限。</p></details>
+  </div>
+</div>
+
+<div class="net box" data-tag="间隔复习安排">
+  <p><strong>1 天后</strong>：重做六方向自测卡（不翻书）+ 翻卡快测第二轮；<strong>3 天后</strong>：重做变式 1（$\Phi_5$）与真题节选的三个梯子问题 + 计时默写①③；<strong>1 周后</strong>：把 §4 动作一（四档流程）默写一遍，用模仿 1 的两法互验，确认翻卡全部"会了"。</p>
+  <p>本章是<strong>第 6 章</strong> <a href="ch16.html">最小多项式</a>的地基返修，也是下一章<strong>高代技巧包</strong>（行列式、秩不等式与分块矩阵）之外另一条真题支线（第 12–14 届多项式三连）的总仓库。</p>
+</div>
+
+<div class="chapnav">
+  <span><a href="ch19.html">← 第 9 章 · 二次型与正定性</a></span>
+  <span><a href="index.html">首页</a></span>
+  <span><a href="ch21.html">第 11 章 · 高代技巧包：行列式、秩不等式与分块矩阵 →</a></span>
+</div>
+
+</div>
+
+<script src="assets/quiz.js"></script>
+<script>
+/* §9.5 翻卡数据 */
+registerQuiz("ch20-drill", [
+  { q: "默写 Eisenstein 判别的三个条件。", a: "存在素数 $p$：$p\\nmid a_n$（首项不染）；$p\\mid a_i$，$i=0,\\dots,n-1$（其余全染）；$p^2\\nmid a_0$（常数项不染 $p^2$）。三齐 ⟹ $f$ 在 $\\mathbb{Q}$ 上不可约。" },
+  { q: "$(f,g)=1$ 的等式版定义（Bezout）？", a: "$\\exists\\,u,v\\in F[x]:\\ uf+vg=1$。用法：把 $1$ 乘到目标对象头上。" },
+  { q: "$(f,g)=1$ 且 $f\\mid gh$，则？", a: "$f\\mid h$（消去）。证明：$h=h(uf+vg)=u(hf)+v(hg)$，两项都被 $f$ 整除。" },
+  { q: "有理根定理：既约分数 $\\frac{p}{q}$ 是整系数 $f$ 的根，则？", a: "$p\\mid a_0$，$q\\mid a_n$。它给的是候选清单，不是根——要逐一代入试。" },
+  { q: "$f$ 无重根当且仅当什么？", a: "$(f,f')=1$。重根 $\\alpha$ ⟺ $x-\\alpha$ 同时整除 $f$ 与 $f'$。" },
+  { q: "Gauss 引理及其关键推论各一句话。", a: "本原×本原=本原；推论：本原整系数多项式 $\\mathbb{Z}$ 上不可分解 ⟺ $\\mathbb{Q}$ 上不可约（ℚ↔ℤ 的桥）。" },
+  { q: "数域三分定律：$\\mathbb{C}$、$\\mathbb{R}$、$\\mathbb{Q}$ 上不可约多项式各到几次？", a: "$\\mathbb{C}$：只有一次；$\\mathbb{R}$：一次与判别式为负的二次；$\\mathbb{Q}$：任意次都有（$x^n-p$ 家族）。" },
+  { q: "$\\widetilde f(x)=x^nf\\!\\left(\\frac1x\\right)$ 的根与 $f$ 的根什么关系？", a: "互为倒数：$f(\\alpha)=0\\iff\\widetilde f\\!\\left(\\frac1\\alpha\\right)=0$。且 $\\widetilde{\\widetilde f}=f$、$f=gh\\Rightarrow\\widetilde f=\\widetilde g\\widetilde h$。" },
+  { q: "$x^4+1$ 移位 $x=y+1$ 后得到什么？用哪个素数？", a: "$y^4+4y^3+6y^2+4y+2$，用 $p=2$（$2\\nmid1$，$2\\mid4,6,4,2$，$4\\nmid2$）。" },
+  { q: "首一 3 次多项式 $x^3+px+q$ 的三根满足 $\\sum x_i$、$\\sum_{i<j}x_ix_j$、$x_1x_2x_3$ 各为？", a: "$0$、$p$、$-q$（Vieta：第 $k$ 个初等对称和 $=(-1)^k a_{n-k}$，注意 $x^2$ 项系数为 $0$）。" }
+]);
+</script>
+
+<script>
+/* §3.7 数域变脸器 */
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  var svg = document.getElementById("fw-svg");
+  var out = document.getElementById("fw-out");
+  var nameEl = document.getElementById("fw-name");
+  var pSlider = document.getElementById("fw-poly");
+  var fSlider = document.getElementById("fw-field");
+  var FIELDS = ["ℚ（有理数域）", "ℝ（实数域）", "ℂ（复数域）"];
+  var FIELD_KEY = ["Q", "R", "C"];
+  var POLYS = [
+    {
+      name: "f(x) = x⁴ + 1",
+      fac: {
+        Q: "不可约：4 次一整块，拆不动",
+        R: "(x²+√2x+1)(x²−√2x+1)，两个二次",
+        C: "(x−ζ)(x−ζ̄)(x+ζ)(x+ζ̄)，ζ=√2/2·(1+i)"
+      },
+      note: [
+        "√2 与 i 都不在 ℚ 里：连一对二次因子都凑不出（例 1 两法证过）。",
+        "√2 到账：拆成两个实系数二次，判别式均为负，到此为止。",
+        "i 到账：四个一次因子，四个根全部现形。"
+      ],
+      roots: [[0.7071, 0.7071], [-0.7071, 0.7071], [-0.7071, -0.7071], [0.7071, -0.7071]]
+    },
+    {
+      name: "f(x) = x² − 2",
+      fac: {
+        Q: "不可约：√2 不是有理数",
+        R: "(x−√2)(x+√2)，两个一次",
+        C: "(x−√2)(x+√2)，与 ℝ 相同"
+      },
+      note: [
+        "候选有理根 ±1,±2 全灭，2 次无根即不可约。",
+        "√2 到账：立刻瓦解成两个一次因子。",
+        "根本来就是实数——在 ℝ 层已经拆完，ℂ 没有新货。"
+      ],
+      roots: [[1.4142, 0], [-1.4142, 0]]
+    },
+    {
+      name: "f(x) = x² + 1",
+      fac: {
+        Q: "不可约：无有理根（甚至无实根）",
+        R: "不可约：判别式 −4＜0，二次是尽头",
+        C: "(x−i)(x+i)，两个一次"
+      },
+      note: [
+        "ℚ 上拆不动——它连实根都没有。",
+        "ℝ 上还是拆不动：虚根不落回实轴，二次就是终点。",
+        "±i 到账：两个一次因子，根在虚轴上现身。"
+      ],
+      roots: [[0, 1], [0, -1]]
+    },
+    {
+      name: "f(x) = x³ − x − 1",
+      fac: {
+        Q: "不可约：候选 ±1 全灭，3 次无根即不可约",
+        R: "(x−1.3247)(x²+1.3247x+0.7549)，一次×二次",
+        C: "三个一次因子（一根实、两根共轭复）"
+      },
+      note: [
+        "有理根候选 ±1 代入都不是 0——但它在 ℝ 上有根！实根 ≠ 有理根。",
+        "实根 1.3247…（塑料常数）到账：拆出一个一次因子，剩判别式为负的二次。",
+        "三个根全部现形：1.3247 与 −0.6624±0.5623i。"
+      ],
+      roots: [[1.3247, 0], [-0.6624, 0.5623], [-0.6624, -0.5623]]
+    }
+  ];
+  function mk(tag, attrs) {
+    var el = document.createElementNS(NS, tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    svg.appendChild(el);
+    return el;
+  }
+  function mkText(x, y, str, attrs) {
+    var t = mk("text", attrs || {});
+    t.setAttribute("x", x); t.setAttribute("y", y);
+    t.textContent = str;
+    return t;
+  }
+  /* 静态：三张数域牌 + 复平面 */
+  var cards = [];
+  var cardY = [18, 112, 206];
+  var fcols = ["#a1132f", "#b45309", "#1d4ed8"];
+  for (var i = 0; i < 3; i++) {
+    var rect = mk("rect", { x: 16, y: cardY[i], width: 410, height: 80, rx: 8, fill: "#ffffff", stroke: fcols[i], "stroke-width": 1.5 });
+    var label = mkText(30, cardY[i] + 24, "", { "font-size": 14, "font-weight": "bold", fill: fcols[i] });
+    var body = mkText(30, cardY[i] + 48, "", { "font-size": 12.5, fill: "#2b2620" });
+    cards.push({ rect: rect, label: label, body: body });
+  }
+  /* 复平面：中心 (570,150)，比例 62 px/单位 */
+  var CX = 570, CY = 150, SC = 62;
+  mk("line", { x1: CX - 140, y1: CY, x2: CX + 140, y2: CY, stroke: "#8a8175", "stroke-width": 1 });
+  mk("line", { x1: CX, y1: CY - 140, x2: CX, y2: CY + 140, stroke: "#8a8175", "stroke-width": 1 });
+  mk("polygon", { points: (CX + 148) + "," + CY + " " + (CX + 138) + "," + (CY - 4) + " " + (CX + 138) + "," + (CY + 4), fill: "#8a8175" });
+  mk("polygon", { points: CX + "," + (CY - 148) + " " + (CX - 4) + "," + (CY - 138) + " " + (CX + 4) + "," + (CY - 138), fill: "#8a8175" });
+  mk("circle", { cx: CX, cy: CY, r: SC, fill: "none", stroke: "#8a8175", "stroke-width": 1, "stroke-dasharray": "4 4" });
+  mkText(CX + SC + 6, CY + 16, "1", { "font-size": 11, fill: "#8a8175" });
+  mkText(CX + 7, CY - SC + 3, "i", { "font-size": 11, fill: "#8a8175" });
+  mkText(CX, CY - 152, "复平面上的根", { "font-size": 12, fill: "#5c554b", "text-anchor": "middle" });
+  var rootGroup = [];
+  function update() {
+    var p = parseInt(pSlider.value, 10), f = parseInt(fSlider.value, 10);
+    var P = POLYS[p];
+    nameEl.textContent = P.name + "　——聚光灯：" + FIELDS[f];
+    /* 牌面 */
+    for (var i = 0; i < 3; i++) {
+      cards[i].label.textContent = FIELDS[i];
+      cards[i].body.textContent = P.fac[FIELD_KEY[i]];
+      var active = i === f;
+      cards[i].rect.setAttribute("stroke-width", active ? 3 : 1.2);
+      cards[i].rect.setAttribute("opacity", active ? 1 : 0.38);
+      cards[i].label.setAttribute("opacity", active ? 1 : 0.38);
+      cards[i].body.setAttribute("opacity", active ? 1 : 0.38);
+    }
+    /* 根：住在当前数域里的染红 */
+    rootGroup.forEach(function (el) { svg.removeChild(el); });
+    rootGroup = [];
+    var inField = 0;
+    P.roots.forEach(function (rt) {
+      var re = rt[0], im = rt[1];
+      var isReal = Math.abs(im) < 1e-9;
+      var lives = f === 2 || (f === 1 && isReal); /* ℚ：这四个多项式都没有有理根 */
+      if (lives) inField++;
+      var cx = CX + SC * re, cy = CY - SC * im;
+      var el;
+      if (isReal) {
+        el = mk("circle", { cx: cx, cy: cy, r: 7, fill: lives ? "#be123c" : "#b8b2a8" });
+      } else {
+        el = mk("circle", { cx: cx, cy: cy, r: 7, fill: "#ffffff", stroke: lives ? "#be123c" : "#b8b2a8", "stroke-width": 2.5 });
+      }
+      rootGroup.push(el);
+    });
+    var verdict = P.note[f];
+    var tail;
+    if (f === 0) tail = "当前数域里根数：" + inField + " / " + P.roots.length + "——没有根落在 ℚ 里，所以它顽固。";
+    else if (f === 1) tail = "当前数域里根数：" + inField + " / " + P.roots.length + "——实根已到账，虚根还在等 i。";
+    else tail = "当前数域里根数：" + inField + " / " + P.roots.length + "——全部到账，拆成一次因子到底。";
+    out.innerHTML = "<strong>" + P.name + " 在 " + FIELDS[f] + " 上</strong><br>" + verdict + "<br>" + tail;
+  }
+  pSlider.addEventListener("input", update);
+  fSlider.addEventListener("input", update);
+  update();
+})();
+</script>
+
+</body>
+</html>

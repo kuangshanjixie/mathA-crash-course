@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高代第 5 章 · 特征值再认识：几何重数 vs 代数重数 —— 数学A速成讲义</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+<div class="wrap">
+
+<div class="bookbar">
+  <span><a href="index.html">← 返回首页</a></span>
+  <span>卷二 · 高等代数 · 第 5 章</span>
+</div>
+
+<div class="chapter-kicker">CHAPTER 15 · 高等代数</div>
+<h1>特征值再认识：几何重数 vs 代数重数</h1>
+
+<div class="exam box" data-tag="本章导览">
+  <p><strong>这一章在整张卷子上的位置</strong>："几何重数"四个字直接当过题面主角——第 15 届题三（20 分）整题就是一句话：存在循环向量 $\{\alpha,\mathbf{A}\alpha,\dots,\mathbf{A}^{n-1}\alpha\}$ 成基 $\iff$ 每个特征值的几何重数为 $1$。更多时候它以步骤分出现：第 15 届题四用"实对称 $\Rightarrow$ 可对角化 $\Rightarrow$ 用特征值算行列式"（15 分），第 12 届题三用"酉矩阵可复对角化 + 特征值奇偶计数"（15 分），第 17 届题四的 $\mu_{\mathcal A}=\chi_{\mathcal A}$ 条件（15 分）正是本章"每个特征值几何重数为 1"的第三张面孔。学会它大约值 <strong>5–20 分</strong>，而且是第 6 章（最小多项式）、第 7 章（Jordan 标准形）的入场券。</p>
+  <p><strong>学完你能</strong>：① 默写代数重数 am 与几何重数 gm 的定义，说出 $1\le\mathrm{gm}(\lambda)\le\mathrm{am}(\lambda)$ 的证明骨架；② 背诵可对角化的五个等价条件，并会证其中"n 个无关特征向量 ⟺ am=gm ⟺ $V=\oplus V_{\lambda_i}$"这条链；③ 用"最短相关组合法"证不同特征值的特征向量线性无关；④ 判定具体矩阵可否对角化（重根必查 gm 的流程），并写出 $A=\sum\lambda_iP_i$ 型谱分解；⑤ 说出"几何重数 = Jordan 块个数"，读懂第 15 届题三在说什么。</p>
+  <p><strong>前置</strong>：卷二第 1 章（基扩充定理）、第 2 章（直和判据、$P^2=P$ 型投影）、第 3 章（$\ker$ 与秩-零度）、第 4 章（相似与换基）；以及第 0 章诊断的 A4——那个 $({2\ 1\atop0\ 2})$，本章要把它彻底收编。</p>
+</div>
+
+<h2>§1 开场谜题：那个"缺向量"的矩阵，在抵抗什么？</h2>
+
+<div class="hook box" data-tag="开场谜题">
+  <p>回到第 0 章的 A4。那个矩阵你再算一次：</p>
+  <p>$$A=\begin{pmatrix}2&1\\0&2\end{pmatrix},\qquad \chi_A(\lambda)=\det(\lambda I-A)=(\lambda-2)^2.$$</p>
+  <p>特征值 $\lambda=2$，<strong>二重</strong>。解 $(A-2I)x=0$，即 $\begin{pmatrix}0&1\\0&0\end{pmatrix}x=0$，得 $x=t(1,0)^{T}$——<strong>只有一条直线上的特征向量</strong>。</p>
+  <p>现在盯着这两个"2 重 / 1 条"问一个问题：特征值明明是<strong>二重</strong>的，可你翻遍整个平面，只找到<strong>一条</strong>特征方向的直线。另一个特征向量去哪了？它"缺"在哪里？</p>
+  <p>换一个更狠的问法。对角化就是"换一组基，让矩阵变成对角阵"。$A$ 的特征值全是 $2$，如果它能对角化，对角阵只能是 $2I$——那就得 $A=P(2I)P^{-1}=2I$，荒谬。所以 $A$ <strong>怎么换基都不肯变成对角阵</strong>。它在抵抗什么？</p>
+  <p>本章的答案是：<strong>"二重"这个"二"，有两种数法</strong>。一种在特征多项式里数——$(\lambda-2)^2$ 里 $\lambda-2$ 出现两次，这叫<strong>代数重数</strong>；一种在空间里数——真正存在的无关特征向量有几条，这叫<strong>几何重数</strong>。订货（代数重数）是两个，到货（几何重数）只有一件。<strong>当两种数法不一致，抵抗就产生了</strong>：缺的向量补不齐基，对角化就破产。</p>
+  <p>这一章，就是把这两种数法分别精确化，证明"到货永不超过订货"（$1\le\mathrm{gm}\le\mathrm{am}$），再给出"何时到货齐全"的全部等价说法——那就是可对角化的完整判据。</p>
+</div>
+
+<h2>§2 先看见它：两条特征直线，与只剩一条</h2>
+
+<div class="vision box" data-tag="直觉与图像">
+  <p>线性变换 $x\mapsto Ax$ 把平面上的每个向量搬到新位置。<strong>特征方向 = 搬家后仍落在原直线上的方向</strong>（只允许伸缩、翻转，不许拐弯）。对角阵 $\operatorname{diag}(2,3)$ 有两条这样的直线（两根坐标轴）；而 $A=({2\ 1\atop0\ 2})$ 是"拉伸 + 剪切"，除了 $x$ 轴，每个方向都被掰弯——第二条特征直线<strong>不存在</strong>，不是你没找到。</p>
+</div>
+
+<figure>
+<svg viewBox="0 0 720 265" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="对角阵有两条特征直线，剪切矩阵只剩一条">
+  <defs>
+    <marker id="arrB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#1d4ed8"/>
+    </marker>
+    <marker id="arrR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#be123c"/>
+    </marker>
+  </defs>
+  <!-- 左 panel：diag(2,3) -->
+  <text x="160" y="24" font-size="13.5" fill="#15803d" text-anchor="middle" font-weight="bold">D = diag(2, 3)：两条特征直线</text>
+  <line x1="40" y1="160" x2="290" y2="160" stroke="#2b2620" stroke-width="1.2"/>
+  <line x1="160" y1="240" x2="160" y2="40" stroke="#2b2620" stroke-width="1.2"/>
+  <!-- 特征直线（绿） -->
+  <line x1="45" y1="160" x2="285" y2="160" stroke="#15803d" stroke-width="2" opacity="0.35"/>
+  <line x1="160" y1="235" x2="160" y2="45" stroke="#15803d" stroke-width="2" opacity="0.35"/>
+  <!-- v1 与 Dv1 -->
+  <line x1="160" y1="160" x2="190" y2="160" stroke="#1d4ed8" stroke-width="2.5" marker-end="url(#arrB)"/>
+  <line x1="160" y1="160" x2="220" y2="160" stroke="#be123c" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#arrR)"/>
+  <text x="196" y="178" font-size="11.5" fill="#1d4ed8">v₁</text>
+  <text x="222" y="178" font-size="11.5" fill="#be123c">Dv₁ = 2v₁</text>
+  <!-- v2 与 Dv2 -->
+  <line x1="160" y1="160" x2="160" y2="130" stroke="#1d4ed8" stroke-width="2.5" marker-end="url(#arrB)"/>
+  <line x1="160" y1="160" x2="160" y2="70" stroke="#be123c" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#arrR)"/>
+  <text x="168" y="132" font-size="11.5" fill="#1d4ed8">v₂</text>
+  <text x="168" y="82" font-size="11.5" fill="#be123c">Dv₂ = 3v₂</text>
+  <text x="160" y="258" font-size="11.5" fill="#15803d" text-anchor="middle">am = gm = 1（每个特征值），基凑得齐</text>
+  <!-- 右 panel：剪切 -->
+  <text x="530" y="24" font-size="13.5" fill="#b45309" text-anchor="middle" font-weight="bold">A = (2 1; 0 2)：只剩一条</text>
+  <line x1="380" y1="160" x2="680" y2="160" stroke="#2b2620" stroke-width="1.2"/>
+  <line x1="530" y1="240" x2="530" y2="40" stroke="#2b2620" stroke-width="1.2"/>
+  <!-- 唯一特征直线（x 轴，绿） -->
+  <line x1="385" y1="160" x2="675" y2="160" stroke="#15803d" stroke-width="2.5" opacity="0.45"/>
+  <!-- e1 → 2e1 -->
+  <line x1="530" y1="160" x2="560" y2="160" stroke="#1d4ed8" stroke-width="2.5" marker-end="url(#arrB)"/>
+  <line x1="530" y1="160" x2="590" y2="160" stroke="#be123c" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#arrR)"/>
+  <text x="566" y="178" font-size="11.5" fill="#1d4ed8">e₁</text>
+  <text x="592" y="178" font-size="11.5" fill="#be123c">Ae₁ = 2e₁ ✓ 共线</text>
+  <!-- v=(0,1) → (1,2)：被掰弯 -->
+  <line x1="530" y1="160" x2="530" y2="130" stroke="#1d4ed8" stroke-width="2.5" marker-end="url(#arrB)"/>
+  <line x1="530" y1="160" x2="560" y2="100" stroke="#be123c" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#arrR)"/>
+  <line x1="530" y1="160" x2="530" y2="80" stroke="#8a8175" stroke-width="1" stroke-dasharray="2 3"/>
+  <text x="500" y="128" font-size="11.5" fill="#1d4ed8">e₂</text>
+  <text x="566" y="96" font-size="11.5" fill="#be123c">Ae₂ = (1,2) ✗ 拐弯了</text>
+  <!-- v=(1,1) → (3,2) -->
+  <line x1="530" y1="160" x2="551" y2="139" stroke="#1d4ed8" stroke-width="2.5" marker-end="url(#arrB)"/>
+  <line x1="530" y1="160" x2="593" y2="118" stroke="#be123c" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#arrR)"/>
+  <line x1="551" y1="139" x2="572" y2="118" stroke="#8a8175" stroke-width="1" stroke-dasharray="2 3"/>
+  <text x="540" y="134" font-size="11.5" fill="#1d4ed8">(1,1)</text>
+  <text x="596" y="114" font-size="11.5" fill="#be123c">(3,2) ✗</text>
+  <!-- 缺失的第二条 -->
+  <text x="655" y="55" font-size="15" fill="#b45309" text-anchor="middle" font-weight="bold">？</text>
+  <text x="530" y="258" font-size="11.5" fill="#b45309" text-anchor="middle">am(2) = 2 但 gm(2) = 1：第二条直线不存在</text>
+</svg>
+<figcaption>左：对角阵的两个特征方向互相垂直、各司其职。右：剪切把除 $x$ 轴外的每个方向都掰弯——灰色虚线是 $v$ 自己的延长线，$Av$（红虚线）全都拐离了它。</figcaption>
+</figure>
+
+<p>盯着右图读出本章的全部直觉：<strong>特征值的重数是"订货单"，特征方向是"到货"</strong>。$A$ 对特征值 $2$ 订了两件货，空间只交得出一条直线。缺的那一件不是藏在哪个角落——剪切把它彻底消灭了。下面的交互件让你亲手把方向扫满一圈，验证"真的只有一条"。</p>
+
+<h3>2.1 亲手摸一摸：特征方向探索器（交互）</h3>
+
+<div class="widget" id="eig-widget">
+  <p class="w-title">▶ 特征方向探索器：把 v 扫满一圈，数一数有几个方向"不拐弯"</p>
+  <p class="w-row">先选一个矩阵，然后<strong style="color:#1d4ed8">拖动蓝色箭头 v 的端点</strong>（或用滑块）让它扫过整个单位圆。红色虚线是 $A\mathbf v$。当 $A\mathbf v$ 与 $\mathbf v$ <strong>共线</strong>（夹角正弦 ≈ 0）时，该方向会点亮成绿色并被登记——那就是特征方向，旁边的数字是特征值 $\lambda$。</p>
+  <div class="w-row">
+    <button id="evw-bsym" style="margin-right:8px;font-weight:700">对称 S = (2 1; 1 2)</button>
+    <button id="evw-bshear" style="margin-right:8px">剪切 H = (1 1; 0 1)</button>
+    <button id="evw-brot">旋转 R = (0 −1; 1 0)</button>
+  </div>
+  <div class="w-row"><label>方向角 θ（拖动 v 或此滑块，效果相同）</label>
+  <input type="range" id="evw-th" min="0" max="360" step="0.5" value="25"></div>
+  <svg id="evw-svg" viewBox="0 0 640 500" xmlns="http://www.w3.org/2000/svg" style="cursor:default;touch-action:none"></svg>
+  <div class="w-verdict" id="evw-out">加载中……（需要启用 JavaScript）</div>
+  <p class="w-row" style="font-size:0.88em;color:#5c554b">玩出这三个体验再往下走：<strong>①</strong> 对称阵 $S$：找到 <strong>2 个</strong>共线方向，读出各自的 $\lambda$（$3$ 与 $1$）——am = gm = 1，到货齐全；<strong>②</strong> 剪切阵 $H$：把 $\theta$ 从 $0^\circ$ 拖到 $360^\circ$，共线<strong>只亮一次</strong>（水平方向）——$\chi_H=(\lambda-1)^2$ 订了两件货，gm(1) = 1 只到一件，这就是 $({2\ 1\atop0\ 2})$ 的同款"缺向量"；<strong>③</strong> 旋转阵 $R$：扫满一圈<strong>一次都不亮</strong>——实数范围内没有特征方向（$\chi_R=\lambda^2+1$，特征值是 $\pm i$），在 $\mathbb R$ 上连"订货"都没有。</p>
+</div>
+
+<h2>§3 精确定义：两种重数，逐符号朗读</h2>
+
+<h3>3.1 快速回顾：特征值、特征向量、特征多项式（一页内）</h3>
+
+<p>设 $A\in M_n(F)$（$F$ 为数域，如 $\mathbb R$、$\mathbb C$）。若存在 $\lambda\in F$ 与非零向量 $x\in F^n$ 使
+$$Ax=\lambda x,\qquad x\ne0,$$
+则称 $\lambda$ 为 $A$ 的<strong>特征值</strong>，$x$ 为属于 $\lambda$ 的<strong>特征向量</strong>。计算流程你早就会：<strong>特征多项式</strong>
+$$\chi_A(\lambda)=\det(\lambda I-A)$$
+是 $n$ 次首一多项式，它的根（恰好）就是全部特征值；对每个根 $\lambda$，解齐次方程组 $(\lambda I-A)x=0$ 得特征向量。在 $\mathbb C$ 上 $\chi_A$ 恰有 $n$ 个根（计重数）。</p>
+
+<div class="def">
+  <p class="def-title">定义（特征子空间）</p>
+  <p>设 $\lambda$ 是 $A$ 的特征值。称
+  $$V_\lambda=\{x\in F^n:Ax=\lambda x\}=\ker(\lambda I-A)$$
+  为属于 $\lambda$ 的<strong>特征子空间</strong>。它由零向量与全体属于 $\lambda$ 的特征向量组成——作为 $\lambda I-A$ 的<strong>核</strong>，它自动是子空间（第 3 章的 $\ker$ 语言），并且
+  $$\dim V_\lambda=n-\operatorname{r}(\lambda I-A)\qquad(\text{秩-零度定理}).$$</p>
+</div>
+
+<h3>3.2 两种重数与核心不等式</h3>
+
+<div class="def">
+  <p class="def-title">定义（代数重数 · 几何重数）</p>
+  <p>设 $\lambda$ 是 $A$ 的特征值。</p>
+  <p>$$\mathrm{am}(\lambda)=\text{$\lambda$ 作为 $\chi_A$ 根的重数}\quad\Bigl(\chi_A(x)=(x-\lambda)^{m}g(x),\ g(\lambda)\ne0\Bigr),$$</p>
+  <p>$$\mathrm{gm}(\lambda)=\dim V_\lambda=\dim\ker(\lambda I-A)=n-\operatorname{r}(\lambda I-A).$$</p>
+  <p>读法：$\mathrm{am}$ 在<strong>多项式</strong>里数（订货单）；$\mathrm{gm}$ 在<strong>空间</strong>里数（实际到货：$\lambda$ 的无关特征向量最多有几个）。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定理（核心不等式）</p>
+  <p>对 $A$ 的每个特征值 $\lambda$，
+  $$1\le\mathrm{gm}(\lambda)\le\mathrm{am}(\lambda).$$</p>
+</div>
+
+<p><strong>证明</strong>（思路一句话：把 $V_\lambda$ 的基扩充成全空间的基，分块矩阵自己把 $(x-\lambda)^{\mathrm{gm}}$ 长出来）。</p>
+<p>左半：$\lambda$ 是特征值 $\iff$ $(\lambda I-A)x=0$ 有非零解 $\iff$ $\dim\ker(\lambda I-A)\ge1$。$\square$</p>
+<p>右半：记 $r=\mathrm{gm}(\lambda)$。取 $V_\lambda$ 的一组基 $\alpha_1,\dots,\alpha_r$，由<strong>基扩充定理</strong>（第 1 章）补成 $F^n$ 的基 $\alpha_1,\dots,\alpha_r,\alpha_{r+1},\dots,\alpha_n$，拼成可逆阵 $P=(\alpha_1\mid\cdots\mid\alpha_n)$。前 $r$ 列都是特征向量：$A\alpha_i=\lambda\alpha_i$，故
+$$AP=P\begin{pmatrix}\lambda I_r&B\\0&C\end{pmatrix}\ \Longrightarrow\ P^{-1}AP=\begin{pmatrix}\lambda I_r&B\\0&C\end{pmatrix}.$$
+特征多项式在相似下不变（$\det(xI-P^{-1}AP)=\det\bigl(P^{-1}(xI-A)P\bigr)=\det(xI-A)$），于是
+$$\chi_A(x)=\det\begin{pmatrix}(x-\lambda)I_r&-B\\0&xI_{n-r}-C\end{pmatrix}=(x-\lambda)^r\,\chi_C(x),$$
+即 $(x-\lambda)^r\mid\chi_A(x)$，故 $\mathrm{am}(\lambda)\ge r=\mathrm{gm}(\lambda)$。$\square$</p>
+
+<div class="symbol box" data-tag="逐符号朗读">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$V_\lambda=\ker(\lambda I-A)$</td><td>"被 $\lambda I-A$ 打成零的全体向量"</td><td>把"特征向量 + 0"打包成子空间——ker 白送封闭性、维数公式</td></tr>
+    <tr><td>$\mathrm{am}(\lambda)=m$</td><td>"$\chi_A$ 里 $(x-\lambda)$ 恰好能提出 $m$ 次"</td><td>订货单：多项式层面的重数，算行列式就出来</td></tr>
+    <tr><td>$\mathrm{gm}(\lambda)=\dim\ker(\lambda I-A)$</td><td>"$\lambda$ 的特征方向最多有几条无关的"</td><td>实际到货：解空间的维数，算秩就出来（$n-\operatorname{r}(\lambda I-A)$）</td></tr>
+    <tr><td>$1\le\mathrm{gm}(\lambda)$</td><td>"是特征值就至少有一条特征方向"</td><td>存在性白送：有根就有非零解</td></tr>
+    <tr><td>$\mathrm{gm}(\lambda)\le\mathrm{am}(\lambda)$</td><td>"到货永不超过订货"</td><td>全章的枢纽：可对角化与否，全看这里取不取等号</td></tr>
+  </table>
+  <p>推论一条，考场直接用：<strong>$\mathrm{am}(\lambda)=1$（单根）$\Rightarrow$ $\mathrm{gm}(\lambda)=1$</strong>——单根免检，只有重根才需要查 gm。</p>
+</div>
+
+<div class="think">
+  <p>别急着往下翻。<strong>拿张纸，算 $D=\begin{pmatrix}2&0\\0&2\end{pmatrix}$ 的 $\mathrm{am}(2)$ 与 $\mathrm{gm}(2)$</strong>，和 $A=({2\ 1\atop0\ 2})$ 并排写下来。两个矩阵的 $\chi$ 一模一样，差别到底在哪？写完再展开。</p>
+  <details class="answer">
+    <summary>对照：同一个"二重"，两种命运</summary>
+    <p>$D$：$\chi_D=(\lambda-2)^2$，$\mathrm{am}(2)=2$；$2I-D=O$，秩 $0$，$\mathrm{gm}(2)=2-0=2$——<strong>到货齐全</strong>，$V_2=\mathbb R^2$ 整个平面，$D$ 本来就是对角阵。</p>
+    <p>$A$：$\mathrm{am}(2)=2$，$\mathrm{gm}(2)=1$——缺一件。</p>
+    <p>结论：$\chi_A$（乃至全部 am）<strong>不能决定</strong> gm；am 相同的矩阵，gm 可以不同。这正是"相似"比"同特征多项式"更细的原因——gm（以及下面的 Jordan 块数）才是相似不变量的完整信息。</p>
+  </details>
+</div>
+
+<h3>3.3 不同特征值的特征向量线性无关（最短相关组合法）</h3>
+
+<div class="def">
+  <p class="def-title">定理（无关性白送）</p>
+  <p>设 $\lambda_1,\dots,\lambda_s$ 是 $A$ 的互不相同特征值，$\xi_i\in V_{\lambda_i}$ 且 $\xi_i\ne0$。则 $\xi_1,\dots,\xi_s$ 线性无关。</p>
+</div>
+
+<p><strong>证明</strong>（最短相关组合法——<strong>工具七 · 极端原理</strong>的用武之地）。反设它们线性相关，则存在系数不全为零的零组合。在所有非平凡零组合中，<strong>取项数最少的一个</strong>，重排下标记为
+$$c_1\xi_1+\cdots+c_k\xi_k=0,\qquad c_1\cdots c_k\ne0,\ k\ge2$$
+（$k=1$ 不可能：单个非零向量乘非零系数不会是零）。两边作用 $A$，用 $A\xi_i=\lambda_i\xi_i$：
+$$c_1\lambda_1\xi_1+\cdots+c_k\lambda_k\xi_k=0.$$
+第一式乘 $\lambda_1$ 再与上式相减，$\xi_1$ 被消掉：
+$$c_2(\lambda_2-\lambda_1)\xi_2+\cdots+c_k(\lambda_k-\lambda_1)\xi_k=0.$$
+$\lambda_i$ 互异 $\Rightarrow$ $\lambda_i-\lambda_1\ne0$，又 $c_i\ne0$，故这是只有 $k-1$ 项的<strong>非平凡</strong>零组合——比"最短"还短，矛盾。$\square$</p>
+
+<div class="calc box" data-tag="推论：特征子空间的和自动是直和">
+  <p><strong>推论</strong>　设 $\lambda_1,\dots,\lambda_s$ 互异，则
+  $$V_{\lambda_1}+\cdots+V_{\lambda_s}=V_{\lambda_1}\oplus\cdots\oplus V_{\lambda_s}.$$</p>
+  <p><strong>证明</strong>：若 $v_1+\cdots+v_s=0$（$v_i\in V_{\lambda_i}$），把其中非零的 $v_i$ 挑出来——它们正是互异特征值的特征向量组成的非平凡零组合，与上面定理矛盾。故所有 $v_i=0$，零向量表出唯一，和为直和。$\square$</p>
+  <p>这条推论是五等价证明与第 15 届题三充分性的共同地基：<strong>不同特征值的特征子空间之间没有冗余</strong>，问题只是它们拼起来装不装得满全空间——装的满就是可对角化。</p>
+</div>
+
+<h3>3.4 可对角化的五个等价条件（本章证其中三条的等价链）</h3>
+
+<div class="def">
+  <p class="def-title">定理（可对角化 · 五等价）</p>
+  <p>设 $A\in M_n(F)$，且 $\chi_A$ 在 $F$ 上完全分裂（$F=\mathbb C$ 时自动成立）。以下五句话互相等价：</p>
+  <p>（i）$A$ 有 $n$ 个线性无关的特征向量（$\iff$ 存在可逆 $P$ 使 $P^{-1}AP$ 为对角阵）；<br>
+  （ii）对 $A$ 的每个特征值 $\lambda$，$\mathrm{am}(\lambda)=\mathrm{gm}(\lambda)$；<br>
+  （iii）$A$ 的最小多项式无重根（<strong>第 6 章</strong>证明）；<br>
+  （iv）$A$ 的 Jordan 标准形中每个 Jordan 块都是 $1$ 阶的（<strong>第 7 章</strong>证明）；<br>
+  （v）$V=V_{\lambda_1}\oplus V_{\lambda_2}\oplus\cdots\oplus V_{\lambda_s}$（$\lambda_1,\dots,\lambda_s$ 为全部互异特征值）。</p>
+</div>
+
+<p>本章证明 (i) ⟺ (v) ⟺ (ii) 这条链；(iii)、(iv) 各自是后面两章的主角，先把五条当成"一个事实的五句话"整体背下。</p>
+
+<div class="calc box" data-tag="等价链证明（读懂每个箭头用的是什么）">
+  <p><strong>(i) ⟹ (v)</strong>：$n$ 个无关特征向量组成 $V$ 的基，每个都属于某个 $V_{\lambda_i}$，故 $V=V_{\lambda_1}+\cdots+V_{\lambda_s}$；由 3.3 推论，和为直和。$\square$</p>
+  <p><strong>(v) ⟹ (i)</strong>：取每个 $V_{\lambda_i}$ 的一组基，直和的基拼接（第 2 章）得到 $V$ 的基——它由 $n$ 个特征向量组成；以其为列拼 $P$，则 $P^{-1}AP=\operatorname{diag}(\lambda_1,\dots,\lambda_n)$（允许重复）。$\square$</p>
+  <p><strong>(v) ⟹ (ii)</strong>：直和装满全空间给出 $\sum_{i=1}^s\mathrm{gm}(\lambda_i)=n$；而 $\chi_A$ 是 $n$ 次的给出 $\sum_{i=1}^s\mathrm{am}(\lambda_i)\le n$（$\chi_A$ 完全分裂时取等）。夹逼：
+  $$n=\sum_i\mathrm{gm}(\lambda_i)\le\sum_i\mathrm{am}(\lambda_i)\le n,$$
+  处处取等；再由每项 $\mathrm{gm}(\lambda_i)\le\mathrm{am}(\lambda_i)$，若某一项严格小，总和就严格小——故每项都取等。$\square$</p>
+  <p><strong>(ii) ⟹ (v)</strong>：$\chi_A$ 完全分裂 $\Rightarrow$ $\sum_i\mathrm{am}(\lambda_i)=n$，于是 $\sum_i\dim V_{\lambda_i}=\sum_i\mathrm{gm}(\lambda_i)=n$；由 3.3 推论 $\bigoplus_iV_{\lambda_i}$ 是 $V$ 的 $n$ 维子空间，只能等于 $V$。$\square$</p>
+  <p class="aside">读证明要读出"库存来源"：(i)⟺(v) 只用了直和推论（3.3）；(v)⟹(ii) 用的是核心不等式 + 一次夹逼；(ii)⟹(v) 用的是"n 维空间的 n 维子空间 = 全空间"。整条链没有一步靠灵感。</p>
+</div>
+
+<h3>3.5 谱分解：对角化的"投影写法"</h3>
+
+<div class="def">
+  <p class="def-title">定理（谱分解）</p>
+  <p>设 $\chi_A$ 在 $F$ 上完全分裂，$\lambda_1,\dots,\lambda_s$ 为全部互异特征值。则 $A$ 可对角化，当且仅当存在一族矩阵 $P_1,\dots,P_s$ 满足
+  $$P_i^2=P_i,\qquad P_iP_j=0\ (i\ne j),\qquad P_1+\cdots+P_s=I,$$
+  使得
+  $$A=\lambda_1P_1+\lambda_2P_2+\cdots+\lambda_sP_s.$$
+  此时 $\operatorname{Im}P_i=V_{\lambda_i}$，$P_i$ 是"沿其余特征子空间向 $V_{\lambda_i}$ 的投影"。</p>
+</div>
+
+<p><strong>证明骨架</strong>。（⟹）由 (v)，每个 $v$ 唯一写成 $v=v_1+\cdots+v_s$（$v_i\in V_{\lambda_i}$），定义 $P_iv=v_i$。则 $P_i^2=P_i$、$P_iP_j=0$、$\sum P_i=I$ 逐条直接验证，且 $Av=\sum\lambda_iv_i=\sum\lambda_iP_iv$。（⟸）由 $\sum P_i=I$ 与 $P_iP_j=0$ 得 $V=\bigoplus\operatorname{Im}P_i$（$v=\sum P_iv$；若 $\sum P_iv_i=0$，两边作用 $P_j$ 得 $P_jv_j=0$）；对 $w=P_iv\in\operatorname{Im}P_i$，$Aw=\sum_j\lambda_jP_jP_iv=\lambda_iP_i^2v=\lambda_iw$，故 $\operatorname{Im}P_i\subseteq V_{\lambda_i}$，于是 $V=\bigoplus V_{\lambda_i}$。$\square$</p>
+
+<p>两点呼应。① $P^2=P$ 是第 2 章的老熟人：<strong>幂等 ⟹ $V=\ker P\oplus\operatorname{Im}P$</strong>——谱分解就是把这个二元直和升级成 $s$ 元；② 对角阵写法与投影写法是同一件事的会计与出纳：$P^{-1}AP=\operatorname{diag}$ 是"换基看"，$A=\sum\lambda_iP_i$ 是"不换基看"。（事实上 $P_i$ 还能取成 $A$ 的多项式——Lagrange 插值，第 13 届题四用过这一招。）</p>
+
+<h3>3.6 几何重数 = Jordan 块个数（陈述 + 例子，第 7 章埋点）</h3>
+
+<div class="def">
+  <p class="def-title">定理（块数 = gm，第 7 章证明）</p>
+  <p>设 $J$ 是 $A$（在 $\mathbb C$ 上）的 Jordan 标准形。则对任意特征值 $\lambda$，
+  $$\mathrm{gm}(\lambda)=\text{$J$ 中属于 $\lambda$ 的 Jordan 块个数}.$$</p>
+</div>
+
+<p>一句话理由：相似不改变 $\mathrm{gm}$（$\lambda I-P^{-1}AP=P^{-1}(\lambda I-A)P$，秩相同），故只需对 $J$ 数。属于其他特征值的块对 $\ker(\lambda I-J)$ 无贡献（$\lambda I$ 减过去对角线非零、可逆）；而一个 $k$ 阶 $\lambda$ 块 $J_k(\lambda)=\lambda I+N$ 中，$N$ 是幂零移位、秩 $k-1$——<strong>每块恰好贡献一条特征方向</strong>（块内只有 $e_1$ 是特征向量）。所以 gm 数的就是块数。</p>
+
+<div class="calc box" data-tag="例子：am(λ) = 3 的全部三种命运">
+  <table>
+    <tr><th>$\mathrm{gm}(\lambda)$</th><th>块数</th><th>Jordan 结构（$3$ 的分拆）</th><th>代表矩阵</th></tr>
+    <tr><td>$1$</td><td>1 块</td><td>$3$：一整块 $J_3(\lambda)$</td><td>$\begin{pmatrix}\lambda&1&0\\0&\lambda&1\\0&0&\lambda\end{pmatrix}$</td></tr>
+    <tr><td>2</td><td>2 块</td><td>$3=2+1$：$J_2(\lambda)\oplus J_1(\lambda)$</td><td>$\begin{pmatrix}\lambda&1&0\\0&\lambda&0\\0&0&\lambda\end{pmatrix}$</td></tr>
+    <tr><td>3</td><td>3 块</td><td>$3=1+1+1$：到货齐全，可对角化</td><td>$\lambda I_3$</td></tr>
+  </table>
+  <p>同一张订货单（am = 3），到货越少、块越大越"肿"。gm 只告诉你块数，块的具体尺寸是第 7 章的事。</p>
+</div>
+
+<p><strong>第 15 届题三在说什么（意义解读）</strong>。题面：存在 $\alpha$ 使 $\{\alpha,\mathbf A\alpha,\dots,\mathbf A^{n-1}\alpha\}$ 成基（这样的 $\alpha$ 叫<strong>循环向量</strong>）$\iff$ 每个特征值 $\mathrm{gm}=1$。用本节语言翻译：每个 $\mathrm{gm}=1$ ⟺ <strong>每个特征值只有一个 Jordan 块</strong>。直觉：根子空间只有一块时，一条迭代链 $\alpha,\mathbf A\alpha,\dots$ 就能把它顶满；块一多，链条"分叉"，一个向量生成不了整个空间。这件事还有第三张面孔：每特征值单块 ⟺ <strong>最小多项式 = 特征多项式</strong>（第 6 章）——第 17 届题四的 $\mu_{\mathcal A}=\chi_{\mathcal A}$ 条件正是它。三句话，一个事实。</p>
+
+<h2>§4 翻译轨：三个标准动作 + 一间练功房</h2>
+
+<p>本章概念在卷面上只有三种用法：判定对角化、读写 gm、用谱分解。练成反射，高代大题的中段分就到手了。</p>
+
+<div class="trans box" data-tag="动作一：判定可对角化 = 重根必查 gm 的三步流程">
+  <p><strong>题面</strong>："判断 $A$ 是否可对角化" / "证明 $A$ 可（不可）对角化"。</p>
+  <p><strong>翻译</strong>：第一步，算 $\chi_A$，读出每个特征值的 am（单根免检，直接跳过）；第二步，对每个<strong>重根</strong> $\lambda$ 算 $\mathrm{gm}(\lambda)=n-\operatorname{r}(\lambda I-A)$；第三步，比对：全等 $\Rightarrow$ 可对角化（五等价 (ii)），任一 $\mathrm{gm}&lt;\mathrm{am}$ $\Rightarrow$ 不可对角化，且缺货数 $\mathrm{am}-\mathrm{gm}$ 透露 Jordan 结构。</p>
+  <p><strong>用在哪一步、值多少分</strong>：§8 例 1 是模板；第 15 届题四官方第一步"$A$ 实对称，可对角化"是本动作的"白送版"（实对称/正规/酉 ⟹ 对角化免检，第 8 章）——写出这句授权，后面特征值算行列式的分才敢拿。</p>
+</div>
+
+<div class="trans box" data-tag="动作二：gm 的三种读法互译（秩、维数、块数）">
+  <p><strong>题面</strong>：出现 "$\operatorname{rank}(\lambda I-A)$"、"解空间维数"、"特征子空间"、"几何重数" 中任何一个。</p>
+  <p><strong>翻译</strong>：立刻在三种读法间自由切换：
+  $$\mathrm{gm}(\lambda)=\dim\ker(\lambda I-A)=n-\operatorname{r}(\lambda I-A)=\text{Jordan 块数}.$$
+  特别地 $\operatorname{r}(\lambda I-A)=n-1$ $\iff$ $\mathrm{gm}(\lambda)=1$（特征方向只剩一条直线）。</p>
+  <p><strong>用在哪一步</strong>：第 15 届题三必要性，官方就是用"友矩阵 $cI-A$ 有 $n-1$ 阶非零子式 $\Rightarrow$ $\operatorname{rank}(cI-A)\ge n-1$ $\Rightarrow$ 解空间维数 $\le1$"压住 gm 的——题面给秩，就是在递 gm 的数据。</p>
+</div>
+
+<div class="trans box" data-tag="动作三：见到 A² = A（或 f(A)=O 无重根），反射出 ker 直和与谱分解">
+  <p><strong>题面</strong>：$A^2=A$、$A^2=I$、$(A-I)(A-2I)=O$……"无重根多项式零化 $A$"。</p>
+  <p><strong>翻译</strong>：每个根 $\lambda_i$ 分一间"核" $\ker(A-\lambda_iI)$，用待定系数造分解式把任意 $v$ 拆进各核（例 2、变式 2 的分解式都是这么倒推出来的），直和判据两件货（和 $=V$ + 交 $=0$）一交，$V=\bigoplus V_{\lambda_i}$——由五等价 (v) 可对角化，谱分解 $A=\sum\lambda_iP_i$ 顺手写出。</p>
+  <p><strong>用在哪一步</strong>：这是"最小多项式无重根 ⟹ 可对角化"（五等价 (iii)）在简单情形下的<strong>直接证明版</strong>，第 6 章会把它一般化；第 15 届题三充分性里"由直和分解与不变性得 $p(\mathbf A)\alpha_i=0$"，用的也是"投影到各分量、逐间处理"这同一个动作。</p>
+</div>
+
+<h3>4.4 翻译练功房：像学语言一样，大量互译</h3>
+
+<p>下面 8 句，先全部写在纸上，再逐条展开对照。每条不超过 1 分钟。</p>
+
+<div class="trans box" data-tag="互译 8 句">
+  <p><strong>T1</strong>　自然→符号："$\lambda$ 的几何重数不超过它的代数重数。"</p>
+  <details class="answer"><summary>对照</summary><p>$\dim\ker(\lambda I-A)\le m$，其中 $\chi_A(x)=(x-\lambda)^mg(x)$，$g(\lambda)\ne0$。<strong>易错</strong>：不等号方向写反——记"到货不超过订货"（gm 是到货）。</p></details>
+  <p><strong>T2</strong>　符号→自然："$n$ 阶阵 $A$ 满足 $\operatorname{r}(2I-A)=n-1$。"这句话关于特征值 $2$ 说了什么？还缺什么信息才能判定对角化？</p>
+  <details class="answer"><summary>对照</summary><p>$\mathrm{gm}(2)=n-(n-1)=1$：属于 $2$ 的特征方向只有一条直线。要对角化还需 $\mathrm{am}(2)=1$——即 $\chi_A$ 里 $(x-2)$ 只出现一次；若 $\mathrm{am}(2)\ge2$ 则不可对角化。<strong>点评</strong>：给秩 = 给 gm，am 得从 $\chi_A$ 读，两份数据缺一不可。</p></details>
+  <p><strong>T3</strong>　五说法互译：把"$A$ <strong>不可</strong>对角化"分别用 (ii) 与 (v) 的语言说一遍。</p>
+  <details class="answer"><summary>对照</summary><p>(ii) 语言：存在特征值 $\lambda$ 使 $\mathrm{gm}(\lambda)&lt;\mathrm{am}(\lambda)$（某份订货缺货）。(v) 语言：$\bigoplus_iV_{\lambda_i}$ 装不满 $V$（$\sum\dim V_{\lambda_i}&lt;n$，特征向量凑不齐一组基）。<strong>点评</strong>：否定句不用反证——等价条件的逆否就是直接判据。</p></details>
+  <p><strong>T4</strong>　流程默写：求 $\mathrm{gm}(3)$ 的完整操作序列（四步）。</p>
+  <details class="answer"><summary>对照</summary><p>① 确认 $3$ 是特征值（$\chi_A(3)=0$，否则 $\mathrm{gm}$ 无定义）；② 拼矩阵 $3I-A$；③ 求秩 $r=\operatorname{r}(3I-A)$（行变换即可）；④ $\mathrm{gm}(3)=n-r$。<strong>易错</strong>：拼成 $A-3I$ 也没关系（秩相同），但拼成 $3I+A$ 全错——符号跟着 $\lambda I-A$ 走。</p></details>
+  <p><strong>T5</strong>　判断（说理由）："$\mathrm{am}(\lambda)=1$ 的特征值不必检查 gm。"</p>
+  <details class="answer"><summary>对照</summary><p>对。$1\le\mathrm{gm}(\lambda)\le\mathrm{am}(\lambda)=1$ 两头夹，$\mathrm{gm}(\lambda)=1$ 自动成立。<strong>用途</strong>：判定对角化时只需在重根处算秩——工作量减半的正式依据。</p></details>
+  <p><strong>T6</strong>　找坑："$A$ 是 $n$ 阶阵，在 $\mathbb C$ 上恰有 $n$ 个特征值（计重数），所以 $A$ 可对角化。"</p>
+  <details class="answer"><summary>对照</summary><p>错。$({2\ 1\atop0\ 2})$ 在 $\mathbb C$ 上有两个特征值（$2,2$），但不可对角化。可对角化要的是 <strong>$n$ 个线性无关的特征向量</strong>（特征子空间拼满），不是 $n$ 个特征值。<strong>点评</strong>："计重数"三个字正是坑——它数的是 am，订货单不等于到货。</p></details>
+  <p><strong>T7</strong>　自然→符号 + 证明一句："不同特征值的特征子空间只交于零向量。"</p>
+  <details class="answer"><summary>对照</summary><p>$\lambda\ne\mu\Rightarrow V_\lambda\cap V_\mu=\{0\}$。证：$v$ 在交中，则 $\lambda v=Av=\mu v$，$(\lambda-\mu)v=0$，而 $\lambda-\mu\ne0$，故 $v=0$。<strong>点评</strong>：这是 3.3 推论（和为直和）的最弱形态；两两交为零 $&lt;$ 和为直和，多子空间时后者才够用（想想 $\mathbb R^2$ 里三条不同直线：两两交为零，和却不是直和）。</p></details>
+  <p><strong>T8</strong>　符号→自然 + 追问："$A=2P_1+3P_2$，其中 $P_1+P_2=I$，$P_i^2=P_i$，$P_1P_2=0$。"$A$ 可对角化吗？特征值、特征子空间各是什么？</p>
+  <details class="answer"><summary>对照</summary><p>可对角化（谱分解定理的逆方向）：特征值只含于 $\{2,3\}$；$V_2=\operatorname{Im}P_1$，$V_3=\operatorname{Im}P_2$（$P_1v$ 满足 $A(P_1v)=2P_1^2v=2P_1v$）。追问 $\ker A$：若 $2,3$ 都真的取到，则 $A$ 在 $V_2\oplus V_3=V$ 上特征值全非零，$\ker A=\{0\}$，$A$ 可逆。<strong>点评</strong>：谱分解把"对角化"写成了不用换基的恒等式，读它要读出投影、像、核三件套。</p></details>
+</div>
+
+<h2>§5 类型识别：什么信号在召唤两种重数</h2>
+
+<div class="recog box" data-tag="识别反射表">
+  <table>
+    <tr><th>题面信号</th><th>反射</th></tr>
+    <tr><td>"判断 / 证明是否可对角化"</td><td>算 $\chi$；重根处查 $\mathrm{gm}=n-\operatorname{r}(\lambda I-A)$ 与 am 比对；单根免检</td></tr>
+    <tr><td>"几何重数 / 特征子空间维数 / $\dim\ker(\lambda I-A)$"</td><td>三读法互译：维数 = $n-$ 秩 = Jordan 块数（动作二）</td></tr>
+    <tr><td>"每个特征值几何重数为 1"</td><td>循环向量 ⟺ 每特征值单 Jordan 块 ⟺ $\mu=\chi$（15 届题三、17 届题四）</td></tr>
+    <tr><td>"不同特征值的特征向量"</td><td>无关性白送——最短相关组合法（工具七 · 极端原理）</td></tr>
+    <tr><td>"$A^2=A$ / $A^2=I$ / $(A-\lambda_1I)(A-\lambda_2I)=O$"</td><td>无重根零化 ⟹ 核直和 $V=\bigoplus\ker(A-\lambda_iI)$ ⟹ 可对角化 + 谱分解（动作三）</td></tr>
+    <tr><td>"$A^k=O$（幂零）"</td><td>特征值全 $0$；可对角化 $\iff$ $A=O$（变式 1）</td></tr>
+    <tr><td>"$\operatorname{rank}(cI-A)$ 出现在条件里"</td><td>官方在递 gm 的数据：$\mathrm{gm}(c)=n-\operatorname{r}(cI-A)$</td></tr>
+    <tr><td>"实对称 / 正规 / 酉矩阵"</td><td>对角化白送（谱定理，第 8 章），只剩算特征值（15 届题四、12 届题三）</td></tr>
+  </table>
+</div>
+
+<h2>§6 考法定位：它藏在哪里、值多少分</h2>
+
+<div class="exam box" data-tag="考法定位">
+  <table>
+    <tr><th>出处</th><th>题号</th><th>本章概念扮演什么角色</th><th>分值权重</th></tr>
+    <tr><td>第 15 届（2023）</td><td>题三</td><td>几何重数是题面主角：循环向量 ⟺ 每个 $\mathrm{gm}=1$；必要性用 $\operatorname{rank}(cI-A)\ge n-1$ 压 gm，充分性用根子空间直和 + Jordan 单块</td><td>20 分（直接）</td></tr>
+    <tr><td>第 15 届（2023）</td><td>题四</td><td>实对称 ⟹ 可对角化（白送）；最小多项式 $x^3-\frac{n^2}{4}x$ 无重根再确认；可对角化 ⟹ 用特征值算 $|E+A^{2023}|$</td><td>15 分（步骤分）</td></tr>
+    <tr><td>第 17 届（2025）</td><td>题四(3)</td><td>$\mu_{\mathcal A}=\chi_{\mathcal A}$ ⟹ 循环空间——与 15 届题三互为表里（$\mathrm{gm}=1$ ⟺ 单块 ⟺ $\mu=\chi$）</td><td>15 分中约 5 分</td></tr>
+    <tr><td>第 12 届（2020）</td><td>题三</td><td>酉矩阵可复对角化 + 特征值结构（实特征值 $\pm1$、非实共轭成对）作中间步骤</td><td>15 分（关键步骤）</td></tr>
+    <tr><td>第 16 届（2024）</td><td>题三</td><td>全题用秩语言推进（$\operatorname{rank}A^*\in\{0,1\}$）——与本章 $\mathrm{gm}=n-\operatorname{r}(\lambda I-A)$ 是同一把秩-零度尺子</td><td>20 分（同源工具）</td></tr>
+  </table>
+  <p><strong>规律</strong>：gm/am 语言直接上卷面的，目前就是第 15 届题三这道 20 分大题；更多年份它隐身在"可对角化 ⟹ 特征值算行列式 / 算幂"的步骤分里（15 届题四、12 届题三）。本章的五等价是<strong>翻译终点站</strong>：题面给秩、给多项式方程、给 Jordan 信息，最后都要翻译成"每个 $\mathrm{gm}=\mathrm{am}$"或"$\oplus V_{\lambda_i}=V$"来收尾。第 6、7 章点亮 (iii)(iv) 后，五条等价会在 17 届题四这类题里反复合流。</p>
+</div>
+
+<h2>§7 关系网：一次缺货，逼出两套语言</h2>
+
+<p>本章的逻辑是一张"问题—判据—方法—出口"图：<span style="color:#b45309">三角形</span>是来源动机，<span style="color:#1d4ed8">圆角矩形</span>是定义，<span style="color:#15803d">矩形</span>是定理，<span style="color:#7c3aed">六边形</span>是方法动作，<span style="color:#0f766e">椭圆</span>是应用出口。顺着箭头走一遍，就是本章的全部逻辑。</p>
+
+<figure>
+<svg viewBox="0 0 720 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="特征值两种重数关系网地图">
+  <defs>
+    <marker id="arr15" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+
+  <!-- 图例 -->
+  <polygon points="30,16 22,30 38,30" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5"/>
+  <text x="44" y="28" font-size="11.5" fill="#5c554b">来源·动机</text>
+  <rect x="116" y="17" width="22" height="13" rx="6.5" fill="#eef3fe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="144" y="28" font-size="11.5" fill="#5c554b">定义</text>
+  <rect x="196" y="17" width="22" height="13" fill="#ecf8f0" stroke="#15803d" stroke-width="1.5"/>
+  <text x="224" y="28" font-size="11.5" fill="#5c554b">定理</text>
+  <polygon points="272,23.5 278,16 292,16 298,23.5 292,31 278,31" fill="#f4effd" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="304" y="28" font-size="11.5" fill="#5c554b">方法·动作</text>
+  <ellipse cx="392" cy="23.5" rx="12" ry="7" fill="#ecf8f5" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="410" y="28" font-size="11.5" fill="#5c554b">应用·出口</text>
+
+  <!-- 来源三角 -->
+  <polygon points="150,52 62,140 238,140" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="150" y="100" font-size="12.5" fill="#7a4a12" text-anchor="middle" font-weight="bold">A = (2 1; 0 2) 的抵抗</text>
+  <text x="150" y="119" font-size="11" fill="#7a4a12" text-anchor="middle">二重特征值，只到货一条直线</text>
+
+  <!-- 三角 → 定义 -->
+  <line x1="238" y1="96" x2="300" y2="96" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr15)"/>
+  <text x="269" y="86" font-size="11" fill="#5c554b" text-anchor="middle">两种数法</text>
+
+  <!-- 定义（圆角矩形） -->
+  <rect x="306" y="58" width="270" height="76" rx="24" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="441" y="84" font-size="14.5" fill="#1d4ed8" text-anchor="middle" font-weight="bold">两种重数：am vs gm</text>
+  <text x="441" y="103" font-size="11" fill="#1d4ed8" text-anchor="middle">am：χ 中根的幂次（订货）；gm = dim ker(λI−A)（到货）</text>
+  <text x="441" y="121" font-size="11.5" fill="#1d4ed8" text-anchor="middle" font-weight="bold">核心不等式 1 ≤ gm(λ) ≤ am(λ)</text>
+
+  <!-- 定义 → 定理 -->
+  <line x1="441" y1="134" x2="441" y2="172" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr15)"/>
+  <text x="455" y="158" font-size="11" fill="#5c554b">何时到货齐全？</text>
+
+  <!-- 定理（矩形） -->
+  <rect x="231" y="178" width="420" height="70" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="441" y="201" font-size="14" fill="#15803d" text-anchor="middle" font-weight="bold">可对角化 · 五等价</text>
+  <text x="441" y="220" font-size="10.5" fill="#4a7c59" text-anchor="middle">n 个无关特征向量 ⟺ 每个 λ：am = gm ⟺ 最小多项式无重根（第 6 章）</text>
+  <text x="441" y="237" font-size="10.5" fill="#4a7c59" text-anchor="middle">⟺ Jordan 块全 1 阶（第 7 章）⟺ V = V₁⊕⋯⊕Vₛ</text>
+
+  <!-- 定义 → 方法一；定理 → 方法二、三 -->
+  <polyline points="360,134 360,152 160,152 160,288" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr15)"/>
+  <text x="166" y="148" font-size="11" fill="#5c554b">怎么证 gm ≤ am</text>
+  <line x1="330" y1="248" x2="330" y2="288" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr15)"/>
+  <text x="250" y="272" font-size="11" fill="#5c554b">无关性怎么来</text>
+  <line x1="552" y1="248" x2="552" y2="288" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr15)"/>
+  <text x="470" y="272" font-size="11" fill="#5c554b">对角化的投影写法</text>
+
+  <!-- 方法（六边形） -->
+  <polygon points="40,330 72,294 248,294 280,330 248,366 72,366" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="160" y="324" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">扩充基 + 分块矩阵</text>
+  <text x="160" y="341" font-size="10.5" fill="#6a55a3" text-anchor="middle">V_λ 的基补成全空间基，χ 长出 (x−λ)^r</text>
+  <polygon points="300,330 332,294 508,294 540,330 508,366 332,366" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="420" y="324" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">最短相关组合法</text>
+  <text x="420" y="341" font-size="10.5" fill="#6a55a3" text-anchor="middle">极端原理：A 作用一次，组合变更短</text>
+  <polygon points="556,330 584,298 660,298 688,330 660,362 584,362" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="622" y="322" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">谱分解</text>
+  <text x="622" y="338" font-size="10.5" fill="#6a55a3" text-anchor="middle">A = Σ λᵢPᵢ</text>
+  <text x="622" y="353" font-size="10" fill="#6a55a3" text-anchor="middle">Pᵢ² = Pᵢ，呼应第 2 章</text>
+
+  <!-- 方法/定理 → 出口 -->
+  <polyline points="160,366 160,420 130,420 130,452" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr15)"/>
+  <polyline points="420,366 420,398 370,398 370,452" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr15)"/>
+  <line x1="441" y1="248" x2="441" y2="452" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr15)"/>
+  <text x="455" y="360" font-size="11" fill="#5c554b">gm = 块数</text>
+  <polyline points="622,362 622,400 590,420 590,452" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr15)"/>
+
+  <!-- 出口（椭圆） -->
+  <ellipse cx="130" cy="492" rx="118" ry="32" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="130" y="488" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">第 6 章 · 最小多项式</text>
+  <text x="130" y="505" font-size="10.5" fill="#3d7a70" text-anchor="middle">无重根 ⟺ 可对角化（iii）</text>
+  <ellipse cx="370" cy="492" rx="118" ry="32" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="370" y="488" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">第 7 章 · Jordan 标准形</text>
+  <text x="370" y="505" font-size="10.5" fill="#3d7a70" text-anchor="middle">gm = 块数；缺向量的最终真相</text>
+  <ellipse cx="600" cy="492" rx="112" ry="32" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="600" y="488" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">循环向量（15 届题三）</text>
+  <text x="600" y="505" font-size="10.5" fill="#3d7a70" text-anchor="middle">每个 gm = 1 ⟺ 存在循环基</text>
+</svg>
+<figcaption>本章地图：一个缺货矩阵逼出两种重数，重数比对给出五等价判据，三件手上武器各管一段证明，再各自通往后面两章与那道 20 分真题。</figcaption>
+</figure>
+
+<div class="net box" data-tag="画面感锚点（记这些，不记条文）">
+  <table>
+    <tr><th>节点</th><th>一句话画面</th><th>擅长场景</th></tr>
+    <tr><td>$({2\ 1\atop0\ 2})$ 的抵抗</td><td>订两件到一件，缺的那条直线被剪切消灭了</td><td>一切"不可对角化"的最小模型</td></tr>
+    <tr><td>am / gm</td><td>订货单 vs 到货单；到货永不超过订货</td><td>判定对角化的全部钥匙</td></tr>
+    <tr><td>五等价</td><td>五句话，一个事实；本章管三句，第 6、7 章各管一句</td><td>翻译终点站：秩、多项式、Jordan 信息在此合流</td></tr>
+    <tr><td>扩充基 + 分块</td><td>把特征子空间的基补满，$(x-\lambda)^r$ 自己长出来</td><td>证 $\mathrm{gm}\le\mathrm{am}$；一切"扩基写矩阵"的原型</td></tr>
+    <tr><td>最短相关组合法</td><td>挑最短的零组合，$A$ 作用一次就露出更短的</td><td>不同特征值的无关性；极端原理（工具七）示范</td></tr>
+    <tr><td>谱分解</td><td>$A$ = 特征值 × 投影的加权和，不换基的对角化</td><td>$A^2=A$ 型题；幂等投影家族</td></tr>
+    <tr><td>gm = 块数</td><td>每个 Jordan 块只交出一条特征方向</td><td>读 Jordan 结构；15 届题三、17 届题四</td></tr>
+  </table>
+  <p><strong>和你已学知识的焊接点</strong>：第 1 章的<strong>基扩充定理</strong>正是核心不等式证明的第一步；第 2 章的<strong>直和判据</strong>（和 $=V$ + 交 $=0$）与 <strong>$P^2=P\Rightarrow V=\ker P\oplus\operatorname{Im}P$</strong> 是谱分解的老底；第 3 章的<strong>秩-零度</strong>给出 $\mathrm{gm}=n-\operatorname{r}(\lambda I-A)$ 这把尺子；第 4 章的<strong>相似</strong>保证 am、gm、Jordan 块数都是换基不变量。本章是把前四章的零件第一次拧成一台整机。</p>
+</div>
+
+<h2>§8 例题：先看真人怎么想，再看卷面怎么写</h2>
+
+<h3>例 1 · 把摸底 A4 做成完整示范（约 6 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>四个小问全是"<strong>计算 + 一句话判定</strong>"型：(i)(ii) 是纯计算（$\chi_A$ 与秩），(iii)(iv) 各是一条定理的直接调用（五等价 (ii)；块数 = gm）。骨架：按问分段，一段一问，判定句必须点名依据的定理。</p>
+  <p><span class="stage">【盘点】</span>$A$ 上三角——特征值躺在对角线上，$\chi_A$ 直接读出；$2I-A$ 只差一步减法。产出清单：$\mathrm{am}(2)=2$（白送）；$\operatorname{r}(2I-A)=1$（白送）。</p>
+  <p><span class="stage">【会师】</span>(iii) 要证"不可对角化"——否定句，但<strong>不需要反证</strong>：五等价 (ii) 的逆否就是直接判据，$\mathrm{gm}&lt;\mathrm{am}$ 一票否决。(iv) 要定 Jordan 形 $\Longleftarrow$ 只需块数与各块阶数 $\Longleftarrow$ 块数 $=\mathrm{gm}=1$，总阶数 $=\mathrm{am}=2$ $\Longleftarrow$ 库存全够，链条闭合。</p>
+  <p><span class="stage">【定型】</span>卷面四段对应四问；(ii) 的 gm 必须写成"$n-\operatorname{r}(2I-A)$"的秩计算，只口头说"只有一个特征向量"拿不到全分；(iv) 的依据"块数 = gm"要点名写出。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 重根必查 gm</strong>：$\chi_A$ 一有 $k$ 重根 $\lambda$（$k\ge2$），立刻算 $\mathrm{gm}(\lambda)=n-\operatorname{r}(\lambda I-A)$ 与 $k$ 比对——相等则该根到货齐全，不等则对角化破产、且 $\mathrm{am}-\mathrm{gm}$ 透露 Jordan 结构。单根免检（$\mathrm{am}=1\Rightarrow\mathrm{gm}=1$）。这是判定对角化的唯一流程，没有第二种。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 1</strong>　设 $A=\begin{pmatrix}2&1\\0&2\end{pmatrix}$。（i）求 $A$ 的特征多项式与每个特征值的代数重数；（ii）求每个特征值的几何重数；（iii）判断 $A$ 是否可对角化，说明理由；（iv）写出 $A$ 的 Jordan 标准形。</p>
+  <hr>
+  <p class="proof-line"><strong>解</strong>　（i）$\chi_A(\lambda)=\det(\lambda I-A)=\begin{vmatrix}\lambda-2&-1\\0&\lambda-2\end{vmatrix}=(\lambda-2)^2$。唯一特征值 $\lambda=2$，$\mathrm{am}(2)=2$。<span class="step-score">（2 分）</span></p>
+  <p class="proof-line">（ii）$2I-A=\begin{pmatrix}0&-1\\0&0\end{pmatrix}$，$\operatorname{r}(2I-A)=1$，故
+  $$\mathrm{gm}(2)=n-\operatorname{r}(2I-A)=2-1=1,$$
+  $V_2=\ker(2I-A)=\operatorname{span}\{(1,0)^{T}\}$。<span class="step-score">（4 分）</span></p>
+  <p class="proof-line">（iii）$\mathrm{gm}(2)=1&lt;2=\mathrm{am}(2)$，由可对角化判据（五等价 (ii)：可对角化 $\iff$ 每个特征值 $\mathrm{am}=\mathrm{gm}$），$A$ <strong>不可对角化</strong>。<span class="step-score">（5 分）</span></p>
+  <p class="proof-line">（iv）$\mathrm{gm}(2)=1$ ⟹ 属于 $2$ 的 Jordan 块恰有 $1$ 块（块数 = 几何重数），其阶数 $=\mathrm{am}(2)=2$，故
+  $$J=J_2(2)=\begin{pmatrix}2&1\\0&2\end{pmatrix}=A,$$
+  $A$ 本身就是自己的 Jordan 标准形。<span class="step-score">（6 分）</span></p>
+  <p class="aside">书写点评：(iii) 的判定句里"由五等价 (ii)"不能省——结论必须挂在定理上；(iv) 的"块数 = 几何重数"就是这一步的分点，光写出 $J$ 不引依据，扣步骤分。</p>
+</div>
+
+<h3>例 2 · 幂等矩阵：$A^2=A$ 的对角化与谱分解（约 10 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>结论三层：(a) 特征值 $\subseteq\{0,1\}$；(b) $A$ 可对角化；(c) 直和 + 谱分解。(a) 是"$\lambda$ 满足同一方程"型：设 $Av=\lambda v$ 倒推出 $\lambda$ 的方程；(b) 查五等价选哪条——题面没有 $\chi$、没有 Jordan、没有最小多项式，只有 $A^2=A$，最适合 (v)：<strong>直接造直和</strong> $V=\ker A\oplus\ker(I-A)$（这两个 $\ker$ 正是 $V_0$ 与 $V_1$）；(c) 投影就是 $P_1=A$、$P_0=I-A$，$P^2=P$ 呼应第 2 章。</p>
+  <p><span class="stage">【盘点】</span>$A^2=A$ 产出三条：① $A(I-A)=O$；② 对任意 $v$，$Av\in\ker(I-A)$（因 $(I-A)Av=Av-A^2v=0$），$v-Av\in\ker A$——<strong>分解式 $v=(v-Av)+Av$ 白送</strong>；③ $\ker A\cap\ker(I-A)=0$（$Av=0$ 且 $Av=v$ 则 $v=0$）。</p>
+  <p><span class="stage">【会师】</span>(b) $\Longleftarrow$ $V=V_0\oplus V_1$ $\Longleftarrow$ 直和判据两件货（第 2 章）：和 $=V$（分解式②）+ 交 $=0$（③）。(a) $\Longleftarrow$ $\lambda^2=\lambda$（$A^2v=\lambda^2v$ 与 $A^2v=Av=\lambda v$ 会师）。(c) $\Longleftarrow$ 验证 $P_0=I-A$、$P_1=A$ 满足 $P_i^2=P_i$、$P_0P_1=O$、$P_0+P_1=I$，则 $A=0\cdot P_0+1\cdot P_1$。</p>
+  <p><span class="stage">【定型前 · 分解式从哪来】</span>分解式不是背出来的，是<strong>倒推</strong>（工具一）：要 $v=u+w$，$u\in\ker A$、$w\in\ker(I-A)$，则 $Aw=A(v-u)=Av$，即 $w=Av$，剩下 $u=v-Av$。草稿纸三行，卷面一行。</p>
+  <p><span class="stage">【定型】</span>先 (a) 一行，再 (b) 两件货格式，最后一句话点亮五等价 (v) ⟹ 可对角化，顺手写谱分解。预告第 6 章：$x^2-x=x(x-1)$ <strong>无重根</strong>且零化 $A$ ⟹ 可对角化——等价条件 (iii) 的提前点映。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 无重根零化 ⟹ 核直和</strong>：见 $f(A)=O$ 且 $f$ 无重根（本章先会 $f=x^2-x$、$x^2-1$、$(x-1)(x-2)$ 这类一次因子全异的），把每个根 $\lambda_i$ 分一间核 $\ker(A-\lambda_iI)$，用待定系数造分解式 $v=\sum v_i$，交直和判据两件货——可对角化与谱分解一次到账。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 2</strong>　设 $n$ 阶方阵 $A$ 满足 $A^2=A$。证明：（i）$A$ 的特征值只可能是 $0$ 或 $1$；（ii）$V=\ker A\oplus\ker(I-A)$，从而 $A$ 可对角化；（iii）写出 $A$ 的谱分解，并说明 $\mathrm{gm}(0)+\mathrm{gm}(1)=n$。</p>
+  <hr>
+  <p><strong>证明</strong>　（i）设 $Av=\lambda v$，$v\ne0$。则 $\lambda^2v=A^2v=Av=\lambda v$，即 $(\lambda^2-\lambda)v=0$；$v\ne0$，故 $\lambda^2=\lambda$，$\lambda\in\{0,1\}$。<span class="step-score">（2 分）</span></p>
+  <p class="proof-line">（ii）<strong>和 $=V$</strong>：对任意 $v\in V$，写
+  $$v=(v-Av)+Av.$$
+  由 $A^2=A$：$A(v-Av)=Av-A^2v=0$，故 $v-Av\in\ker A$；$(I-A)Av=Av-A^2v=0$，故 $Av\in\ker(I-A)$。于是 $V=\ker A+\ker(I-A)$。<span class="step-score">（5 分）</span></p>
+  <p class="proof-line"><strong>交 $=0$</strong>：若 $v\in\ker A\cap\ker(I-A)$，则 $Av=0$ 且 $v=Av$，得 $v=0$。由直和判据，$V=\ker A\oplus\ker(I-A)$。<span class="step-score">（7 分）</span></p>
+  <p class="proof-line">注意 $\ker A=V_0$、$\ker(I-A)=V_1$（若 $0$ 或 $1$ 不是特征值，相应的 $\ker=\{0\}$，论证不变；$A=O$ 或 $A=I$ 时 $A$ 本身已是对角阵）。于是 $V=V_0\oplus V_1$，由五等价 (v)，$A$ 可对角化。<span class="step-score">（8 分）</span></p>
+  <p class="proof-line">（iii）令 $P_0=I-A$，$P_1=A$。则 $P_i^2=P_i$（$A^2=A$），$P_0P_1=(I-A)A=O$，$P_0+P_1=I$，且
+  $$A=0\cdot P_0+1\cdot P_1,\qquad \operatorname{Im}P_1=V_1,\quad \operatorname{Im}P_0=V_0,$$
+  即 $A$ 的谱分解。最后
+  $$\mathrm{gm}(0)+\mathrm{gm}(1)=\dim\ker A+\dim\ker(I-A)=\dim(V_0\oplus V_1)=n.$$
+  $\square$<span class="step-score">（10 分）</span></p>
+  <p class="aside">书写点评：(ii) 的两件货一件都不能少——只写分解式不证交为零，直和不成立；分解式中两项各属哪个核，必须像上面那样逐一代入验证，跳步 = 白丢 3 分。副产品顺手记：由秩-零度，$(n-\operatorname{r}A)+(n-\operatorname{r}(I-A))=n$，即 $\operatorname{r}A+\operatorname{r}(I-A)=n$——幂等矩阵的经典秩等式。</p>
+</div>
+
+<h2>§9 配套题目</h2>
+
+<p>铁律：<strong>先写在纸上，写到写不动再展开答案</strong>。模仿题照例 1、例 2 的卷面格式写；变式题开始没有模板，先问自己"五等价里哪条最顺手、分解式怎么倒推"。</p>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 1</span>设 $A=\begin{pmatrix}2&0&0\\0&2&1\\0&0&2\end{pmatrix}$。（i）求特征多项式与每个特征值的代数重数；（ii）求每个特征值的几何重数；（iii）判断 $A$ 是否可对角化；（iv）写出 $A$ 的 Jordan 标准形。</p>
+  <details class="answer">
+    <summary>参考答案（约 6 分书写量）</summary>
+    <p>（i）$A$ 上三角，$\chi_A(\lambda)=(\lambda-2)^3$，唯一特征值 $2$，$\mathrm{am}(2)=3$（2 分）。</p>
+    <p>（ii）$2I-A=\begin{pmatrix}0&0&0\\0&0&-1\\0&0&0\end{pmatrix}$，秩 $1$，$\mathrm{gm}(2)=3-1=2$，$V_2=\operatorname{span}\{e_1,e_2\}$（4 分）。</p>
+    <p>（iii）$\mathrm{gm}(2)=2&lt;3=\mathrm{am}(2)$，由五等价 (ii)，不可对角化（5 分）。</p>
+    <p>（iv）块数 $=\mathrm{gm}(2)=2$，总阶数 $3$，分拆唯一：$3=2+1$，故 $J=J_2(2)\oplus J_1(2)=\begin{pmatrix}2&1&0\\0&2&0\\0&0&2\end{pmatrix}$（6 分）。</p>
+    <p><strong>易错点</strong>：(iv) 的分拆 $3=2+1$ 是由"2 块、总阶 3"唯一确定的——若错算成 $\mathrm{gm}=1$ 就会写出整块 $J_3(2)$。gm 算错，Jordan 形跟着全错。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 2</span>设 $n$ 阶方阵 $A$ 满足 $A^2=I$（对合矩阵）。证明：$A$ 的特征值只可能是 $\pm1$，且 $V=\ker(A-I)\oplus\ker(A+I)$，从而 $A$ 可对角化；写出谱分解。</p>
+  <details class="answer">
+    <summary>参考答案（约 8 分书写量）</summary>
+    <p><strong>特征值</strong>：$Av=\lambda v$（$v\ne0$）$\Rightarrow$ $\lambda^2v=A^2v=v$，$(\lambda^2-1)v=0$ $\Rightarrow$ $\lambda=\pm1$（2 分）。</p>
+    <p><strong>直和</strong>：分解式 $v=\dfrac{v+Av}{2}+\dfrac{v-Av}{2}$。验证：$(A-I)(v+Av)=Av+A^2v-v-Av=0$ ⟹ $\frac{v+Av}{2}\in\ker(A-I)=V_1$；$(A+I)(v-Av)=Av-A^2v+v-Av=0$ ⟹ $\frac{v-Av}{2}\in\ker(A+I)=V_{-1}$（5 分）。交：$Av=v$ 且 $Av=-v$ ⟹ $v=0$。故 $V=V_1\oplus V_{-1}$，由五等价 (v) 可对角化（7 分）。</p>
+    <p><strong>谱分解</strong>：$P_1=\dfrac{I+A}{2}$，$P_{-1}=\dfrac{I-A}{2}$，$A=1\cdot P_1+(-1)\cdot P_{-1}$（8 分）。</p>
+    <p><strong>自查</strong>：你的分解式是倒推出来的吗？设 $v=u+w$，$u\in V_1$、$w\in V_{-1}$，则 $Av=u-w$，联立 $v=u+w$ 解出 $u=\frac{v+Av}{2}$——和例 2 同一个倒推程序。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 1</span>设 $A$ 为 $n$ 阶复方阵，且存在正整数 $k$ 使 $A^k=O$（幂零矩阵）。证明：$A$ 可对角化当且仅当 $A=O$。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：先定特征值（"$\lambda$ 满足同一方程"型），再用五等价 (ii) 把"可对角化"翻译成 gm 的条件。</p>
+    <p><strong>证明</strong>：设 $Av=\lambda v$，$v\ne0$，则 $0=A^kv=\lambda^kv$，故 $\lambda=0$——$A$ 的特征值只有 $0$，$\chi_A(\lambda)=\lambda^n$，$\mathrm{am}(0)=n$。</p>
+    <p>若 $A$ 可对角化，由五等价 (ii)：$\mathrm{gm}(0)=\mathrm{am}(0)=n$，即 $\dim\ker A=n$，$\ker A=\mathbb C^n$，故 $A=O$。反向显然（$O$ 已是对角阵）。$\square$</p>
+    <p><strong>点评</strong>：一句话记忆——<strong>幂零 + 可对角化 = 零矩阵</strong>。它解释了为什么 $({2\ 1\atop0\ 2})$ 必然抵抗：$A-2I$ 幂零且非零，整块 $J_2(2)$ 里那份幂零部分正是缺向量的元凶（第 7 章把这句话变成定理）。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 2</span>设 $n$ 阶方阵 $A$ 满足 $A^2-3A+2I=O$。证明：$A$ 可对角化，特征值只可能是 $1$ 或 $2$，并给出谱分解。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：$(A-I)(A-2I)=O$——无重根零化，动作三。关键是造出把 $v$ 拆进两间核的分解式；倒推：设 $v=u+w$，$u\in V_1$、$w\in V_2$，则 $Av=u+2w$，与 $v=u+w$ 联立解出 $u=2v-Av$，$w=Av-v$。</p>
+    <p><strong>证明</strong>：$Av=\lambda v$（$v\ne0$）$\Rightarrow$ $(\lambda^2-3\lambda+2)v=0$ $\Rightarrow$ $\lambda\in\{1,2\}$。</p>
+    <p>对任意 $v$，写 $v=(2v-Av)+(Av-v)$。验证：$(A-I)(2v-Av)=-(A-I)(A-2I)v=0$ ⟹ $2v-Av\in\ker(A-I)=V_1$；$(A-2I)(Av-v)=(A-I)(A-2I)v=0$ ⟹ $Av-v\in\ker(A-2I)=V_2$（两因子可交换，次序无碍）。交：$Av=v=2v$ ⟹ $v=0$。故 $V=V_1\oplus V_2$，由五等价 (v)，$A$ 可对角化。</p>
+    <p>谱分解：$P_1=2I-A$，$P_2=A-I$（验证 $P_1^2=(2I-A)^2=4I-4A+A^2=2I-A=P_1$，用到 $A^2=3A-2I$；$P_1+P_2=I$，$P_1P_2=O$），
+    $$A=1\cdot(2I-A)+2\cdot(A-I).\qquad\square$$</p>
+    <p><strong>点评</strong>：例 2（根 $0,1$）、模仿 2（根 $\pm1$）、本题（根 $1,2$）是同一台机器的三个档位——<strong>无重根零化 ⟹ 核直和</strong>。第 6 章会把"同一台机器"升级为定理：最小多项式无重根 ⟺ 可对角化。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv3">真题节选</span><strong>（第 15 届题三，20 分）</strong>设 $V$ 是复数域 $\mathbb{C}$ 上的 $n$ 维线性空间，$\mathbf{A}$ 是 $V$ 上的一个线性变换。证明：存在 $\alpha\in V$ 使得 $\left\{\alpha,\mathbf{A}\alpha,\cdots,\mathbf{A}^{n-1}\alpha\right\}$ 成为 $V$ 的一组基，当且仅当对于 $\mathbf{A}$ 的任一特征值 $\lambda$，$\lambda$ 的几何重数为 $1$。</p>
+  <p>这是本章的"本命题"——题面直接写着"几何重数"。先回答三个梯子问题（写在纸上）：</p>
+  <p>（i）<strong>必要性方向</strong>：在基 $\{\alpha,\mathbf A\alpha,\dots,\mathbf A^{n-1}\alpha\}$ 下，$\mathbf A$ 的矩阵长什么样（前几列是什么）？这个矩阵 $A$ 的 $cI-A$ 为什么总有一个非零的 $n-1$ 阶子式？由此 $\operatorname{rank}(cI-A)\ge n-1$，它能压住 $\mathrm{gm}$ 的上界还是下界？<br>
+  （ii）<strong>充分性方向</strong>："$\lambda_i$ 的几何重数为 $1$"用 §3.6 的语言翻译，Jordan 形长什么样？为什么单个 $d_i$ 阶 Jordan 块里，一定存在 $\alpha_i$ 使 $(\mathbf A-\lambda_i\mathbf I)^{d_i-1}\alpha_i\ne0$？<br>
+  （iii）<strong>合拢</strong>：令 $\alpha=\alpha_1+\cdots+\alpha_s$。若 $p(\mathbf A)\alpha=0$（$p\ne0$，$\deg p\le n-1$），根子空间直和分解 + 不变性给出每个 $p(\mathbf A)\alpha_i=0$；为什么 $(x-\lambda_i)^{d_i}\mid p(x)$？这些因子两两互素，推出什么矛盾？</p>
+  <details class="answer">
+    <summary>梯子参考答案</summary>
+    <p>（i）$\mathbf A\alpha$ 是第二个基向量，$\mathbf A(\mathbf A\alpha)=\mathbf A^2\alpha$ 是第三个……前 $n-1$ 列都是"下一个标准位" $e_{i+1}$，只有最后一列有未知元——<strong>友矩阵</strong>（次对角线全 $1$）。$cI-A$ 划去第一行与最后一列，剩下的 $n-1$ 阶子式以次对角线上的 $-1$ 为对角线，行列式 $=(-1)^{n-1}\ne0$，故 $\operatorname{rank}(cI-A)\ge n-1$，解空间维数 $=n-\operatorname{rank}\le1$——压住 gm 的<strong>上界</strong>（$\mathrm{gm}(\lambda)\le1$），又特征值处 $\mathrm{gm}\ge1$，合起来 $\mathrm{gm}=1$。</p>
+    <p>（ii）$\mathrm{gm}(\lambda_i)=1$ ⟺ 属于 $\lambda_i$ 的 Jordan 块只有一块（§3.6），即 $\mathbf A|_{V_{\lambda_i}}$ 的 Jordan 形是单个 $J_{d_i}(\lambda_i)$。单块是"一条幂零链"：$N=J_{d_i}-\lambda_iI$ 满足 $N^{d_i}=O$ 但 $N^{d_i-1}\ne O$，取链顶端的 $\alpha_i$（如 $e_{d_i}$）即得 $(\mathbf A-\lambda_i\mathbf I)^{d_i-1}\alpha_i\ne0$。</p>
+    <p>（iii）$V=\bigoplus V_{\lambda_i}$ 且各 $V_{\lambda_i}$ 是 $\mathbf A$-不变的（从而是 $p(\mathbf A)$-不变的）：$p(\mathbf A)\alpha=\sum p(\mathbf A)\alpha_i=0$ 是直和中的零表出，故每个分量 $p(\mathbf A)\alpha_i=0$。零化 $\alpha_i$ 的多项式全体由最低次的那个生成（带余除法），而 $(x-\lambda_i)^{d_i}$ 零化 $\alpha_i$ 且次数不能再低（由 (ii) 的选取），故 $(x-\lambda_i)^{d_i}\mid p$。各因子两两互素 ⟹ $f(x)=\prod(x-\lambda_i)^{d_i}\mid p(x)$，但 $\deg p\le n-1&lt;n=\deg f$ 且 $p\ne0$，矛盾。故 $\{\alpha,\mathbf A\alpha,\dots,\mathbf A^{n-1}\alpha\}$ 无关，$n$ 个无关向量在 $n$ 维空间中成基。</p>
+  </details>
+  <details class="answer">
+    <summary>官方解答骨架（转录自官方参考答案）</summary>
+    <p><strong>必要性</strong>：在基 $\{\alpha,\mathbf{A}\alpha,\dots,\mathbf{A}^{n-1}\alpha\}$ 下 $\mathbf{A}$ 的矩阵为友矩阵
+    $$A=\begin{pmatrix}0&&&*\\1&0&&*\\&1&\ddots&\vdots\\&&\ddots&0&*\\&&&1&*\end{pmatrix}.$$<span class="step-score">（2 分）</span></p>
+    <p>对任意 $c\in\mathbb{C}$，$cI-A$ 左下角的 $n-1$ 阶子式非零，故 $\operatorname{rank}(cI-A)\ge n-1$，$(cI-A)X=0$ 解空间维数 $\le1$。<span class="step-score">（5 分）</span>
+    又对特征值 $\lambda$，$(\lambda I-A)X=0$ 必有非零解，解空间维数 $\ge1$；合起来维数恰为 $1$，即 $\lambda$ 的几何重数为 $1$。<span class="step-score">（8 分）</span></p>
+    <p><strong>充分性</strong>：设互不相同的特征值 $\lambda_1,\dots,\lambda_s$，代数重数 $d_1,\dots,d_s$（$\sum d_i=n$），特征多项式 $f(x)=\prod(x-\lambda_i)^{d_i}$。记 $V_{\lambda_i}=\operatorname{Ker}(\mathbf{A}-\lambda_i\mathbf{I})^{d_i}$（$\mathbf{A}$-不变子空间），则 $V=V_{\lambda_1}\oplus\cdots\oplus V_{\lambda_s}$。<span class="step-score">（11 分）</span>
+    $\lambda_i$ 几何重数为 $1$ ⟹ $\mathbf{A}|_{V_{\lambda_i}}$ 的 Jordan 标准型是单个 $d_i$ 阶 Jordan 块，故存在 $\alpha_i\in V_{\lambda_i}$ 使 $(\mathbf{A}-\lambda_i\mathbf{I})^{d_i-1}\alpha_i\ne0$。<span class="step-score">（14 分）</span></p>
+    <p>令 $\alpha=\alpha_1+\cdots+\alpha_s$。若 $\alpha,\mathbf{A}\alpha,\dots,\mathbf{A}^{n-1}\alpha$ 线性相关，则有非零 $p(x)\in\mathbb{C}[x]$（$\deg\le n-1$）使 $p(\mathbf{A})\alpha=0$；由直和分解与不变性得 $p(\mathbf{A})\alpha_i=0$，而 $(x-\lambda_i)^{d_i}$ 是零化 $\alpha_i$ 的最低次多项式，故 $(x-\lambda_i)^{d_i}\mid p(x)$<span class="step-score">（18 分）</span>；各因子两两互素 ⟹ $f(x)\mid p(x)$，与 $\deg p&lt;\deg f$ 且 $p\ne0$ 矛盾。<span class="step-score">（20 分）</span></p>
+    <p><strong>复盘</strong>：必要性就是本章<strong>动作二</strong>（gm 的秩读法：$\operatorname{rank}(cI-A)\ge n-1\iff\mathrm{gm}\le1$）加核心不等式的左半（$\mathrm{gm}\ge1$）；充分性是"根子空间直和（第 2 章）+ 块数 = gm（§3.6）+ 零化多项式整除（第 6 章预演）"三军会师。注意官方记号 $V_{\lambda_i}=\operatorname{Ker}(\mathbf A-\lambda_i\mathbf I)^{d_i}$ 是<strong>根子空间</strong>（广义特征子空间），比本章的 $V_\lambda=\ker(\lambda I-A)$ 大——两者相等当且仅当该特征值无高阶 Jordan 块，这个区别第 7 章细说。<em>（题目与解答转录自第 15 届官方 PDF，见 <a href="真题索引/第15届_2023.md">真题索引</a>。）</em></p>
+  </details>
+</div>
+
+<h2>§9.5 熟练度训练场</h2>
+
+<p>理解只是入场券，<strong>考场上拼的是基本动作的速度</strong>。两种训练，每天 10 分钟：</p>
+
+<h3>训练一 · 翻卡快测（目标：每卡 10 秒内出答案）</h3>
+<div class="quiz" data-quiz="ch15-drill"></div>
+
+<h3>训练二 · 计时默写（写在纸上，掐表）</h3>
+<div class="calc box" data-tag="默写清单">
+  <p>① <strong>60 秒</strong>：默写 $V_\lambda$、$\mathrm{am}(\lambda)$、$\mathrm{gm}(\lambda)$ 的定义与核心不等式 $1\le\mathrm{gm}(\lambda)\le\mathrm{am}(\lambda)$（一字不差）；</p>
+  <p>② <strong>90 秒</strong>：默写 $\mathrm{gm}(\lambda)\le\mathrm{am}(\lambda)$ 的证明骨架（$V_\lambda$ 的基 → 基扩充 → 分块矩阵 $\begin{pmatrix}\lambda I_r&B\\0&C\end{pmatrix}$ → $(x-\lambda)^r\mid\chi_A$，四个环节必须在）；</p>
+  <p>③ <strong>90 秒</strong>：默写可对角化五等价全句，并写出本章所证链 (i)⟺(v)⟺(ii) 四个箭头各自的依据（直和推论 / 基拼接 / 夹逼 / $n$ 维子空间）。</p>
+  <p><strong>过关标准</strong>：连续两天全对才算过。做不到就回到对应小节重读，再默。</p>
+</div>
+
+<h2>§10 六方向自测卡</h2>
+
+<div class="selftest">
+  <h3>合上书，拿张白纸，默写以下六项</h3>
+  <div class="st-item">
+    <p class="st-q"><em>=（它是什么）</em>　写出 $\mathrm{am}(\lambda)$ 与 $\mathrm{gm}(\lambda)$ 的完整定义，以及核心不等式。</p>
+    <details><summary>对照</summary><p>$\mathrm{am}(\lambda)$ = $\lambda$ 作为 $\chi_A$ 根的重数（$\chi_A=(x-\lambda)^mg,\ g(\lambda)\ne0$）；$\mathrm{gm}(\lambda)=\dim V_\lambda=\dim\ker(\lambda I-A)=n-\operatorname{r}(\lambda I-A)$；$1\le\mathrm{gm}(\lambda)\le\mathrm{am}(\lambda)$。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>←（什么带来它）</em>　哪个矩阵逼出了两种重数？它的症状是什么？</p>
+    <details><summary>对照</summary><p>$A=({2\ 1\atop0\ 2})$（第 0 章 A4）。$\chi_A=(\lambda-2)^2$ 订货两件，$V_2=\operatorname{span}\{(1,0)^T\}$ 到货一件：$\mathrm{am}(2)=2$，$\mathrm{gm}(2)=1$，怎么换基都不肯对角化。缺向量 = 两种数法不一致。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>→（它带来什么）</em>　说出由两种重数出发的三条出口。</p>
+    <details><summary>对照</summary><p>① 可对角化判据：每个 $\mathrm{gm}=\mathrm{am}$（五等价，另四条：$n$ 个无关特征向量 / $\mu$ 无重根 / Jordan 全 1 阶 / $V=\oplus V_{\lambda_i}$）；② 谱分解 $A=\sum\lambda_iP_i$（$P_i^2=P_i$）；③ $\mathrm{gm}$ = Jordan 块数 → 循环向量 ⟺ 每特征值 gm = 1（15 届题三）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>∈（实例）</em>　各写一个矩阵使指定特征值处 $(\mathrm{am},\mathrm{gm})$ 为 $(2,1)$、$(2,2)$、$(1,1)$。</p>
+    <details><summary>对照</summary><p>$({2\ 1\atop0\ 2})$ 在 $\lambda=2$ 处 $(2,1)$；$2I_2$ 在 $\lambda=2$ 处 $(2,2)$（到货齐全）；$\operatorname{diag}(2,3)$ 在每个特征值处 $(1,1)$。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>≠（区分）</em>　am 与 gm 的三处不同；"$n$ 个特征值" 与 "$n$ 个无关特征向量" 的不同。</p>
+    <details><summary>对照</summary><p>am 在多项式里数（由 $\chi_A$ 读出，订货）、gm 在空间里数（由秩算出，到货）；am 只报账不点货（am 相同 gm 可不同：$({2\ 1\atop0\ 2})$ vs $2I_2$）；可对角化由 gm 全满判定，不由 am 判定。"$n$ 个特征值（计重数）"是 $\sum\mathrm{am}=n$，白送；"$n$ 个无关特征向量"是 $\sum\mathrm{gm}=n$，才是对角化——$({2\ 1\atop0\ 2})$ 有前者无后者。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>（为何要有它）</em>　只学代数重数不够吗？gm 多量化出了什么？</p>
+    <details><summary>对照</summary><p>不够。am 看不见"缺几条特征方向"，而缺不缺正是可对角化的全部。gm 把缺失量化成 $\dim\ker(\lambda I-A)$，并一路接上 Jordan 块数、循环向量、$\mu=\chi$——它是特征值理论从"会算"走向"会证"的那座桥。</p></details>
+  </div>
+</div>
+
+<div class="net box" data-tag="间隔复习安排">
+  <p><strong>1 天后</strong>：重做六方向自测卡（不翻书）+ 翻卡快测第二轮；<strong>3 天后</strong>：重做变式 2 与真题节选的三个梯子问题 + 计时默写②③；<strong>1 周后</strong>：默写五等价全句，确认翻卡全部"会了"，并把 widget 的剪切阵再扫一遍（肌肉记忆 gm = 1）。</p>
+  <p>本章是<strong>第 6 章</strong>（五等价 (iii)：最小多项式无重根 ⟺ 可对角化）与<strong>第 7 章</strong>（五等价 (iv)：Jordan 块全 1 阶；块数 = gm 的完整证明）的直接地基——第 15 届题三的充分性在第 7 章学完后应能独立写出。</p>
+</div>
+
+<div class="chapnav">
+  <span><a href="ch14.html">← 第 4 章 · 表示矩阵与相似：换基的艺术</a></span>
+  <span><a href="index.html">首页</a></span>
+  <span><a href="ch16.html">第 6 章 · Cayley-Hamilton 与最小多项式 →</a></span>
+</div>
+
+</div>
+
+<script src="assets/quiz.js"></script>
+<script>
+/* §9.5 翻卡数据 */
+registerQuiz("ch15-drill", [
+  { q: "$\\mathrm{am}(\\lambda)$ 的定义？", a: "$\\lambda$ 作为 $\\chi_A$ 根的重数：$\\chi_A(x)=(x-\\lambda)^m g(x)$，$g(\\lambda)\\ne0$。订货单——在多项式里数。" },
+  { q: "$\\mathrm{gm}(\\lambda)$ 的定义？三种算法？", a: "$\\dim\\ker(\\lambda I-A)=n-\\operatorname{r}(\\lambda I-A)$ = $\\lambda$ 的无关特征向量最大个数 = Jordan 块个数。到货单——在空间里数。" },
+  { q: "核心不等式？证明骨架？", a: "$1\\le\\mathrm{gm}(\\lambda)\\le\\mathrm{am}(\\lambda)$。左：有非零解。右：$V_\\lambda$ 的基扩充成全空间基，分块矩阵使 $(x-\\lambda)^{\\mathrm{gm}}\\mid\\chi_A$。" },
+  { q: "$({2\\ 1\\atop0\\ 2})$ 的 $\\mathrm{am}(2)$、$\\mathrm{gm}(2)$？可否对角化？", a: "$\\mathrm{am}(2)=2$，$\\mathrm{gm}(2)=1$，不可对角化（gm&lt;am 缺向量）。它的 Jordan 标准形就是它自己。" },
+  { q: "可对角化的五个等价条件？", a: "n 个无关特征向量 ⟺ 每个 $\\lambda$ 有 am = gm ⟺ 最小多项式无重根 ⟺ Jordan 块全 1 阶 ⟺ $V=\\oplus V_{\\lambda_i}$。" },
+  { q: "不同特征值的特征向量为何线性无关？", a: "最短相关组合法（工具七 · 极端原理）：取项数最少的非平凡零组合，作用 A 后与原式乘 $\\lambda_1$ 相减，得到更短的非平凡零组合，矛盾。" },
+  { q: "$A^2=A$：特征值？为何可对角化？谱分解？", a: "$\\lambda\\in\\{0,1\\}$；分解式 $v=(v-Av)+Av$ 给出 $V=\\ker A\\oplus\\ker(I-A)=V_0\\oplus V_1$；$A=0\\cdot(I-A)+1\\cdot A$。" },
+  { q: "谱分解定理说什么？", a: "A 可对角化 ⟺ $A=\\sum_i\\lambda_iP_i$，其中 $P_i^2=P_i$、$P_iP_j=0\\ (i\\ne j)$、$\\sum_iP_i=I$，且 $\\operatorname{Im}P_i=V_{\\lambda_i}$。" },
+  { q: "「每个特征值 gm = 1」等价于哪三件事？", a: "每个特征值只有一个 Jordan 块 ⟺ 存在循环向量 $\\{\\alpha,A\\alpha,\\dots,A^{n-1}\\alpha\\}$ 成基 ⟺ 最小多项式 = 特征多项式（15 届题三、17 届题四）。" },
+  { q: "$\\mathrm{am}(\\lambda)=3$ 时 gm 的所有可能与 Jordan 分拆？", a: "gm = 1：一整块（3）；gm = 2：3 = 2+1；gm = 3：3 = 1+1+1，可对角化（$\\lambda I_3$）。" }
+]);
+</script>
+
+<script>
+/* §2.1 特征方向探索器 */
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  var svg = document.getElementById("evw-svg");
+  var out = document.getElementById("evw-out");
+  var slider = document.getElementById("evw-th");
+  var CX = 250, CY = 260, R = 90, TOL = 0.06;
+  var PRESETS = {
+    sym: {
+      m: [[2, 1], [1, 2]], label: "对称 S = (2 1; 1 2)", chi: "χ(λ) = λ² − 4λ + 3 = (λ−3)(λ−1)",
+      eigs: [{ ang: Math.PI / 4, lam: 3 }, { ang: 3 * Math.PI / 4, lam: 1 }],
+      story: "两个特征方向（λ = 3 与 λ = 1）：每个 am = gm = 1，到货齐全，S 可对角化（实对称，第 8 章还会白送一次）。"
+    },
+    shear: {
+      m: [[1, 1], [0, 1]], label: "剪切 H = (1 1; 0 1)", chi: "χ(λ) = (λ−1)²",
+      eigs: [{ ang: 0, lam: 1 }],
+      story: "am(1) = 2 订了两件货，全圆却只有一个共线方向：gm(1) = 1。缺的那条永远找不到——H 不可对角化，与本章主角 (2 1; 0 2) 同款病。"
+    },
+    rot: {
+      m: [[0, -1], [1, 0]], label: "旋转 R = (0 −1; 1 0)", chi: "χ(λ) = λ² + 1",
+      eigs: [],
+      story: "实数内没有特征值（特征值是 ±i）：扫满一圈一次共线都不出现。订货单开在复数域——到 ℂ 上它反而可对角化。"
+    }
+  };
+  var cur = "sym";
+  var theta = 25 * Math.PI / 180;
+  var found = { sym: [false, false], shear: [false], rot: [] };
+  var buttons = { sym: document.getElementById("evw-bsym"), shear: document.getElementById("evw-bshear"), rot: document.getElementById("evw-brot") };
+
+  function mk(tag, attrs) {
+    var el = document.createElementNS(NS, tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    svg.appendChild(el);
+    return el;
+  }
+  function mkText(x, y, str, attrs) {
+    var t = mk("text", attrs || {});
+    t.setAttribute("x", x); t.setAttribute("y", y);
+    t.textContent = str;
+    return t;
+  }
+  /* 箭头标记 */
+  var defs = mk("defs", {});
+  [["evw-arrB", "#1d4ed8"], ["evw-arrR", "#be123c"]].forEach(function (pair) {
+    var marker = document.createElementNS(NS, "marker");
+    marker.setAttribute("id", pair[0]);
+    marker.setAttribute("viewBox", "0 0 10 10");
+    marker.setAttribute("refX", "9"); marker.setAttribute("refY", "5");
+    marker.setAttribute("markerWidth", "7"); marker.setAttribute("markerHeight", "7");
+    marker.setAttribute("orient", "auto-start-reverse");
+    var path = document.createElementNS(NS, "path");
+    path.setAttribute("d", "M 0 1 L 9 5 L 0 9 z");
+    path.setAttribute("fill", pair[1]);
+    marker.appendChild(path);
+    defs.appendChild(marker);
+  });
+  /* 坐标轴与单位圆 */
+  mk("line", { x1: CX - 225, y1: CY, x2: CX + 225, y2: CY, stroke: "#2b2620", "stroke-width": 1.2 });
+  mk("line", { x1: CX, y1: CY + 225, x2: CX, y2: CY - 225, stroke: "#2b2620", "stroke-width": 1.2 });
+  mk("circle", { cx: CX, cy: CY, r: R, fill: "none", stroke: "#8a8175", "stroke-width": 1, "stroke-dasharray": "4 4" });
+  mkText(CX + R + 8, CY + 16, "1", { "font-size": 12, fill: "#8a8175" });
+  /* 特征方向线（点亮后显示）与 λ 标签：按预设各建一组 */
+  var eigLines = {};
+  Object.keys(PRESETS).forEach(function (key) {
+    eigLines[key] = PRESETS[key].eigs.map(function (e) {
+      var c = Math.cos(e.ang), s = Math.sin(e.ang);
+      var ln = mk("line", {
+        x1: CX - 185 * c, y1: CY + 185 * s, x2: CX + 185 * c, y2: CY - 185 * s,
+        stroke: "#15803d", "stroke-width": 3, opacity: 0
+      });
+      var tx = mkText(CX + 152 * c + 6, CY - 152 * s, "λ = " + e.lam, { "font-size": 13, fill: "#15803d", "font-weight": "bold", opacity: 0 });
+      return { line: ln, label: tx };
+    });
+  });
+  /* v 箭头、Av 箭头、手柄 */
+  var vArrow = mk("line", { stroke: "#1d4ed8", "stroke-width": 2.5, "marker-end": "url(#evw-arrB)" });
+  var wArrow = mk("line", { stroke: "#be123c", "stroke-width": 2, "stroke-dasharray": "6 4", "marker-end": "url(#evw-arrR)" });
+  var vLabel = mkText(0, 0, "v", { "font-size": 13, fill: "#1d4ed8", "font-weight": "bold" });
+  var wLabel = mkText(0, 0, "Av", { "font-size": 13, fill: "#be123c", "font-weight": "bold" });
+  var handle = mk("circle", { r: 10, fill: "#ffffff", stroke: "#1d4ed8", "stroke-width": 2.5, cursor: "grab" });
+
+  function syncSlider() {
+    var deg = theta * 180 / Math.PI;
+    deg = ((deg % 360) + 360) % 360;
+    slider.value = deg;
+  }
+  function render() {
+    var P = PRESETS[cur];
+    var vx = Math.cos(theta), vy = Math.sin(theta);
+    var wx = P.m[0][0] * vx + P.m[0][1] * vy;
+    var wy = P.m[1][0] * vx + P.m[1][1] * vy;
+    var wnorm = Math.sqrt(wx * wx + wy * wy);
+    var sinphi = Math.abs(vx * wy - vy * wx) / wnorm;
+    var lam = vx * wx + vy * wy;
+    var collinear = sinphi < TOL;
+    /* 几何 */
+    var ex = CX + R * vx, ey = CY - R * vy;
+    var fx = CX + R * wx, fy = CY - R * wy;
+    vArrow.setAttribute("x1", CX); vArrow.setAttribute("y1", CY);
+    vArrow.setAttribute("x2", ex); vArrow.setAttribute("y2", ey);
+    wArrow.setAttribute("x1", CX); wArrow.setAttribute("y1", CY);
+    wArrow.setAttribute("x2", fx); wArrow.setAttribute("y2", fy);
+    handle.setAttribute("cx", ex); handle.setAttribute("cy", ey);
+    handle.setAttribute("stroke", collinear ? "#15803d" : "#1d4ed8");
+    handle.setAttribute("stroke-width", collinear ? 4 : 2.5);
+    wArrow.setAttribute("stroke", collinear ? "#15803d" : "#be123c");
+    vLabel.setAttribute("x", ex + 12); vLabel.setAttribute("y", ey - 8);
+    wLabel.setAttribute("x", fx + 12); wLabel.setAttribute("y", fy + 16);
+    wLabel.setAttribute("fill", collinear ? "#15803d" : "#be123c");
+    /* 特征方向登记 */
+    if (collinear) {
+      P.eigs.forEach(function (e, i) {
+        if (!found[cur][i] && Math.abs(lam - e.lam) < 0.25) {
+          found[cur][i] = true;
+          eigLines[cur][i].line.setAttribute("opacity", 0.55);
+          eigLines[cur][i].label.setAttribute("opacity", 1);
+        }
+      });
+    }
+    /* 反馈文本 */
+    var got = found[cur].filter(function (b) { return b; }).length;
+    var total = P.eigs.length;
+    var state = collinear
+      ? "<span class=\"ok\">✓ 共线！这是特征方向，λ ≈ " + lam.toFixed(2) + "</span>"
+      : "<span class=\"no\">✗ 不共线（Av 拐弯了）</span>";
+    var count = total === 0 ? "本矩阵特征方向：实数内 0 个" : "本矩阵特征方向：已发现 " + got + " / " + total + " 个";
+    out.innerHTML = "<strong>" + P.label + "</strong>　" + P.chi + "<br>" +
+      "v = (" + vx.toFixed(2) + ", " + vy.toFixed(2) + ")　Av = (" + wx.toFixed(2) + ", " + wy.toFixed(2) + ")<br>" +
+      "sin(v 与 Av 的夹角) = " + sinphi.toFixed(3) + "　" + state + "<br>" +
+      "<strong>" + count + "</strong>　" + P.story;
+  }
+  function setPreset(key) {
+    cur = key;
+    Object.keys(buttons).forEach(function (k) { buttons[k].style.fontWeight = (k === key) ? "700" : "400"; });
+    render();
+  }
+  buttons.sym.addEventListener("click", function () { setPreset("sym"); });
+  buttons.shear.addEventListener("click", function () { setPreset("shear"); });
+  buttons.rot.addEventListener("click", function () { setPreset("rot"); });
+  slider.addEventListener("input", function () {
+    theta = parseFloat(slider.value) * Math.PI / 180;
+    render();
+  });
+  /* 拖动 */
+  var dragging = false;
+  function angleFromEvent(evt) {
+    var pt = svg.createSVGPoint();
+    pt.x = evt.clientX; pt.y = evt.clientY;
+    var loc = pt.matrixTransform(svg.getScreenCTM().inverse());
+    return Math.atan2(-(loc.y - CY), loc.x - CX);
+  }
+  svg.addEventListener("pointerdown", function (e) {
+    dragging = true;
+    if (svg.setPointerCapture) svg.setPointerCapture(e.pointerId);
+    theta = angleFromEvent(e);
+    syncSlider(); render();
+  });
+  svg.addEventListener("pointermove", function (e) {
+    if (!dragging) return;
+    theta = angleFromEvent(e);
+    syncSlider(); render();
+  });
+  svg.addEventListener("pointerup", function () { dragging = false; });
+  svg.addEventListener("pointercancel", function () { dragging = false; });
+  syncSlider();
+  render();
+})();
+</script>
+
+</body>
+</html>

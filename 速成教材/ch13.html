@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高代第 3 章 · 线性映射、核与像：秩-零度定理 —— 数学A速成讲义</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+<div class="wrap">
+
+<div class="bookbar">
+  <span><a href="index.html">← 返回首页</a></span>
+  <span>卷二 · 高等代数 · 第 3 章</span>
+</div>
+
+<div class="chapter-kicker">CHAPTER 3 · 高等代数</div>
+<h1>线性映射、核与像：秩-零度定理</h1>
+
+<div class="exam box" data-tag="本章导览">
+  <p><strong>这一章在整张卷子上的位置</strong>：线性映射与秩-零度定理是高等代数证明题的<strong>几何引擎</strong>。它直接出场的形态：第 16 届题三（20 分，伴随矩阵的秩三档——开门第一步"$\operatorname{rank}A^*\in\{0,1\}$"就是秩-零度的推论）；第 15 届题三（20 分，几何重数 $=\dim\ker(\lambda I-A)$，根子空间 $\ker(\lambda I-A)^{d}$）。间接出场：一切秩不等式步骤分（$r(AB)$、$r(A+B)$）背后都是它。直接分值两道 20 分大题的入场券，间接值 <strong>3–8 分的步骤分</strong>。</p>
+  <p><strong>学完你能</strong>：① 默写线性映射、$\ker T$、$\operatorname{Im}T$ 的定义，并判定单射/满射；② 用基扩充法完整写出秩-零度定理的证明；③ 矩阵语言 ↔ 映射语言秒切（解空间 $=\ker$、列空间 $=\operatorname{Im}$）；④ 用"限制映射 + 秩-零度"证明 $r(AB)\le\min\{r(A),r(B)\}$ 与 Sylvester 秩不等式；⑤ 背出伴随矩阵的秩三档并写出证明骨架——第 16 届题三的开门 3 分。</p>
+  <p><strong>前置</strong>：卷二第 1–2 章（线性空间、子空间、基与维数，尤其"基扩充定理"）；数分第 4 章的求导（用来认出微分、积分也是线性映射）。</p>
+</div>
+
+<h2>§1 开场谜题：一台机器只丢它必须丢的东西</h2>
+
+<div class="hook box" data-tag="开场谜题">
+  <p>先看一台具体的"线性机器"：
+  $$A=\begin{pmatrix}1&2\\2&4\end{pmatrix}.$$</p>
+  <p>它吃掉平面 $\mathbb{R}^2$ 里的每个向量，吐出一个新向量。但吐出的一切<strong>都躺在同一条直线</strong> $\operatorname{span}\{(1,2)\}$ 上——整个平面被它压扁成了一条线。问：丢掉的信息去哪了？</p>
+  <p>答案是：有一整条直线的输入被压成了 $\mathbf{0}$。凡是满足 $x+2y=0$ 的向量 $(x,y)$，打进去都是零。这台机器<strong>压掉 1 维，铺满 1 维</strong>，而 $1+1=2$，恰好是定义域的全部维数。</p>
+  <p>再换个画面：正午的阳光把三维世界投到地面，影子是 2 维的，"竖直方向"这 1 维被压没了——$3=2+1$。现在反过来问：<strong>存不存在一台线性机器，定义域 3 维，压掉 2 维，输出却还能铺满 2 维？</strong>直觉上$2+2=4&gt;3$，维数不够分——但"不够分"到底是一条可以写在卷面上的定理，还是只是一种感觉？</p>
+  <p>本章的主角<strong>秩-零度定理</strong>说：这是铁律。任何线性映射 $T:V\to W$（$V$ 有限维）：
+  $$\dim V=\dim\ker T+\dim\operatorname{Im}T,$$
+  压掉的维数 + 铺满的维数 = 定义域的全部维数，<strong>一丝不浪费</strong>。你大学背过的"$A\mathbf{x}=\mathbf{0}$ 解空间维数 $=n-r(A)$"只是它的矩阵影子；而影子之外的抽象版本——不限于 $\mathbb{F}^n$，对微分算子、对限制映射都成立——才是真正能做证明题的武器。</p>
+</div>
+
+<p>事实上你早就见过这台机器的零件。不定积分 $\int f(x)\,dx=F(x)+C$ 里那个讨厌的 "$+C$" 是什么？求导 $D:f\mapsto f'$ 是一个线性映射，而常数函数恰好是被 $D$ 压成 $0$ 的全体——<strong>"$+C$" 就是 $\ker D$</strong>。"通解 = 特解 + 齐次解空间"这句话，从微分方程到线性方程组，说的都是同一件事：一个输出点的全部原像 $=$ 任一原像 $+$ 核。本章把这件事钉成定理。</p>
+
+<h2>§2 先看见它：薄片分层图</h2>
+
+<div class="vision box" data-tag="直觉与图像">
+  <p>线性映射 $T$ 把定义域 $V$ 切成一层层<strong>平行的薄片</strong>：每个输出点 $\mathbf{w}\in\operatorname{Im}T$ 的全部原像是一层薄片 $T^{-1}(\mathbf{w})=\mathbf{v}_0+\ker T$（任取一个原像 $\mathbf{v}_0$，加上核里的任意向量，还是原像）。整层薄片被压成<strong>同一个</strong>输出点；薄片内部的方向就是 $\ker T$ 的方向——被浪费掉；而薄片"摞起来"的方向，一层对应一个输出，撑起了 $\operatorname{Im}T$。</p>
+  <p>于是一眼读出秩-零度：<strong>$\operatorname{Im}T$ 的维数 = 薄片的"层数"维数 = $\dim V-\dim\ker T$</strong>。定义域的每一维只有两种去处——压进核里（薄片内部），或撑起像（薄片之间）——没有第三种去处，所以一丝不浪费。</p>
+</div>
+
+<figure>
+<svg viewBox="0 0 720 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="薄片分层：核的方向被压扁，层数方向撑起像">
+  <defs>
+    <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+  <!-- 左面板：定义域 -->
+  <rect x="70" y="30" width="220" height="220" fill="#fdfcf9" stroke="#d8d2c6" stroke-width="1.5"/>
+  <text x="180" y="22" font-size="13" fill="#2b2620" text-anchor="middle" font-weight="bold">定义域 V（被切成薄片）</text>
+  <!-- ker 直线 -->
+  <line x1="85" y1="187" x2="275" y2="92" stroke="#be123c" stroke-width="2.5"/>
+  <text x="105" y="200" font-size="12" fill="#be123c">ker T：压成 0 的方向</text>
+  <!-- 平行薄片 -->
+  <line x1="98" y1="214" x2="261" y2="132" stroke="#b8b0a2" stroke-width="1.2"/>
+  <line x1="125" y1="227" x2="288" y2="145" stroke="#b8b0a2" stroke-width="1.2"/>
+  <line x1="72" y1="160" x2="235" y2="78" stroke="#b8b0a2" stroke-width="1.2"/>
+  <!-- x 所在的薄片（高亮） -->
+  <line x1="112" y1="146" x2="275" y2="64" stroke="#1d4ed8" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="160" y="62" font-size="11.5" fill="#1d4ed8">x 所在薄片 v₀ + ker T</text>
+  <!-- 向量 x -->
+  <line x1="180" y1="140" x2="260" y2="80" stroke="#1d4ed8" stroke-width="2.5" marker-end="url(#arr2)"/>
+  <circle cx="180" cy="140" r="3" fill="#2b2620"/>
+  <text x="170" y="158" font-size="12" fill="#2b2620">0</text>
+  <text x="264" y="76" font-size="13" fill="#1d4ed8" font-weight="bold">x</text>
+  <!-- 中间的 T 箭头 -->
+  <line x1="308" y1="140" x2="408" y2="140" stroke="#8a8175" stroke-width="2.5" marker-end="url(#arr2)"/>
+  <text x="358" y="128" font-size="16" fill="#5c554b" text-anchor="middle" font-weight="bold">T</text>
+  <text x="358" y="165" font-size="11" fill="#5c554b" text-anchor="middle">整层压成一点</text>
+  <!-- 右面板：值域 -->
+  <rect x="430" y="30" width="220" height="220" fill="#fdfcf9" stroke="#d8d2c6" stroke-width="1.5"/>
+  <text x="540" y="22" font-size="13" fill="#2b2620" text-anchor="middle" font-weight="bold">值域 W（只有绿线被铺满）</text>
+  <!-- Im 直线 -->
+  <line x1="445" y1="187" x2="635" y2="92" stroke="#15803d" stroke-width="2.5"/>
+  <text x="455" y="200" font-size="12" fill="#15803d">Im T：铺满的方向</text>
+  <!-- 薄片对应的点 -->
+  <circle cx="486" cy="165" r="3.5" fill="#b8b0a2"/>
+  <circle cx="513" cy="151" r="3.5" fill="#b8b0a2"/>
+  <circle cx="567" cy="124" r="3.5" fill="#b8b0a2"/>
+  <circle cx="594" cy="110" r="5" fill="#b45309"/>
+  <text x="580" y="98" font-size="12.5" fill="#b45309" font-weight="bold">T(x)</text>
+  <circle cx="540" cy="140" r="3" fill="#2b2620"/>
+  <text x="530" y="158" font-size="12" fill="#2b2620">0</text>
+</svg>
+<figcaption>薄片分层图：红线的方向（ker）整层压成一点；层与层的相对位置一一对应绿线（Im）上的点。层数维数 $+$ 层内维数 $=$ 总维数。</figcaption>
+</figure>
+
+<p>盯住这张图，秩-零度定理就不再是一行公式，而是一个<strong>维数分配方案</strong>：$\dim V$ 是总预算，$\dim\ker T$ 是被压掉的开销，$\dim\operatorname{Im}T$ 是花在输出上的部分——预算必被花光，且只花在这两处。证明题里它有两副面孔：<strong>像不够大就必有核</strong>（存在性论证），<strong>核不大就像不小</strong>（秩不等式）。两副面孔在 §4 变成标准动作。</p>
+
+<h2>§3 精确定义：逐符号朗读</h2>
+
+<div class="def">
+  <p class="def-title">定义（线性映射 linear map）</p>
+  <p>设 $V,W$ 是数域 $\mathbb{F}$ 上的线性空间。映射 $T:V\to W$ 称为<strong>线性映射</strong>，如果对一切 $\mathbf{u},\mathbf{v}\in V$ 与 $\lambda\in\mathbb{F}$：</p>
+  <p>$$T(\mathbf{u}+\mathbf{v})=T(\mathbf{u})+T(\mathbf{v})\quad\text{（保加法）},\qquad T(\lambda\mathbf{u})=\lambda T(\mathbf{u})\quad\text{（保数乘）}.$$</p>
+  <p>两条等价于一条：$T(\lambda\mathbf{u}+\mu\mathbf{v})=\lambda T(\mathbf{u})+\mu T(\mathbf{v})$。直接推论：$T(\mathbf{0})=\mathbf{0}$（常用来一票否决一个映射的线性性）。</p>
+</div>
+
+<p>三个早已相识的例子：</p>
+<ul>
+  <li><strong>矩阵左乘（原型）</strong>：$A\in\mathbb{F}^{m\times n}$，$T_A(\mathbf{x})=A\mathbf{x}$ 是 $\mathbb{F}^n\to\mathbb{F}^m$ 的线性映射。第 4 章将证明：选好基之后，<strong>一切</strong>线性映射都长这样——矩阵是线性映射在坐标下的照片。</li>
+  <li><strong>微分算子</strong>：$D:f\mapsto f'$，在 $P_n$（次数 $\le n$ 的多项式空间）或 $C^\infty$ 上。$(f+g)'=f'+g'$，$(\lambda f)'=\lambda f'$——求导的线性性你用了三年，现在它有了名字。</li>
+  <li><strong>积分算子</strong>：$I:f\mapsto\int_0^x f(t)\,dt$，在 $C[a,b]$ 上。微分与积分都是线性映射，所以本章的定理对它们全部有效——这是高代与数分暗通的管道。</li>
+</ul>
+
+<div class="def">
+  <p class="def-title">定义（核 kernel 与像 image）</p>
+  <p>$$\ker T=\{\mathbf{v}\in V:T(\mathbf{v})=\mathbf{0}\}\subseteq V,\qquad \operatorname{Im}T=\{T(\mathbf{v}):\mathbf{v}\in V\}\subseteq W.$$</p>
+  <p>读法：$\ker T$ 是<strong>被压成零的全体输入</strong>（定义域侧）；$\operatorname{Im}T$ 是<strong>输出能到达的全体地方</strong>（值域侧）。$\dim\ker T$ 叫 $T$ 的<strong>零度</strong>（nullity），$\dim\operatorname{Im}T$ 叫 $T$ 的<strong>秩</strong>（rank）。</p>
+</div>
+
+<div class="symbol box" data-tag="逐符号朗读">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$\ker T=\{\mathbf{v}\in V:T(\mathbf{v})=\mathbf{0}\}$</td><td>"$V$ 里所有被 $T$ 压成 $\mathbf{0}$ 的向量"</td><td>收集"被浪费的方向"——它是 $V$ 的<strong>子空间</strong>（见下）</td></tr>
+    <tr><td>$\operatorname{Im}T=\{T(\mathbf{v}):\mathbf{v}\in V\}$</td><td>"所有能被打到的输出"</td><td>量出"铺满的地方"——它是 $W$ 的<strong>子空间</strong></td></tr>
+    <tr><td>$T$ 单射 $\iff\ker T=\{\mathbf{0}\}$</td><td>"没有非零输入被压死 ⟺ 不同输入必得不同输出"</td><td>把"单射"从函数语言翻译成子空间语言——判定只需查一个子空间</td></tr>
+    <tr><td>$T$ 满射 $\iff\operatorname{Im}T=W$</td><td>"像铺满整个 $W$"</td><td>$\operatorname{Im}T$ 与 $W$ 比维数即可判定（有限维时）</td></tr>
+    <tr><td>$\dim V=\dim\ker T+\dim\operatorname{Im}T$</td><td>"定义域维数 = 压掉的 + 铺满的"</td><td>维数守恒律——本章 c 位，证明在 §8 例 1</td></tr>
+  </table>
+</div>
+
+<p><strong>命题 1（核与像都是子空间）</strong>：$\mathbf{0}\in\ker T$ 因为 $T(\mathbf{0})=\mathbf{0}$；若 $T(\mathbf{u})=T(\mathbf{v})=\mathbf{0}$，则 $T(\mathbf{u}+\mathbf{v})=\mathbf{0}$、$T(\lambda\mathbf{u})=\lambda\mathbf{0}=\mathbf{0}$——$\ker T$ 对加法、数乘封闭，是 $V$ 的子空间。$\operatorname{Im}T$：$\mathbf{0}=T(\mathbf{0})\in\operatorname{Im}T$；$T(\mathbf{u})+T(\mathbf{v})=T(\mathbf{u}+\mathbf{v})$，$\lambda T(\mathbf{u})=T(\lambda\mathbf{u})$——封闭，是 $W$ 的子空间。$\square$　<em>三行验证，但"是子空间"四个字是后面一切维数论证的通行证。</em></p>
+
+<div class="think">
+  <p>别急着往下翻。<strong>拿张纸，自己证"T 单射 ⟺ $\ker T=\{\mathbf{0}\}$"</strong>——提示只有一句：$T(\mathbf{u})=T(\mathbf{v})\iff T(\mathbf{u}-\mathbf{v})=\mathbf{0}$。两个方向各两行。写完再展开对照。</p>
+  <details class="answer">
+    <summary>对照：单射充要条件的证明</summary>
+    <p>（⟸）设 $\ker T=\{\mathbf{0}\}$。若 $T(\mathbf{u})=T(\mathbf{v})$，则 $T(\mathbf{u}-\mathbf{v})=\mathbf{0}$，即 $\mathbf{u}-\mathbf{v}\in\ker T=\{\mathbf{0}\}$，故 $\mathbf{u}=\mathbf{v}$，$T$ 单。</p>
+    <p>（⟹）设 $T$ 单。任取 $\mathbf{v}\in\ker T$，则 $T(\mathbf{v})=\mathbf{0}=T(\mathbf{0})$，由单射 $\mathbf{v}=\mathbf{0}$，故 $\ker T=\{\mathbf{0}\}$。$\square$</p>
+    <p>注意这个等价把"检查所有输入对是否撞车"（无穷多次比较）变成"检查一个子空间是否退化"（算一次维数）——这是线性世界才有的福利。</p>
+  </details>
+</div>
+
+<p><strong>命题 2（同构与有限维福利）</strong>：$T$ 是<strong>同构</strong> $\iff$ $T$ 双射。若 $\dim V=\dim W$ 有限，则
+$$T\text{ 单射}\iff T\text{ 满射}\iff T\text{ 同构}.$$
+这是秩-零度的第一笔红利：$\dim\operatorname{Im}T=\dim V-\dim\ker T=\dim W-\dim\ker T$，所以"满"（左端 $=\dim W$）与"单"（右端 $\dim\ker T=0$）同时发生。<strong>推论</strong>：有限维空间上，证可逆只需查一头——查 $\ker T=\{\mathbf{0}\}$ 通常是最便宜的那头。</p>
+
+<div class="def">
+  <p class="def-title">定理（秩-零度定理 rank–nullity theorem）</p>
+  <p>设 $V$ 有限维，$T:V\to W$ 线性，则
+  $$\dim V=\dim\ker T+\dim\operatorname{Im}T.$$</p>
+  <p>证明是本章的<strong>方法示范</strong>，完整拆解放在 §8 例 1（基扩充法）。</p>
+</div>
+
+<h3>3.4 矩阵翻译：秩-零度的影子与真身</h3>
+
+<p>把抽象定理按到矩阵上。设 $A\in\mathbb{F}^{m\times n}$，$T_A:\mathbb{F}^n\to\mathbb{F}^m$，$\mathbf{x}\mapsto A\mathbf{x}$。逐条翻译：</p>
+<ul>
+  <li>$\ker T_A=\{\mathbf{x}:A\mathbf{x}=\mathbf{0}\}$ —— 齐次线性方程组的<strong>解空间</strong>；</li>
+  <li>$\operatorname{Im}T_A=\{A\mathbf{x}\}=\{x_1\boldsymbol{\alpha}_1+\cdots+x_n\boldsymbol{\alpha}_n\}$（$\boldsymbol{\alpha}_j$ 为 $A$ 的列）—— <strong>列空间</strong>，故 $\dim\operatorname{Im}T_A=r(A)$；</li>
+  <li>秩-零度念出来：$\dim\ker T_A=n-r(A)$ —— 正是大学课本的"<strong>解空间维数公式</strong>"。</li>
+</ul>
+<p>所以解空间维数公式只是秩-零度在 $\mathbb{F}^n$ 上的<strong>影子</strong>。真身的优势：不需要坐标、不需要行变换，对微分算子、限制映射、商映射这些"没有现成矩阵"的场合照样开炮。</p>
+
+<div class="calc box" data-tag="关键例子：+C 的来历">
+  <p>取 $D:P_3\to P_3$，$D(f)=f'$（$P_3$：次数 $\le3$ 的实多项式，$\dim P_3=4$）。</p>
+  <p>$\ker D=\{$常数多项式$\}$，$\dim\ker D=1$；$\operatorname{Im}D=P_2$（求导必降次，且每个次数 $\le2$ 的多项式都能积分回来），$\dim\operatorname{Im}D=3$。验算：$4=1+3$。✓</p>
+  <p><strong>推论（线性方程的通解结构）</strong>：方程 $T(\mathbf{v})=\mathbf{w}$ 若有一个特解 $\mathbf{v}_0$，则全部解 $=\mathbf{v}_0+\ker T$。$D(F)=f$ 的通解 $F(x)+C$（$C\in\ker D$）——你高数写的每一个 "$+C$" 都是核；线性方程组"通解 = 特解 + 齐次解空间"是同一句话的矩阵口音。</p>
+</div>
+
+<h3>3.5 秩-零度的三个拳头应用</h3>
+
+<p><strong>① 维数比较（鸽笼）</strong>：若 $\dim V&gt;\dim W$，则任何 $T:V\to W$ 必有非零核：
+$$\dim\ker T=\dim V-\dim\operatorname{Im}T\ge\dim V-\dim W\ge1.$$
+不用求出解，就能证"<strong>非零解存在</strong>"——存在性论证的第一反射。</p>
+
+<p><strong>② $r(AB)\le\min\{r(A),r(B)\}$ 的几何证法</strong>：$\operatorname{Im}(AB)\subseteq\operatorname{Im}A$（$AB\mathbf{y}=A(B\mathbf{y})$），故 $r(AB)\le r(A)$；把 $T_A$ 限制到 $\operatorname{Im}B$ 上，像的维数不会超过定义域的维数：$r(AB)=\dim\operatorname{Im}\bigl(T_A|_{\operatorname{Im}B}\bigr)\le\dim\operatorname{Im}B=r(B)$。两句话，不用一行行变换。</p>
+
+<p><strong>③ 伴随矩阵的秩三档</strong>（第 16 届题三的核心引理）：</p>
+
+<div class="calc box" data-tag="定理与证明骨架">
+  <p><strong>定理</strong>　设 $A$ 为 $n$ 阶方阵（$n\ge2$），$A^*$ 为其伴随矩阵，则
+  $$\operatorname{rank}A^*=\begin{cases}n,&\operatorname{rank}A=n,\\ 1,&\operatorname{rank}A=n-1,\\ 0,&\operatorname{rank}A\le n-2.\end{cases}$$</p>
+  <hr>
+  <p><strong>证明骨架</strong>（两件武器：$AA^*=\det A\cdot I$；$\dim\ker A=n-\operatorname{rank}A$）：</p>
+  <p>（i）$\operatorname{rank}A=n$：$\det A\ne0$，$AA^*=\det A\cdot I$ 是可逆阵，故 $A^*$ 可逆，$\operatorname{rank}A^*=n$。<span class="step-score">（骨架 1/3）</span></p>
+  <p>（ii）$\operatorname{rank}A=n-1$：$AA^*=\det A\cdot I=O$，故 $A^*$ 的每一列 $\in\ker A$；而 $\dim\ker A=n-(n-1)=1$，所以 $\operatorname{rank}A^*\le1$。另一方面 $\operatorname{rank}A=n-1$ ⟹ 存在非零的 $n-1$ 阶子式，它（至多差符号）就是某个代数余子式，即 $A^*$ 有非零元，$\operatorname{rank}A^*\ge1$。合起来 $\operatorname{rank}A^*=1$。<span class="step-score">（骨架 2/3）</span></p>
+  <p>（iii）$\operatorname{rank}A\le n-2$：一切 $n-1$ 阶子式为 $0$，即一切代数余子式为 $0$，$A^*=O$。$\square$<span class="step-score">（骨架 3/3）</span></p>
+  <p class="aside">记忆锚点：<strong>三档的分界线全由"$\dim\ker A=n-r(A)$"和"$AA^*=\det A\cdot I$"两句话撑起来</strong>。$A$ 不可逆时只剩 $1$ 与 $0$ 两档——这正是第 16 届题三开门第一步"$\operatorname{rank}A^*\in\{0,1\}$"（3 分）的全部依据。完整书写见 §9 变式 2。</p>
+</div>
+
+<h3>3.6 亲手摸一摸核与像（交互）</h3>
+
+<div class="widget" id="ki-widget">
+  <p class="w-title">▶ 核像分流探索器：拖 x、调矩阵，亲眼看"压掉的 + 铺满的 = 2"</p>
+  <p class="w-row">左图是<strong>定义域</strong>平面：<strong style="color:#be123c">红线</strong>是 $\ker A$（整条被压到原点），<strong style="color:#1d4ed8">蓝箭头</strong>是输入 $x$（<strong>拖动它的尖端</strong>）；右图是<strong>值域</strong>平面：<strong style="color:#15803d">绿线</strong>是 $\operatorname{Im}A$，<strong style="color:#b45309">橙箭头</strong>是 $Ax$，<strong style="color:#7c3aed">紫色虚线</strong>是 $x$ 沿圆周跑一圈时 $Ax$ 扫出的轨迹（像椭圆——退化时是一条线段）。</p>
+  <div class="w-row">矩阵 $A=\begin{pmatrix}a&b\\c&d\end{pmatrix}$ 预设：
+    <button type="button" data-preset="inv">可逆（剪切）</button>
+    <button type="button" data-preset="rk1">秩 1</button>
+    <button type="button" data-preset="idem">幂等 A²=A</button>
+    <button type="button" data-preset="nil">幂零 A²=O</button>
+  </div>
+  <div class="w-row"><label>a = <span id="ki-av">1.0</span></label><input type="range" id="ki-a" min="-2" max="2" step="0.1" value="1">
+  <label>b = <span id="ki-bv">1.0</span></label><input type="range" id="ki-b" min="-2" max="2" step="0.1" value="1"></div>
+  <div class="w-row"><label>c = <span id="ki-cv">0.0</span></label><input type="range" id="ki-c" min="-2" max="2" step="0.1" value="0">
+  <label>d = <span id="ki-dv">1.0</span></label><input type="range" id="ki-d" min="-2" max="2" step="0.1" value="1"></div>
+  <svg id="ki-svg" viewBox="0 0 720 330" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div class="w-verdict" id="ki-out">加载中……（需要启用 JavaScript）</div>
+  <p class="w-row" style="font-size:0.88em;color:#5c554b">玩出这三个体验再往下走：<strong>①</strong> 选"秩 1"，把 $x$ 拖到红线上——$Ax$ 瞬间归零（$\ker$ 里的输入全灭）；把 $x$ 拖离红线，$Ax$ 沿绿线滑动，$x$ 平行于红线的分量纯属浪费。<strong>②</strong> 选"幂零"，绿线与红线是<strong>同一个方向</strong>：输出恰好躺在下一步会被压死的地方（$A^2=O$）——幂零的图像意义。<strong>③</strong> 选"可逆"后手动把 $d$ 从 $1$ 慢慢拖到 $0.3$、$0$：盯着 $\det A$ 与紫色椭圆——$\det\to0$ 的瞬间椭圆塌成线段、$\ker$ 从 $\{\mathbf0\}$ 胀成一条线，但"压掉的 + 铺满的"始终是 $2$。</p>
+</div>
+
+<h2>§4 翻译轨：三个标准动作 + 一间练功房</h2>
+
+<p>秩-零度在卷面上只有三种用法，练成反射即可毕业。</p>
+
+<div class="trans box" data-tag="动作一：判定线性映射（两条各证，一票否决）">
+  <p><strong>题面</strong>："验证 $T$ 是线性映射" / "下列映射哪些是线性的"。</p>
+  <p><strong>翻译</strong>：证线性 = 任取 $\mathbf{u},\mathbf{v}$ 证保加法 + 任取 $\lambda,\mathbf{u}$ 证保数乘（两个"任取"都是 $\forall$ 型）；<strong>否决</strong>线性只需一个反例，先查最便宜的一票：$T(\mathbf{0})\ne\mathbf{0}$ 就直接出局。</p>
+  <p><strong>用在哪</strong>：高代大题开局确认研究对象合法（1–2 分步骤分）；微分、积分、矩阵左乘的线性性允许直接引用。</p>
+</div>
+
+<div class="trans box" data-tag="动作二：「证有非零解」→ 维数比较">
+  <p><strong>题面</strong>："证明存在非零 $\mathbf{x}$ 使 $A\mathbf{x}=\mathbf{0}$" / "证明存在非零 $\mathbf{v}$ 使 $T(\mathbf{v})=\mathbf{0}$" / "证明 $A\mathbf{x}=\mathbf{0}$ 有非零解"。</p>
+  <p><strong>翻译</strong>：三句话是同一句：$\dim\ker&gt;0$。由秩-零度 $\dim\ker T=\dim V-\dim\operatorname{Im}T\ge\dim V-\dim W$，只要<strong>定义域比值域"宽"</strong>，核自动非零——不用把解求出来。矩阵版：$A$ 是 $m\times n$ 且 $m&lt;n$（方程少于未知量）⟹ $A\mathbf{x}=\mathbf{0}$ 必有非零解。</p>
+  <p><strong>用在哪</strong>：存在性论证的开门 3 分；第 15 届题三"$(\lambda I-A)X=0$ 必有非零解"就是这口音。</p>
+</div>
+
+<div class="trans box" data-tag="动作三：「rank(AB)」→ 限制映射 T|Im B">
+  <p><strong>题面</strong>：任何含 $r(AB)$ 的等式或不等式。</p>
+  <p><strong>翻译</strong>：设 $A$ 是 $m\times n$、$B$ 是 $n\times p$。把 $T_A$ <strong>限制</strong>到 $\operatorname{Im}B$ 上，得 $S=T_A|_{\operatorname{Im}B}:\operatorname{Im}B\to\mathbb{F}^m$。两张对照卡：</p>
+  <p>$\operatorname{Im}S=\{A\mathbf{x}:\mathbf{x}\in\operatorname{Im}B\}=\{AB\mathbf{y}:\mathbf{y}\in\mathbb{F}^p\}=\operatorname{Im}(AB)$，故 $\dim\operatorname{Im}S=r(AB)$；<br>
+  $\ker S=\{\mathbf{x}\in\operatorname{Im}B:A\mathbf{x}=\mathbf{0}\}=\ker T_A\cap\operatorname{Im}B\subseteq\ker T_A$，故 $\dim\ker S\le n-r(A)$。</p>
+  <p><strong>用在哪</strong>：对 $S$ 用一次秩-零度，Sylvester 不等式自动掉出来（§8 例 2）；只取"像维数 ≤ 定义域维数"一半，就是 $r(AB)\le\min$（§3.5 ②）。值 4–6 分的步骤分。</p>
+</div>
+
+<h3>4.4 翻译练功房：像学语言一样，大量互译</h3>
+
+<p>下面 8 句，先全部写在纸上，再逐条展开对照。每条不超过 1 分钟。</p>
+
+<div class="trans box" data-tag="互译 8 句">
+  <p><strong>T1</strong>　自然→符号："$T$ 是单射。"（写出两个等价说法）</p>
+  <details class="answer"><summary>对照</summary><p>① $\ker T=\{\mathbf{0}\}$；② $\forall\mathbf{u},\mathbf{v}\in V:\ T(\mathbf{u})=T(\mathbf{v})\Rightarrow\mathbf{u}=\mathbf{v}$。<strong>要点</strong>：②是定义，①才是工具——判单射永远走①。</p></details>
+  <p><strong>T2</strong>　符号→自然："$\dim\ker T\ge1$。"</p>
+  <details class="answer"><summary>对照</summary><p>"$T$ 至少压死一个非零方向"——等价说法一串：$T$ 不单；存在 $\mathbf{v}\ne\mathbf{0}$ 使 $T(\mathbf{v})=\mathbf{0}$；（矩阵版）$A\mathbf{x}=\mathbf{0}$ 有非零解。一串话一个意思，题面用哪句都要认得。</p></details>
+  <p><strong>T3</strong>　自然→符号："$A\mathbf{x}=\mathbf{0}$ 只有零解"（$A$ 是 $m\times n$）。</p>
+  <details class="answer"><summary>对照</summary><p>$\ker A=\{\mathbf{0}\}\iff r(A)=n$（<strong>列</strong>满秩）$\iff A$ 的列向量组线性无关。<strong>易错</strong>：记成 $r(A)=m$——那是"对任意 $\mathbf{b}$ 都有解"（满射）的条件，方向别记反。</p></details>
+  <p><strong>T4</strong>　秩-零度默写填空：$\dim V=\underline{\qquad}+\underline{\qquad}$；矩阵版：解空间维数 $=\underline{\qquad}$。</p>
+  <details class="answer"><summary>对照</summary><p>$\dim V=\dim\ker T+\dim\operatorname{Im}T$；$\dim(\text{解空间})=n-r(A)$（$n$ 是<strong>列数</strong>/未知量个数）。<strong>易错</strong>：右边写成 $\dim W$——秩-零度管的是定义域的预算，与值域多大无关。</p></details>
+  <p><strong>T5</strong>　判断（说理由）：$\dim V&gt;\dim W$ 时，可能存在单射 $T:V\to W$ 吗？</p>
+  <details class="answer"><summary>对照</summary><p>不可能。$\dim\ker T=\dim V-\dim\operatorname{Im}T\ge\dim V-\dim W\ge1$，必有非零核。这就是维数鸽笼：宽空间塞不进窄空间。</p></details>
+  <p><strong>T6</strong>　自然→符号："方程组 $A\mathbf{x}=\mathbf{b}$ 对<strong>任意</strong> $\mathbf{b}\in\mathbb{F}^m$ 都有解"（$A$ 是 $m\times n$）。</p>
+  <details class="answer"><summary>对照</summary><p>$\operatorname{Im}A=\mathbb{F}^m\iff r(A)=m$（<strong>行</strong>满秩）。对照 T3：列满秩管"解至多一个"，行满秩管"解至少一个"；方阵时两者相遇，就是"可逆 ⟺ 唯一解"。</p></details>
+  <p><strong>T7</strong>　判断（找坑）："$T$ 单射 ⟹ $T$ 可逆"对吗？</p>
+  <details class="answer"><summary>对照</summary><p>不对。少了 $\dim V=\dim W$（有限维）这个前提。反例：嵌入 $T:\mathbb{F}^2\to\mathbb{F}^3$，$T(x,y)=(x,y,0)$，单而不满，谈不上可逆。<strong>规则</strong>：$\dim V=\dim W$ 有限时"单 ⟺ 满 ⟺ 同构"（命题 2）；维数不等时单、满各自独立。</p></details>
+  <p><strong>T8</strong>　符号→自然 + 追问："$\ker\bigl(T|_U\bigr)=\ker T\cap\,U$。"它在 Sylvester 证明里扮演什么角色？</p>
+  <details class="answer"><summary>对照</summary><p>"限制映射的核 = 原核与限制域的交"——读法直白，但它是把 $r(A)+r(B)-n$ 里的 "$-n$"（即 $\dim\ker T_A$）请进证明的桥：$\dim\ker\bigl(T|_{\operatorname{Im}B}\bigr)\le\dim\ker T$，子空间包含给出不等号。见例 2。</p></details>
+</div>
+
+<h2>§5 类型识别：什么信号在召唤秩-零度</h2>
+
+<div class="recog box" data-tag="识别反射表">
+  <table>
+    <tr><th>题面信号</th><th>反射</th></tr>
+    <tr><td>"证 $A\mathbf{x}=\mathbf{0}$ 有非零解 / 存在非零 $\mathbf{v}$ 使 $T(\mathbf{v})=\mathbf{0}$"</td><td>$\ker$ 非零 ⟺ 不满秩；优先试维数比较（$\dim$ 定义域 $&gt;\dim$ 值域）</td></tr>
+    <tr><td>"证解唯一 / $T$ 可逆"（有限维）</td><td>只查 $\ker T=\{\mathbf{0}\}$ 一头（命题 2：单 ⟺ 满）</td></tr>
+    <tr><td>"$r(AB)\ge$ / $r(AB)\le$ / $r(AB)=$ …"</td><td>限制映射 $T_A|_{\operatorname{Im}B}$ + 秩-零度（动作三）</td></tr>
+    <tr><td>"$A^*=\dots$ / 伴随矩阵"</td><td>伴随的秩三档 + $AA^*=\det A\cdot I$（§3.5 ③，16 届题三）</td></tr>
+    <tr><td>"几何重数 / 特征向量的最大无关个数"</td><td>$\dim\ker(\lambda I-A)$——核的维数（第 5 章主场）</td></tr>
+    <tr><td>"根子空间 / 广义特征向量"</td><td>$\ker(\lambda I-A)^{d}$——幂零部分的核（15 届题三）</td></tr>
+    <tr><td>"解空间的维数 / 基础解系含几个向量"</td><td>$n-r(A)$，秩-零度的矩阵影子（§3.4）</td></tr>
+    <tr><td>"维数等式 $\dim U_1+\dim U_2=\dots$"</td><td>造一个线性映射使其核、像各是一个子空间（如 $(\mathbf{u}_1,\mathbf{u}_2)\mapsto\mathbf{u}_1-\mathbf{u}_2$ 证维数公式）</td></tr>
+  </table>
+</div>
+
+<h2>§6 考法定位：它藏在哪里、值多少分</h2>
+
+<div class="exam box" data-tag="考法定位">
+  <table>
+    <tr><th>出处</th><th>题号</th><th>秩-零度扮演什么角色</th><th>分值权重</th></tr>
+    <tr><td>第 16 届（2024）</td><td>题三</td><td>伴随矩阵秩三档撑起全题分类框架：开门"$A$ 不可逆 ⟹ $\operatorname{rank}A^*\in\{0,1\}$"值 3 分，后续 17 分的讨论在这两档上展开</td><td>20 分（核心引理）</td></tr>
+    <tr><td>第 15 届（2023）</td><td>题三</td><td>几何重数 $=\dim\ker(\lambda I-A)$；根子空间 $\ker(\lambda I-A)^{d_i}$；必要性用 $\operatorname{rank}(cI-A)\ge n-1$ ⟹ 解空间维数 $\le1$——秩-零度影子直接用</td><td>20 分（贯穿）</td></tr>
+    <tr><td>第 15 届（2023）</td><td>题四</td><td>低秩分解后 $r(X+Y)\le r(X)+r(Y)$ 的秩估计</td><td>步骤分</td></tr>
+  </table>
+  <p><strong>规律</strong>：秩-零度极少单独成题，它是高代证明的<strong>发动机</strong>：单/满射判定、解空间维数、秩不等式、伴随三档，几乎届届以步骤分形态出现。卷面上"由秩-零度定理，$\dim\ker=\dots$"这一行本身就是分点；而它的两个动作化身——<strong>基扩充</strong>（证维数等式）与<strong>限制映射</strong>（证秩不等式）——是从 15、16 两届真题里直接读出来的高频剧目。</p>
+</div>
+
+<h2>§7 关系网：一个影子、一台机器、三把扳手</h2>
+
+<p>本章地图：<span style="color:#b45309">三角形</span>是来源与动机，<span style="color:#1d4ed8">圆角矩形</span>是定义，<span style="color:#15803d">矩形</span>是定理，<span style="color:#7c3aed">六边形</span>是方法动作，<span style="color:#0f766e">椭圆</span>是应用出口。顺着箭头走一遍，就是本章的全部逻辑。</p>
+
+<figure>
+<svg viewBox="0 0 760 540" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="秩-零度关系网地图">
+  <defs>
+    <marker id="arr3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+
+  <!-- 图例 -->
+  <polygon points="30,16 22,30 38,30" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5"/>
+  <text x="44" y="28" font-size="11.5" fill="#5c554b">来源·动机</text>
+  <rect x="116" y="17" width="22" height="13" rx="6.5" fill="#eef3fe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="144" y="28" font-size="11.5" fill="#5c554b">定义</text>
+  <rect x="200" y="17" width="22" height="13" fill="#ecf8f0" stroke="#15803d" stroke-width="1.5"/>
+  <text x="228" y="28" font-size="11.5" fill="#5c554b">定理</text>
+  <polygon points="282,23.5 288,16 302,16 308,23.5 302,31 288,31" fill="#f4effd" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="314" y="28" font-size="11.5" fill="#5c554b">方法·动作</text>
+  <ellipse cx="400" cy="23.5" rx="12" ry="7" fill="#ecf8f5" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="418" y="28" font-size="11.5" fill="#5c554b">应用·出口</text>
+
+  <!-- 来源：解空间维数公式（三角） -->
+  <polygon points="120,52 52,132 188,132" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="120" y="94" font-size="12" fill="#7a4a12" text-anchor="middle" font-weight="bold">解空间维数公式</text>
+  <text x="120" y="110" font-size="11" fill="#7a4a12" text-anchor="middle">dim = n − r(A)</text>
+  <text x="120" y="124" font-size="10" fill="#7a4a12" text-anchor="middle">大学线代的影子</text>
+
+  <!-- 影子 → 线性映射 -->
+  <line x1="196" y1="92" x2="262" y2="92" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr3)"/>
+  <text x="229" y="82" font-size="11" fill="#5c554b" text-anchor="middle">抽象化</text>
+
+  <!-- 定义：线性映射（圆角矩形） -->
+  <rect x="270" y="62" width="230" height="60" rx="30" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="385" y="88" font-size="14.5" fill="#1d4ed8" text-anchor="middle" font-weight="bold">线性映射 T: V → W</text>
+  <text x="385" y="107" font-size="11" fill="#1d4ed8" text-anchor="middle">保加法 · 保数乘（矩阵左乘是原型）</text>
+
+  <!-- 线性映射 → ker/Im -->
+  <line x1="385" y1="122" x2="385" y2="168" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr3)"/>
+  <text x="397" y="150" font-size="11" fill="#5c554b">取核与像（都是子空间）</text>
+
+  <!-- ker/Im（矩形） -->
+  <rect x="270" y="176" width="230" height="56" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="385" y="198" font-size="13.5" fill="#15803d" text-anchor="middle" font-weight="bold">ker T（压掉的）· Im T（铺满的）</text>
+  <text x="385" y="217" font-size="11" fill="#4a7c59" text-anchor="middle">单 ⟺ ker={0}；满 ⟺ Im=W</text>
+
+  <!-- ker/Im → 秩-零度 -->
+  <line x1="385" y1="232" x2="385" y2="280" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr3)"/>
+  <text x="397" y="262" font-size="11" fill="#5c554b">薄片分层 · 基扩充证之</text>
+
+  <!-- 秩-零度（c 位矩形） -->
+  <rect x="240" y="288" width="290" height="64" fill="#ecf8f0" stroke="#15803d" stroke-width="3.5"/>
+  <text x="385" y="314" font-size="15" fill="#15803d" text-anchor="middle" font-weight="bold">秩-零度定理（c 位）</text>
+  <text x="385" y="336" font-size="12.5" fill="#15803d" text-anchor="middle">dim V = dim ker T + dim Im T</text>
+
+  <!-- 秩-零度 → 三动作 -->
+  <polyline points="330,352 330,386 180,386 180,404" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr3)"/>
+  <line x1="385" y1="352" x2="385" y2="404" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr3)"/>
+  <polyline points="440,352 440,386 590,386 590,404" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr3)"/>
+  <text x="455" y="380" font-size="11" fill="#5c554b">三把扳手</text>
+
+  <!-- 三动作（六边形） -->
+  <polygon points="100,438 125,410 235,410 260,438 235,466 125,466" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="180" y="434" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">基扩充法</text>
+  <text x="180" y="450" font-size="10.5" fill="#6a55a3" text-anchor="middle">证基 = 无关 + 生成</text>
+  <polygon points="305,438 330,410 440,410 465,438 440,466 330,466" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="385" y="434" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">限制映射 T|_(Im B)</text>
+  <text x="385" y="450" font-size="10.5" fill="#6a55a3" text-anchor="middle">秩不等式的钥匙</text>
+  <polygon points="510,438 535,410 645,410 670,438 645,466 535,466" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="590" y="434" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">维数比较</text>
+  <text x="590" y="450" font-size="10.5" fill="#6a55a3" text-anchor="middle">鸽笼：dimV &gt; dimW ⟹ 有核</text>
+
+  <!-- 动作 → 出口 -->
+  <line x1="180" y1="466" x2="140" y2="492" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr3)"/>
+  <line x1="385" y1="466" x2="360" y2="492" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr3)"/>
+  <text x="330" y="486" font-size="10.5" fill="#5c554b" text-anchor="end">S: Im B → Fᵐ</text>
+  <line x1="590" y1="466" x2="560" y2="492" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr3)"/>
+  <polyline points="385,352 700,352 700,492" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr3)"/>
+  <text x="640" y="344" font-size="10.5" fill="#5c554b">配合 AA* = detA·I</text>
+  <polyline points="240,320 60,320 60,492 80,492" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr3)"/>
+  <text x="64" y="312" font-size="10.5" fill="#5c554b">选基后 T 变矩阵</text>
+
+  <!-- 四出口（椭圆） -->
+  <ellipse cx="140" cy="512" rx="118" ry="26" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="140" y="508" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">第 4 章 · 表示矩阵与相似</text>
+  <text x="140" y="524" font-size="10" fill="#3d7a70" text-anchor="middle">ker/Im → 解空间/列空间</text>
+  <ellipse cx="378" cy="512" rx="112" ry="26" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="378" y="508" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">Sylvester 秩不等式</text>
+  <text x="378" y="524" font-size="10" fill="#3d7a70" text-anchor="middle">r(AB) ≥ r(A)+r(B)−n（例 2）</text>
+  <ellipse cx="590" cy="512" rx="105" ry="26" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="590" y="508" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">伴随的秩三档</text>
+  <text x="590" y="524" font-size="10" fill="#3d7a70" text-anchor="middle">16 届题三（20 分）开门钥匙</text>
+  <ellipse cx="716" cy="512" rx="44" ry="26" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="716" y="508" font-size="10.5" fill="#0f766e" text-anchor="middle" font-weight="bold">第 5 章</text>
+  <text x="716" y="524" font-size="9.5" fill="#3d7a70" text-anchor="middle">特征子空间</text>
+</svg>
+<figcaption>本章地图：解空间公式抽象成线性映射，核与像养出秩-零度，三把扳手（基扩充、限制映射、维数比较）分别拧开四个出口。</figcaption>
+</figure>
+
+<div class="net box" data-tag="画面感锚点（记这些，不记条文）">
+  <table>
+    <tr><th>节点</th><th>一句话画面</th><th>擅长场景</th></tr>
+    <tr><td>线性映射</td><td>一台只丢必须丢的东西的机器</td><td>统一矩阵、微分、积分（判定：保加保数乘）</td></tr>
+    <tr><td>ker T</td><td>被压成 0 的方向抱成一团（子空间）</td><td>单射判定；存在非零解；几何重数</td></tr>
+    <tr><td>Im T</td><td>输出铺满的那块地方（子空间）</td><td>满射判定；秩 = 它的维数</td></tr>
+    <tr><td>秩-零度</td><td>维数预算必花光：压掉的 + 铺满的 = 全部</td><td>一切维数等式/不等式的发动机</td></tr>
+    <tr><td>基扩充法</td><td>核的基补全成全空间的基，余下部分的像恰好是像的基</td><td>证"dim 子 + dim 商 = dim 全"型等式</td></tr>
+    <tr><td>限制映射</td><td>把 A 摁到 Im B 上，乘积的秩变成限制映射的像</td><td>$r(AB)$ 类不等式（Sylvester、Frobenius）</td></tr>
+    <tr><td>维数比较</td><td>宽空间塞不进窄空间，多出来的维数必被压死</td><td>存在性论证（不解方程证有解）</td></tr>
+  </table>
+  <p><strong>和你已学知识的焊接点</strong>：① 大学线代"$A\mathbf{x}=\mathbf{0}$ 解空间维数 $=n-r(A)$"——本章 §3.4 已认亲，它是影子；② 高数"$\int f\,dx=F(x)+C$"与"通解 = 特解 + 齐次解"——"$+C$" 就是 $\ker D$；③ 微分方程 $y'+p(x)y=q(x)$ 的通解结构，同一个核像故事；④ 第 2 章的基扩充定理，是例 1 证明的合法通行证。</p>
+</div>
+
+<h2>§8 计算示范：先看真人怎么想，再看卷面怎么写</h2>
+
+<h3>例 1 · 秩-零度定理的完整证明（方法示范，约 8 分书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>结论是三个维数的等式 $\dim V=\dim\ker T+\dim\operatorname{Im}T$。维数是"基的元素个数"，所以等式型的外衣下藏着一个<strong>构造任务</strong>：设 $\dim\ker T=k$，只需在 $\operatorname{Im}T$ 里<strong>造出 $n-k$ 个向量并证它们是基</strong>。查拆目标总表："证某组向量是基"是 <strong>∧ 型</strong>——线性无关 + 生成，<strong>各证一半</strong>，漏一半 = 漏一半分。骨架就此钉死，不需要灵感。</p>
+  <p><span class="stage">【盘点】</span>① $\ker T$ 是子空间（命题 1）⟹ 它有基 $\boldsymbol{\alpha}_1,\dots,\boldsymbol{\alpha}_k$，产出 $k$ 次"$T(\boldsymbol{\alpha}_i)=\mathbf{0}$"；② $V$ 有限维 ⟹ <strong>基扩充定理</strong>（第 2 章）：子空间的基必可补成全空间的基——补出 $\boldsymbol{\beta}_1,\dots,\boldsymbol{\beta}_m$，$k+m=n$，这 $m$ 个 $\boldsymbol{\beta}$ 就是候选原材料；③ $T$ 线性 ⟹ $T\bigl(\sum c_i\mathbf{v}_i\bigr)=\sum c_iT(\mathbf{v}_i)$，和式可以拆开到每一项。</p>
+  <p><span class="stage">【会师】</span>候选：$T(\boldsymbol{\beta}_1),\dots,T(\boldsymbol{\beta}_m)$。倒推两条支线——<br>
+  <strong>生成</strong>：任取 $\mathbf{w}\in\operatorname{Im}T$ ⟸ $\mathbf{w}=T(\mathbf{v})$ ⟸ $\mathbf{v}=\sum a_i\boldsymbol{\alpha}_i+\sum b_j\boldsymbol{\beta}_j$（库存②：全空间的基）⟸ 拆开（库存③），$\boldsymbol{\alpha}$ 项全灭（库存①）⟸ $\mathbf{w}=\sum b_jT(\boldsymbol{\beta}_j)$。✓<br>
+  <strong>无关</strong>：设 $\sum b_jT(\boldsymbol{\beta}_j)=\mathbf{0}$ ⟸ 合并（库存③）：$T\bigl(\sum b_j\boldsymbol{\beta}_j\bigr)=\mathbf{0}$ ⟸ $\sum b_j\boldsymbol{\beta}_j\in\ker T$ ⟸ 被 $\boldsymbol{\alpha}$ 组表出 ⟸ 移项得"全空间的基的零组合" ⟸ 系数全零（库存②）。✓<br>
+  两条支线都闭合于同一条库存："$\boldsymbol{\alpha}$ 组与 $\boldsymbol{\beta}$ 组合起来是 $V$ 的基"。<strong>工具六 · 划归</strong>（维数等式划归为"造一组基"）；<strong>工具一 · 倒推</strong>（从"要证是基"倒推出"需要把核的基补全"）。</p>
+  <p><span class="stage">【定型】</span>卷面正着写五步：取核的基 → 扩充 → 证生成 → 证无关 → 数数合拢。倒推痕迹（"我们猜想 $T(\boldsymbol{\beta})$ 组能行……"）一个字不留。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 基扩充法</strong>：子空间的基必可扩充为全空间的基；扩充出来的那些向量，其像恰好张成 $\operatorname{Im}T$。凡是"$\dim(\text{子})+\dim(\text{商})=\dim(\text{全})$"型的等式（秩-零度、维数公式、同构定理），全是这同一个剧目——第 4 章、第 5 章还会反复上演。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 1（秩-零度定理）</strong>　设 $V$ 是数域 $\mathbb{F}$ 上的 $n$ 维线性空间，$T:V\to W$ 是线性映射。证明：
+  $$\dim V=\dim\ker T+\dim\operatorname{Im}T.$$</p>
+  <hr>
+  <p class="proof-line"><strong>证明</strong>　设 $\dim\ker T=k$。取 $\ker T$ 的一组基 $\boldsymbol{\alpha}_1,\dots,\boldsymbol{\alpha}_k$。<span class="step-score">（2 分）</span></p>
+  <p class="proof-line">由基扩充定理，可补充 $\boldsymbol{\beta}_1,\dots,\boldsymbol{\beta}_m$ 使 $\boldsymbol{\alpha}_1,\dots,\boldsymbol{\alpha}_k,\boldsymbol{\beta}_1,\dots,\boldsymbol{\beta}_m$ 成为 $V$ 的基，于是 $k+m=n$。下面证明 $\{T(\boldsymbol{\beta}_1),\dots,T(\boldsymbol{\beta}_m)\}$ 是 $\operatorname{Im}T$ 的基。<span class="step-score">（4 分）</span></p>
+  <p class="proof-line"><strong>（i）生成</strong>：任取 $\mathbf{w}\in\operatorname{Im}T$，存在 $\mathbf{v}\in V$ 使 $\mathbf{w}=T(\mathbf{v})$。写 $\mathbf{v}=\sum_{i=1}^k a_i\boldsymbol{\alpha}_i+\sum_{j=1}^m b_j\boldsymbol{\beta}_j$，由 $T$ 线性及 $T(\boldsymbol{\alpha}_i)=\mathbf{0}$：
+  $$\mathbf{w}=T(\mathbf{v})=\sum_{i=1}^k a_iT(\boldsymbol{\alpha}_i)+\sum_{j=1}^m b_jT(\boldsymbol{\beta}_j)=\sum_{j=1}^m b_jT(\boldsymbol{\beta}_j),$$
+  故 $\operatorname{Im}T=\operatorname{span}\{T(\boldsymbol{\beta}_1),\dots,T(\boldsymbol{\beta}_m)\}$。<span class="step-score">（6 分）</span></p>
+  <p class="proof-line"><strong>（ii）线性无关</strong>：设 $\sum_{j=1}^m b_jT(\boldsymbol{\beta}_j)=\mathbf{0}$，则 $T\bigl(\sum_{j=1}^m b_j\boldsymbol{\beta}_j\bigr)=\mathbf{0}$，即 $\sum_{j=1}^m b_j\boldsymbol{\beta}_j\in\ker T$，故存在 $a_1,\dots,a_k$ 使
+  $$\sum_{j=1}^m b_j\boldsymbol{\beta}_j=\sum_{i=1}^k a_i\boldsymbol{\alpha}_i,\qquad\text{即}\qquad \sum_{j=1}^m b_j\boldsymbol{\beta}_j-\sum_{i=1}^k a_i\boldsymbol{\alpha}_i=\mathbf{0}.$$
+  但 $\boldsymbol{\alpha}_1,\dots,\boldsymbol{\alpha}_k,\boldsymbol{\beta}_1,\dots,\boldsymbol{\beta}_m$ 是 $V$ 的基，线性无关，故所有系数为零，特别地 $b_1=\cdots=b_m=0$。<span class="step-score">（8 分）</span></p>
+  <p class="proof-line">于是 $\dim\operatorname{Im}T=m=n-k=\dim V-\dim\ker T$，即 $\dim V=\dim\ker T+\dim\operatorname{Im}T$。$\square$</p>
+  <p class="aside">书写点评：分点在（i）（ii）两处——"证基 = 无关 + 生成"各一半分。最常见的丢分：只证生成、忘证无关（直觉上"像$=$那些$T(\boldsymbol{\beta})$ 张成"太顺了）；其次是不写"由基扩充定理"就直接补向量——第 2 章的定理名就是这一步的得分凭证。</p>
+</div>
+
+<h3>例 2 · Sylvester 秩不等式的几何证明（约 10 分书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>结论是秩不等式 $r(AB)\ge r(A)+r(B)-n$（$A$ 是 $m\times n$，$B$ 是 $n\times p$）。拆目标总表里没有"秩不等式"这一行，但<strong>动作三</strong>给了翻译：秩 = 像的维数，而秩-零度负责把"像"与"核"互相换算。先把减法式<strong>移项变形</strong>：
+  $$r(AB)\ge r(A)+r(B)-n\iff r(B)-r(AB)\le n-r(A).$$
+  左边 $=\dim\operatorname{Im}B-\dim\operatorname{Im}(AB)$，右边 $=\dim\ker T_A$。左边像什么？像"某个映射的<strong>定义域维数 − 像维数</strong>"——由秩-零度，那正是某个<strong>核的维数</strong>。哪个映射？把 $A$ 摁到 $\operatorname{Im}B$ 上的那个：$S=T_A|_{\operatorname{Im}B}$。于是目标变形为 $\dim\ker S\le\dim\ker T_A$——而 $\ker S=\ker T_A\cap\operatorname{Im}B\subseteq\ker T_A$，子空间的维数不超过全空间，<strong>白送</strong>。</p>
+  <p><span class="stage">【盘点】</span>① $\operatorname{Im}S=\operatorname{Im}(AB)$（动作三对照卡，故 $\dim\operatorname{Im}S=r(AB)$）；② $\ker S=\ker T_A\cap\operatorname{Im}B\subseteq\ker T_A$（故 $\dim\ker S\le\dim\ker T_A$）；③ 秩-零度可用两次：对 $S$（定义域 $\operatorname{Im}B$，维数 $r(B)$）与对 $T_A$（定义域 $\mathbb{F}^n$，维数 $n$）。</p>
+  <p><span class="stage">【会师】</span>倒推链：要证 $r(AB)\ge r(A)+r(B)-n$ ⟸ 只需 $r(B)-r(AB)\le n-r(A)$ ⟸（秩-零度两次）只需 $\dim\ker S\le\dim\ker T_A$ ⟸ 只需 $\ker S\subseteq\ker T_A$ ⟸ 库存②，显然。链条闭合，每一环都是库存。<strong>工具六 · 划归</strong>（矩阵乘积的秩划归为限制映射的核与像）；<strong>工具三 · 特殊化侦察</strong>：$A=B=\begin{pmatrix}0&1\\0&0\end{pmatrix}$ 时 $r(A)=r(B)=1$，$AB=O$，$0\ge1+1-2$ 等号成立 ✓；$A=B=I$ 时 $2\ge2$ ✓——不等式方向与常数 $n$ 的位置通过侦察。</p>
+  <p><span class="stage">【定型】</span>卷面只写：定义 $S$ → 算 $\operatorname{Im}S$ → 算 $\ker S$ 的包含 → 秩-零度两次 → 合拢。"移项变形"的倒推过程删除——卷面上那个"恰好"想到对 $S$ 用秩-零度，就是这么来的。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 限制映射</strong>：碰到 $r(AB)$，第一反应把 $A$ 限制到 $\operatorname{Im}B$ 上。定义域换成 $\operatorname{Im}B$ 之后，"定义域维数 $r(B)$ − 像维数 $r(AB)$ = 核维数"，秩不等式自动变成子空间包含的维数比较。Sylvester、Frobenius 不等式全是这个模子。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 2（Sylvester 秩不等式）</strong>　设 $A\in\mathbb{F}^{m\times n}$，$B\in\mathbb{F}^{n\times p}$。证明：
+  $$r(AB)\ge r(A)+r(B)-n.$$</p>
+  <hr>
+  <p class="proof-line"><strong>证明</strong>　记 $T_A:\mathbb{F}^n\to\mathbb{F}^m$，$\mathbf{x}\mapsto A\mathbf{x}$。考虑 $T_A$ 在子空间 $\operatorname{Im}B\subseteq\mathbb{F}^n$ 上的限制
+  $$S=T_A|_{\operatorname{Im}B}:\ \operatorname{Im}B\longrightarrow\mathbb{F}^m,\qquad \mathbf{x}\longmapsto A\mathbf{x}.$$<span class="step-score">（2 分）</span></p>
+  <p class="proof-line"><strong>第一步（算像）</strong>：$\operatorname{Im}S=\{A\mathbf{x}:\mathbf{x}\in\operatorname{Im}B\}=\{AB\mathbf{y}:\mathbf{y}\in\mathbb{F}^p\}=\operatorname{Im}(AB)$，故
+  $$\dim\operatorname{Im}S=r(AB).$$<span class="step-score">（4 分）</span></p>
+  <p class="proof-line"><strong>第二步（估核）</strong>：$\ker S=\{\mathbf{x}\in\operatorname{Im}B:A\mathbf{x}=\mathbf{0}\}=\ker T_A\cap\operatorname{Im}B\subseteq\ker T_A$，故
+  $$\dim\ker S\le\dim\ker T_A=n-r(A),$$
+  末式是对 $T_A$ 用秩-零度。<span class="step-score">（7 分）</span></p>
+  <p class="proof-line"><strong>第三步（合拢）</strong>：对 $S$ 用秩-零度（其定义域为 $\operatorname{Im}B$，维数 $r(B)$）：
+  $$r(B)=\dim\operatorname{Im}B=\dim\ker S+\dim\operatorname{Im}S\le\bigl(n-r(A)\bigr)+r(AB),$$
+  移项即得 $r(AB)\ge r(A)+r(B)-n$。$\square$<span class="step-score">（10 分）</span></p>
+  <p class="aside">书写点评：三个分点各管一件事——像算准、核估上、秩-零度合拢。最常见的跳步：不写 $\ker S=\ker T_A\cap\operatorname{Im}B$ 这个等式就直接写不等号——这个等式是"为什么核能估"的全部理由，跳过它第三步就断了。若右端 $r(A)+r(B)-n&lt;0$，不等式当然仍成立（秩非负），无需单独讨论。</p>
+</div>
+
+<h2>§9 配套题目</h2>
+
+<p>铁律：<strong>先写在纸上，写到写不动再展开答案</strong>。模仿题照例 1、例 2 的卷面格式写；变式题先问自己"题面信号触发哪个动作"。</p>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 1</span>设 $P_3$ 为次数 $\le3$ 的实多项式空间，$D:P_3\to P_3$，$D(f)=f'$。验证 $D$ 是线性映射；求 $\ker D$ 与 $\operatorname{Im}D$ 的基与维数，并验证秩-零度定理。</p>
+  <details class="answer">
+    <summary>参考答案（约 6 分书写量）</summary>
+    <p><strong>线性性</strong>：任取 $f,g\in P_3$，$\lambda\in\mathbb{R}$：$D(f+g)=(f+g)'=f'+g'=D(f)+D(g)$；$D(\lambda f)=(\lambda f)'=\lambda f'=\lambda D(f)$。故 $D$ 线性（2 分）。</p>
+    <p><strong>核</strong>：$D(f)=0\iff f'=0\iff f$ 为常数，故 $\ker D=\operatorname{span}\{1\}$，基 $\{1\}$，$\dim\ker D=1$（3 分）。</p>
+    <p><strong>像</strong>：求导把 $1,x,x^2,x^3$ 分别送到 $0,1,2x,3x^2$，故 $\operatorname{Im}D=\operatorname{span}\{1,x,x^2\}=P_2$，基 $\{1,x,x^2\}$，$\dim\operatorname{Im}D=3$（5 分）。</p>
+    <p><strong>验算</strong>：$\dim P_3=4=1+3=\dim\ker D+\dim\operatorname{Im}D$ ✓（6 分）。</p>
+    <p><strong>易错点</strong>：把 $\operatorname{Im}D$ 写成 $P_3$——求导必降次，$x^3$ 项永远打不到；或只写 $\ker D=\{$常数$\}$ 却不给基与维数。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 2</span>设 $T:\mathbb{F}^3\to\mathbb{F}^3$，$T(x,y,z)=(x+y,\ y+z,\ x+2y+z)$。求 $\ker T$ 与 $\operatorname{Im}T$ 的基与维数，验证秩-零度定理，并判断 $T$ 是否单射、是否满射。</p>
+  <details class="answer">
+    <summary>参考答案（约 6 分书写量）</summary>
+    <p><strong>核</strong>：解 $T(x,y,z)=\mathbf{0}$：$x+y=0,\ y+z=0$（第三式为前两式之和，自动成立），得 $x=-y,\ z=-y$，即 $(x,y,z)=t(1,-1,1)$。故 $\ker T=\operatorname{span}\{(1,-1,1)\}$，$\dim\ker T=1$（2 分）。</p>
+    <p><strong>像</strong>：$\operatorname{Im}T=$ 列空间 $=\operatorname{span}\{(1,0,1),(1,1,2),(0,1,1)\}$。第三列？注意 $(1,1,2)=(1,0,1)+(0,1,1)$，故 $\operatorname{Im}T=\operatorname{span}\{(1,0,1),(0,1,1)\}$，这两向量不成比例、线性无关，$\dim\operatorname{Im}T=2$（4 分）。</p>
+    <p><strong>验算</strong>：$3=1+2$ ✓（5 分）。<strong>判定</strong>：$\ker T\ne\{\mathbf{0}\}$，非单射；$\operatorname{Im}T\ne\mathbb{F}^3$，非满射——与命题 2"单 ⟺ 满"一致（6 分）。</p>
+    <p><strong>易错点</strong>：把<strong>行</strong>空间当成 $\operatorname{Im}T$（像是<strong>列</strong>空间：$T(\mathbf{x})=x\boldsymbol{\alpha}_1+y\boldsymbol{\alpha}_2+z\boldsymbol{\alpha}_3$）。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 1</span>设 $A\in\mathbb{F}^{m\times n}$，$B\in\mathbb{F}^{n\times p}$。用核像语言（不许用行变换）证明：$r(AB)\le\min\{r(A),r(B)\}$，并各举一个等号成立与严格小于的 $2\times2$ 例子。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：两个不等号分开打，都用"像是列空间/限制映射的像"。</p>
+    <p><strong>证明</strong>：① $\operatorname{Im}(AB)=\{AB\mathbf{y}\}=\{A(B\mathbf{y})\}\subseteq\{A\mathbf{x}\}=\operatorname{Im}A$，子空间包含，故 $r(AB)=\dim\operatorname{Im}(AB)\le\dim\operatorname{Im}A=r(A)$。② 设 $S=T_A|_{\operatorname{Im}B}:\operatorname{Im}B\to\mathbb{F}^m$，则 $\operatorname{Im}S=\operatorname{Im}(AB)$（例 2 第一步），而像的维数不超过定义域的维数：$r(AB)=\dim\operatorname{Im}S\le\dim\operatorname{Im}B=r(B)$。合起来 $r(AB)\le\min\{r(A),r(B)\}$。$\square$</p>
+    <p><strong>例子</strong>：$A=B=I$：$r(AB)=2=\min\{2,2\}$（等号）；$A=B=\begin{pmatrix}0&1\\0&0\end{pmatrix}$：$AB=O$，$r(AB)=0&lt;1=\min\{1,1\}$（严格）。</p>
+    <p><strong>点评</strong>：②与例 2 共用同一个 $S$——例 2 估它的核，本题估它的像。同一个限制映射，榨出两条不等式。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 2</span>证明伴随矩阵的秩三档：$n$ 阶方阵 $A$（$n\ge2$）满足
+  $$\operatorname{rank}A^*=\begin{cases}n,&\operatorname{rank}A=n,\\1,&\operatorname{rank}A=n-1,\\0,&\operatorname{rank}A\le n-2.\end{cases}$$
+  （§3.5 给了骨架，请补全成卷面级证明——尤其写清为什么 $\operatorname{rank}A=n-1$ 时 $A^*\ne O$。）</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>工具</strong>：$AA^*=A^*A=\det A\cdot I$；秩-零度 $\dim\ker A=n-\operatorname{rank}A$；"$\operatorname{rank}A\ge k$ ⟺ 存在非零 $k$ 阶子式"。</p>
+    <p><strong>（i）</strong>$\operatorname{rank}A=n$：$\det A\ne0$，$A\cdot\bigl(A^*/\det A\bigr)=I$，$A^*$ 可逆，$\operatorname{rank}A^*=n$。</p>
+    <p><strong>（ii）</strong>$\operatorname{rank}A=n-1$。$\det A=0$，故 $AA^*=O$：$A^*$ 的每一列 $\boldsymbol{\gamma}_j$ 满足 $A\boldsymbol{\gamma}_j=\mathbf{0}$，即 $\operatorname{Im}A^*\subseteq\ker A$。由秩-零度 $\dim\ker A=n-(n-1)=1$，故 $\operatorname{rank}A^*=\dim\operatorname{Im}A^*\le1$。另一方面，$\operatorname{rank}A=n-1$ 说明 $A$ 有非零的 $n-1$ 阶子式；每个 $n-1$ 阶子式（至多差符号）都是某元素的代数余子式，而 $A^*$ 的元素正是全体代数余子式，故 $A^*$ 有非零元，$A^*\ne O$，$\operatorname{rank}A^*\ge1$。合起来 $\operatorname{rank}A^*=1$。</p>
+    <p><strong>（iii）</strong>$\operatorname{rank}A\le n-2$：$A$ 的一切 $n-1$ 阶子式为 $0$（否则秩 $\ge n-1$），即一切代数余子式为 $0$，$A^*=O$，$\operatorname{rank}A^*=0$。$\square$</p>
+    <p><strong>点评</strong>：（ii）是不等式两头夹的典范——$AA^*=O$ 管上界，非零子式管下界。这正是第 16 届题三第一步的全部内容。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv3">真题节选</span><strong>（第 16 届题三，20 分）</strong>设
+  $$A=\begin{pmatrix}a_{11}&a_{12}&a_{13}\\ a_{21}&a_{22}&a_{23}\\ a_{31}&a_{32}&a_{33}\end{pmatrix}$$
+  为实数域 $\mathbb{R}$ 上的 $3\times3$ <strong>不可逆</strong>方阵。若 $A$ 的伴随矩阵 $A^*$ 为
+  $$A^*=\begin{pmatrix}a_{11}^2&a_{12}^2&a_{13}^2\\ a_{21}^2&a_{22}^2&a_{23}^2\\ a_{31}^2&a_{32}^2&a_{33}^2\end{pmatrix},$$
+  求 $A$。</p>
+  <p>先回答三个梯子问题（写在纸上）：</p>
+  <p>（i）$A$ 不可逆时，由伴随的秩三档，$\operatorname{rank}A^*$ 只剩哪两种可能？为什么？<br>
+  （ii）若 $\operatorname{rank}A^*=0$，配合"$A^*$ 的每个元素是某个实数的平方"，立刻读出什么？<br>
+  （iii）若 $\operatorname{rank}A^*=1$，秩 1 矩阵的所有 2 阶子式等于什么？官方解答用它（配合元素非负）逼出"$A^*$ 至少有一个零元"——下一步，"秩 1 且有零元"的矩阵必有什么样的整行/整列？</p>
+  <details class="answer">
+    <summary>梯子参考答案</summary>
+    <p>（i）$\operatorname{rank}A^*\in\{0,1\}$。$A$ 不可逆即 $\operatorname{rank}A\le2=n-1$：$\operatorname{rank}A=2=n-1$ 时 $\operatorname{rank}A^*=1$；$\operatorname{rank}A\le1\le n-2$ 时 $\operatorname{rank}A^*=0$。满秩那一档（$n$）被"不可逆"排除——这就是变式 2 的直接推论。</p>
+    <p>（ii）$\operatorname{rank}A^*=0$ 即 $A^*=O$，于是 $a_{ij}^2=0$ 对所有 $i,j$ 成立，即 $A=O$。这一档 5 分，白送。</p>
+    <p>（iii）秩 1 ⟺ 所有 2 阶子式为 $0$（且有非零元）。秩 1 矩阵可写 $M=\mathbf{u}\mathbf{v}^{T}$，故某元 $M_{ij}=u_iv_j=0$ ⟹ $u_i=0$（第 $i$ <strong>行</strong>全零）或 $v_j=0$（第 $j$ <strong>列</strong>全零）——<strong>秩 1 且有零元 ⟹ 有整行或整列全零</strong>。再翻译回 $A$：$A^*$ 有整行/列零 ⟹ $A$ 有整行/列零，官方由此推出更多元为零直至 $A^*=O$，与秩 1 矛盾。</p>
+  </details>
+  <details class="answer">
+    <summary>官方解答骨架（转录自官方参考答案）</summary>
+    <p>1. $A$ 不可逆 $\Rightarrow\operatorname{rank}(A^*)=0$ 或 $1$。<span class="step-score">（3 分）</span></p>
+    <p>2. 若 $\operatorname{rank}(A^*)=0$，则 $A^*=O$，由各元 $a_{ij}^2=0$ 立得 $A=O$。<span class="step-score">（5 分）</span></p>
+    <p>3. 若 $\operatorname{rank}(A^*)=1$，其所有 2 阶子式为零，特别地 $a_{11}a_{22}=\pm a_{12}a_{21}$，$a_{21}a_{32}=\pm a_{22}a_{31}$，$a_{12}a_{31}=\pm a_{11}a_{32}$。<span class="step-score">（8 分）</span></p>
+    <p>4. 若某式取正号（如 $a_{11}a_{22}=a_{12}a_{21}$），则相应 2 阶子式（$a_{33}$ 的余子式）为零，由 $A^*$ 定义得 $a_{33}^2=0$；若三式均取负号，三式相乘得 $P=-P$（$P=a_{11}a_{22}a_{21}a_{32}a_{12}a_{31}$），故六个元中至少一个为零。总之 $A^*$ 至少有一个零元。<span class="step-score">（14 分）</span></p>
+    <p>5. 不妨 $a_{11}^2=0$：若 $A^*$ 第一列不全为零，由秩 1 知其余列被第一列线性表出，从而 $A^*$ 有整行（或整列）为零，相应 $A$ 有整行（或整列）为零；不妨 $A$ 第一行全零，则 $a_{22},a_{23},a_{32},a_{33}$ 的代数余子式全为零 $\Rightarrow$ 这四个元全为零，进而 $a_{12},a_{13}$ 的代数余子式也为零 $\Rightarrow a_{21}^2=a_{31}^2=0$，导致 $A^*=O$，与秩 1 矛盾。</p>
+    <p>6. 故恒有 $A=O$。<span class="step-score">（20 分）</span></p>
+    <p><strong>复盘</strong>：本题的第一块多米诺就是本章 §3.5 ③——伴随的秩三档（秩-零度 + $AA^*=\det A\cdot I$），它把 20 分切成"$0$ 档白送、$1$ 档矛盾"的分类框架；后面的子式讨论是代数余子式的计算功夫。<strong>秩-零度负责搭台，计算负责唱戏。</strong><em>（题目与解答骨架转录自第 16 届官方 PDF，见 <a href="真题索引/第16届_2024.md">真题索引</a>。）</em></p>
+  </details>
+</div>
+
+<h2>§9.5 熟练度训练场</h2>
+
+<p>两种训练，每天 10 分钟：</p>
+
+<h3>训练一 · 翻卡快测（目标：每卡 10 秒内出答案）</h3>
+<div class="quiz" data-quiz="ch13-drill"></div>
+
+<h3>训练二 · 计时默写（写在纸上，掐表）</h3>
+<div class="calc box" data-tag="默写清单">
+  <p>① <strong>45 秒</strong>：默写秩-零度定理（映射版 + 矩阵影子"解空间维数 $=n-r(A)$"）；</p>
+  <p>② <strong>60 秒</strong>：默写判定三连——$T$ 单 ⟺ ? / $T$ 满 ⟺ ? / $\dim V=\dim W$ 有限时单、满、同构的关系，各配一句理由；</p>
+  <p>③ <strong>2 分钟</strong>：默写例 2（Sylvester）证明骨架：$S=T_A|_{\operatorname{Im}B}$、$\operatorname{Im}S=\operatorname{Im}(AB)$、$\ker S=\ker T_A\cap\operatorname{Im}B\subseteq\ker T_A$、秩-零度两次、移项合拢——五个关节一个不能少。</p>
+  <p><strong>过关标准</strong>：连续两天全对才算过。做不到就回到对应小节重读，再默。</p>
+</div>
+
+<h2>§10 六方向自测卡</h2>
+
+<div class="selftest">
+  <h3>合上书，拿张白纸，默写以下六项</h3>
+  <div class="st-item">
+    <p class="st-q"><em>=（它是什么）</em>　写出线性映射的定义（两条）、$\ker T$ 与 $\operatorname{Im}T$ 的定义、秩-零度定理。</p>
+    <details><summary>对照</summary><p>$T(\mathbf{u}+\mathbf{v})=T\mathbf{u}+T\mathbf{v}$，$T(\lambda\mathbf{u})=\lambda T\mathbf{u}$；$\ker T=\{\mathbf{v}\in V:T\mathbf{v}=\mathbf{0}\}\subseteq V$；$\operatorname{Im}T=\{T\mathbf{v}:\mathbf{v}\in V\}\subseteq W$；$\dim V$ 有限时 $\dim V=\dim\ker T+\dim\operatorname{Im}T$。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>←（什么带来它）</em>　秩-零度定理是从哪个你已会的公式抽象出来的？"+C" 和它什么关系？</p>
+    <details><summary>对照</summary><p>从"解空间维数 $=n-r(A)$"抽象而来（矩阵影子，§3.4）；不定积分的 "$+C$" 就是微分算子的核 $\ker D$——"通解 = 特解 + 核"的特例。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>→（它带来什么）</em>　说出秩-零度的四条直接推论链。</p>
+    <details><summary>对照</summary><p>① $\dim V=\dim W$ 有限时单 ⟺ 满 ⟺ 同构；② 维数鸽笼：$\dim V&gt;\dim W$ ⟹ 必有非零核；③ 限制映射 → Sylvester、$r(AB)\le\min$；④ 配合 $AA^*=\det A\cdot I$ → 伴随的秩三档 → 16 届题三。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>∈（实例）</em>　默写三个线性映射，使 $(\dim\ker,\dim\operatorname{Im})$ 分别为 $(1,2)$、$(1,3)$、$(1,1)$，并各验证秩-零度。</p>
+    <details><summary>对照</summary><p>投影 $P:\mathbb{R}^3\to\mathbb{R}^2$，$P(x,y,z)=(x,y)$：$3=1+2$；$D:P_3\to P_3$：$4=1+3$；幂零 $A=\begin{pmatrix}0&1\\0&0\end{pmatrix}$：$\ker A=\operatorname{Im}A=$ $x$ 轴，$2=1+1$。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>≠（区分）</em>　秩-零度等号右边是哪两个维数？最常见的记错版本是什么？用嵌入 $\mathbb{F}^2\to\mathbb{F}^3$ 戳穿它。</p>
+    <details><summary>对照</summary><p>右边是 $\dim\ker T+\dim\operatorname{Im}T$，等于<strong>定义域</strong> $\dim V$，<strong>不是</strong>值域 $\dim W$。反例：嵌入 $T:\mathbb{F}^2\to\mathbb{F}^3$，$\dim\ker+\dim\operatorname{Im}=0+2=2\ne3=\dim W$——值域可以很大，像只是其中被铺满的部分。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>（为何要有它）</em>　不解方程，凭什么能证"非零解存在"？行变换明明也能算解空间维数，为什么还要抽象版本？</p>
+    <details><summary>对照</summary><p>凭维数比较：定义域比值域宽，核自动非零——存在性不需要构造。抽象版本不限于 $\mathbb{F}^n$：微分算子、限制映射（Sylvester 证明里的 $S$）都没有现成矩阵可消元，只有核像语言能开炮。</p></details>
+  </div>
+</div>
+
+<div class="net box" data-tag="间隔复习安排">
+  <p><strong>1 天后</strong>：重做六方向自测卡（不翻书）+ 翻卡快测第二轮；<strong>3 天后</strong>：重做变式 2 与真题节选的梯子问题 + 计时默写③；<strong>1 周后</strong>：默写例 1 完整证明（基扩充剧目），确认翻卡全部"会了"。</p>
+  <p>本章是<strong>第 4 章</strong>（表示矩阵与相似：选好基，$T$ 就变成 $A$）与<strong>第 5 章</strong>（特征子空间：几何重数 $=\dim\ker(\lambda I-A)$，15 届题三在那里等你）的直接地基。</p>
+</div>
+
+<div class="chapnav">
+  <span><a href="ch12.html">← 第 2 章 · 子空间、和与直和</a></span>
+  <span><a href="index.html">首页</a></span>
+  <span><a href="ch14.html">第 4 章 · 表示矩阵与相似：换基的艺术 →</a></span>
+</div>
+
+</div>
+
+<script src="assets/quiz.js"></script>
+<script>
+/* §9.5 翻卡数据 */
+registerQuiz("ch13-drill", [
+  { q: "线性映射的两条定义性质？", a: "$T(\\mathbf{u}+\\mathbf{v})=T\\mathbf{u}+T\\mathbf{v}$（保加法）；$T(\\lambda\\mathbf{u})=\\lambda T\\mathbf{u}$（保数乘）。推论 $T(\\mathbf{0})=\\mathbf{0}$，常用来一票否决。" },
+  { q: "$\\ker T$ 与 $\\operatorname{Im}T$ 各是谁的子空间？", a: "$\\ker T\\subseteq V$（定义域侧，被压成 $\\mathbf{0}$ 的输入）；$\\operatorname{Im}T\\subseteq W$（值域侧，铺满的输出）。" },
+  { q: "$T$ 单射 ⟺ ?　$T$ 满射 ⟺ ?", a: "单 ⟺ $\\ker T=\\{\\mathbf{0}\\}$；满 ⟺ $\\operatorname{Im}T=W$。判单射永远走核这条路。" },
+  { q: "秩-零度定理（默写）。", a: "$\\dim V$ 有限时 $\\dim V=\\dim\\ker T+\\dim\\operatorname{Im}T$。矩阵影子：解空间维数 $=n-r(A)$（$n$ 为列数）。" },
+  { q: "$A$ 是 $m\\times n$，「$A\\mathbf{x}=\\mathbf{0}$ 只有零解」等价于？", a: "$\\ker A=\\{\\mathbf{0}\\}$ ⟺ $r(A)=n$（列满秩）⟺ 列向量组线性无关。" },
+  { q: "$\\dim V>\\dim W$ 时，$T:V\\to W$ 能单射吗？", a: "不能。$\\dim\\ker T=\\dim V-\\dim\\operatorname{Im}T\\ge\\dim V-\\dim W\\ge1$——维数鸽笼，宽空间塞不进窄空间。" },
+  { q: "Sylvester 秩不等式（默写）及其几何证法一句话。", a: "$r(AB)\\ge r(A)+r(B)-n$。对限制映射 $S=T_A|_{\\operatorname{Im}B}$ 用秩-零度：$\\ker S=\\ker T_A\\cap\\operatorname{Im}B\\subseteq\\ker T_A$。" },
+  { q: "伴随矩阵的秩三档（默写）。", a: "$r(A^*)=n$（$r(A)=n$）/ $1$（$r(A)=n-1$）/ $0$（$r(A)\\le n-2$）。支柱：$AA^*=\\det A\\cdot I$ 与 $\\dim\\ker A=n-r(A)$。" },
+  { q: "$r(A)=n-1$ 时为什么 $A^*\\ne O$？", a: "$r(A)=n-1$ ⟹ 存在非零 $n-1$ 阶子式，它（至多差符号）就是某代数余子式，即 $A^*$ 的某个元素非零。" },
+  { q: "$\\dim V=\\dim W$（有限维）时，单射与满射的关系？", a: "等价：$\\dim\\operatorname{Im}T=\\dim V-\\dim\\ker T=\\dim W-\\dim\\ker T$，满 ⟺ $\\ker T=\\{\\mathbf{0}\\}$ ⟺ 单 ⟺ 同构。" }
+]);
+</script>
+
+<script>
+/* §3.6 核像分流探索器 */
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  var svg = document.getElementById("ki-svg");
+  var out = document.getElementById("ki-out");
+  var sl = {
+    a: document.getElementById("ki-a"),
+    b: document.getElementById("ki-b"),
+    c: document.getElementById("ki-c"),
+    d: document.getElementById("ki-d")
+  };
+  var lb = {
+    a: document.getElementById("ki-av"),
+    b: document.getElementById("ki-bv"),
+    c: document.getElementById("ki-cv"),
+    d: document.getElementById("ki-dv")
+  };
+  var LC = { x: 190, y: 172 }, RC = { x: 530, y: 172 }, SC = 52, HALF = 143;
+  var xv = [1.6, 0.9];
+  var presetNote = "当前：可逆（剪切）——ker = {0}，没有任何方向被压掉。";
+  var EPS = 1e-9;
+
+  function mk(tag, attrs, parent) {
+    var el = document.createElementNS(NS, tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    (parent || svg).appendChild(el);
+    return el;
+  }
+  function txt(x, y, str, attrs, parent) {
+    var t = mk("text", attrs || {}, parent);
+    t.setAttribute("x", x); t.setAttribute("y", y);
+    t.textContent = str;
+    return t;
+  }
+  function L(v) { return [LC.x + SC * v[0], LC.y - SC * v[1]]; }
+  function R(v) { return [RC.x + SC * v[0], RC.y - SC * v[1]]; }
+
+  /* 面板与网格 */
+  [["kiL", LC], ["kiR", RC]].forEach(function (pn) {
+    var c = pn[1];
+    mk("rect", { x: c.x - HALF, y: c.y - HALF, width: 2 * HALF, height: 2 * HALF, fill: "#fdfcf9", stroke: "#d8d2c6", "stroke-width": 1.5 });
+    for (var k = -2; k <= 2; k++) {
+      if (k === 0) continue;
+      mk("line", { x1: c.x + k * SC, y1: c.y - HALF, x2: c.x + k * SC, y2: c.y + HALF, stroke: "#eee9df", "stroke-width": 1 });
+      mk("line", { x1: c.x - HALF, y1: c.y + k * SC, x2: c.x + HALF, y2: c.y + k * SC, stroke: "#eee9df", "stroke-width": 1 });
+    }
+    mk("line", { x1: c.x - HALF, y1: c.y, x2: c.x + HALF, y2: c.y, stroke: "#c9c2b4", "stroke-width": 1.2 });
+    mk("line", { x1: c.x, y1: c.y - HALF, x2: c.x, y2: c.y + HALF, stroke: "#c9c2b4", "stroke-width": 1.2 });
+  });
+  txt(LC.x, LC.y - HALF - 10, "定义域平面", { "font-size": 13, fill: "#2b2620", "text-anchor": "middle", "font-weight": "bold" });
+  txt(RC.x, RC.y - HALF - 10, "值域平面", { "font-size": 13, fill: "#2b2620", "text-anchor": "middle", "font-weight": "bold" });
+  txt(LC.x - HALF + 6, LC.y + 14, "0", { "font-size": 11, fill: "#5c554b" });
+  txt(RC.x - HALF + 6, RC.y + 14, "0", { "font-size": 11, fill: "#5c554b" });
+
+  /* 裁剪 */
+  var defs = mk("defs", {});
+  [["cl", LC], ["cr", RC]].forEach(function (pn) {
+    var cp = mk("clipPath", { id: pn[0] }, defs);
+    mk("rect", { x: pn[1].x - HALF, y: pn[1].y - HALF, width: 2 * HALF, height: 2 * HALF }, cp);
+  });
+  var gL = mk("g", { "clip-path": "url(#cl)" });
+  var gR = mk("g", { "clip-path": "url(#cr)" });
+
+  /* 动态元素 */
+  var kerTint = mk("rect", { x: LC.x - HALF, y: LC.y - HALF, width: 2 * HALF, height: 2 * HALF, fill: "#be123c", opacity: 0.08 }, gL);
+  var imTint = mk("rect", { x: RC.x - HALF, y: RC.y - HALF, width: 2 * HALF, height: 2 * HALF, fill: "#15803d", opacity: 0.08 }, gR);
+  var kerLine = mk("line", { stroke: "#be123c", "stroke-width": 2.5 }, gL);
+  var imLine = mk("line", { stroke: "#15803d", "stroke-width": 2.5 }, gR);
+  var guide = mk("circle", { fill: "none", stroke: "#b8b0a2", "stroke-width": 1, "stroke-dasharray": "4 4" }, gL);
+  var ellip = mk("polyline", { fill: "none", stroke: "#7c3aed", "stroke-width": 1.6, "stroke-dasharray": "5 4" }, gR);
+  var xVec = mk("line", { stroke: "#1d4ed8", "stroke-width": 2.5 }, gL);
+  var xHead = mk("polygon", { fill: "#1d4ed8" }, gL);
+  var axVec = mk("line", { stroke: "#b45309", "stroke-width": 2.5 }, gR);
+  var axHead = mk("polygon", { fill: "#b45309" }, gR);
+  var kerLab = txt(0, 0, "ker A", { "font-size": 12.5, fill: "#be123c", "font-weight": "bold" }, gL);
+  var imLab = txt(0, 0, "Im A", { "font-size": 12.5, fill: "#15803d", "font-weight": "bold" }, gR);
+  var xLab = txt(0, 0, "x", { "font-size": 13, fill: "#1d4ed8", "font-weight": "bold" }, gL);
+  var axLab = txt(0, 0, "Ax", { "font-size": 13, fill: "#b45309", "font-weight": "bold" }, gR);
+  mk("circle", { cx: LC.x, cy: LC.y, r: 3, fill: "#2b2620" }, gL);
+  mk("circle", { cx: RC.x, cy: RC.y, r: 3, fill: "#2b2620" }, gR);
+  var handle = mk("circle", { r: 9, fill: "#1d4ed8", opacity: 0.35, cursor: "grab" }, gL);
+  var hit = mk("rect", { x: LC.x - HALF, y: LC.y - HALF, width: 2 * HALF, height: 2 * HALF, fill: "rgba(0,0,0,0)", cursor: "crosshair" });
+
+  function arrowHead(el, tip, tail) {
+    var dx = tip[0] - tail[0], dy = tip[1] - tail[1];
+    var len = Math.hypot(dx, dy);
+    if (len < 1e-9) { el.setAttribute("points", "0,0 0,0 0,0"); return; }
+    var ux = dx / len, uy = dy / len, s = 9;
+    var bx = tip[0] - ux * s, by = tip[1] - uy * s;
+    el.setAttribute("points",
+      tip[0] + "," + tip[1] + " " +
+      (bx - uy * 4.5) + "," + (by + ux * 4.5) + " " +
+      (bx + uy * 4.5) + "," + (by - ux * 4.5));
+  }
+  function norm(v) { var l = Math.hypot(v[0], v[1]); return l < 1e-12 ? [1, 0] : [v[0] / l, v[1] / l]; }
+  function fmt(v) { return "(" + v[0].toFixed(2) + ", " + v[1].toFixed(2) + ")"; }
+
+  function update() {
+    var a = parseFloat(sl.a.value), b = parseFloat(sl.b.value),
+        c = parseFloat(sl.c.value), d = parseFloat(sl.d.value);
+    lb.a.textContent = a.toFixed(1); lb.b.textContent = b.toFixed(1);
+    lb.c.textContent = c.toFixed(1); lb.d.textContent = d.toFixed(1);
+    var det = a * d - b * c;
+    var s = Math.abs(a) + Math.abs(b) + Math.abs(c) + Math.abs(d);
+    var rank, nul;
+    if (s < EPS) { rank = 0; nul = 2; }
+    else if (Math.abs(det) < EPS) { rank = 1; nul = 1; }
+    else { rank = 2; nul = 0; }
+
+    /* ker 方向：取较长的行 (p,q)，ker 方向 (-q,p) */
+    var kd = null;
+    if (rank >= 1) {
+      var r1 = Math.hypot(a, b), r2 = Math.hypot(c, d);
+      var p = r1 >= r2 ? a : c, q = r1 >= r2 ? b : d;
+      kd = norm([-q, p]);
+    }
+    /* Im 方向：取较长的列 */
+    var id = null;
+    if (rank >= 1) {
+      var c1 = Math.hypot(a, c), c2 = Math.hypot(b, d);
+      id = norm(c1 >= c2 ? [a, c] : [b, d]);
+    }
+
+    /* ker 显示 */
+    kerTint.style.display = rank === 0 ? "" : "none";
+    if (rank === 1) {
+      var e1 = L([kd[0] * 3.2, kd[1] * 3.2]), e2 = L([-kd[0] * 3.2, -kd[1] * 3.2]);
+      kerLine.setAttribute("x1", e1[0]); kerLine.setAttribute("y1", e1[1]);
+      kerLine.setAttribute("x2", e2[0]); kerLine.setAttribute("y2", e2[1]);
+      kerLine.style.display = "";
+      var lp = L([kd[0] * 2.35, kd[1] * 2.35]);
+      kerLab.setAttribute("x", lp[0] - 10); kerLab.setAttribute("y", lp[1] - 8);
+      kerLab.style.display = "";
+    } else { kerLine.style.display = "none"; kerLab.style.display = "none"; }
+
+    /* Im 显示 */
+    imTint.style.display = rank === 2 ? "" : "none";
+    if (rank === 1) {
+      var f1 = R([id[0] * 3.2, id[1] * 3.2]), f2 = R([-id[0] * 3.2, -id[1] * 3.2]);
+      imLine.setAttribute("x1", f1[0]); imLine.setAttribute("y1", f1[1]);
+      imLine.setAttribute("x2", f2[0]); imLine.setAttribute("y2", f2[1]);
+      imLine.style.display = "";
+      var lq = R([id[0] * 2.35, id[1] * 2.35]);
+      imLab.setAttribute("x", lq[0] + 8); imLab.setAttribute("y", lq[1] - 8);
+      imLab.style.display = "";
+    } else { imLine.style.display = "none"; imLab.style.display = "none"; }
+
+    /* x 与 Ax */
+    var xt = L(xv);
+    xVec.setAttribute("x1", LC.x); xVec.setAttribute("y1", LC.y);
+    xVec.setAttribute("x2", xt[0]); xVec.setAttribute("y2", xt[1]);
+    arrowHead(xHead, xt, [LC.x, LC.y]);
+    handle.setAttribute("cx", xt[0]); handle.setAttribute("cy", xt[1]);
+    xLab.setAttribute("x", xt[0] + 12); xLab.setAttribute("y", xt[1] - 10);
+    var rr = Math.hypot(xv[0], xv[1]);
+    guide.setAttribute("cx", LC.x); guide.setAttribute("cy", LC.y);
+    guide.setAttribute("r", rr * SC);
+
+    var ax = [a * xv[0] + b * xv[1], c * xv[0] + d * xv[1]];
+    var axt = R(ax);
+    axVec.setAttribute("x1", RC.x); axVec.setAttribute("y1", RC.y);
+    axVec.setAttribute("x2", axt[0]); axVec.setAttribute("y2", axt[1]);
+    arrowHead(axHead, axt, [RC.x, RC.y]);
+    axLab.setAttribute("x", axt[0] + 12); axLab.setAttribute("y", axt[1] - 10);
+
+    /* 像椭圆 */
+    if (rr > 1e-9) {
+      var pts = [];
+      for (var t = 0; t <= 64; t++) {
+        var th = 2 * Math.PI * t / 64;
+        var ex = a * rr * Math.cos(th) + b * rr * Math.sin(th);
+        var ey = c * rr * Math.cos(th) + d * rr * Math.sin(th);
+        var pp = R([ex, ey]);
+        pts.push(pp[0].toFixed(1) + "," + pp[1].toFixed(1));
+      }
+      ellip.setAttribute("points", pts.join(" "));
+      ellip.style.display = "";
+    } else ellip.style.display = "none";
+
+    /* 反馈文本 */
+    var note;
+    if (rank === 0) note = "A = O：整个定义域都是 ker，全部被压成原点一点。";
+    else if (rank === 1) note = "红线上每一个输入都被压到原点——把 x 拖到红线上试试；x 平行于红线的分量纯属浪费。";
+    else note = "ker = {0}：没有任何非零输入被压死（单射；维数相同故也是满射）。";
+    out.innerHTML =
+      "det A = " + det.toFixed(2) + "　·　rank A = " + rank +
+      "　·　dim ker A = " + nul + "　·　dim Im A = " + rank + "<br>" +
+      "<strong>压掉 " + nul + " 维 + 铺满 " + rank + " 维 = 2 = 定义域的全部维数 ✓（一丝不浪费）</strong><br>" +
+      "x = " + fmt(xv) + "　→　Ax = " + fmt(ax) + "<br>" +
+      note + "<br><span style='color:#5c554b'>" + presetNote + "</span>";
+  }
+
+  /* 拖动 x */
+  var dragging = false;
+  function toSvg(evt) {
+    var pt = svg.createSVGPoint();
+    pt.x = evt.clientX; pt.y = evt.clientY;
+    return pt.matrixTransform(svg.getScreenCTM().inverse());
+  }
+  function setFromEvent(evt) {
+    var p = toSvg(evt);
+    var vx = (p.x - LC.x) / SC, vy = (LC.y - p.y) / SC;
+    var l = Math.hypot(vx, vy);
+    if (l > 2.7) { vx = vx / l * 2.7; vy = vy / l * 2.7; }
+    xv = [vx, vy];
+    update();
+  }
+  hit.addEventListener("pointerdown", function (e) {
+    dragging = true;
+    hit.setPointerCapture(e.pointerId);
+    setFromEvent(e);
+  });
+  hit.addEventListener("pointermove", function (e) { if (dragging) setFromEvent(e); });
+  hit.addEventListener("pointerup", function () { dragging = false; });
+  hit.addEventListener("pointercancel", function () { dragging = false; });
+
+  /* 滑块 */
+  ["a", "b", "c", "d"].forEach(function (k) {
+    sl[k].addEventListener("input", function () {
+      presetNote = "手动矩阵——盯着 det：它归 0 的瞬间，椭圆塌成线段，ker 从 {0} 胀成一条线。";
+      update();
+    });
+  });
+
+  /* 预设 */
+  var presets = {
+    inv: { m: [1, 1, 0, 1], note: "预设「可逆（剪切）」：ker = {0}，像椭圆不塌——压掉 0 维 + 铺满 2 维 = 2。" },
+    rk1: { m: [1, 2, 2, 4], note: "预设「秩 1」：整条红线被压到原点，输出全躺在绿线上——压掉 1 维 + 铺满 1 维 = 2。" },
+    idem: { m: [1, 1, 0, 0], note: "预设「幂等 A²=A」：到达绿线（Im）的点再打一次不再动；红绿两线各占 1 维。" },
+    nil: { m: [0, 1, 0, 0], note: "预设「幂零 A²=O」：ker 与 Im 是同一个方向（x 轴）——输出恰好躺在下一步会被压死的地方。" }
+  };
+  document.querySelectorAll("#ki-widget [data-preset]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var pr = presets[btn.getAttribute("data-preset")];
+      sl.a.value = pr.m[0]; sl.b.value = pr.m[1]; sl.c.value = pr.m[2]; sl.d.value = pr.m[3];
+      presetNote = pr.note;
+      update();
+    });
+  });
+
+  update();
+})();
+</script>
+
+</body>
+</html>

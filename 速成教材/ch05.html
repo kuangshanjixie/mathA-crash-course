@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数分第 5 章 · 微分中值定理家族与辅助函数构造术 —— 数学A速成讲义</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+<div class="wrap">
+
+<div class="bookbar">
+  <span><a href="index.html">← 返回首页</a></span>
+  <span>卷一 · 数学分析 · 第 5 章</span>
+</div>
+
+<div class="chapter-kicker">CHAPTER 5 · 数学分析</div>
+<h1>微分中值定理家族与辅助函数构造术</h1>
+
+<div class="exam box" data-tag="本章导览">
+  <p><strong>这一章在整张卷子上的位置</strong>：中值定理 + 辅助函数是数 A 数分证明的<strong>第一手艺</strong>。第 11 届题二（15 分）整题是微分不等式，官方解答连造两个辅助函数（$xf'+\alpha f-\alpha\int_0^x f$ 求导得单调、$e^{-x}g$ 处理 $g'\le g$）；第 13 届题六（20 分）再考一次，积分因子 $e^{F(t)}h(t)$ 梅开二度；第 16 届题六（20 分）函数迭代列，中值定理两次核心使用撑起全题估值；第 15 届题六官方证法 III 用中值定理反证极限不为 $3$；第 11 届题五的差分放缩 $\frac1{n^\delta}-\frac1{(n+1)^\delta}\le\frac{\delta}{n^{1+\delta}}$ 也是 Lagrange 的一步（步骤分）。直接撑整题时 15–20 分，藏在链条里时 3–5 分步骤分。</p>
+  <p><strong>学完你能</strong>：① 默写 Rolle / Lagrange / Cauchy 三定理的陈述，并说清相互推出关系（Cauchy 取 $g(x)=x$ 得 Lagrange，Lagrange 加端点相等得 Rolle）；② 把「证 $\exists\xi$ 使 …$=0$」机械地倒推出辅助函数——模式对照表前五行张口就来，且会用积分因子<strong>生成</strong>表上没有的新模式；③ 用 Rolle 推论链处理根的存在与个数（$f$ 有 $n$ 个根 $\Rightarrow f'$ 有 $n-1$ 个根）；④ 用 Lagrange 把增量差变成导数估值（$|f(b)-f(a)|\le M|b-a|$）；⑤ 复述第 11 届题二两处构造的动机。</p>
+  <p><strong>前置</strong>：第 4 章（最值定理——Fermat 引理与 Rolle 的证明靠它；零点定理与「移项造 $g$」——本章的辅助函数是它的成人形态）、第 0.5 章（工具八 · 辅助函数，本章是它的主场）。</p>
+</div>
+
+<h2>§1 开场谜题：算不出来的 ξ，造出来的函数</h2>
+
+<div class="hook box" data-tag="开场谜题">
+  <p>看一道标准的竞赛型结论：「$f$ 在 $[a,b]$ 上连续、在 $(a,b)$ 内可导，$f(a)=f(b)$。证明：存在 $\xi\in(a,b)$，使 $f'(\xi)=0$。」</p>
+  <p>问一句：$\xi$ 是多少？</p>
+  <p>不知道。在哪儿？不知道。怎么算？<strong>算不出来</strong>——题目连 $f$ 的表达式都没给。你唯一能说的是：它<strong>存在</strong>。一个你一辈子都算不出来的数，你却要证明它「有」，这件事本身已经够奇怪了。（第 4 章的零点定理也是这种「只保证有、不给地址」的定理，但那是连续函数的世界；这里是导数的世界。）</p>
+  <p>更狠的在后面。竞赛题不满足于 $f'(\xi)=0$，它让你证这种东西：</p>
+  <p>$$f'(\xi)+f(\xi)=0,\qquad \xi f'(\xi)-f(\xi)=0,\qquad f'(\xi)g(\xi)-f(\xi)g'(\xi)=0.$$</p>
+  <p>翻遍定理书，<strong>没有一条定理叫「$f'+f$ 定理」</strong>，也没有「$xf'-f$ 定理」。货架上的定理只有一条 Rolle：$F'(\xi)=0$。</p>
+  <p>所以出路只有一条：<strong>自己造一个 $F$，让 $F'(\xi)=0$ 恰好等价于题目要的那句定制等式</strong>，然后让 Rolle 定理替你干活。比如第一句：造 $F(x)=e^{x}f(x)$，则 $F'(\xi)=e^{\xi}\bigl(f'(\xi)+f(\xi)\bigr)=0$，而 $e^{\xi}$ 永不为零——于是 $f'(\xi)+f(\xi)=0$ 成立。$\xi$ 你还是算不出来，但等式成立了。</p>
+  <p>这个「造函数」的手艺叫<strong>辅助函数构造</strong>，是第 0.5 章工具八的主场，也是本章的心脏。$F$ 不是背出来的，是<strong>倒推出来的</strong>——本章先把中值定理全家（Rolle → Lagrange → Cauchy）交付给你，再把「造函数」从玄学变成一套生成程序。</p>
+</div>
+
+<h2>§2 先看见它：必有切线平行于弦</h2>
+
+<div class="vision box" data-tag="直觉与图像">
+  <p>把 $f$ 的图像画出来，两端点连成一条<strong>弦</strong>。弦的斜率是平均变化率 $\dfrac{f(b)-f(a)}{b-a}$——全程的「平均速度」。现在让切线沿着曲线从一端滑到另一端：切线斜率（瞬时速度）连续地变，<strong>总有一个位置，切线与弦恰好平行</strong>。</p>
+  <p>那个位置的横坐标就是 $\xi$。Lagrange 中值定理说的全部事情就是一句大白话：<strong>平均速度一定在某个瞬间被真的达到过</strong>。Rolle 是它的特例：两端同高（弦水平），则必有水平切线——山顶或谷底，总有一个地方是平的。</p>
+</div>
+
+<figure>
+<svg viewBox="0 0 720 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Lagrange 中值定理：必有切线平行于弦">
+  <!-- 坐标轴 -->
+  <line x1="60" y1="225" x2="700" y2="225" stroke="#2b2620" stroke-width="1.5"/>
+  <polygon points="710,225 698,220 698,230" fill="#2b2620"/>
+  <line x1="90" y1="230" x2="90" y2="30" stroke="#2b2620" stroke-width="1.5"/>
+  <polygon points="90,20 85,32 95,32" fill="#2b2620"/>
+  <!-- 曲线：a 端高 b 端更高，中间起伏 -->
+  <path d="M 150 190 C 210 160 230 90 300 82 C 360 75 390 130 450 128 C 510 126 560 70 630 58"
+        fill="none" stroke="#1d4ed8" stroke-width="2.8"/>
+  <!-- 端点 -->
+  <circle cx="150" cy="190" r="5" fill="#1d4ed8"/>
+  <circle cx="630" cy="58" r="5" fill="#1d4ed8"/>
+  <text x="138" y="212" font-size="13.5" fill="#1d4ed8" text-anchor="middle">(a, f(a))</text>
+  <text x="644" y="52" font-size="13.5" fill="#1d4ed8">(b, f(b))</text>
+  <!-- 弦（橙，虚线），斜率 (58-190)/(630-150) = -132/480 ≈ -0.275 -->
+  <line x1="128" y1="196" x2="652" y2="52" stroke="#b45309" stroke-width="2" stroke-dasharray="7 5"/>
+  <text x="392" y="200" font-size="13" fill="#b45309">弦：斜率 = (f(b)−f(a))/(b−a)，平均速度</text>
+  <!-- 切线 1：在 (300,82) 附近，斜率与弦相同 -0.275 -->
+  <line x1="222" y1="103" x2="378" y2="60" stroke="#be123c" stroke-width="2.4"/>
+  <circle cx="300" cy="82" r="5" fill="#be123c"/>
+  <text x="300" y="44" font-size="13.5" fill="#be123c" text-anchor="middle" font-weight="bold">ξ₁：切线 ∥ 弦</text>
+  <!-- 切线 2：在 (450,128) 附近 -->
+  <line x1="372" y1="150" x2="528" y2="107" stroke="#be123c" stroke-width="2.4"/>
+  <circle cx="450" cy="128" r="5" fill="#be123c"/>
+  <text x="462" y="152" font-size="13.5" fill="#be123c" font-weight="bold">ξ₂：也平行</text>
+  <!-- 竖直虚线标 ξ 位置 -->
+  <line x1="300" y1="82" x2="300" y2="225" stroke="#8a8175" stroke-width="1.2" stroke-dasharray="4 4"/>
+  <line x1="450" y1="128" x2="450" y2="225" stroke="#8a8175" stroke-width="1.2" stroke-dasharray="4 4"/>
+  <text x="300" y="243" font-size="13" fill="#5c554b" text-anchor="middle">ξ₁</text>
+  <text x="450" y="243" font-size="13" fill="#5c554b" text-anchor="middle">ξ₂</text>
+  <text x="330" y="255" font-size="11.5" fill="#5c554b" text-anchor="middle">（「至少一个」：这张图里其实有两个）</text>
+</svg>
+<figcaption>Lagrange 中值定理的全部几何内容：弦摆在那里，就必有切线与它平行；$f'(\xi)$ 就是弦的斜率。</figcaption>
+</figure>
+
+<h3>2.1 亲手找 ξ（交互）</h3>
+
+<div class="widget" id="mvt-widget">
+  <p class="w-title">▶ 中值定理可视化：拖动端点与切点，看切线何时平行于弦</p>
+  <p class="w-row">曲线 $f(x)=x^3-3x$，左端固定 $a=-2$。<span style="color:#b45309">橙色虚线</span>是弦（随 $b$ 变），<span style="color:#be123c">红线</span>是切点 $c$ 处的切线。下方实时显示两个斜率：<strong>让它们相等，你就亲手找到了 Lagrange 保证的那个 $\xi$</strong>（灰虚线是解析解 $\xi=\pm\sqrt{(m+3)/3}$ 中落在区间内的，先别看它，自己拖 $c$ 找感觉）。</p>
+  <div class="w-row"><label>右端点 b（拖到 1 试试：此时 f(b)=f(a)，弦水平——这就是 Rolle）</label>
+  <input type="range" id="mvt-b" min="-1.2" max="2" step="0.01" value="2"></div>
+  <div class="w-row"><label>切点 c（在 a、b 之间滑动，盯两个斜率的差）</label>
+  <input type="range" id="mvt-c" min="-1.99" max="1.99" step="0.01" value="0.4"></div>
+  <svg id="mvt-svg" viewBox="0 0 720 250" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div class="w-verdict" id="mvt-out">加载中……（需要启用 JavaScript）</div>
+  <p class="w-row" style="font-size:0.88em;color:#5c554b">玩出这三个体验再往下走：<strong>①</strong> 把 $b$ 拖到 $1$：弦水平（$m=0$），拖 $c$ 找到<strong>两个</strong>使切线水平的点（$c=\pm1$）——Rolle 是 Lagrange 的 $m=0$ 特例，「至少一个」其实给了两个；<strong>②</strong> $b=2$ 时把 $c$ 从 $-1.9$ 慢慢拖到 $1.9$，看 $f'(c)-m$ 由正变负再变正——每次变号都踩过一个 $\xi$，「必有」二字就是这种躲不开的体感（严格证明不靠眼睛，靠 Rolle）；<strong>③</strong> 把 $b$ 拖到 $-0.5$：灰虚线只剩一条——$\xi$ 的个数不保证，存在性从不缺席；再注意 $\xi$ 永远严格落在开区间内部。</p>
+</div>
+
+<h2>§3 精确定义：三兄弟与一个引理</h2>
+
+<div class="def">
+  <p class="def-title">引理（Fermat）</p>
+  <p>设 $f$ 在 $x_0$ 的某邻域内有定义，在 $x_0$ 处可导，且 $x_0$ 是 $f$ 的（局部）极值点。则 $f'(x_0)=0$。</p>
+  <p>一句话：<strong>可导函数在内部最高点的切线必水平</strong>。它是 Rolle 定理的证明机关（配合第 4 章最值定理：闭区间上的最大、最小值必存在）。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定理 1（Rolle 中值定理）</p>
+  <p>设 $f$ 满足：① 在 $[a,b]$ 上连续；② 在 $(a,b)$ 内可导；③ $f(a)=f(b)$。则存在 $\xi\in(a,b)$，使
+  $$f'(\xi)=0.$$</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定理 2（Lagrange 中值定理）</p>
+  <p>设 $f$ 在 $[a,b]$ 上连续，在 $(a,b)$ 内可导。则存在 $\xi\in(a,b)$，使
+  $$f'(\xi)=\frac{f(b)-f(a)}{b-a},\qquad\text{等价地}\qquad f(b)-f(a)=f'(\xi)\,(b-a).$$</p>
+  <p>第二种写法才是主力军：<strong>把增量差翻译成某点的导数</strong>——估值、放缩、压缩估计全靠它。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定理 3（Cauchy 中值定理）</p>
+  <p>设 $f,g$ 在 $[a,b]$ 上连续，在 $(a,b)$ 内可导，且 $g'(x)\ne0$ 对一切 $x\in(a,b)$ 成立。则存在 $\xi\in(a,b)$，使
+  $$\frac{f(b)-f(a)}{g(b)-g(a)}=\frac{f'(\xi)}{g'(\xi)}.$$</p>
+  <p>注：由 Rolle 的逆否，$g'(x)\ne0$ 保证 $g(b)\ne g(a)$（否则 $\exists\,\eta,\ g'(\eta)=0$），分母合法。几何意义：参数曲线 $\bigl(g(t),f(t)\bigr)$ 上必有切线平行于连接两端点的弦。</p>
+</div>
+
+<div class="symbol box" data-tag="逐符号朗读">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$f$ 在 $[a,b]$ 连续</td><td>"闭区间上连续，端点处单侧连续"</td><td>三兄弟共同的第一张船票（端点可以不可导，如 $\sqrt{x}$ 在 $[0,1]$ 上照样能用 Lagrange）</td></tr>
+    <tr><td>$(a,b)$ 内可导</td><td>"开区间每一点导数存在"</td><td>第二张船票；注意是<strong>开</strong>区间——端点可导性不要求</td></tr>
+    <tr><td>$f(a)=f(b)$（仅 Rolle）</td><td>"两端同高"</td><td>弦水平；结论 $f'(\xi)=0$ 即「必有水平切线」</td></tr>
+    <tr><td>$\exists\,\xi\in(a,b)$</td><td>"内部至少存在一点 $\xi$"</td><td>$\exists$ 型结论：只保证有、不给地址；开区间——端点不算数</td></tr>
+    <tr><td>$\dfrac{f(b)-f(a)}{b-a}$</td><td>"弦的斜率，全程平均变化率"</td><td>Lagrange 说：瞬时变化率 $f'(\xi)$ 在某点恰好等于它</td></tr>
+    <tr><td>$\dfrac{f'(\xi)}{g'(\xi)}$（Cauchy）</td><td>"两个函数瞬时变化率的比"</td><td>参数曲线的切线斜率；$g'\ne0$ 既保证分母合法，也保证 $g(b)\ne g(a)$</td></tr>
+  </table>
+  <p>三兄弟的量词形态完全一致：<strong>$\exists\,\xi\in(a,b)$ + 一句关于 $f'(\xi)$ 的等式</strong>。辅助函数构造术的任务，就是把卷面上五花八门的「定制等式」全部翻译成这个形态。</p>
+</div>
+
+<div class="think">
+  <p>别急着往下翻。<strong>用 Cauchy 定理推出 Lagrange 定理，再用 Lagrange 定理推出 Rolle 定理</strong>——各只需一行。写在纸上再展开。</p>
+  <details class="answer">
+    <summary>对照：特化两步</summary>
+    <p><strong>Cauchy ⟹ Lagrange</strong>：取 $g(x)=x$。则 $g(b)-g(a)=b-a$，$g'(x)=1\ne0$，代入即得 $\dfrac{f(b)-f(a)}{b-a}=f'(\xi)$。</p>
+    <p><strong>Lagrange ⟹ Rolle</strong>：加条件 $f(a)=f(b)$，则分子 $f(b)-f(a)=0$，故 $f'(\xi)=0$。</p>
+    <p>记忆锚点：<strong>Cauchy ⊃ Lagrange ⊃ Rolle</strong>，一个套一个——这是「特化」方向，白送；「推广」方向（Rolle 证 Lagrange、Lagrange 证 Cauchy）才需要造辅助函数，见下面的家族证明路线。</p>
+  </details>
+</div>
+
+<div class="calc box" data-tag="家族证明路线：辅助函数的第一次登场">
+  <p><strong>Rolle 的证明</strong>（第 4 章弹药）：$f$ 在 $[a,b]$ 连续，由最值定理取到最大值 $M$ 与最小值 $m$。若 $M=m$，$f$ 为常数，$f'\equiv0$；若 $M&gt;m$，因 $f(a)=f(b)$，$M$ 与 $m$ 至少有一个不在端点取得，设最大值在内部点 $\xi$ 取得，由 Fermat 引理，$f'(\xi)=0$。$\square$</p>
+  <p><strong>Lagrange 的证明</strong>（关键的十行）：要证「$\exists\,\xi,\ f'(\xi)-\dfrac{f(b)-f(a)}{b-a}=0$」。造
+  $$\varphi(x)=f(x)-f(a)-\frac{f(b)-f(a)}{b-a}\,(x-a),$$
+  即「曲线减弦」。则 $\varphi$ 在 $[a,b]$ 连续、$(a,b)$ 可导，且直接代入得 $\varphi(a)=\varphi(b)=0$。由 Rolle，$\exists\,\xi\in(a,b)$，$\varphi'(\xi)=f'(\xi)-\dfrac{f(b)-f(a)}{b-a}=0$。$\square$</p>
+  <p><strong>Cauchy 的证明</strong>（同一台机床）：记 $\lambda=\dfrac{f(b)-f(a)}{g(b)-g(a)}$，造
+  $$\varphi(x)=f(x)-f(a)-\lambda\,\bigl(g(x)-g(a)\bigr),$$
+  同样有 $\varphi(a)=\varphi(b)=0$，Rolle 给出 $\varphi'(\xi)=f'(\xi)-\lambda g'(\xi)=0$，两边除以 $g'(\xi)\ne0$ 即证。$\square$</p>
+  <p class="aside">看清楚了：<strong>Lagrange 与 Cauchy 都是「为目标等式定制一个 $\varphi$，让 Rolle 干活」</strong>——这正是辅助函数构造的第一次登场。§3.1 要做的就是把这个动作从「课本里的一次性技巧」升级成你手上的通用程序（工具八）。</p>
+</div>
+
+<p><strong>家族远亲 · Darboux 定理</strong>（提一句，证明不要求）：导函数即使不连续，也必有<strong>介值性</strong>——$f'$ 在区间上取遍任意两点导数值之间的一切值。推论：「$f'$ 在区间上无零点」自动等价于「$f'$ 恒正或恒负」，<strong>不需要 $f'$ 连续</strong>。在根个数与单调性论证里，这句话能省掉「$f'$ 连续」的多余假设。</p>
+
+<h3>3.1 辅助函数构造的系统方法（本章核心）</h3>
+
+<p>问题的一般形态：<strong>证明存在 $\xi\in(a,b)$，使 $G\bigl(f(\xi),f'(\xi),\xi\bigr)=0$</strong>。正面寻找 $\xi$ 是死路（算不出来），标准打法是倒推——这是工具一与工具八的联合作战：</p>
+
+<div class="trans box" data-tag="倒推三步（辅助函数的生成程序）">
+  <p><strong>第一步 · 移项成型</strong>：把目标等式全部移到一边，写成「某表达式$(\xi)=0$」。</p>
+  <p><strong>第二步 · 配原函数</strong>：找一个 $F$，使 $F'(x)=$（一个恒非零的因子）$\times$（该表达式）——于是 $F'(\xi)=0\iff$ 目标式。$F$ 怎么找？把表达式看成<strong>微分方程的左边</strong>，用积分因子法生成（下面讲），或查模式对照表。</p>
+  <p><strong>第三步 · 验 Rolle 三条件</strong>：$F$ 在 $[a,b]$ 连续、$(a,b)$ 可导、$F(a)=F(b)$。前两条通常白送；端点等值由题面给 $f$ 的条件（如 $f(a)=f(b)=0$）自动继承——<strong>但必须写出验证的一句</strong>。然后 Rolle 给出 $\xi$，回代，约掉非零因子（声明它非零！），收工。</p>
+</div>
+
+<div class="net box" data-tag="模式对照表（每行都已逐条求导验证）">
+  <table>
+    <tr><th>目标式（要证 $=0$ 的左边）</th><th>辅助函数 $F$</th><th>验证：$F'(x)=$</th></tr>
+    <tr><td>$f'(x)+f(x)$</td><td>$e^{x}f(x)$</td><td>$e^{x}\bigl(f'(x)+f(x)\bigr)$</td></tr>
+    <tr><td>$f'(x)-f(x)$</td><td>$e^{-x}f(x)$</td><td>$e^{-x}\bigl(f'(x)-f(x)\bigr)$</td></tr>
+    <tr><td>$xf'(x)+f(x)$</td><td>$xf(x)$</td><td>$xf'(x)+f(x)$（乘积求导倒放）</td></tr>
+    <tr><td>$xf'(x)-f(x)$</td><td>$\dfrac{f(x)}{x}$（$x\ne0$）</td><td>$\dfrac{xf'(x)-f(x)}{x^{2}}$（商求导倒放）</td></tr>
+    <tr><td>$f'(x)g(x)-f(x)g'(x)$</td><td>$\dfrac{f(x)}{g(x)}$（$g\ne0$）</td><td>$\dfrac{f'(x)g(x)-f(x)g'(x)}{g^{2}(x)}$</td></tr>
+    <tr><td>$f'(x)+\lambda f(x)$</td><td>$e^{\lambda x}f(x)$</td><td>$e^{\lambda x}\bigl(f'(x)+\lambda f(x)\bigr)$</td></tr>
+    <tr><td>$f''(x)-f(x)$</td><td>$e^{x}\bigl(f'(x)-f(x)\bigr)$</td><td>$e^{x}\bigl(f''(x)-f(x)\bigr)$（两次构造压缩成一次）</td></tr>
+  </table>
+  <p>用法：把目标式往表上靠，靠上哪行用哪行；<strong>靠不上就自己生成</strong>——下一框讲生成器。</p>
+</div>
+
+<div class="calc box" data-tag="生成器：积分因子法（把背模式升级成会生成模式）">
+  <p>这张表不是天上掉的。看目标式的一般形 $f'(x)+P(x)f(x)$：给它乘一个待定的 $\mu(x)$，想让它变成某个乘积的导数：
+  $$\mu f'+\mu Pf\ \overset{\text{想等于}}{=}\ (\mu f)'=\mu f'+\mu'f\quad\Longleftrightarrow\quad \mu'=\mu P\quad\Longleftrightarrow\quad \frac{\mu'}{\mu}=P.$$</p>
+  <p>即 $(\ln\mu)'=P$，取
+  $$\mu(x)=e^{\int P(x)\,dx}\qquad\Longrightarrow\qquad \Bigl(e^{\int P\,dx}f(x)\Bigr)'=e^{\int P\,dx}\bigl(f'(x)+P(x)f(x)\bigr).$$</p>
+  <p>这就是解微分方程 $y'+P(x)y=0$ 的<strong>积分因子法</strong>。模式表前五行全是它的产品：$P=\pm1$ 给 $e^{\pm x}$；$P=\lambda$ 给 $e^{\lambda x}$；$xf'+\alpha f$ 型先除以 $x$ 得 $P=\dfrac{\alpha}{x}$，给 $\mu=e^{\alpha\ln x}=x^{\alpha}$，即 $F=x^{\alpha}f$，$F'=x^{\alpha-1}\bigl(xf'(x)+\alpha f(x)\bigr)$。</p>
+  <p><strong>最后这个例子不是随手的</strong>：第 11 届题二官方解答「两边乘 $x^{\alpha-1}$」那一步，来源正是它（§9 真题节选细拆）。考场上表里没有的型，现推 $\mu=e^{\int P\,dx}$，十秒钟生成。</p>
+</div>
+
+<div class="trans box" data-tag="f″±f 型：两次构造，以及 e 的边界">
+  <p><strong>$f''-f$ 型</strong>：把 $g=f'-f$ 当一个整体，则 $f''-f=(f''-f')+(f'-f)=g'+g$——这是 $g$ 的「$g'+g$ 型」，查表用 $e^{x}$：造 $F=e^{x}g=e^{x}\bigl(f'-f\bigr)$，则 $F'=e^{x}\bigl(f''-f\bigr)$。<strong>两次构造压缩成一次</strong>；同理 $e^{-x}\bigl(f'+f\bigr)$ 的导数是 $e^{-x}(f''-f)$，也行。</p>
+  <p><strong>$f''+f$ 型</strong>：$e$ 的幂次<strong>办不到</strong>——因为 $D^{2}+1$ 在实数范围分解不了（$D^{2}-1=(D-1)(D+1)$ 才有上面的玩法），这正是方程 $y''+y=0$ 的解是 $\sin x,\cos x$ 而不是 $e^{\lambda x}$ 的原因。改用三角因子：
+  $$F=f'\sin x-f\cos x\ \Longrightarrow\ F'=\bigl(f''+f\bigr)\sin x,\qquad F=f'\cos x+f\sin x\ \Longrightarrow\ F'=\bigl(f''+f\bigr)\cos x.$$</p>
+  <p>一句话：<strong>因子 $\mu$ 永远选自目标微分方程的解</strong>——积分因子法不是技巧清单，是「把 Rolle 定理接到微分方程上」的通用接口。</p>
+</div>
+
+<div class="warn box" data-tag="头号陷阱 ×3">
+  <p><strong>① 证「$f'(\xi)=0$」有两条路，别走错的</strong>：对 $f'$ 用零点定理，需要 $f'$ <strong>连续</strong>且变号——题面只说「可导」时 $f'$ 未必连续，此路封死；对 $F$ 用 Rolle，只需 $F$ 端点等值，<strong>不要求 $F'$ 连续</strong>。Rolle 才是正门，零点定理那条是偏门（第 4 章 T8 见过：介值性不等于连续）。</p>
+  <p><strong>② 约因子必须声明非零</strong>：$e^{\pm\xi}&gt;0$、$x^{2}&gt;0$（$x\ne0$ 时）、$g^{2}(\xi)&gt;0$。漏掉「因为 $e^{-\xi}&gt;0$」这句，从 $e^{-\xi}\bigl(f'(\xi)-f(\xi)\bigr)=0$ 到 $f'(\xi)=f(\xi)$ 就是跳步——分步给分制下，这一步就是分。</p>
+  <p><strong>③ Cauchy 定理不能「分子分母各用一次 Lagrange 再相除」</strong>：对 $f$ 用 Lagrange 得一个 $\xi_1$，对 $g$ 又得一个 $\xi_2$，两个点一般不同，$\dfrac{f'(\xi_1)}{g'(\xi_2)}$ 什么也不是。必须像家族证明路线那样<strong>一次性</strong>造 $\varphi$。这是 Cauchy 定理证明题里最常见的伪证。</p>
+</div>
+
+<h3>3.2 Rolle 推论链：根的个数，一条流水线</h3>
+
+<div class="calc box" data-tag="Rolle 推论链（逐次降阶）">
+  <p>设 $f$ 在 $(a,b)$ 内有 $n$ 个<strong>不同</strong>的根 $x_1&lt;x_2&lt;\cdots&lt;x_n$。每对相邻根之间用一次 Rolle（$f(x_i)=f(x_{i+1})=0$），得 $f'$ 在 $(x_i,x_{i+1})$ 内至少一根——共至少 $n-1$ 个根；对 $f'$ 同理，$f''$ 至少 $n-2$ 个；依此类推：
+  $$f\text{ 有 }n\text{ 个根}\ \Longrightarrow\ f'\text{ 至少 }n-1\text{ 个}\ \Longrightarrow\ f''\text{ 至少 }n-2\text{ 个}\ \Longrightarrow\ \cdots\ \Longrightarrow\ f^{(k)}\text{ 至少 }n-k\text{ 个}.$$</p>
+  <p>翻成逆否（工具四 · 量词否定）才是战场形态：<strong>若 $f^{(k)}$ 在 $(a,b)$ 内无根，则 $f$ 在 $(a,b)$ 内至多有 $k$ 个根</strong>。证「方程至多有 $k$ 个根」= 反证假设 $k+1$ 个根，沿链推到 $f^{(k)}$ 有根，与条件对撞。</p>
+</div>
+
+<div class="net box" data-tag="应用三类出口（预览，§8 各配例题或习题）">
+  <p><strong>出口一 · 方程根的存在与个数</strong>：存在性靠零点定理（第 4 章），个数靠 Rolle 链（本章）——「存在 + 唯一」的经典会师。配套变式 1。</p>
+  <p><strong>出口二 · $\xi$ 存在性等式</strong>：辅助函数构造的主战场（§3.1 全部手艺）。例 1、模仿 1、11 届题二。</p>
+  <p><strong>出口三 · Lagrange 证不等式</strong>：$f(b)-f(a)=f'(\xi)(b-a)$ 把增量差换成导数估值：$|f'|\le M\Rightarrow|f(b)-f(a)|\le M|b-a|$（压缩估计，16 届题六的引擎）；反过来 $|f'|\ge m&gt;0$ 给反向估计（15 届题六法 III：$|x_{n+1}-3|=f'(\xi_n)(3-x_n)\ge 3-x_n$）。例 2、模仿 2。</p>
+</div>
+
+<h2>§4 翻译轨：三个标准动作 + 一间练功房</h2>
+
+<p>中值定理在卷面上只有三种用法。把它们练成反射，这一章就毕业了。</p>
+
+<div class="trans box" data-tag="动作一：「∃ξ 使 …=0」→ 倒推造 F，对 F 用 Rolle">
+  <p><strong>题面</strong>：「证明存在 $\xi\in(a,b)$，使 $f'(\xi)=\cdots$ / …$(\xi)=0$」（目标式含 $f'$ 或 $f''$）。</p>
+  <p><strong>翻译</strong>：跑 §3.1 的倒推三步：移项成型 → 配原函数（查模式对照表，查不到用 $\mu=e^{\int P\,dx}$ 生成）→ 验 Rolle 三条件。<strong>写在卷面上的只有 $F$ 和验证</strong>，倒推过程全部删除（第 0.5 章程序第 5 步）。</p>
+  <p><strong>用在哪一步、值多少分</strong>：这类题「造对 $F$」通常就是 2–4 分的开门分，端点等值验证一句又是分；11 届题二里两处构造撑起整题 15 分。完整示范在 §8 例 1。</p>
+</div>
+
+<div class="trans box" data-tag="动作二：「f(b)−f(a)」增量差 → Lagrange 估值">
+  <p><strong>题面</strong>：出现函数值的差（$f(b)-f(a)$、$|x_{n+1}-L|$、$\frac1{n^\delta}-\frac1{(n+1)^\delta}$），且手里有关于 $f'$ 的信息（有界、下界、符号）。</p>
+  <p><strong>翻译</strong>：$f(b)-f(a)=f'(\xi)(b-a)$，$\xi$ 夹在 $a,b$ 之间——<strong>差变成导数</strong>，然后 $f'$ 的信息进场：$|f'|\le M\Rightarrow|f(b)-f(a)|\le M|b-a|$（压缩，16 届题六）；$f'\ge m\Rightarrow f(b)-f(a)\ge m(b-a)$（15 届题六法 III）。$\xi$ 的位置「夹在中间」常常是放缩的最后一环。</p>
+  <p><strong>用在哪一步</strong>：估值链条的关节步，3–5 分；11 届题五的 $\frac1{n^\delta}-\frac1{(n+1)^\delta}\le\frac{\delta}{n^{1+\delta}}$ 就是对 $x^{-\delta}$ 用一次（$\xi\in(n,n+1)$，$\delta\,\xi^{-\delta-1}\le\delta\,n^{-\delta-1}$）。</p>
+</div>
+
+<div class="trans box" data-tag="动作三：「g′≤g 型微分不等式」→ 乘积分因子，变单调函数">
+  <p><strong>题面</strong>：条件或反证假设给出微分不等式（$g'\le g$、$h'+(2+f)h\ge0$、$xf''+(\alpha+1)f'\le\alpha f$），要推出函数本身的范围。</p>
+  <p><strong>翻译</strong>：把不等式移成「某表达式 $\le0$（或 $\ge0$）」，配 $F$ 使 $F'$ 恰为它——$F$ 单调，再由 $F$ 在某点的取值（通常是端点 $0$）定 $F$ 的符号，最后解出函数本身。查表：$g'-g\le0\Rightarrow\bigl(e^{-x}g\bigr)'\le0$；$h'+Ph\ge0\Rightarrow\bigl(e^{\int P}h\bigr)'\ge0$。这是 Gronwall 不等式的裸形态，11 届题二与 13 届题六（$e^{F(t)}h(t)$、$e^{G(t)}\bigl(g(t)-3\bigr)$）都是它。</p>
+</div>
+
+<h3>4.4 翻译练功房：像学语言一样，大量互译</h3>
+
+<p>老规矩：<strong>先全部写在纸上，再逐条展开对照</strong>。每条不超过 1 分钟。</p>
+
+<div class="trans box" data-tag="互译 8 句">
+  <p><strong>T1</strong>　自然→构造路径：「证明存在 $\xi\in(a,b)$ 使 $f'(\xi)=f(\xi)$」（设 $f\in C[a,b]$，$(a,b)$ 可导，$f(a)=f(b)=0$）。写出你的完整开局。</p>
+  <details class="answer"><summary>对照</summary><p>目标式移项：$f'(\xi)-f(\xi)=0$。看成 $y'-y=0$，$P(x)=-1$，积分因子 $\mu=e^{\int(-1)dx}=e^{-x}$。造 $F(x)=e^{-x}f(x)$：$F(a)=F(b)=0$，Rolle ⟹ $F'(\xi)=e^{-\xi}\bigl(f'(\xi)-f(\xi)\bigr)=0$，又 $e^{-\xi}&gt;0$，得 $f'(\xi)=f(\xi)$。<strong>反射</strong>：目标式 → 微分方程 → $\mu=e^{\int P}$ → $F=\mu f$ → Rolle。不需要灵感，需要程序。</p></details>
+  <p><strong>T2</strong>　填空：要证「$\exists\,\xi,\ \xi f'(\xi)-f(\xi)=0$」（$0\notin[a,b]$），造 $F=\underline{\quad}$，验证 $F'=\underline{\quad}$。</p>
+  <details class="answer"><summary>对照</summary><p>$F(x)=\dfrac{f(x)}{x}$，$F'(x)=\dfrac{xf'(x)-f(x)}{x^{2}}$（商求导倒放）。$x^{2}&gt;0$ 负责「非零因子」一职。<strong>易错</strong>：忘记条件 $0\notin[a,b]$ 保证了什么——$F$ 在区间上才有定义、才可导。</p></details>
+  <p><strong>T3</strong>　判断（说理由）：「要证 $f'(\xi)=0$，可以对 $f'$ 用零点定理：找两点使 $f'$ 异号即可。」这话什么时候合法？</p>
+  <details class="answer"><summary>对照</summary><p>仅当 $f'$ <strong>连续</strong>时合法——零点定理吃的就是连续。题面只给「可导」时 $f'$ 未必连续，此路封死，正门是 Rolle（只需端点等值）。补一刀：就算 $f'$ 不连续，Darboux 定理也说 $f'$ 有介值性，所以「$f'$ 异号 ⟹ $f'$ 有零点」其实仍成立——但那是 Darboux，不是零点定理，卷面上引用要写对名字。</p></details>
+  <p><strong>T4</strong>　自然→符号（反证开局）：「证明方程 $f(x)=0$ 在 $(a,b)$ 内至多有 $2$ 个根。」已知 $f''$ 在 $(a,b)$ 内无零点。写出反证的前三行。</p>
+  <details class="answer"><summary>对照</summary><p>设不然：存在 $x_1&lt;x_2&lt;x_3\in(a,b)$ 使 $f(x_1)=f(x_2)=f(x_3)=0$。在 $[x_1,x_2]$、$[x_2,x_3]$ 上各用 Rolle，得 $\eta_1\in(x_1,x_2)$、$\eta_2\in(x_2,x_3)$ 使 $f'(\eta_1)=f'(\eta_2)=0$。再在 $[\eta_1,\eta_2]$ 上用 Rolle，得 $\zeta$ 使 $f''(\zeta)=0$——与「$f''$ 无零点」矛盾。<strong>名字</strong>：Rolle 推论链，每对相邻根喂一次 Rolle。</p></details>
+  <p><strong>T5</strong>　符号→自然 + 点名：「$|f'|\le M\ \Longrightarrow\ |f(b)-f(a)|\le M|b-a|$。」它从哪个定理来？在 16 届题六里扮演什么角色？</p>
+  <details class="answer"><summary>对照</summary><p>Lagrange：$|f(b)-f(a)|=|f'(\xi)|\,|b-a|\le M|b-a|$。16 届题六里它是压缩估计的引擎：$|f_k(t)-f_k(s)|\le\frac12|t-s|$（$f_1'=\frac12$，$f_2'=\frac13$），迭代 $k$ 次得 $|F_k(x)-3|\le\frac1{2^k}|x-3|\to0$。<strong>信号</strong>：看到 $|f'|$ 有一致上界，就要反射出「压缩 / 线性增长控制」。</p></details>
+  <p><strong>T6</strong>　找坑：「由 Lagrange，存在 $\xi$ 使 $f'(\xi)=\dfrac{f(b)-f(a)}{b-a}$，所以 $f'$ 在 $\xi$ 处连续。」坑在哪？</p>
+  <details class="answer"><summary>对照</summary><p>中值定理只保证 $f'$ 在 $\xi$ 处<strong>存在</strong>（题设可导），一个字都没说 $f'$ 连续。「$f'$ 在 $\xi$ 取值等于弦斜率」与「$f'$ 在 $\xi$ 连续」差了十万八千里。<strong>病灶</strong>：把「导数存在」与「导数连续」混为一谈——可导 ⟹ $f$ 连续，但不 ⟹ $f'$ 连续（$x^{2}\sin\frac1x$ 是标准反例）。</p></details>
+  <p><strong>T7</strong>　自然→构造路径：「证明存在 $\xi$ 使 $f'(\xi)g(\xi)=f(\xi)g'(\xi)$」（设 $g$ 在 $[a,b]$ 上无零点）。</p>
+  <details class="answer"><summary>对照</summary><p>移项：$f'g-fg'=0$——商求导的分子。造 $F=\dfrac{f}{g}$，$F'=\dfrac{f'g-fg'}{g^{2}}$；若端点给 $F(a)=F(b)$（题面常包装成 $\frac{f(a)}{g(a)}=\frac{f(b)}{g(b)}$），Rolle 给出 $\xi$，约掉 $g^{2}(\xi)&gt;0$ 即证。<strong>反射</strong>：交叉相乘的等式，先除回商的形式再认亲。</p></details>
+  <p><strong>T8</strong>　判断 + 纠错：「Cauchy 中值定理可以这样证：对 $f$ 用 Lagrange 得 $f(b)-f(a)=f'(\xi)(b-a)$，对 $g$ 用 Lagrange 得 $g(b)-g(a)=g'(\xi)(b-a)$，两式相除即证。」</p>
+  <details class="answer"><summary>对照</summary><p>伪证。两次 Lagrange 给出的中值点一般是<strong>不同的两个点</strong> $\xi_1,\xi_2$，相除得到的是 $\dfrac{f'(\xi_1)}{g'(\xi_2)}$，不是 $\dfrac{f'(\xi)}{g'(\xi)}$。正确路线：记 $\lambda=\dfrac{f(b)-f(a)}{g(b)-g(a)}$，造 $\varphi=f-f(a)-\lambda\bigl(g-g(a)\bigr)$，对 $\varphi$ 用 Rolle——<strong>同一个 $\varphi$，才有同一个 $\xi$</strong>。</p></details>
+</div>
+
+<h2>§5 类型识别：什么信号在召唤中值定理</h2>
+
+<div class="recog box" data-tag="识别反射表">
+  <table>
+    <tr><th>题面信号</th><th>反射</th></tr>
+    <tr><td>「$\exists\,\xi$ 使 …$(\xi)=0$」，目标式含 $f'$ / $f''$</td><td>倒推造 $F$ → 对 $F$ 用 Rolle（动作一，工具八主场）</td></tr>
+    <tr><td>目标式形如 $f'\pm f$、$xf'\pm f$、$f'+\lambda f$、$f'g-fg'$</td><td>查模式对照表；查不到 → 积分因子 $\mu=e^{\int P\,dx}$ 现生成</td></tr>
+    <tr><td>「$f(a)=f(b)$」「两端同高」出现在条件里</td><td>Rolle 直接待命：条件①②多半白送，先写三条件验证</td></tr>
+    <tr><td>函数值的差：$f(b)-f(a)$、$|x_{n+1}-L|$、$\frac1{n^\delta}-\frac1{(n+1)^\delta}$</td><td>Lagrange：差变导数，$f'$ 的信息（上界 / 下界 / 符号）进场（动作二）</td></tr>
+    <tr><td>$|f'|$ 有一致上界（如 $|f'|\le\frac12$）</td><td>压缩信号：$|f(b)-f(a)|\le M|b-a|$，迭代估值（16 届题六）</td></tr>
+    <tr><td>「证方程至多有 $k$ 个根」「恰有一个根」的个数半句</td><td>Rolle 链反证：$k+1$ 个根 ⟹ $f^{(k)}$ 有根，对撞条件</td></tr>
+    <tr><td>微分不等式：$g'\le g$、$h'+Ph\ge0$、结论带「$&gt;$」的反证假设</td><td>乘积分因子变单调函数 + 端点值定号（动作三，11 届题二、13 届题六）</td></tr>
+    <tr><td>结论是 $f''(\xi)$ 的估计（如 $f''(\xi)\le-8$）</td><td>对 $f'$ 再用一次中值定理：链式调用（例 2 三次 Lagrange）</td></tr>
+  </table>
+</div>
+
+<h2>§6 考法定位：它藏在哪里、值多少分</h2>
+
+<div class="exam box" data-tag="考法定位">
+  <table>
+    <tr><th>出处</th><th>题号</th><th>本章内容扮演什么角色</th><th>分值权重</th></tr>
+    <tr><td>第 11 届（2019）</td><td>题二</td><td>微分不等式整题：反证 + 两处辅助函数（$xf'+\alpha f-\alpha\int_0^x f$ 求导得单调；$e^{-x}g$ 处理 $g'\le g$）——本章主场</td><td>15 分（整题，§9 真题节选）</td></tr>
+    <tr><td>第 13 届（2021）</td><td>题六</td><td>微分不等式比较原理：积分因子 $e^{F(t)}h(t)$、$e^{G(t)}\bigl(g(t)-3\bigr)$ 两次构造——「模式生成器」的考场形态</td><td>20 分（整题）</td></tr>
+    <tr><td>第 16 届（2024）</td><td>题六</td><td>迭代列压缩估值：中值定理两次核心使用（$\frac12$ 压缩；紧集上 $|f'|\le\ell&lt;1$ 的局部估计）</td><td>20 分（整题）</td></tr>
+    <tr><td>第 15 届（2023）</td><td>题六</td><td>法 III：中值定理反证极限不为 $3$（$|x_{n+1}-3|=f'(\xi_n)(3-x_n)\ge3-x_n$）</td><td>20 分题的官方备选证法之一</td></tr>
+    <tr><td>第 17 届（2025）</td><td>题五</td><td>辅助函数 $F=P-f$ 配 $F''\ge0$ 凸性夹逼——辅助函数的凸性形态（第 6 章 Taylor 近亲）</td><td>15 分（整题）</td></tr>
+    <tr><td>第 11 届（2019）</td><td>题五</td><td>差分放缩 $\frac1{n^\delta}-\frac1{(n+1)^\delta}\le\frac{\delta}{n^{1+\delta}}$，Lagrange 一步</td><td>约 3 分步骤（15 分题内）</td></tr>
+  </table>
+  <p><strong>规律</strong>：① 中值定理 / 辅助函数<strong>直接撑整题</strong>的频率约两年一道大题（11 届题二、13 届题六、16 届题六、17 届题五），且微分不等式 + 积分因子这个组合已经出现了两次（11、13 届）——动作三必须练成反射；② 其余年份它以步骤分藏在估值链条里（11 届题五、15 届题六法 III）；③ Rolle 链「根个数」模型在第 11–17 届索引中<strong>没有独立成题</strong>（13 届题三的多项式根的定性讨论是远亲），但它是中值定理应用的经典模型，且「存在（第 4 章零点）+ 唯一（本章 Rolle 链）」的会师结构随时可能返场——必练。</p>
+</div>
+
+<h2>§7 关系网：三兄弟、一台生成器、三个出口</h2>
+
+<p>本章所有角色的来龙去脉画在下面：<span style="color:#b45309">三角形</span>是来源与动机，<span style="color:#1d4ed8">圆角矩形</span>是公理与定义（本章的共同条件），<span style="color:#15803d">矩形</span>是定理，<span style="color:#7c3aed">六边形</span>是方法动作，<span style="color:#0f766e">椭圆</span>是应用出口。</p>
+
+<figure>
+<svg viewBox="0 0 720 550" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="中值定理家族关系网地图">
+  <defs>
+    <marker id="arr5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+
+  <!-- 图例 -->
+  <polygon points="30,16 22,30 38,30" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5"/>
+  <text x="44" y="28" font-size="11.5" fill="#5c554b">来源·动机</text>
+  <rect x="116" y="17" width="22" height="13" rx="6.5" fill="#eef3fe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="144" y="28" font-size="11.5" fill="#5c554b">公理·定义</text>
+  <rect x="222" y="17" width="22" height="13" fill="#ecf8f0" stroke="#15803d" stroke-width="1.5"/>
+  <text x="250" y="28" font-size="11.5" fill="#5c554b">定理</text>
+  <polygon points="300,23.5 306,16 320,16 326,23.5 320,31 306,31" fill="#f4effd" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="332" y="28" font-size="11.5" fill="#5c554b">方法·动作</text>
+  <ellipse cx="420" cy="23.5" rx="12" ry="7" fill="#ecf8f5" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="438" y="28" font-size="11.5" fill="#5c554b">应用·出口</text>
+
+  <!-- 来源三角：第 4 章 -->
+  <polygon points="105,56 50,126 160,126" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="105" y="98" font-size="12" fill="#7a4a12" text-anchor="middle" font-weight="bold">第 4 章</text>
+  <text x="105" y="114" font-size="10.5" fill="#7a4a12" text-anchor="middle">连续·最值·零点</text>
+
+  <!-- 船票（圆角矩形） -->
+  <rect x="230" y="64" width="270" height="58" rx="29" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="365" y="90" font-size="15" fill="#1d4ed8" text-anchor="middle" font-weight="bold">连续 + 可导（本章船票）</text>
+  <text x="365" y="109" font-size="11.5" fill="#1d4ed8" text-anchor="middle">[a,b] 连续，(a,b) 可导</text>
+
+  <!-- Fermat 引理 -->
+  <rect x="550" y="66" width="140" height="54" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="620" y="89" font-size="12.5" fill="#15803d" text-anchor="middle" font-weight="bold">Fermat 引理</text>
+  <text x="620" y="106" font-size="10.5" fill="#4a7c59" text-anchor="middle">内部极值 ⟹ f′=0</text>
+
+  <!-- 三角 → 船票 -->
+  <line x1="165" y1="93" x2="226" y2="93" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr5)"/>
+  <text x="196" y="84" font-size="10.5" fill="#5c554b" text-anchor="middle">供血</text>
+
+  <!-- Fermat → Rolle（证明机关） -->
+  <polyline points="620,120 620,150 115,150 115,176" fill="none" stroke="#15803d" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#arr5)"/>
+  <text x="368" y="144" font-size="10.5" fill="#15803d" text-anchor="middle">Rolle 的证明机关（配最值定理）</text>
+
+  <!-- 船票 → 三定理 -->
+  <polyline points="300,122 300,158 115,158 115,176" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr5)"/>
+  <polyline points="365,122 365,160 360,176" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr5)"/>
+  <polyline points="430,122 430,158 605,158 605,176" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr5)"/>
+  <text x="448" y="152" font-size="10.5" fill="#5c554b">同一张船票</text>
+
+  <!-- 三定理（矩形） -->
+  <rect x="40" y="180" width="150" height="56" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="115" y="203" font-size="12.5" fill="#15803d" text-anchor="middle" font-weight="bold">Rolle 定理</text>
+  <text x="115" y="221" font-size="10.5" fill="#4a7c59" text-anchor="middle">端点同高 ⟹ 水平切线</text>
+  <rect x="285" y="180" width="150" height="56" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="360" y="203" font-size="12.5" fill="#15803d" text-anchor="middle" font-weight="bold">Lagrange 定理</text>
+  <text x="360" y="221" font-size="10.5" fill="#4a7c59" text-anchor="middle">切线 ∥ 弦：差 = 导数×距</text>
+  <rect x="530" y="180" width="150" height="56" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="605" y="203" font-size="12.5" fill="#15803d" text-anchor="middle" font-weight="bold">Cauchy 定理</text>
+  <text x="605" y="221" font-size="10.5" fill="#4a7c59" text-anchor="middle">参数曲线版：变化率之比</text>
+
+  <!-- 正向推广箭头（上行） -->
+  <line x1="190" y1="196" x2="281" y2="196" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr5)"/>
+  <text x="236" y="188" font-size="10" fill="#5c554b" text-anchor="middle">推广：φ=f−弦</text>
+  <line x1="435" y1="196" x2="526" y2="196" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr5)"/>
+  <text x="481" y="188" font-size="10" fill="#5c554b" text-anchor="middle">同法推广</text>
+  <!-- 反向特化箭头（下行） -->
+  <polyline points="605,236 605,252 360,252 360,240" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr5)"/>
+  <text x="482" y="263" font-size="10" fill="#5c554b" text-anchor="middle">取 g(x)=x</text>
+  <polyline points="330,236 330,270 115,270 115,240" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr5)"/>
+  <text x="222" y="281" font-size="10" fill="#5c554b" text-anchor="middle">加 f(a)=f(b)</text>
+
+  <!-- Darboux 侧挂 -->
+  <rect x="530" y="296" width="150" height="46" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="605" y="315" font-size="12" fill="#15803d" text-anchor="middle" font-weight="bold">Darboux 定理</text>
+  <text x="605" y="331" font-size="10" fill="#4a7c59" text-anchor="middle">f′ 恒有介值性（不需连续）</text>
+  <line x1="655" y1="236" x2="655" y2="292" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr5)"/>
+  <text x="663" y="268" font-size="10" fill="#5c554b">家族远亲</text>
+
+  <!-- Rolle → 辅助函数构造术 -->
+  <polyline points="115,236 115,352 155,376" fill="none" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arr5)"/>
+  <text x="108" y="312" font-size="10" fill="#7c3aed" text-anchor="middle">F′(ξ)=0 的雇主</text>
+  <!-- Rolle → Rolle 链 -->
+  <polyline points="180,236 180,290 490,290 490,364" fill="none" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arr5)"/>
+  <text x="335" y="283" font-size="10" fill="#7c3aed" text-anchor="middle">相邻根之间逐个用</text>
+  <!-- Lagrange → 辅助函数（证明靠它，虚线） -->
+  <polyline points="360,236 360,316 250,364" fill="none" stroke="#7c3aed" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#arr5)"/>
+
+  <!-- 两六边形（方法） -->
+  <polygon points="110,400 140,368 260,368 290,400 260,432 140,432" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="200" y="396" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">辅助函数构造术</text>
+  <text x="200" y="413" font-size="10.5" fill="#6a55a3" text-anchor="middle">倒推 + 积分因子生成</text>
+  <polygon points="390,400 415,368 565,368 590,400 565,432 415,432" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="490" y="396" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">Rolle 链（推论）</text>
+  <text x="490" y="413" font-size="10.5" fill="#6a55a3" text-anchor="middle">n 根 ⟹ f′ 有 n−1 根</text>
+
+  <!-- 方法 → 应用 -->
+  <polyline points="440,432 440,458 180,458 180,468" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr5)"/>
+  <text x="310" y="452" font-size="10" fill="#5c554b" text-anchor="middle">个数判官</text>
+  <polyline points="230,432 230,462 330,462 330,468" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr5)"/>
+  <text x="222" y="448" font-size="10" fill="#5c554b" text-anchor="end">主战场</text>
+  <polyline points="420,236 420,352 610,352 610,468" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr5)"/>
+  <text x="515" y="346" font-size="10" fill="#5c554b" text-anchor="middle">差 → 导数估值</text>
+
+  <!-- 三椭圆（应用出口） -->
+  <ellipse cx="135" cy="505" rx="115" ry="32" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="135" y="501" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">根的存在与个数</text>
+  <text x="135" y="518" font-size="10.5" fill="#3d7a70" text-anchor="middle">零点（第 4 章）+ Rolle 链</text>
+  <ellipse cx="375" cy="505" rx="120" ry="32" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="375" y="501" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">ξ 存在性等式</text>
+  <text x="375" y="518" font-size="10.5" fill="#3d7a70" text-anchor="middle">辅助函数主战场（11·13 届）</text>
+  <ellipse cx="610" cy="505" rx="105" ry="32" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="610" y="501" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">不等式 · 估值</text>
+  <text x="610" y="518" font-size="10.5" fill="#3d7a70" text-anchor="middle">16 届引擎：差 → 导数</text>
+</svg>
+<figcaption>本章地图：第 4 章供血，一张船票养三兄弟；Rolle 雇佣辅助函数、串起 Rolle 链，Lagrange 直通估值；三个出口各有真题把守。</figcaption>
+</figure>
+
+<div class="net box" data-tag="画面感锚点（记这些，不记条文）">
+  <table>
+    <tr><th>节点</th><th>一句话画面</th></tr>
+    <tr><td>第 4 章（来源）</td><td>最值定理给 Rolle 递上「内部必有最高或最低点」，连续性给一切打底</td></tr>
+    <tr><td>连续 + 可导（船票）</td><td>端点可以不可导（$\sqrt{x}$ 于 $[0,1]$）——闭区间连续 + 开区间可导，条件要逐字背</td></tr>
+    <tr><td>Fermat 引理</td><td>山顶上切线必水平——Rolle 的证明机关</td></tr>
+    <tr><td>Rolle</td><td>两端同高，中途必有平地</td></tr>
+    <tr><td>Lagrange</td><td>平均速度必在某瞬达到；写的最多的是 $f(b)-f(a)=f'(\xi)(b-a)$</td></tr>
+    <tr><td>Cauchy</td><td>参数曲线的「切线 ∥ 弦」；取 $g(x)=x$ 就退化回 Lagrange</td></tr>
+    <tr><td>Darboux</td><td>导数不连续也有介值性——「$f'$ 无零点」免费升级成「$f'$ 恒号」</td></tr>
+    <tr><td>辅助函数构造术</td><td>把目标式当微分方程，$\mu=e^{\int P\,dx}$ 十秒生成 $F$，Rolle 替你干活</td></tr>
+    <tr><td>Rolle 链</td><td>每对相邻根之间夹出一个 $f'$ 的根——根的个数沿求导逐次递减</td></tr>
+    <tr><td>三个出口</td><td>根个数（反证链）、$\xi$ 等式（造 $F$）、不等式估值（差变导数）</td></tr>
+  </table>
+  <p><strong>和已学知识的焊接点</strong>：第 4 章的「移项造 $g$」（$g=f-\mu$、$g=f-x$）是辅助函数的幼体，本章它长大成「倒推造 $F$」；最值定理是 Fermat 引理的腿（16 届题六里「紧集上 $|f'|$ 有上界 $\ell&lt;1$」也用它的有界闭区间版）；第 1 章的确界在 17 届题五以 $\sup f''=2$ 的形态进场。往前看：第 6 章 Taylor 公式的 Lagrange 余项，就是 Lagrange 中值定理的高阶版（$n=0$ 即本章定理 2）。</p>
+</div>
+
+<h2>§8 计算示范：先看真人怎么想，再看卷面怎么写</h2>
+
+<h3>例 1 · ξ 等式：从目标式倒推出辅助函数（约 8 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>「$\exists\,\xi\in(a,b),\ f'(\xi)=f(\xi)$」——$\exists$ 型，要构造。但构造对象不是 $\xi$（它算不出来），而是一个函数 $F$，让 Rolle 定理替我们<strong>生产</strong> $\xi$。目标式含 $f'$，查识别反射表第一行：「$\exists\,\xi$ 使 …$=0$」$\to$ 倒推造 $F$——<strong>工具八 · 辅助函数</strong> + <strong>工具六 · 划归</strong>（划归成「$F'(\xi)=0$」，Rolle 管的事）。</p>
+  <p><span class="stage">【盘点】</span>三条条件各取货：① $f\in C[a,b]$；② $(a,b)$ 可导——Rolle 的前两张船票，$F$ 只要由 $f$ 与光滑函数拼成就自动继承；③ $f(a)=f(b)=0$——端点等值的原料：$F$ 若含因子 $f$，则 $F(a)=F(b)=0$ 白送。Rolle 三条件还没动工就已凑齐大半，这题的结构就是「配一个 $F$ 让导数对得上」。</p>
+  <p><span class="stage">【会师】</span>倒推（工具一）：目标式移项 $f'(\xi)-f(\xi)=0$。要 $F'=\text{（非零因子）}\times(f'-f)$。试 $F=\varphi f$：$F'=\varphi f'+\varphi' f=\varphi\bigl(f'+\frac{\varphi'}{\varphi}f\bigr)$，要对上 $f'-f$，需 $\dfrac{\varphi'}{\varphi}=-1$，即 $(\ln\varphi)'=-1$，$\varphi=e^{-x}$。于是 $F(x)=e^{-x}f(x)$：三条件 ✓（端点 $F(a)=e^{-a}\cdot0=0=F(b)$），Rolle 给 $\xi$，$F'(\xi)=e^{-\xi}\bigl(f'(\xi)-f(\xi)\bigr)=0$，而 $e^{-\xi}&gt;0$，得 $f'(\xi)=f(\xi)$。链条闭合，每环都是库存货。<strong>注意：刚才解的就是微分方程 $y'-y=0$ 的积分因子</strong>——模式对照表第 2 行，是你生成的，不是背的。</p>
+  <p><span class="stage">【定型】</span>卷面只写：作 $F(x)=e^{-x}f(x)$（仿佛从天而降），验三条件，Rolle，约 $e^{-\xi}$。倒推过程一个字不留。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 倒推造 $F$</strong>：目标式移项成「$=0$」→ 看成微分方程 $y'+P(x)y=0$ → 积分因子 $\mu=e^{\int P\,dx}$ → $F=\mu f$ → 验 Rolle 三条件 → 回代约掉非零因子（声明它非零）。同一个程序，换 $P(x)$ 就批量生产整张模式对照表。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 1</strong>　设 $f$ 在 $[a,b]$ 上连续，在 $(a,b)$ 内可导，且 $f(a)=f(b)=0$。证明：存在 $\xi\in(a,b)$，使 $f'(\xi)=f(\xi)$。</p>
+  <hr>
+  <p><strong>证明</strong>　作辅助函数
+  $$F(x)=e^{-x}f(x),\qquad x\in[a,b].$$<span class="step-score">（2 分）</span></p>
+  <p class="proof-line">$f$ 在 $[a,b]$ 上连续、在 $(a,b)$ 内可导，$e^{-x}$ 处处光滑，故 $F$ 在 $[a,b]$ 上连续，在 $(a,b)$ 内可导。<span class="step-score">（4 分）</span></p>
+  <p class="proof-line">又 $F(a)=e^{-a}f(a)=0$，$F(b)=e^{-b}f(b)=0$，即 $F(a)=F(b)$。<span class="step-score">（5 分）</span></p>
+  <p class="proof-line">由 Rolle 定理，存在 $\xi\in(a,b)$ 使 $F'(\xi)=0$。而
+  $$F'(x)=-e^{-x}f(x)+e^{-x}f'(x)=e^{-x}\bigl(f'(x)-f(x)\bigr),$$
+  故 $e^{-\xi}\bigl(f'(\xi)-f(\xi)\bigr)=0$。因 $e^{-\xi}&gt;0$，得 $f'(\xi)-f(\xi)=0$，即 $f'(\xi)=f(\xi)$。$\square$<span class="step-score">（8 分）</span></p>
+  <p class="aside">书写点评：分点落在「造对 $F$」（2 分）与「端点等值 + Rolle」（5 分）两处；「$F$ 连续可导」一句是准用条件声明，写了就是分；由 $F'(\xi)=0$ 到结论要<strong>声明 $e^{-\xi}&gt;0$ 再约</strong>——不声明就约，属跳步归零区。</p>
+</div>
+
+<h3>例 2 · f″ 的估计：三次 Lagrange 的链（约 12 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>「$\exists\,\xi\in(0,1),\ f''(\xi)\le-8$」——$\exists$ 型 + <strong>二阶导</strong>结论。手里没有直接管 $f''$ 的定理，但 $f''$ 是 $f'$ 的导数：对 $f'$ 用一次 Lagrange，$f''(\xi)=\dfrac{f'(\xi_2)-f'(\xi_1)}{\xi_2-\xi_1}$——于是问题降阶成「找两个 $f'$ 的取值信息」，而每个 $f'(\xi_i)$ 又各是对 $f$ 用一次 Lagrange 的产品。骨架：<strong>三次 Lagrange 的链</strong>（工具六 · 划归：$f''\to f'\to f$ 逐级降）。</p>
+  <p><span class="stage">【盘点】</span>① 二阶可导 ⟹ $f,f'$ 的连续、可导条件全程够用（三次 Lagrange 的准用条件）；② $f(0)=f(1)=0$；③ $\max f=2$：第 4 章最值定理保证最大值点 $c$ 存在且 $f(c)=2&gt;0=f(0)=f(1)$，故 $c\in(0,1)$ <strong>严格在内部</strong>。②③合起来的产出：两段弦的斜率——$[0,c]$ 上 $\dfrac{f(c)-f(0)}{c-0}=\dfrac2c&gt;0$，$[c,1]$ 上 $\dfrac{f(1)-f(c)}{1-c}=-\dfrac{2}{1-c}&lt;0$。$f'$ 一正一负两次取值，正是第三步要的货。</p>
+  <p><span class="stage">【会师】</span>倒推：要 $f''(\xi)\le-8$ $\Longleftarrow$ Lagrange（对 $f'$ 于 $[\xi_1,\xi_2]$）：$f''(\xi)=\dfrac{f'(\xi_2)-f'(\xi_1)}{\xi_2-\xi_1}$ $\Longleftarrow$ 需要分子很负、分母有上界：$f'(\xi_2)-f'(\xi_1)=-\dfrac{2}{1-c}-\dfrac2c=-\dfrac{2}{c(1-c)}\le-8$（因 $c(1-c)\le\frac14$），而 $0&lt;\xi_2-\xi_1&lt;1$（$\xi_1&gt;0,\ \xi_2&lt;1$），故
+  $$f''(\xi)=-\frac{2}{c(1-c)\,(\xi_2-\xi_1)}&lt;-\frac{2}{\frac14\cdot1}=-8.$$
+  每环都是库存货：两个斜率来自盘点③，$c(1-c)\le\frac14$ 是 $c(1-c)\le\bigl(\frac{c+(1-c)}{2}\bigr)^2$。</p>
+  <p><span class="stage">【定型前 · 特殊化侦察】</span>（工具三）取 $c=\frac12$、$f$ 为开口向下的抛物线 $f(x)=2\cdot4x(1-x)=8x(1-x)$：$f(0)=f(1)=0$，$\max f=f\bigl(\frac12\bigr)=2$ ✓；$f''\equiv-16\le-8$ ✓。结论在这个实例上成立且有余量——写进卷面前猜想先过了一关。（顺带：$-16$ 说明 $-8$ 这个界还有改进空间，但题目只要 $-8$。）</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 中值定理的链式调用</strong>：结论是 $f''$ 就先对 $f'$ 用一次、条件是 $f$ 的值就先对 $f$ 用两次——<strong>导数阶数每差一阶，中值定理就多用一次</strong>。最大值点 $c$ 把区间劈成两段，两段各产出一个符号相反的 $f'$ 值，第三次调用把它们对撞出 $f''$ 的上界。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 2</strong>　设 $f$ 在 $[0,1]$ 上二阶可导，$f(0)=f(1)=0$，且 $\max\limits_{[0,1]}f=2$。证明：存在 $\xi\in(0,1)$，使 $f''(\xi)\le-8$。</p>
+  <hr>
+  <p><strong>证明</strong></p>
+  <p class="proof-line"><strong>第一步（取最大值点）</strong>：$f$ 在 $[0,1]$ 上可导故连续，由最值定理，存在 $c\in[0,1]$ 使 $f(c)=2$。因 $f(0)=f(1)=0&lt;2$，故 $c\ne0,1$，即 $c\in(0,1)$。<span class="step-score">（3 分）</span></p>
+  <p class="proof-line"><strong>第二步（两段各用 Lagrange）</strong>：$f$ 在 $[0,c]$、$[c,1]$ 上分别满足 Lagrange 条件，存在 $\xi_1\in(0,c)$ 与 $\xi_2\in(c,1)$，使
+  $$f'(\xi_1)=\frac{f(c)-f(0)}{c-0}=\frac{2}{c},\qquad f'(\xi_2)=\frac{f(1)-f(c)}{1-c}=-\frac{2}{1-c}.$$<span class="step-score">（7 分）</span></p>
+  <p class="proof-line"><strong>第三步（对 $f'$ 用 Lagrange）</strong>：$f$ 二阶可导，故 $f'$ 在 $[\xi_1,\xi_2]$ 上连续、在 $(\xi_1,\xi_2)$ 内可导。由 Lagrange 中值定理，存在 $\xi\in(\xi_1,\xi_2)\subset(0,1)$，使
+  $$f''(\xi)=\frac{f'(\xi_2)-f'(\xi_1)}{\xi_2-\xi_1}=\frac{-\dfrac{2}{1-c}-\dfrac{2}{c}}{\xi_2-\xi_1}=-\frac{2}{c(1-c)\,(\xi_2-\xi_1)}.$$<span class="step-score">（10 分）</span></p>
+  <p class="proof-line"><strong>第四步（放缩收口）</strong>：由 $c(1-c)\le\left(\dfrac{c+(1-c)}{2}\right)^{2}=\dfrac14$ 及 $0&lt;\xi_2-\xi_1&lt;1$，得
+  $$f''(\xi)=-\frac{2}{c(1-c)\,(\xi_2-\xi_1)}&lt;-\frac{2}{\frac14\cdot1}=-8,$$
+  更有 $f''(\xi)\le-8$。$\square$<span class="step-score">（12 分）</span></p>
+  <p class="aside">书写点评：三次 Lagrange 各是一步分（3、7、10 分）；第三步前「$f'$ 满足中值定理条件」一句不可省——条件声明是分步给分制的刚需。注意 $\xi_2-\xi_1&lt;1$ 用的是 $\xi_1&gt;0,\ \xi_2&lt;1$（$c$ 严格内部在这里兑现）；放缩里 $-8=\dfrac{2}{\frac14\cdot1}$ 的来历：最大值 $2$、区间长 $1$，题目换个数，界就跟着换——会算这一个，就会算一族。第 6 章学了 Taylor 公式后，本题可在最大值点展开一行出（间隔复习见）。</p>
+</div>
+
+<h2>§9 配套题目</h2>
+
+<p>铁律：<strong>先写在纸上，写到写不动再展开答案</strong>。模仿题照例 1、例 2 的卷面格式写；变式题开始没有模板，先问自己「造哪个 $F$、用哪条链」。</p>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 1</span>设 $f$ 在 $[0,\pi]$ 上连续，在 $(0,\pi)$ 内可导，且 $f(0)=f(\pi)=0$。证明：存在 $\xi\in(0,\pi)$，使 $f'(\xi)+f(\xi)=0$。</p>
+  <details class="answer">
+    <summary>参考答案（约 4 分书写量）</summary>
+    <p>作辅助函数 $F(x)=e^{x}f(x)$（1 分）。$f$ 连续可导、$e^{x}$ 光滑 ⟹ $F$ 在 $[0,\pi]$ 上连续、在 $(0,\pi)$ 内可导（2 分）。</p>
+    <p>$F(0)=e^{0}f(0)=0$，$F(\pi)=e^{\pi}f(\pi)=0$，即 $F(0)=F(\pi)$（3 分）。</p>
+    <p>由 Rolle 定理，$\exists\,\xi\in(0,\pi)$ 使 $F'(\xi)=e^{\xi}\bigl(f'(\xi)+f(\xi)\bigr)=0$；因 $e^{\xi}&gt;0$，得 $f'(\xi)+f(\xi)=0$。$\square$（4 分）</p>
+    <p><strong>易错点</strong>：① 与例 1 只差一个符号，但 $e^{x}$ 与 $e^{-x}$ 选错就全错——分不清就现推：$y'+y=0$ 的积分因子是 $e^{\int 1\,dx}=e^{x}$；② 约 $e^{\xi}$ 前声明 $e^{\xi}&gt;0$。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 2</span>证明：对任意实数 $a,b$，成立 $|\arctan a-\arctan b|\le|a-b|$。</p>
+  <details class="answer">
+    <summary>参考答案（约 4 分书写量）</summary>
+    <p>$a=b$ 时两边同为 $0$，成立。下设 $a\ne b$。</p>
+    <p>设 $f(x)=\arctan x$，它在以 $a,b$ 为端点的闭区间上连续、内部可导（1 分）。由 Lagrange 中值定理，存在 $\xi$ 严格介于 $a,b$ 之间，使
+    $$\arctan a-\arctan b=f'(\xi)\,(a-b)=\frac{a-b}{1+\xi^{2}}$$（3 分）。</p>
+    <p>因 $\left|\dfrac{1}{1+\xi^{2}}\right|\le1$，取绝对值得 $|\arctan a-\arctan b|=\dfrac{|a-b|}{1+\xi^{2}}\le|a-b|$。$\square$（4 分）</p>
+    <p><strong>易错点</strong>：① 必须交代 $\xi$「介于 $a,b$ 之间」——这是 Lagrange 结论的一部分；② 其实 $a\ne b$ 时 $\xi\ne0$ 使 $1+\xi^{2}&gt;1$ 未必成立（$\xi$ 可能是 $0$），所以只写 $\le$ 不写 $&lt;$，别贪。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 1</span>证明：方程 $x^{3}-3x+c=0$（$c$ 为任意常数）在 $[0,1]$ 内至多有一个实根。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：「至多 $1$ 个根」是否定型结论（工具四），反证 + Rolle 链：假设 $2$ 个根，链推 $f'$ 有根，与 $f'$ 在 $(0,1)$ 无根对撞。</p>
+    <p><strong>证明</strong>：设不然，存在 $0\le x_1&lt;x_2\le1$ 使 $f(x_1)=f(x_2)=0$，其中 $f(x)=x^{3}-3x+c$。$f$ 在 $[x_1,x_2]$ 上连续、在 $(x_1,x_2)$ 内可导，由 Rolle 定理，存在 $\xi\in(x_1,x_2)\subset(0,1)$ 使
+    $$f'(\xi)=3\xi^{2}-3=0,$$
+    即 $\xi=\pm1$。但 $\xi\in(0,1)$，矛盾。故方程在 $[0,1]$ 内至多有一个实根。$\square$</p>
+    <p><strong>点评</strong>：$c$ 是多少根本不重要——Rolle 链把「根的信息」翻译成「导数的信息」，而 $f'=3x^{2}-3$ 不含 $c$。若再补一句「当 $c\in[0,2]$ 时 $f(0)f(1)=c(c-2)\le0$（端点情形另行收编），由零点定理至少一根」，就是「存在 + 唯一」的完整会师：存在靠第 4 章，唯一靠本章。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 2</span>设 $0&lt;a&lt;b$，$f$ 在 $[a,b]$ 上连续，在 $(a,b)$ 内可导。证明：存在 $\xi\in(a,b)$，使
+  $$f(b)-f(a)=\xi f'(\xi)\,\ln\frac{b}{a}.$$</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：结论里同时出现 $f$ 的增量与 $\ln$ 的增量（$\ln\frac ba=\ln b-\ln a$）——Cauchy 的信号：另一个函数是 $g(x)=\ln x$。</p>
+    <p><strong>证明</strong>：取 $g(x)=\ln x$。$f,g$ 在 $[a,b]$ 上连续、在 $(a,b)$ 内可导，且 $g'(x)=\dfrac1x\ne0$（因 $x&gt;0$）。由 Cauchy 中值定理，存在 $\xi\in(a,b)$ 使
+    $$\frac{f(b)-f(a)}{\ln b-\ln a}=\frac{f'(\xi)}{1/\xi}=\xi f'(\xi),$$
+    两边乘 $\ln b-\ln a=\ln\dfrac ba$ 即证。$\square$</p>
+    <p><strong>点评</strong>：Cauchy 的识别信号是「结论里有两个函数的增量」。千万别分别对 $f$ 与 $\ln x$ 各用一次 Lagrange 再相除——那是练功房 T8 的伪证：两个 $\xi$ 不是同一个点。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv3">真题节选</span><strong>（第 11 届题二，15 分）</strong>设 $\alpha&gt;0$，$f(x)$ 在 $[0,1]$ 上非负，有二阶导函数，$f(0)=0$，且在 $[0,1]$ 上不恒为零。求证：存在 $\xi\in(0,1)$ 使得
+  $$\xi f''(\xi)+(\alpha+1)f'(\xi)&gt;\alpha f(\xi).$$</p>
+  <p>这是本章动作三（微分不等式 + 积分因子）的整题形态，官方解答连造两个辅助函数。先回答三个梯子问题（写在纸上）：</p>
+  <p>（i）结论带「$&gt;$」，正面难以下手——反证假设该怎么写？假设成立后，不等式 $xf''(x)+(\alpha+1)f'(x)\le\alpha f(x)$ 左边的每一项分别是谁的导数？（提示：$(xf')'=xf''+f'$；$(\alpha f)'=\alpha f'$；而 $f$ 自己是变上限积分 $\int_0^x f(u)\,du$ 的导数。）<br>
+  （ii）拼出 $H(x)=xf'(x)+\alpha f(x)-\alpha\displaystyle\int_0^x f(u)\,du$ 后，凭什么说它单调递减？$H(0)$ 等于多少？两个事实合起来推出什么？<br>
+  （iii）推到 $f(x)\le\displaystyle\int_0^x f(u)\,du$（即 $g'\le g$）之后，为什么要乘 $e^{-x}$？查模式对照表第几行？乘完之后 $g$ 的命运如何？</p>
+  <details class="answer">
+    <summary>梯子参考答案</summary>
+    <p>（i）反证：设对一切 $x\in[0,1]$，$xf''(x)+(\alpha+1)f'(x)\le\alpha f(x)$，即 $xf''+(\alpha+1)f'-\alpha f\le0$。「求导试」不是猜：$xf''+f'=(xf')'$（乘积求导倒放）、$\alpha f'=(\alpha f)'$、$\alpha f=\bigl(\alpha\int_0^x f\bigr)'$（变上限积分求导）——三项都长着「某人导数」的脸，所以整式恰为 $H'$，其中 $H(x)=xf'(x)+\alpha f(x)-\alpha\int_0^x f(u)\,du$。第一个辅助函数是被「逐项认亲」认出来的。</p>
+    <p>（ii）反证假设正是 $H'(x)\le0$，故 $H$ 单调递减；$H(0)=0\cdot f'(0)+\alpha f(0)-0=0$（用到 $f(0)=0$）；递减 + 起点为 $0$ ⟹ $H(x)\le0$，即 $xf'(x)+\alpha f(x)\le\alpha\int_0^x f(u)\,du$。</p>
+    <p>（iii）$g'\le g$ 即 $g'-g\le0$——模式对照表第 2 行：乘 $e^{-x}$ 得 $\bigl(e^{-x}g\bigr)'\le0$，$e^{-x}g$ 单调递减；又 $g(0)=0$，故 $e^{-x}g(x)\le0$，即 $g\le0$；但 $f\ge0$ 又给出 $g\ge0$，两头夹得 $g\equiv0$，于是 $f=g'\equiv0$，与「$f$ 不恒为零」矛盾。乘 $e^{-x}$ 的全部理由：<strong>只有把 $g'-g$ 看成某个乘积的导数，「单调 + 端点值定号」这件武器才使得上劲</strong>。</p>
+  </details>
+  <details class="answer">
+    <summary>官方解答骨架（转录自官方参考答案）</summary>
+    <p><strong>反证</strong>：设对一切 $x\in[0,1]$ 有 $xf''(x)+(\alpha+1)f'(x)\le\alpha f(x)$。</p>
+    <p class="proof-line">该式说明 $H(x)=xf'(x)+\alpha f(x)-\alpha\displaystyle\int_0^x f(u)\,du$ 的导数 $H'(x)=xf''(x)+(\alpha+1)f'(x)-\alpha f(x)\le0$，故 $H$ 单调递减；又 $H(0)=0$，得
+    $$xf'(x)+\alpha f(x)\le\alpha\int_0^x f(u)\,du.$$<span class="step-score">（5 分）</span></p>
+    <p class="proof-line">两边乘 $x^{\alpha-1}$：$x^{\alpha}f'(x)+\alpha x^{\alpha-1}f(x)\le\alpha x^{\alpha-1}\displaystyle\int_0^x f(u)\,du$，左边即 $\bigl(x^{\alpha}f(x)\bigr)'$；在 $[0,x]$ 上积分（注意 $x^{\alpha}f(x)\big|_{x=0}=0$），并放大内层积分上限（$t\le x$ 时 $\int_0^t f\le\int_0^x f$，因 $f\ge0$），得
+    $$x^{\alpha}f(x)\le x^{\alpha}\int_0^x f(u)\,du,\qquad\text{即 }f(x)\le\int_0^x f(u)\,du.$$<span class="step-score">（10 分）</span></p>
+    <p class="proof-line">记 $g(x)=\displaystyle\int_0^x f(u)\,du$，则 $g'(x)\le g(x)$，即 $\bigl(e^{-x}g(x)\bigr)'\le0$；由 $g(0)=0$ 得 $g\le0$，再由 $f$ 非负得 $g\ge0$，故 $g\equiv0$，从而 $f=g'\equiv0$，矛盾。$\square$<span class="step-score">（15 分）</span></p>
+    <p><strong>复盘</strong>：本题用了本章哪个动作？——<strong>动作三，连用两次</strong>。第一处 $H=xf'+\alpha f-\alpha\int_0^x f$ 靠「逐项认亲」（乘积求导 + 变上限积分求导的倒放）；中间「乘 $x^{\alpha-1}$」也不是神仙手笔：$xf'+\alpha f$ 型的积分因子是 $\mu=e^{\int\frac{\alpha}{x}dx}=x^{\alpha}$，即 $F=x^{\alpha}f$，$F'=x^{\alpha-1}\bigl(xf'+\alpha f\bigr)$——<strong>本章生成器的标准产品</strong>；第二处 $e^{-x}g$ 是模式对照表第 2 行。整题 = 生成器跑两遍 + 反证法 + 非负性两头夹。<em>（题目与解答骨架转录自第 11 届官方 PDF，见 <a href="真题索引/第11届_2019.md">真题索引</a>。）</em></p>
+  </details>
+</div>
+
+<h2>§9.5 熟练度训练场</h2>
+
+<p>模式对照表是「默写级 + 生成级」的基本功——考场上它值开门分。两种训练，每天 10 分钟：</p>
+
+<h3>训练一 · 翻卡快测（目标：每卡 10 秒内出答案）</h3>
+<div class="quiz" data-quiz="ch05-drill"></div>
+
+<h3>训练二 · 计时默写（写在纸上，掐表）</h3>
+<div class="calc box" data-tag="默写清单">
+  <p>① <strong>90 秒</strong>：默写 Rolle / Lagrange / Cauchy 三定理完整陈述——条件逐字（$[a,b]$ 连续、$(a,b)$ 可导、Rolle 加 $f(a)=f(b)$、Cauchy 加 $g'\ne0$），结论里 $\xi\in(a,b)$ 是开区间，缺一即错；</p>
+  <p>② <strong>60 秒</strong>：默写模式对照表前五行（$f'+f\to e^{x}f$；$f'-f\to e^{-x}f$；$xf'+f\to xf$；$xf'-f\to f/x$；$f'g-fg'\to f/g$）+ 总生成器 $\mu=e^{\int P\,dx}$；</p>
+  <p>③ <strong>2 分钟</strong>：默写例 1 证明骨架（移项 $f'-f=0$ → $P=-1$ → $\mu=e^{-x}$ → $F=e^{-x}f$ → 三条件 → Rolle → 声明 $e^{-\xi}&gt;0$ 约掉）。</p>
+  <p><strong>过关标准</strong>：连续两天全对才算过。做不到就回到对应小节重读，再默。</p>
+</div>
+
+<h2>§10 六方向自测卡</h2>
+
+<div class="selftest">
+  <h3>合上书，拿张白纸，默写以下六项</h3>
+  <div class="st-item">
+    <p class="st-q"><em>=（它是什么）</em>　默写 Rolle / Lagrange / Cauchy 三定理的陈述，以及 Rolle 推论链的一句话。</p>
+    <details><summary>对照</summary><p>Rolle：$f\in C[a,b]$，$(a,b)$ 可导，$f(a)=f(b)$ ⟹ $\exists\,\xi\in(a,b),\ f'(\xi)=0$。Lagrange：前两条件 ⟹ $f(b)-f(a)=f'(\xi)(b-a)$。Cauchy：$f,g$ 同前两条件且 $g'\ne0$ ⟹ $\frac{f(b)-f(a)}{g(b)-g(a)}=\frac{f'(\xi)}{g'(\xi)}$。推论链：$f$ 有 $n$ 个根 ⟹ $f'$ 至少 $n-1$ 个根；逆否：$f^{(k)}$ 无根 ⟹ $f$ 至多 $k$ 个根。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>←（什么带来它）</em>　三兄弟各自怎么证出来？家族内部怎么互相推出？</p>
+    <details><summary>对照</summary><p>Rolle：最值定理取到 $M,m$；$M=m$ 则 $f'\equiv0$，否则内部极值点处 Fermat 引理给 $f'=0$。Lagrange：造 $\varphi=f-f(a)-\frac{f(b)-f(a)}{b-a}(x-a)$（曲线减弦），$\varphi(a)=\varphi(b)=0$，Rolle。Cauchy：造 $\varphi=f-f(a)-\lambda\bigl(g-g(a)\bigr)$，同法。特化方向：Cauchy 取 $g(x)=x$ 得 Lagrange，Lagrange 加 $f(a)=f(b)$ 得 Rolle。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>→（它带来什么）</em>　说出中值定理的三类应用出口与各一句代表。</p>
+    <details><summary>对照</summary><p>① 根的存在与个数（Rolle 链：$f$ 有 $n$ 根 ⟹ $f'$ 有 $n-1$ 根；「零点定理管存在 + Rolle 链管唯一」）；② $\xi$ 存在性等式（倒推造 $F$，积分因子 $\mu=e^{\int P\,dx}$ 生成）；③ Lagrange 证不等式（$|f'|\le M\Rightarrow|f(b)-f(a)|\le M|b-a|$，压缩估值）。外加：Taylor 的 Lagrange 余项是它的 $n$ 阶版（第 6 章）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>∈（实例）</em>　各默一个：辅助函数等式、根个数、Lagrange 不等式的实例。</p>
+    <details><summary>对照</summary><p>等式：$f(a)=f(b)=0\Rightarrow\exists\,\xi,\ f'(\xi)=f(\xi)$（$F=e^{-x}f$，例 1）。根个数：$x^{3}-3x+c=0$ 在 $[0,1]$ 至多一根（$f'=3x^{2}-3$ 在 $(0,1)$ 无根，变式 1）。不等式：$|\arctan a-\arctan b|\le|a-b|$（$|f'|=\frac1{1+\xi^{2}}\le1$，模仿 2）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>≠（区分）</em>　证「$f'(\xi)=0$」的两条路线有何不同？Cauchy 证明的头号伪证是什么？</p>
+    <details><summary>对照</summary><p>对 $f'$ 用零点定理：需 $f'$ <strong>连续</strong>且异号——题面只给「可导」时此路封死（Darboux 说 $f'$ 总有介值性，但引用要写对名字）；对 $F$ 用 Rolle：只需 $F$ 端点等值，不要求 $F'$ 连续，是正门。伪证：分子分母各用一次 Lagrange 再相除——两个中值点 $\xi_1\ne\xi_2$，必须一次性造 $\varphi$ 才有同一个 $\xi$。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>（为何要有它）</em>　$\xi$ 算不出来，为什么还要证它存在？没有「$f'+f$ 定理」，怎么办？</p>
+    <details><summary>对照</summary><p>存在性本身就有力量：根的唯一性、不等式的界、极限的排除（15 届题六法 III）都只需要「有 $\xi$」而不需要「$\xi$ 是谁」。没有现成定理就自己造：把目标式当微分方程，$\mu=e^{\int P\,dx}$ 生成 $F$，让 Rolle 替我们干活——辅助函数构造就是「把定制结论翻译回通用定理」的程序。</p></details>
+  </div>
+</div>
+
+<div class="net box" data-tag="间隔复习安排">
+  <p><strong>1 天后</strong>：重做六方向自测卡（不翻书）+ 翻卡快测第二轮；<strong>3 天后</strong>：重做变式 1、变式 2 与真题节选的梯子问题 + 计时默写②③；<strong>1 周后</strong>：把 §3.1 倒推三步与生成器默写一遍，确认翻卡全部「会了」。</p>
+  <p><strong>与第 6 章（Taylor 公式）的接口</strong>：带 Lagrange 余项的 Taylor 公式
+  $$f(x)=f(x_0)+f'(x_0)(x-x_0)+\cdots+\frac{f^{(n)}(x_0)}{n!}(x-x_0)^{n}+\frac{f^{(n+1)}(\xi)}{(n+1)!}(x-x_0)^{n+1},$$
+  其余项就是 Lagrange 中值定理的高阶版——$n=0$ 时正是本章定理 2。例 2 用 Taylor 在最大值点 $c$ 展开：$0=f(0)=2+\frac{f''(\eta)}{2}c^{2}$ 型放缩，几行即出（界还更好）；11 届题二的 Gronwall 思想、17 届题五的 $F=P-f$ 凸性夹逼，也将在 Taylor 章重新会师。本章的 Rolle 链则会在「根的个数 vs 导数阶数」的 Taylor 应用题里继续服役。</p>
+</div>
+
+<div class="chapnav">
+  <span><a href="ch04.html">← 第 4 章 · 闭区间上的连续函数</a></span>
+  <span><a href="index.html">首页</a></span>
+  <span><a href="ch06.html">第 6 章 · Taylor 公式：阶的估计与不等式证明 →</a></span>
+</div>
+
+</div>
+
+<script src="assets/quiz.js"></script>
+<script>
+/* §9.5 翻卡数据 */
+registerQuiz("ch05-drill", [
+  { q: "$f'+f$ 型，造 $F=$？", a: "$F=e^{x}f(x)$，$F'=e^{x}(f'+f)$。积分因子 $\\mu=e^{\\int 1\\,dx}=e^{x}$。" },
+  { q: "$f'-f$ 型，造 $F=$？", a: "$F=e^{-x}f(x)$，$F'=e^{-x}(f'-f)$。约因子前声明 $e^{-\\xi}>0$。" },
+  { q: "$xf'+f$ 型，造 $F=$？", a: "$F=xf(x)$，$F'=xf'+f$——乘积求导倒放。" },
+  { q: "$xf'-f$ 型，造 $F=$？", a: "$F=\\dfrac{f(x)}{x}$（$x\\ne0$），$F'=\\dfrac{xf'-f}{x^{2}}$——商求导倒放。" },
+  { q: "$f'g-fg'$ 型，造 $F=$？", a: "$F=\\dfrac{f}{g}$（$g\\ne0$），$F'=\\dfrac{f'g-fg'}{g^{2}}$。" },
+  { q: "$f'+\\lambda f$ 型，造 $F=$？", a: "$F=e^{\\lambda x}f(x)$，$F'=e^{\\lambda x}(f'+\\lambda f)$。" },
+  { q: "模式对照表的总生成器？", a: "目标式 $f'+P(x)f$：积分因子 $\\mu=e^{\\int P\\,dx}$，造 $F=\\mu f$，$F'=\\mu(f'+Pf)$。例：$xf'+\\alpha f$ 型给 $\\mu=x^{\\alpha}$，$F=x^{\\alpha}f$。" },
+  { q: "Rolle 定理三条件？结论？", a: "①$[a,b]$ 连续 ②$(a,b)$ 可导 ③$f(a)=f(b)$ ⟹ $\\exists\\,\\xi\\in(a,b),\\ f'(\\xi)=0$。" },
+  { q: "$f$ 有 $n$ 个不同的根 ⟹ $f'$ 至少几个根？逆否怎么说？", a: "$f'$ 至少 $n-1$ 个（相邻根间各夹一个）。逆否：$f^{(k)}$ 无根 ⟹ $f$ 至多 $k$ 个根。" },
+  { q: "Cauchy 怎么特化成 Lagrange？Lagrange 怎么特化成 Rolle？", a: "取 $g(x)=x$（$g'=1$，$g(b)-g(a)=b-a$）；加条件 $f(a)=f(b)$（分子为零）。" }
+]);
+</script>
+
+<script>
+/* §2.1 中值定理可视化 */
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  var svg = document.getElementById("mvt-svg");
+  var out = document.getElementById("mvt-out");
+  var bS = document.getElementById("mvt-b");
+  var cS = document.getElementById("mvt-c");
+  function f(x) { return x * x * x - 3 * x; }
+  function df(x) { return 3 * x * x - 3; }
+  var A = -2;
+  /* 坐标映射：x∈[-2.4,2.4] → [40,680]；y∈[-3.2,3.2] → [215,35] */
+  function px(x) { return 40 + (x + 2.4) / 4.8 * 640; }
+  function py(y) { return 215 - (y + 3.2) / 6.4 * 180; }
+  function mk(tag, attrs) {
+    var el = document.createElementNS(NS, tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    svg.appendChild(el);
+    return el;
+  }
+  function txt(x, y, s, attrs) {
+    var t = mk("text", attrs || {});
+    t.setAttribute("x", x); t.setAttribute("y", y);
+    t.textContent = s;
+    return t;
+  }
+  /* 坐标轴 */
+  mk("line", { x1: px(-2.4), y1: py(0), x2: px(2.4), y2: py(0), stroke: "#2b2620", "stroke-width": 1.5 });
+  mk("polygon", { points: (px(2.4) + 10) + "," + py(0) + " " + px(2.4) + "," + (py(0) - 5) + " " + px(2.4) + "," + (py(0) + 5), fill: "#2b2620" });
+  mk("line", { x1: px(0), y1: py(-3.2), x2: px(0), y2: py(3.2), stroke: "#2b2620", "stroke-width": 1.5 });
+  mk("polygon", { points: px(0) + "," + (py(3.2) - 10) + " " + (px(0) - 5) + "," + py(3.2) + " " + (px(0) + 5) + "," + py(3.2), fill: "#2b2620" });
+  /* x 轴刻度 */
+  [[-2, "−2"], [-1, "−1"], [1, "1"], [2, "2"]].forEach(function (tk) {
+    mk("line", { x1: px(tk[0]), y1: py(0) - 5, x2: px(tk[0]), y2: py(0) + 5, stroke: "#2b2620", "stroke-width": 1.5 });
+    txt(px(tk[0]), py(0) + 20, tk[1], { "font-size": 12.5, fill: "#2b2620", "text-anchor": "middle" });
+  });
+  txt(px(-2.35), py(3.1), "f(x) = x³ − 3x", { "font-size": 13, fill: "#1d4ed8" });
+  /* 曲线 */
+  var d = "";
+  for (var i = 0; i <= 210; i++) {
+    var xv = -2.1 + 4.2 * i / 210;
+    d += (i === 0 ? "M " : " L ") + px(xv).toFixed(1) + " " + py(f(xv)).toFixed(1);
+  }
+  mk("path", { d: d, fill: "none", stroke: "#1d4ed8", "stroke-width": 2.6 });
+  /* 固定端点 A */
+  mk("circle", { cx: px(A), cy: py(f(A)), r: 5, fill: "#1d4ed8" });
+  txt(px(A) - 6, py(f(A)) - 12, "a", { "font-size": 14, fill: "#1d4ed8", "text-anchor": "middle", "font-weight": "bold" });
+  /* 动态元素 */
+  var chord = mk("line", { stroke: "#b45309", "stroke-width": 2, "stroke-dasharray": "7 5" });
+  var tang = mk("line", { stroke: "#be123c", "stroke-width": 2.4 });
+  var g1 = mk("line", { stroke: "#8a8175", "stroke-width": 1.2, "stroke-dasharray": "4 4" });
+  var g2 = mk("line", { stroke: "#8a8175", "stroke-width": 1.2, "stroke-dasharray": "4 4" });
+  var g1t = txt(0, 0, "", { "font-size": 12, fill: "#5c554b", "text-anchor": "middle", "font-weight": "bold" });
+  var g2t = txt(0, 0, "", { "font-size": 12, fill: "#5c554b", "text-anchor": "middle", "font-weight": "bold" });
+  var pB = mk("circle", { r: 5, fill: "#b45309" });
+  var pC = mk("circle", { r: 5.5, fill: "#be123c" });
+  var tB = txt(0, 0, "", { "font-size": 14, fill: "#b45309", "text-anchor": "middle", "font-weight": "bold" });
+  var tC = txt(0, 0, "", { "font-size": 14, fill: "#be123c", "text-anchor": "middle", "font-weight": "bold" });
+
+  function setGuide(line, lab, xv) {
+    if (xv === null) { line.setAttribute("display", "none"); lab.setAttribute("display", "none"); return; }
+    line.setAttribute("display", "");
+    lab.setAttribute("display", "");
+    line.setAttribute("x1", px(xv)); line.setAttribute("x2", px(xv));
+    line.setAttribute("y1", py(-3.2)); line.setAttribute("y2", py(3.2));
+    lab.setAttribute("x", px(xv) + 10); lab.setAttribute("y", py(2.6));
+    lab.textContent = "ξ≈" + xv.toFixed(2);
+  }
+
+  function update() {
+    var b = parseFloat(bS.value), c = parseFloat(cS.value);
+    var m = (f(b) - f(A)) / (b - A);
+    /* 弦（略延长） */
+    var ext = 0.18;
+    chord.setAttribute("x1", px(A - ext)); chord.setAttribute("y1", py(f(A) - m * ext));
+    chord.setAttribute("x2", px(b + ext)); chord.setAttribute("y2", py(f(b) + m * ext));
+    /* 切线 */
+    var s = df(c), hl = 0.55;
+    tang.setAttribute("x1", px(c - hl)); tang.setAttribute("y1", py(f(c) - s * hl));
+    tang.setAttribute("x2", px(c + hl)); tang.setAttribute("y2", py(f(c) + s * hl));
+    /* 点 */
+    pB.setAttribute("cx", px(b)); pB.setAttribute("cy", py(f(b)));
+    pC.setAttribute("cx", px(c)); pC.setAttribute("cy", py(f(c)));
+    tB.setAttribute("x", px(b) + 12); tB.setAttribute("y", py(f(b)) - 8); tB.textContent = "b";
+    tC.setAttribute("x", px(c) + 12); tC.setAttribute("y", py(f(c)) + 20); tC.textContent = "c";
+    /* 解析解导轨：f′(ξ)=m ⟹ 3ξ²−3=m ⟹ ξ=±√((m+3)/3)，落在 (a,b) 内的 */
+    var disc = (m + 3) / 3, roots = [];
+    if (disc >= 0) {
+      var r = Math.sqrt(disc);
+      if (r > A && r < b) roots.push(r);
+      if (-r > A && -r < b) roots.push(-r);
+    }
+    setGuide(g1, g1t, roots.length > 0 ? roots[0] : null);
+    setGuide(g2, g2t, roots.length > 1 ? roots[1] : null);
+    /* 判词 */
+    if (c <= A || c >= b) {
+      out.innerHTML = "<span class=\"no\">✗ 切点 c 不在开区间 (a, b) 内</span>——中值定理只保证<strong>内部</strong>有 ξ；把 c 拖到 a、b 之间。";
+      return;
+    }
+    var diff = s - m;
+    var head = "弦斜率 m = " + m.toFixed(3) + "（橙）｜切线斜率 f′(c) = " + s.toFixed(3) + "（红）｜差 = " + diff.toFixed(3) + "<br>";
+    var verdict;
+    if (Math.abs(diff) < 0.04) {
+      verdict = "<span class=\"ok\">✓ 切线平行于弦！</span><strong>这个 c 就是 Lagrange 保证的 ξ</strong>：f′(ξ) = (f(b)−f(a))/(b−a)。";
+    } else {
+      verdict = "<span class=\"no\">还不平行</span>——往 f′(c) " + (diff > 0 ? "偏小" : "偏大") + "的方向拖 c；定理说：一定能拖到相等。";
+    }
+    out.innerHTML = head + verdict + "<br><span style=\"font-size:0.88em;color:#5c554b\">（解析：本题 m=(b−1)² ≥ 0，ξ=±√((m+3)/3)，落在区间内的已用灰虚线标出——先自己拖，再对照。）</span>";
+  }
+  bS.addEventListener("input", update);
+  cS.addEventListener("input", update);
+  update();
+})();
+</script>
+
+</body>
+</html>

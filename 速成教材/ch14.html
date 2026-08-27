@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高代第 4 章 · 表示矩阵与相似：换基的艺术 —— 数学A速成讲义</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+<div class="wrap">
+
+<div class="bookbar">
+  <span><a href="index.html">← 返回首页</a></span>
+  <span>卷二 · 高等代数 · 第 4 章</span>
+</div>
+
+<div class="chapter-kicker">CHAPTER 14 · 高等代数（卷二第 4 章）</div>
+<h1>表示矩阵与相似：换基的艺术</h1>
+
+<div class="exam box" data-tag="本章导览">
+  <p><strong>这一章在整张卷子上的位置</strong>：换基与相似是高代证明题的<strong>通用语</strong>。它直接撑起第 11 届题三（15 分）的核心引理 $\det(sI+AB)=\det(sI+BA)$ 及其官方证法"可逆扰动 $+$ 取极限"；第 15 届题四（15 分）的收尾 $|E+A^{2023}|=\prod(1+\lambda_i^{2023})$ 就是"对角化算行列式"的直接兑现；第 15 届题三（20 分）开门 2 分"在基 $\{\alpha,\mathbf{A}\alpha,\dots\}$ 下矩阵为友矩阵"，考的正是表示矩阵的定义本身。它同时是第 5 章（对角化）、第 6 章（最小多项式）、第 7 章（Jordan）的<strong>全部动机</strong>。</p>
+  <p><strong>学完你能</strong>：① 默写表示矩阵的定义与换基公式，逐符号朗读；② 把"同一线性变换在两组基下的矩阵"与"$B=P^{-1}AP$"双向互译；③ 用相似不变量（tr、det、$\chi$、rank）一行证"不相似"，用对角化算 $A^n$ 与 $\det f(A)$；④ 掌握"扰动 $+$ 取极限"——不可逆却想套可逆公式时的标准动作；⑤ 给出"$\chi$ 相同却不相似"的反例，说出证相似的三条路径。</p>
+  <p><strong>前置</strong>：卷二第 1–3 章（线性空间与基、线性映射、秩-零度定理）；矩阵乘法、$\det(XY)=\det X\det Y$、$\operatorname{tr}(XY)=\operatorname{tr}(YX)$ 当作已知。</p>
+</div>
+
+<h2>§1 开场谜题：同一张脸，无数张证件照</h2>
+
+<div class="hook box" data-tag="开场谜题">
+  <p>给你一个很具体的矩阵，一道很具体的题：</p>
+  <p>$$A=\begin{pmatrix}\dfrac54 & \dfrac34\\[4pt] \dfrac34 & \dfrac54\end{pmatrix},\qquad\text{求 }A^{100}.$$</p>
+  <p>硬乘 100 次？不可能。但你注意过这个矩阵在<strong>干什么</strong>吗——它把向量 $(1,1)$ 变成 $(2,2)$（拉长 2 倍），把向量 $(1,-1)$ 变成 $(\frac12,-\frac12)$（压成一半）。它其实是一个再老实不过的变换：<strong>沿 $y=x$ 方向拉 2 倍，沿 $y=-x$ 方向压 0.5 倍</strong>。</p>
+  <p>问题来了：这个变换本身干干净净，为什么它的矩阵 $\begin{pmatrix}5/4&3/4\\3/4&5/4\end{pmatrix}$ 却长得这么难看？因为<strong>矩阵不是变换本身，而是变换在某组基（某张坐标纸）上的读数</strong>。你用标准基 $\{e_1,e_2\}$ 这张坐标纸去量一个"斜着拉伸"的变换，读数自然歪。换一张坐标纸——取基 $\{b_1=(1,1),\ b_2=(1,-1)\}$——同一个变换的矩阵立刻变成
+  $$\begin{pmatrix}2&0\\0&\tfrac12\end{pmatrix}.$$</p>
+  <p>同一个线性变换，换一组基，矩阵就换一张脸。这些脸之间是什么关系？答案只有一个词：<strong>相似</strong>，$B=P^{-1}AP$。反过来问：能不能<strong>挑</strong>一组基，让脸顺眼到极致——变成对角阵，甚至（不行的时候）变成 Jordan 块？这就是第 5 章对角化与第 7 章 Jordan 标准形的全部动机。而"哪些东西换基纹丝不动"（迹、行列式、特征多项式、秩），正是相似类的<strong>身份证</strong>——也是计算题的捷径：$A^{100}$ 的答案 $P\begin{pmatrix}2^{100}&0\\0&2^{-100}\end{pmatrix}P^{-1}$，等你走到 §4 动作三，就是三行的事。</p>
+</div>
+
+<h2>§2 先看见它：变形是客观的，坐标纸是人选的</h2>
+
+<div class="vision box" data-tag="直觉与图像">
+  <p>把线性变换想成一张橡皮膜的<strong>变形</strong>：它拉伸、压缩、旋转平面，不在乎你用哪张坐标纸去量它。矩阵，是你隔着某张坐标纸给这个变形拍的<strong>证件照</strong>。下面的图还是开场谜题里那个变换 $T$（沿 $y=x$ 拉 2 倍、沿 $y=-x$ 压 0.5 倍）：同一个变形，左边用标准基的量法，右边用"贴着特征方向"的基去量。</p>
+</div>
+
+<figure>
+<svg viewBox="0 0 720 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="同一个变形在两种基下的样子">
+  <defs>
+    <clipPath id="clipL"><rect x="15" y="30" width="330" height="210"/></clipPath>
+    <clipPath id="clipR"><rect x="375" y="30" width="330" height="210"/></clipPath>
+  </defs>
+  <text x="180" y="22" font-size="13.5" fill="#2b2620" text-anchor="middle" font-weight="bold">旧基 {e₁, e₂} 的眼里</text>
+  <text x="540" y="22" font-size="13.5" fill="#2b2620" text-anchor="middle" font-weight="bold">新基 {b₁=(1,1), b₂=(1,−1)} 的眼里</text>
+  <!-- 左：标准基网格 -->
+  <g clip-path="url(#clipL)">
+    <g stroke="#e8e2d6" stroke-width="1">
+      <line x1="45" y1="170" x2="265" y2="170"/><line x1="155" y1="40" x2="155" y2="225"/>
+      <line x1="100" y1="115" x2="265" y2="115"/><line x1="210" y1="40" x2="210" y2="225"/>
+      <line x1="45" y1="60" x2="265" y2="60"/>
+    </g>
+    <line x1="45" y1="170" x2="262" y2="170" stroke="#2b2620" stroke-width="1.8"/>
+    <polygon points="266,170 258,166 258,174" fill="#2b2620"/>
+    <line x1="100" y1="225" x2="100" y2="44" stroke="#2b2620" stroke-width="1.8"/>
+    <polygon points="100,40 96,48 104,48" fill="#2b2620"/>
+    <text x="255" y="188" font-size="12" fill="#2b2620">e₁</text>
+    <text x="112" y="54" font-size="12" fill="#2b2620">e₂</text>
+    <!-- 单位正方形 -->
+    <polygon points="100,170 155,170 155,115 100,115" fill="rgba(29,78,216,0.10)" stroke="#1d4ed8" stroke-width="2"/>
+    <text x="127" y="146" font-size="11" fill="#1d4ed8" text-anchor="middle">单位正方形</text>
+    <!-- 像：平行四边形 (1.25,0.75),(2,2),(0.75,1.25) -->
+    <polygon points="100,170 168.75,128.75 210,60 141.25,101.25" fill="rgba(190,18,60,0.10)" stroke="#be123c" stroke-width="2"/>
+    <text x="222" y="96" font-size="11" fill="#be123c">像：歪的平行四边形</text>
+    <text x="222" y="110" font-size="11" fill="#be123c">矩阵四个元全非零</text>
+  </g>
+  <!-- 右：特征基网格 -->
+  <g clip-path="url(#clipR)">
+    <g stroke="#e8e2d6" stroke-width="1">
+      <line x1="407.5" y1="252.5" x2="627.5" y2="32.5"/>
+      <line x1="462.5" y1="252.5" x2="682.5" y2="32.5"/>
+      <line x1="517.5" y1="252.5" x2="737.5" y2="32.5"/>
+      <line x1="352.5" y1="252.5" x2="572.5" y2="32.5"/>
+      <line x1="407.5" y1="87.5" x2="627.5" y2="307.5"/>
+      <line x1="462.5" y1="32.5" x2="682.5" y2="252.5"/>
+      <line x1="352.5" y1="142.5" x2="572.5" y2="362.5"/>
+    </g>
+    <line x1="407.5" y1="252.5" x2="572.5" y2="87.5" stroke="#b45309" stroke-width="1.8"/>
+    <text x="582" y="84" font-size="11" fill="#b45309">b₁ 方向（λ=2）</text>
+    <line x1="462.5" y1="32.5" x2="627.5" y2="197.5" stroke="#b45309" stroke-width="1.8"/>
+    <text x="632" y="205" font-size="11" fill="#b45309">b₂ 方向（λ=0.5）</text>
+    <!-- 新基的单位格：0, b1, b1+b2, b2 -->
+    <polygon points="490,170 545,115 600,170 545,225" fill="rgba(29,78,216,0.10)" stroke="#1d4ed8" stroke-width="2"/>
+    <text x="500" y="200" font-size="11" fill="#1d4ed8" text-anchor="end">单位格</text>
+    <!-- 像：0, 2b1, 2b1+0.5b2, 0.5b2 -->
+    <polygon points="490,170 600,60 627.5,87.5 517.5,197.5" fill="rgba(190,18,60,0.10)" stroke="#be123c" stroke-width="2"/>
+    <text x="612" y="52" font-size="11" fill="#be123c">像：矩形</text>
+  </g>
+  <text x="180" y="243" font-size="12" fill="#5c554b" text-anchor="middle">[T] = ((5/4, 3/4), (3/4, 5/4))：歪的</text>
+  <text x="540" y="243" font-size="12" fill="#5c554b" text-anchor="middle">[T] = diag(2, 0.5)：只是沿两轴伸缩</text>
+</svg>
+<figcaption>同一个变形 $T$：旧基看是歪的平行四边形，新基（对准特征方向）看是贴着网格的矩形。矩阵的长相是坐标纸的选择，不是变换的本性。</figcaption>
+</figure>
+
+<p>所以"换基"不是技巧，是<strong>立场</strong>：变形是客观的，坐标纸是人选的；人既然可以选，就应该选那张让变形现出原形的纸。§3 把"换一张纸"翻译成矩阵运算，§4 开始练它在卷面上的四种用法。</p>
+
+<h2>§3 精确定义：逐符号朗读</h2>
+
+<div class="def">
+  <p class="def-title">定义（坐标与坐标映射）</p>
+  <p>设 $V$ 是数域 $F$ 上的 $n$ 维线性空间，取定基 $\mathcal{B}=\{\varepsilon_1,\dots,\varepsilon_n\}$。每个 $\alpha\in V$ <strong>唯一</strong>地写成 $\alpha=\sum_{i=1}^n x_i\varepsilon_i$，称列向量
+  $$[\alpha]_{\mathcal{B}}=\begin{pmatrix}x_1\\ \vdots\\ x_n\end{pmatrix}\in F^n$$
+  为 $\alpha$ 在基 $\mathcal{B}$ 下的<strong>坐标</strong>。映射 $\sigma:\alpha\mapsto[\alpha]_{\mathcal{B}}$ 叫<strong>坐标映射</strong>，它是 $V$ 到 $F^n$ 的线性同构——<strong>取基之后，$V$ 里的任何运算都等于 $F^n$ 里的列向量运算</strong>。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定义（线性变换的表示矩阵）</p>
+  <p>设 $T$ 是 $V$ 上的线性变换，$\mathcal{B}=\{\varepsilon_1,\dots,\varepsilon_n\}$ 是基。$T$ 在基 $\mathcal{B}$ 下的<strong>表示矩阵</strong> $[T]_{\mathcal{B}}$ 是 $n$ 阶方阵，其<strong>第 $j$ 列是 $T(\varepsilon_j)$ 在基 $\mathcal{B}$ 下的坐标</strong>：
+  $$\bigl(T\varepsilon_1,\ T\varepsilon_2,\ \dots,\ T\varepsilon_n\bigr)=\bigl(\varepsilon_1,\varepsilon_2,\dots,\varepsilon_n\bigr)\,[T]_{\mathcal{B}}.$$
+  它满足核心公式：对一切 $\alpha\in V$，
+  $$[T\alpha]_{\mathcal{B}}=[T]_{\mathcal{B}}\,[\alpha]_{\mathcal{B}}.$$</p>
+  <p>一句话：<strong>取定基后，变换 $T$ 完全由矩阵 $[T]_{\mathcal{B}}$ 决定</strong>——矩阵左乘坐标，就是变换作用。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定义（过渡矩阵）与定理（坐标变换、换基公式）</p>
+  <p>设 $\mathcal{B}=\{\varepsilon_i\}$（旧基）与 $\mathcal{B}'=\{\eta_j\}$（新基）是 $V$ 的两组基。把每个新基向量用旧基表示，坐标按列排成的方阵
+  $$P=\bigl([\eta_1]_{\mathcal{B}},\ [\eta_2]_{\mathcal{B}},\ \dots,\ [\eta_n]_{\mathcal{B}}\bigr),\qquad\text{即}\qquad(\eta_1,\dots,\eta_n)=(\varepsilon_1,\dots,\varepsilon_n)\,P,$$
+  称为从 $\mathcal{B}$ 到 $\mathcal{B}'$ 的<strong>过渡矩阵</strong>。新基线性无关 $\iff P$ 列满秩 $\iff$ <strong>$P$ 可逆</strong>。</p>
+  <p><strong>坐标变换公式</strong>：$[\alpha]_{\mathcal{B}}=P\,[\alpha]_{\mathcal{B}'}$（旧坐标 $=P\times$ 新坐标）。推导一行：$\alpha=(\eta_1,\dots,\eta_n)[\alpha]_{\mathcal{B}'}=(\varepsilon_1,\dots,\varepsilon_n)P[\alpha]_{\mathcal{B}'}$，坐标唯一即得。</p>
+  <p><strong>换基公式</strong>：设 $T$ 是 $V$ 上的线性变换，则
+  $$[T]_{\mathcal{B}'}=P^{-1}\,[T]_{\mathcal{B}}\,P.$$
+  推导：一方面 $[T\alpha]_{\mathcal{B}}=[T]_{\mathcal{B}}[\alpha]_{\mathcal{B}}=[T]_{\mathcal{B}}P[\alpha]_{\mathcal{B}'}$；另一方面 $[T\alpha]_{\mathcal{B}}=P[T\alpha]_{\mathcal{B}'}=P[T]_{\mathcal{B}'}[\alpha]_{\mathcal{B}'}$。两式对<strong>一切</strong> $\alpha$ 成立（取 $\alpha=\eta_j$ 逐个比较各列），故 $P[T]_{\mathcal{B}'}=[T]_{\mathcal{B}}P$，两边左乘 $P^{-1}$ 即得。$\square$</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定义（相似）与定理（相似的几何意义）</p>
+  <p>设 $A,B\in M_n(F)$。若存在可逆矩阵 $P$ 使
+  $$B=P^{-1}AP,$$
+  则称 $A$ 与 $B$ <strong>相似</strong>，记 $A\sim B$。相似是等价关系（自反、对称、传递）。</p>
+  <p><strong>定理</strong>：$A\sim B$ $\iff$ $A,B$ 是<strong>同一个</strong>线性变换在某 $n$ 维空间的两组基下的表示矩阵。（$\Leftarrow$ 就是换基公式；$\Rightarrow$：取 $V=F^n$、$T(x)=Ax$、旧基取标准基、新基取 $P$ 的各列，则 $[T]_{\text{新}}=P^{-1}AP=B$。）$\square$</p>
+  <p><strong>把这句话刻进脑子</strong>：相似 $=$ 同一变换在不同基下的表示。矩阵的相似类 $\{P^{-1}AP:\ P\text{ 可逆}\}$，就是同一个变换的<strong>全体证件照</strong>。</p>
+</div>
+
+<div class="symbol box" data-tag="逐符号朗读">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$[T]_{\mathcal{B}}$ 的第 $j$ 列</td><td>"$T$ 作用在第 $j$ 个基向量上，结果在基 $\mathcal{B}$ 下的坐标"</td><td>表示矩阵是<strong>逐列填</strong>出来的：算一个 $T(\varepsilon_j)$，填一列</td></tr>
+    <tr><td>$[T\alpha]_{\mathcal{B}}=[T]_{\mathcal{B}}[\alpha]_{\mathcal{B}}$</td><td>"$T$ 作用后的坐标 $=$ 矩阵左乘原坐标"</td><td>取基之后，抽象的变换作用退化为矩阵乘法——一切计算靠它落地</td></tr>
+    <tr><td>$(\eta_1,\dots,\eta_n)=(\varepsilon_1,\dots,\varepsilon_n)P$</td><td>"新基 $=$ 旧基右乘 $P$；$P$ 的第 $j$ 列是 $\eta_j$ 的旧坐标"</td><td>$P$ 是两张坐标纸之间的<strong>换算率</strong>；新基是基 $\Rightarrow P$ 必可逆</td></tr>
+    <tr><td>$[\alpha]_{\text{旧}}=P[\alpha]_{\text{新}}$</td><td>"旧坐标 $=P$ 乘新坐标"</td><td>基正着乘 $P$，坐标倒着乘 $P^{-1}$（从旧到新看）——方向感别丢</td></tr>
+    <tr><td>$[T]_{\text{新}}=P^{-1}[T]_{\text{旧}}P$</td><td>"新矩阵 $=P^{-1}$ 乘旧矩阵乘 $P$"</td><td>换基公式：右 $P$ 把新坐标翻回旧坐标算，左 $P^{-1}$ 把结果翻回来</td></tr>
+    <tr><td>$B=P^{-1}AP$</td><td>"$A$ 与 $B$ 相似：同一个变换，两张证件照"</td><td>$P$ 的列就是那组让矩阵变成 $B$ 的新基（在 $A$ 的坐标系里）</td></tr>
+  </table>
+</div>
+
+<div class="think">
+  <p>别急着往下翻。<strong>拿张纸，自己把坐标变换公式推一遍</strong>：设 $(\eta_1,\dots,\eta_n)=(\varepsilon_1,\dots,\varepsilon_n)P$，任取 $\alpha$，把 $\alpha$ 用新基写出、再把每个 $\eta_j$ 换成旧基，读出 $[\alpha]_{\text{旧}}$ 与 $[\alpha]_{\text{新}}$ 的关系。顺手再证一条：相似关系是<strong>传递</strong>的（$A\sim B$ 且 $B\sim C \Rightarrow A\sim C$）。写完再展开对照。</p>
+  <details class="answer">
+    <summary>对照</summary>
+    <p>$\alpha=\sum_j x'_j\eta_j=(\eta_1,\dots,\eta_n)[\alpha]_{\text{新}}=(\varepsilon_1,\dots,\varepsilon_n)\,P[\alpha]_{\text{新}}$；而 $\alpha=(\varepsilon_1,\dots,\varepsilon_n)[\alpha]_{\text{旧}}$，由坐标的唯一性，$[\alpha]_{\text{旧}}=P[\alpha]_{\text{新}}$。$\square$</p>
+    <p>传递性：$B=P^{-1}AP$，$C=Q^{-1}BQ$，则 $C=Q^{-1}P^{-1}APQ=(PQ)^{-1}A(PQ)$，$PQ$ 仍可逆，故 $A\sim C$。$\square$　（传递性是"证相似"最常用的一条腿：要证 $A\sim B$，只需让它们<strong>都相似于同一个标准形</strong>——§4 动作二与第 5、7 章全靠它。）</p>
+  </details>
+</div>
+
+<h3>3.1 亲手变脸：换基探索器（交互）</h3>
+
+<div class="widget" id="basis-widget">
+  <p class="w-title">▶ 换基变脸探索器：拖动 b₁、b₂，亲眼看"对角化 = 把基对准特征方向"</p>
+  <p class="w-row">固定变换还是开场谜题那个 $T$（沿 $y=x$ 拉 2 倍、沿 $y=-x$ 压 0.5 倍，橙色虚线是两条特征线）。<strong style="color:#1d4ed8">蓝色手柄 b₁</strong> 与 <strong style="color:#15803d">绿色手柄 b₂</strong> 是你选的基（可拖动，贴近特征线或坐标轴会轻轻吸附）；半透明的虚线箭头是 $T(b_1)$、$T(b_2)$。右侧面板实时显示当前基下的矩阵 $[T]_{\mathcal{B}}=P^{-1}AP$。</p>
+  <svg id="bw-svg" viewBox="0 0 720 400" xmlns="http://www.w3.org/2000/svg" style="touch-action:none"></svg>
+  <div class="w-verdict" id="bw-out">加载中……（需要启用 JavaScript）</div>
+  <p class="w-row" style="font-size:0.88em;color:#5c554b">玩出这三个体验再往下走：<strong>①</strong> 把 b₁ 拖到橙色线 $y=x$ 上：矩阵第一列变成 $(2,0)^T$——为什么？（$b_1$ 成了特征向量，$T(b_1)=2b_1$，它在新基下的坐标正是 $(2,0)^T$，这就是"第 $j$ 列 $=T(\varepsilon_j)$ 的坐标"在发光。）<strong>②</strong> 把 b₂ 也拖到 $y=-x$ 上：矩阵变成 $\operatorname{diag}(2,0.5)$——亲眼看到"对角化 $=$ 把基对准特征方向"。<strong>③</strong> 把 b₁ 拖到 b₂ 附近让它们几乎共线：$\det P\to0$、矩阵元素爆炸——体会"基"为什么必须线性无关。</p>
+</div>
+
+<h3>3.2 换基纹丝不动的东西：相似类的身份证</h3>
+
+<p>证件照可以换，但有些量换基不变——它们是<strong>变换本身</strong>的属性，被矩阵借用而已。设 $B=P^{-1}AP$：</p>
+
+<div class="calc box" data-tag="相似不变量：各证一句">
+  <p><strong>行列式</strong>：$\det B=\det(P^{-1})\det A\det P=\dfrac1{\det P}\cdot\det A\cdot\det P=\det A$。</p>
+  <p><strong>迹</strong>：$\operatorname{tr}B=\operatorname{tr}\bigl(P^{-1}(AP)\bigr)=\operatorname{tr}\bigl((AP)P^{-1}\bigr)=\operatorname{tr}A$（用 $\operatorname{tr}(XY)=\operatorname{tr}(YX)$）。</p>
+  <p><strong>特征多项式</strong>：关键一步是 $\lambda I$ 也换基不变——
+  $$\chi_B(\lambda)=\det(\lambda I-B)=\det\bigl(\lambda I-P^{-1}AP\bigr)=\det\bigl(P^{-1}(\lambda I-A)P\bigr)=\det(\lambda I-A)=\chi_A(\lambda).$$</p>
+  <p><strong>特征值</strong>（含代数重数）：是 $\chi$ 的根，$\chi$ 相同故特征值相同。</p>
+  <p><strong>秩</strong>：左（右）乘可逆矩阵不改变秩，$\operatorname{rank}(P^{-1}AP)=\operatorname{rank}(AP)=\operatorname{rank}A$。几何说法更干净：$\operatorname{rank}A=\dim(\text{像空间})$，像空间是变换的，与基无关。</p>
+</div>
+
+<p>反过来用就是武器：<strong>要证两个矩阵不相似，亮出任何一个不变量不相等即结案</strong>。但正向用要小心，见下面的头号陷阱。</p>
+
+<div class="warn box" data-tag="头号陷阱：χ 相同 ⇏ 相似">
+  <p><strong>反例一</strong>（$\chi$ 相同，秩不同）：$J=\begin{pmatrix}0&1\\0&0\end{pmatrix}$ 与零矩阵 $O$ 的特征多项式都是 $\lambda^2$，迹、行列式、特征值全同——但 $\operatorname{rank}J=1\ne0=\operatorname{rank}O$，秩出卖了它们：不相似（当然，$P^{-1}OP=O$ 也直接说明一切）。</p>
+  <p><strong>反例二</strong>（全套初等不变量相同，仍不相似）：$I=\begin{pmatrix}1&0\\0&1\end{pmatrix}$ 与 $\begin{pmatrix}1&1\\0&1\end{pmatrix}$：$\chi$ 同为 $(\lambda-1)^2$，$\operatorname{tr}=2$、$\det=1$、$\operatorname{rank}=2$、特征值全同——但 $P^{-1}IP=I$ 永远不等于后者，<strong>不相似</strong>。</p>
+  <p>教训：特征多项式、迹、行列式、秩都只是身份证的<strong>一面</strong>，全对上也未必是同一个人。配得上"完整身份证"的是 Jordan 标准形——第 7 章会证明：两个矩阵相似 $\iff$ 它们有相同的 Jordan 标准形（不计块的次序）。本章先用反例把这个坑占住：<strong>不变量全同只能用来证"不相似"，不能用来证"相似"</strong>（例外：若 $A,B$ 都可对角化且 $\chi_A=\chi_B$，则它们相似于同一个对角阵，此时 $\chi$ 说了算——§4 动作二还会回来）。</p>
+</div>
+
+<h2>§4 翻译轨：四个标准动作 + 一间练功房</h2>
+
+<p>换基与相似在卷面上只有四种用法。练成反射，高代大题的"步骤分"就稳了一半。</p>
+
+<div class="trans box" data-tag="动作一：求 T 在某基下的矩阵（逐列填）">
+  <p><strong>题面</strong>："求线性变换 $T$ 在基 $\{\varepsilon_1,\dots,\varepsilon_n\}$ 下的矩阵。"</p>
+  <p><strong>翻译</strong>：循环 $n$ 次，每次三行：算 $T(\varepsilon_j)$ $\to$ 解出它在基下的坐标 $\to$ 填进第 $j$ 列。没有任何技巧，只有定义。</p>
+  <p><strong>用在哪、值多少</strong>：第 15 届题三开门 2 分点——在基 $\{\alpha,\mathbf{A}\alpha,\dots,\mathbf{A}^{n-1}\alpha\}$ 下，$T(\mathbf{A}^{j-1}\alpha)=\mathbf{A}^j\alpha$ 就是第 $j+1$ 个基向量，故前 $n-1$ 列是 $(0,\dots,1,\dots,0)^T$（$1$ 逐行下移），最后一列是 $\mathbf{A}^n\alpha$ 的坐标——<strong>友矩阵</strong>就这样逐列长出来。表示矩阵写对，后面的秩讨论才有地基。</p>
+</div>
+
+<div class="trans box" data-tag="动作二：相似 ⇔ 不变量 / 找 P">
+  <p><strong>题面</strong>：已知 $A\sim B$（或"它们是同一变换的表示矩阵"）。</p>
+  <p><strong>翻译</strong>：立刻取出不变量套餐——$\operatorname{tr}A=\operatorname{tr}B$，$\det A=\det B$，$\chi_A=\chi_B$，$\operatorname{rank}A=\operatorname{rank}B$。用法：证<strong>不相似</strong>（找一处矛盾即结案）、定参数（相似关系里的未知量由不变量方程解出）。</p>
+  <p><strong>反向（要证相似）</strong>三条路：① 直接构造 $P$（定义）；② 证明它们是同一线性变换在两组基下的矩阵（几何路）；③ 都相似于同一个标准形 $C$，用传递性——$A,B$ 都可对角化时 $C$ 取对角阵（此时 $\chi_A=\chi_B$ 就够），一般情形 $C$ 取 Jordan 标准形（第 7 章）。</p>
+</div>
+
+<div class="trans box" data-tag="动作三：Aⁿ 与 det(f(A)) —— 对角化算幂">
+  <p><strong>题面</strong>："求 $A^n$"、"计算 $\det(E+A^{2023})$"、"矩阵多项式 $f(A)$ 的行列式/秩"。</p>
+  <p><strong>翻译</strong>：若 $A=PDP^{-1}$（$D=\operatorname{diag}(\lambda_1,\dots,\lambda_n)$，即 $A$ 可对角化），则
+  $$A^n=PD^nP^{-1},\qquad f(A)=P\,f(D)\,P^{-1},\qquad \det f(A)=\prod_{i=1}^n f(\lambda_i).$$
+  一句话：<strong>换到特征基里，幂和多项式都退化成对对角元逐一操作</strong>。开场谜题的 $A^{100}=P\operatorname{diag}(2^{100},2^{-100})P^{-1}$ 即此。</p>
+  <p><strong>用在哪、值多少</strong>：第 15 届题四收尾（15 分点）：$A$ 实对称故可对角化，特征值为 $\underbrace{0,\dots,0}_{n-2},\frac n2,-\frac n2$；于是 $E+A^{2023}$ 的特征值为 $\underbrace{1,\dots,1}_{n-2},1+\bigl(\frac n2\bigr)^{2023},1-\bigl(\frac n2\bigr)^{2023}$（2023 是奇数），
+  $$\bigl|E+A^{2023}\bigr|=\Bigl(1+\bigl(\tfrac n2\bigr)^{2023}\Bigr)\Bigl(1-\bigl(\tfrac n2\bigr)^{2023}\Bigr)=1-\Bigl(\tfrac n2\Bigr)^{4046}.$$
+  求不出 $P$ 也没关系——算行列式只要特征值，不要 $P$。</p>
+</div>
+
+<div class="trans box" data-tag="动作四：不可逆想套可逆公式 —— 扰动 + 取极限">
+  <p><strong>题面</strong>：证明一个关于任意方阵 $A$ 的恒等式，但你的证法需要 $A^{-1}$（例如要共轭、要消去）。</p>
+  <p><strong>翻译</strong>：标准动作三步：</p>
+  <p>① <strong>扰动</strong>：把 $A$ 换成 $A_\varepsilon=A+\varepsilon I$。$\det(A+\varepsilon I)$ 是 $\varepsilon$ 的首一 $n$ 次多项式，<strong>至多有 $n$ 个零点</strong>，故存在 $\delta>0$，当 $0&lt;\varepsilon&lt;\delta$ 时 $A_\varepsilon$ 可逆；<br>
+  ② <strong>套用</strong>：对每个这样的 $\varepsilon$，用可逆情形的证法得到恒等式；<br>
+  ③ <strong>取极限</strong>：恒等式两边都是 $\varepsilon$ 的多项式（连续函数），令 $\varepsilon\to0^+$，恒等式传回 $A$。</p>
+  <p>这是<strong>代数里的分析手法</strong>：合法性的两个来源是"$\det$ 连续"与"多项式恒等定理"（在无穷多点上相等的多项式必恒等）。第 11 届题三官方解答的原装动作就是它：取 $B_n=B+\frac1n I\to B$，先对可逆的 $B_n$ 用共轭，再令 $n\to\infty$。完整示范见 §8 例 2。</p>
+</div>
+
+<div class="trans box" data-tag="附：可交换 ⇒ 可同时对角化（一句话定理）">
+  <p><strong>陈述</strong>：若 $A,B$ 都可对角化且 $AB=BA$，则存在<strong>同一个</strong>可逆矩阵 $P$，使 $P^{-1}AP$ 与 $P^{-1}BP$ <strong>同时为对角阵</strong>（思路：$B$ 保持 $A$ 的每个特征子空间不变，在每个特征子空间内把 $B$ 对角化，拼起来即得）。</p>
+  <p><strong>使用场景</strong>：第 11 届题四证法 1 的第一步（10 分点）——"存在可逆 $P$ 使 $B=PP^T$、$A=P\operatorname{diag}(\lambda_1,\dots,\lambda_n)P^T$"，即同时（合同）对角化，是同一思想在合同变换下的版本；第 15 届题三充分性把空间按特征值拆成不变子空间的直和、逐块处理，则是"可交换的一族变换可同步化简"这一思想在不可对角化世界的根子空间版。看到 $AB=BA$ 且都要对角化，反射出"同一组基，两张对角脸"。</p>
+</div>
+
+<h3>4.5 翻译练功房：像学语言一样，大量互译</h3>
+
+<p>下面 8 句，先全部写在纸上，再逐条展开对照。每条不超过 1 分钟。</p>
+
+<div class="trans box" data-tag="互译 8 句">
+  <p><strong>T1</strong>　自然→符号："$A$ 与 $B$ 相似。"</p>
+  <details class="answer"><summary>对照</summary><p>存在可逆矩阵 $P$，使 $B=P^{-1}AP$。出声读："存在一组基，让同一个变换的脸从 $A$ 换成 $B$；$P$ 的列就是这组新基的旧坐标。"<strong>易错</strong>：写成 $B=PAP^{-1}$ 不算错（把 $P$ 换成 $P^{-1}$ 而已），但换基公式里 $P$ 与 $P^{-1}$ 的方向是定的：$[T]_{\text{新}}=P^{-1}[T]_{\text{旧}}P$——新基坐标排在 $P$ 的列里，所以新矩阵<strong>左边挂 $P^{-1}$</strong>。</p></details>
+  <p><strong>T2</strong>　自然→符号："$\{\eta_1,\dots,\eta_n\}$ 是新基，且 $(\eta_1,\dots,\eta_n)=(\varepsilon_1,\dots,\varepsilon_n)P$。"这句话同时给了坐标之间的什么关系？</p>
+  <details class="answer"><summary>对照</summary><p>$P$ 的第 $j$ 列 $=\eta_j$ 的旧坐标；坐标关系 $[\alpha]_{\text{旧}}=P[\alpha]_{\text{新}}$（等价地 $[\alpha]_{\text{新}}=P^{-1}[\alpha]_{\text{旧}}$）。<strong>口诀</strong>：基正着乘 $P$，坐标倒着乘 $P^{-1}$（从旧到新）。方向写反是本章最高频的书写事故。</p></details>
+  <p><strong>T3</strong>　符号→自然 + 判断："$\operatorname{tr}(P^{-1}AP)=\operatorname{tr}(A)$。"追问：$\operatorname{tr}A=\operatorname{tr}B$ 能推出 $A\sim B$ 吗？</p>
+  <details class="answer"><summary>对照</summary><p>"迹是相似不变量"——换基不改变迹。不能反推：$I_2$ 与 $\begin{pmatrix}1&1\\0&1\end{pmatrix}$ 迹同为 $2$（甚至 $\det$、$\chi$、秩全同），但 $P^{-1}IP=I$ 永远不相似于后者。单个不变量相等，离相似还差得远。</p></details>
+  <p><strong>T4</strong>　判断（说理由）："$\chi_A=\chi_B$ 是 $A\sim B$ 的充分条件。"如果对，证；如果错，反例，并补一个能救回来的加强条件。</p>
+  <details class="answer"><summary>对照</summary><p>错。它只是<strong>必要</strong>条件：$J=\begin{pmatrix}0&1\\0&0\end{pmatrix}$ 与 $O$ 的 $\chi$ 同为 $\lambda^2$，但不相似（秩 $1\ne0$ 已出卖）。加强救回：若 $A,B$ <strong>都可对角化</strong>，则 $\chi_A=\chi_B\Rightarrow$ 二者相似于同一个 $\operatorname{diag}(\lambda_1,\dots,\lambda_n)$，由传递性 $A\sim B$。可对角化世界里，特征多项式就是完整身份证。</p></details>
+  <p><strong>T5</strong>　自然→符号："$A$ 可对角化。"并顺势写出 $A^n$ 与 $\det(E+A^m)$。</p>
+  <details class="answer"><summary>对照</summary><p>存在可逆 $P$ 与 $D=\operatorname{diag}(\lambda_1,\dots,\lambda_n)$ 使 $P^{-1}AP=D$（$\iff A$ 有 $n$ 个线性无关的特征向量，即 $P$ 的各列）。于是 $A^n=PD^nP^{-1}$，$\det(E+A^m)=\prod_{i=1}^n(1+\lambda_i^m)$。<strong>易错</strong>：$\det(E+A^m)$ 不是 $1+\det A^m$——行列式不过加法，只有换到特征基里才能"逐对角元加 $1$"。</p></details>
+  <p><strong>T6</strong>　路径选择："证明 $A$ 与 $B$ 相似。"列出常规路径，并说明每条何时伸手。</p>
+  <details class="answer"><summary>对照</summary><p>① 构造 $P$：题面已经暗示新基（如"取基 …"）时；② 证同一变换的两张证件照：$A,B$ 各有明显几何出处时；③ 各相似于同一标准形 $+$ 传递性：$A,B$ 都可对角化时用对角阵（$\chi$ 相同即可），不可对角化时上 Jordan（第 7 章）。配套反射：证"<strong>不</strong>相似"才用不变量找茬——不变量有一处不同即结案，全同则不能结案（除非落入③的可对角化情形）。</p></details>
+  <p><strong>T7</strong>　自然→符号 + 动作："$A$ 不可逆，但证明的下一步需要 $A^{-1}$。"</p>
+  <details class="answer"><summary>对照</summary><p>扰动：取 $A_\varepsilon=A+\varepsilon I$。$\det(A+\varepsilon I)$ 是 $\varepsilon$ 的首一 $n$ 次多项式，至多 $n$ 个零点，故 $0&lt;\varepsilon$ 充分小时 $A_\varepsilon$ 可逆；先对 $A_\varepsilon$ 完成需要逆的那一步，再令 $\varepsilon\to0^+$ 由连续性取回。<strong>警告</strong>：能穿过极限的是恒等式、不等式这类"闭条件"；"存在可逆 $P$ 使 …"这种存在性命题穿不过——相似关系对极限不封闭（见 §9 模仿 2 的反例）。</p></details>
+  <p><strong>T8</strong>　符号→自然："$AP=PD$，其中 $D=\operatorname{diag}(\lambda_1,\dots,\lambda_n)$，$P$ 可逆。"逐列读出来。</p>
+  <details class="answer"><summary>对照</summary><p>设 $P=(p_1,\dots,p_n)$，逐列是 $Ap_j=\lambda_jp_j$：$P$ 的每一列是 $A$ 的特征向量，$\lambda_j$ 是对应特征值；"$P$ 可逆" $\iff$ 这些特征向量构成一组基。整句话就是"$A$ 可对角化"的全部含义——<strong>把基对准特征方向，矩阵露出对角的真面目</strong>。这也是 §3.1 探索器里你亲手做过的事。</p></details>
+</div>
+
+<h2>§5 类型识别：什么信号在召唤换基与相似</h2>
+
+<div class="recog box" data-tag="识别反射表">
+  <table>
+    <tr><th>题面信号</th><th>反射</th></tr>
+    <tr><td>"求 $A^n$ / $A$ 的幂 / 矩阵幂级数 / $\det f(A)$"</td><td>对角化算幂：$A^n=PD^nP^{-1}$，$\det f(A)=\prod f(\lambda_i)$；不能对角化想 Jordan（第 7 章）</td></tr>
+    <tr><td>"$\det(sI\pm AB)$ 与 $\det(sI\pm BA)$、比较 $AB$ 与 $BA$ 的特征"</td><td>Sylvester 行列式恒等式（§8 例 2）：$\det(sI+AB)=\det(sI+BA)$</td></tr>
+    <tr><td>"$A$ 不可逆，但想套需要 $A^{-1}$ 的公式"</td><td>扰动 $A+\varepsilon I$（$\det$ 是多项式，零点有限）$+$ 取极限</td></tr>
+    <tr><td>"同一线性变换在两组基下的矩阵""换基后矩阵变为 …"</td><td>$[T]_{\text{新}}=P^{-1}[T]_{\text{旧}}P$；$P$ 的列 $=$ 新基的旧坐标</td></tr>
+    <tr><td>"证 $A$ 与 $B$ <strong>不</strong>相似"</td><td>亮不变量：$\operatorname{tr}$、$\det$、$\operatorname{rank}$、$\chi$（以后还有最小多项式、Jordan）——一处不同即结案</td></tr>
+    <tr><td>"证 $A$ 与 $B$ 相似"</td><td>构造 $P$；或证同一变换的两张证件照；或都相似于同一标准形用传递性</td></tr>
+    <tr><td>"$AB=BA$ 且都可对角化"</td><td>同时对角化：同一组基下两张脸都是对角阵</td></tr>
+    <tr><td>"特征多项式相同，所以相似"</td><td>警报：$\chi$ 相同 $\nRightarrow$ 相似（$J$ vs $O$；$I$ vs $\begin{pmatrix}1&1\\0&1\end{pmatrix}$），除非都可对角化</td></tr>
+  </table>
+</div>
+
+<h2>§6 考法定位：它藏在哪里、值多少分</h2>
+
+<div class="exam box" data-tag="考法定位">
+  <table>
+    <tr><th>出处</th><th>题号</th><th>本章内容扮演什么角色</th><th>分值权重</th></tr>
+    <tr><td>第 11 届（2019）</td><td>题三</td><td>核心引理 $\det(sI+AB)=\det(sI+BA)$ 及其官方证法"可逆扰动 $B_n=B+\frac1nI$ $+$ 取极限"——本章动作四的原装现场</td><td>15 分（整题的骨架）</td></tr>
+    <tr><td>第 15 届（2023）</td><td>题四</td><td>收尾一步"实对称可对角化 $\Rightarrow$ $|E+A^{2023}|=\prod(1+\lambda_i^{2023})=1-(n/2)^{4046}$"——动作三直接兑现</td><td>15 分（收尾约 5 分）</td></tr>
+    <tr><td>第 15 届（2023）</td><td>题三</td><td>开门"在基 $\{\alpha,\mathbf{A}\alpha,\dots,\mathbf{A}^{n-1}\alpha\}$ 下 $\mathbf{A}$ 的矩阵为友矩阵"——表示矩阵定义逐列填（动作一）</td><td>20 分（开门 2 分点）</td></tr>
+    <tr><td>第 11 届（2019）</td><td>题四（证法 1）</td><td>第一步"同时合同对角化 $B=PP^T$、$A=P\Lambda P^T$"——可交换 $/$ 同时对角化思想</td><td>20 分（开局约 10 分点）</td></tr>
+  </table>
+  <p><strong>规律</strong>：换基与相似极少单独成题，但它是高代大题的<strong>通用语</strong>：表示矩阵写对（开门 2–3 分）、不变量取对（中间 2–3 分）、对角化收尾（3–5 分），全是分步给分制下"跳步就归零"的基本功。而"扰动 $+$ 取极限"是官方解答亲笔用过的招牌动作（第 11 届题三），值得单独练到反射级——本章例 2 就是它的完整示范。</p>
+</div>
+
+<h2>§7 关系网：一个变形，一条换算率，三件武器</h2>
+
+<p>本章的逻辑就一句话：变形是客观的，坐标纸是人选的——于是有了表示矩阵（读数）、换基公式（读数间的换算率）、相似不变量（与读数无关的本性），再长出三件手上武器，各自通往真题与后面的章节。形状约定同前：<span style="color:#b45309">三角形</span>是来源与动机，<span style="color:#1d4ed8">圆角矩形</span>是定义，<span style="color:#15803d">矩形</span>是定理，<span style="color:#7c3aed">六边形</span>是方法动作，<span style="color:#0f766e">椭圆</span>是应用出口。</p>
+
+<figure>
+<svg viewBox="0 0 720 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="换基与相似关系网地图">
+  <defs>
+    <marker id="arr14" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+
+  <!-- 图例 -->
+  <polygon points="30,16 22,30 38,30" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5"/>
+  <text x="44" y="28" font-size="11.5" fill="#5c554b">来源·动机</text>
+  <rect x="116" y="17" width="22" height="13" rx="6.5" fill="#eef3fe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="144" y="28" font-size="11.5" fill="#5c554b">定义</text>
+  <rect x="196" y="17" width="22" height="13" fill="#ecf8f0" stroke="#15803d" stroke-width="1.5"/>
+  <text x="224" y="28" font-size="11.5" fill="#5c554b">定理</text>
+  <polygon points="276,23.5 282,16 296,16 302,23.5 296,31 282,31" fill="#f4effd" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="308" y="28" font-size="11.5" fill="#5c554b">方法·动作</text>
+  <ellipse cx="392" cy="23.5" rx="12" ry="7" fill="#ecf8f5" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="410" y="28" font-size="11.5" fill="#5c554b">应用·出口</text>
+
+  <!-- 来源三角 -->
+  <polygon points="120,56 56,132 184,132" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="120" y="96" font-size="12" fill="#7a4a12" text-anchor="middle" font-weight="bold">同一变形</text>
+  <text x="120" y="112" font-size="10.5" fill="#7a4a12" text-anchor="middle">两种坐标纸</text>
+  <text x="120" y="126" font-size="10.5" fill="#7a4a12" text-anchor="middle">A¹⁰⁰ 怎么算</text>
+
+  <!-- 三角 → 表示矩阵 -->
+  <line x1="190" y1="94" x2="266" y2="94" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr14)"/>
+  <text x="228" y="84" font-size="11" fill="#5c554b" text-anchor="middle">取基读数</text>
+
+  <!-- 定义：表示矩阵（圆角矩形） -->
+  <rect x="272" y="62" width="240" height="64" rx="30" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="392" y="88" font-size="14.5" fill="#1d4ed8" text-anchor="middle" font-weight="bold">表示矩阵 [T]_B</text>
+  <text x="392" y="108" font-size="11" fill="#1d4ed8" text-anchor="middle">第 j 列 = T(基向量 j) 的坐标</text>
+
+  <!-- 表示矩阵 → 换基公式 -->
+  <line x1="392" y1="126" x2="392" y2="168" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr14)"/>
+  <text x="404" y="152" font-size="11" fill="#5c554b">换一张坐标纸</text>
+
+  <!-- 定理：换基公式与相似（矩形） -->
+  <rect x="252" y="174" width="280" height="66" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="392" y="199" font-size="14" fill="#15803d" text-anchor="middle" font-weight="bold">换基公式 [T]新 = P⁻¹[T]旧P</text>
+  <text x="392" y="219" font-size="11.5" fill="#4a7c59" text-anchor="middle">相似 B=P⁻¹AP = 同一变换的全体证件照</text>
+
+  <!-- 换基公式 → 三方法（肘形走线） -->
+  <polyline points="322,240 322,282 130,282 130,306" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr14)"/>
+  <line x1="392" y1="240" x2="392" y2="306" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr14)"/>
+  <polyline points="462,240 462,282 610,282 610,306" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr14)"/>
+  <text x="476" y="274" font-size="11" fill="#5c554b">身份证</text>
+  <text x="346" y="296" font-size="11" fill="#5c554b">挑最好的脸</text>
+  <text x="560" y="274" font-size="11" fill="#5c554b">挤一点 εI</text>
+
+  <!-- 三方法（六边形） -->
+  <polygon points="55,342 80,312 180,312 205,342 180,372 80,372" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="130" y="338" font-size="12" fill="#7c3aed" text-anchor="middle" font-weight="bold">不变量侦察</text>
+  <text x="130" y="354" font-size="10" fill="#6a55a3" text-anchor="middle">tr · det · χ · rank</text>
+  <polygon points="317,342 342,312 442,312 467,342 442,372 342,372" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="392" y="338" font-size="12" fill="#7c3aed" text-anchor="middle" font-weight="bold">对角化算幂</text>
+  <text x="392" y="354" font-size="10" fill="#6a55a3" text-anchor="middle">Aⁿ = PDⁿP⁻¹</text>
+  <polygon points="535,342 560,312 660,312 685,342 660,372 560,372" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="610" y="338" font-size="12" fill="#7c3aed" text-anchor="middle" font-weight="bold">扰动+取极限</text>
+  <text x="610" y="354" font-size="10" fill="#6a55a3" text-anchor="middle">不可逆 → A+εI</text>
+
+  <!-- 警告注记 -->
+  <rect x="30" y="392" width="200" height="40" rx="6" fill="#fdf6e3" stroke="#b45309" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="130" y="409" font-size="10.5" fill="#7a4a12" text-anchor="middle">⚠ χ 相同 ⇏ 相似</text>
+  <text x="130" y="424" font-size="10" fill="#7a4a12" text-anchor="middle">J=((0,1),(0,0)) vs O；I vs ((1,1),(0,1))</text>
+
+  <!-- 三方法 → 三出口 -->
+  <line x1="130" y1="372" x2="130" y2="446" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr14)"/>
+  <line x1="392" y1="372" x2="392" y2="446" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr14)"/>
+  <line x1="610" y1="372" x2="610" y2="446" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr14)"/>
+
+  <!-- 三出口（椭圆） -->
+  <ellipse cx="130" cy="486" rx="112" ry="38" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="130" y="480" font-size="11.5" fill="#0f766e" text-anchor="middle" font-weight="bold">证不相似 · 定参数</text>
+  <text x="130" y="496" font-size="10" fill="#3d7a70" text-anchor="middle">不变量一处不同即结案</text>
+  <ellipse cx="392" cy="486" rx="128" ry="38" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="392" y="480" font-size="11.5" fill="#0f766e" text-anchor="middle" font-weight="bold">|E+A²⁰²³| = 1−(n/2)⁴⁰⁴⁶</text>
+  <text x="392" y="496" font-size="10" fill="#3d7a70" text-anchor="middle">第 15 届题四（15 分）收尾</text>
+  <ellipse cx="610" cy="486" rx="106" ry="38" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="610" y="480" font-size="11.5" fill="#0f766e" text-anchor="middle" font-weight="bold">det(sI+AB)=det(sI+BA)</text>
+  <text x="610" y="496" font-size="10" fill="#3d7a70" text-anchor="middle">第 11 届题三（15 分）引理</text>
+
+  <!-- 换基公式 → 后续章节 -->
+  <polyline points="532,207 660,207 660,300" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr14)"/>
+  <text x="596" y="198" font-size="11" fill="#5c554b" text-anchor="middle">能不能挑到最好的脸？</text>
+  <ellipse cx="610" cy="246" rx="0" ry="0" fill="none" stroke="none"/>
+  <rect x="540" y="212" width="160" height="0" fill="none" stroke="none"/>
+</svg>
+<figcaption>本章地图：一个变形逼出表示矩阵，一次换纸逼出换基公式与相似；相似不变量、对角化算幂、扰动取极限三件武器分别通往三个出口。（右侧引出的问句"能不能挑到最好的脸"，就是第 5 章对角化与第 7 章 Jordan 的入口。）</figcaption>
+</figure>
+
+<div class="net box" data-tag="画面感锚点（记这些，不记条文）">
+  <table>
+    <tr><th>节点</th><th>一句话画面</th><th>擅长场景</th></tr>
+    <tr><td>表示矩阵 $[T]_{\mathcal{B}}$</td><td>变形在坐标纸上的读数，逐列填写</td><td>"求 $T$ 在某基下的矩阵"（15 届题三的友矩阵）</td></tr>
+    <tr><td>换基公式</td><td>两张坐标纸之间的换算率：右 $P$ 翻旧账，左 $P^{-1}$ 翻回来</td><td>"换基后矩阵变成什么"；相似的定义由此长出来</td></tr>
+    <tr><td>相似 $B=P^{-1}AP$</td><td>同一变换的全体证件照</td><td>"$A,B$ 什么关系"类问题；把矩阵问题还原成变换问题</td></tr>
+    <tr><td>不变量侦察</td><td>换多少张脸都改不了的胎记</td><td>证不相似、定参数；$\chi$ 相同不能反推相似</td></tr>
+    <tr><td>对角化算幂</td><td>换到特征基里，幂退化为逐对角元操作</td><td>$A^n$、$\det f(A)$（15 届题四）</td></tr>
+    <tr><td>扰动 $+$ 取极限</td><td>挤一点 $\varepsilon I$ 混进可逆俱乐部，用完再退出来</td><td>不可逆却想用可逆公式的恒等式（11 届题三）</td></tr>
+  </table>
+  <p><strong>和你已学知识的焊接点</strong>：扰动法能取极限，合法性来自数分——$\det$ 是连续函数、"在无穷多点相等的多项式恒等"（第 2 章极限、第 9 章级数里的恒等定理思想）；$\operatorname{rank}A=\dim(\text{像})$ 与换基无关，焊在卷二第 3 章的秩-零度定理上；$\det(XY)=\det X\det Y$ 与 $\operatorname{tr}(XY)=\operatorname{tr}(YX)$ 是两个不变量证明的全部引擎。向后，本章直接焊住第 5 章（对角化判据）、第 6 章（最小多项式）、第 7 章（Jordan——"$\chi$ 相同而形不同"的最终裁决）。</p>
+</div>
+
+<h2>§8 计算示范：先看真人怎么想，再看卷面怎么写</h2>
+
+<p>两道例题，分别对应本章前两件武器：换基公式（例 1）与扰动取极限（例 2）。照例两层：<strong>按总纲拆解</strong>教你"怎么想出来"，<strong>卷面书写</strong>教你"写出来拿分"。</p>
+
+<h3>例 1 · 表示矩阵与换基验证（约 8 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>两件事：① 写出 $T$ 在两组基下的表示矩阵——查拆目标总表，这不是证明题是<strong>定义执行题</strong>，骨架由定义直接给出（逐列填）；② 验证换基公式 $[T]_{\text{新}}=P^{-1}[T]_{\text{旧}}P$——<strong>计算验证型</strong>等式，骨架是"两边各算出来，比对"。不需要灵感，只需要不跳步。</p>
+  <p><span class="stage">【盘点】</span>$T$ 是往平面 $\Pi:x+y+z=0$ 上的投影，产出清单：① 面内向量不动（$\alpha\in\Pi\Rightarrow T\alpha=\alpha$）；② 法向量 $n=(1,1,1)^T$ 被拍扁（$Tn=0$）；③ 分解公式 $T\alpha=\alpha-\frac{\langle\alpha,n\rangle}{\langle n,n\rangle}n$。①②暗示新基怎么选：<strong>两个面内向量 $+$ 一个法向量</strong>——基贴着变换的结构选，矩阵自然对角（<strong>工具三 · 特殊化侦察</strong>：先想清楚最顺眼的基长什么样，这也正是第 5 章对角化的选基思想）。</p>
+  <p><span class="stage">【会师】</span>旧基（标准基）：逐列算 $T(e_j)=e_j-\frac13n$，填出 $[T]_{\text{旧}}$。新基 $\{b_1,b_2,b_3\}$：由产出①②，$T(b_1)=b_1$、$T(b_2)=b_2$、$T(b_3)=0$，坐标白送，$[T]_{\text{新}}=\operatorname{diag}(1,1,0)$。过渡矩阵 $P$：新基的旧坐标按列排。验证：$P^{-1}[T]_{\text{旧}}P$ 乘出来比对——每步都是库存里的货。</p>
+  <p><span class="stage">【定型】</span>卷面顺序：定义写两个矩阵 $\to$ 写 $P$ 与 $P^{-1}$ $\to$ 乘法验证 $\to$ 补一句不变量核对（$\operatorname{tr}$、$\operatorname{rank}$、$\det$、$\chi$ 两边一致）。最后这一步不是必须，但它一分钟成本换一层保险——<strong>不变量核对是换基计算的免费验算器</strong>。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 表示矩阵三步 + 相似验证三步</strong>：表示矩阵 = "算 $T(\varepsilon_j)$ → 解坐标 → 填第 $j$ 列"循环 $n$ 次；相似验证 = "新基旧坐标按列排成 $P$ → 求 $P^{-1}$ → 乘 $P^{-1}[T]_{\text{旧}}P$ 与 $[T]_{\text{新}}$ 比对"。全部机械，零灵感，跳步才失分。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 1</strong>　设 $T:\mathbb{R}^3\to\mathbb{R}^3$ 是向平面 $\Pi:x+y+z=0$ 上的（正交）投影变换，$T\alpha=\alpha-\dfrac{\langle\alpha,n\rangle}{\langle n,n\rangle}n$，其中 $n=(1,1,1)^T$。取旧基为标准基 $\mathcal{E}=\{e_1,e_2,e_3\}$，新基 $\mathcal{B}=\{b_1,b_2,b_3\}$，其中 $b_1=(1,-1,0)^T$，$b_2=(1,1,-2)^T$，$b_3=(1,1,1)^T$。求 $[T]_{\mathcal{E}}$ 与 $[T]_{\mathcal{B}}$，并验证换基公式 $[T]_{\mathcal{B}}=P^{-1}[T]_{\mathcal{E}}P$。</p>
+  <hr>
+  <p class="proof-line"><strong>解　第一步（$[T]_{\mathcal{E}}$，逐列填）</strong>：$\langle n,n\rangle=3$，
+  $$T(e_1)=e_1-\tfrac13n=\begin{pmatrix}2/3\\-1/3\\-1/3\end{pmatrix},\quad T(e_2)=\begin{pmatrix}-1/3\\2/3\\-1/3\end{pmatrix},\quad T(e_3)=\begin{pmatrix}-1/3\\-1/3\\2/3\end{pmatrix},\qquad [T]_{\mathcal{E}}=\frac13\begin{pmatrix}2&-1&-1\\-1&2&-1\\-1&-1&2\end{pmatrix}.$$<span class="step-score">（3 分）</span></p>
+  <p class="proof-line"><strong>第二步（$[T]_{\mathcal{B}}$，几何白送）</strong>：$b_1,b_2$ 满足 $x+y+z=0$，故在平面 $\Pi$ 上，投影不动：$T(b_1)=b_1$，$T(b_2)=b_2$；$b_3=n$ 是法向量，$T(b_3)=0$。三列坐标分别为 $(1,0,0)^T,(0,1,0)^T,(0,0,0)^T$，故
+  $$[T]_{\mathcal{B}}=\begin{pmatrix}1&0&0\\0&1&0\\0&0&0\end{pmatrix}.$$<span class="step-score">（5 分）</span></p>
+  <p class="proof-line"><strong>第三步（过渡矩阵及其逆）</strong>：新基的旧坐标按列排，
+  $$P=\begin{pmatrix}1&1&1\\-1&1&1\\0&-2&1\end{pmatrix},\qquad \det P=6,\qquad P^{-1}=\frac16\begin{pmatrix}3&-3&0\\1&1&-2\\2&2&2\end{pmatrix}.$$<span class="step-score">（6 分）</span></p>
+  <p class="proof-line"><strong>第四步（验证）</strong>：先算
+  $$[T]_{\mathcal{E}}P=\frac13\begin{pmatrix}2&-1&-1\\-1&2&-1\\-1&-1&2\end{pmatrix}\begin{pmatrix}1&1&1\\-1&1&1\\0&-2&1\end{pmatrix}=\frac13\begin{pmatrix}3&3&0\\-3&3&0\\0&-6&0\end{pmatrix}=\begin{pmatrix}1&1&0\\-1&1&0\\0&-2&0\end{pmatrix}$$
+  （三列恰为 $b_1,b_2,0$，与 $T(b_1)=b_1$ 等几何事实吻合）。再乘
+  $$P^{-1}\bigl([T]_{\mathcal{E}}P\bigr)=\frac16\begin{pmatrix}3&-3&0\\1&1&-2\\2&2&2\end{pmatrix}\begin{pmatrix}1&1&0\\-1&1&0\\0&-2&0\end{pmatrix}=\frac16\begin{pmatrix}6&0&0\\0&6&0\\0&0&0\end{pmatrix}=\begin{pmatrix}1&0&0\\0&1&0\\0&0&0\end{pmatrix}=[T]_{\mathcal{B}}.\ \checkmark$$<span class="step-score">（8 分）</span></p>
+  <p class="proof-line"><strong>不变量核对（免费验算）</strong>：$\operatorname{tr}[T]_{\mathcal{E}}=\frac13(2+2+2)=2=\operatorname{tr}[T]_{\mathcal{B}}$；$\operatorname{rank}$ 同为 $2$；$\det$ 同为 $0$；$\chi_{[T]_{\mathcal{E}}}(\lambda)=\lambda^3-2\lambda^2+\lambda=\lambda(\lambda-1)^2=\chi_{[T]_{\mathcal{B}}}(\lambda)$。四套证件信息一致。$\square$</p>
+  <p class="aside">书写点评：第二步的分点在于说出"<strong>为什么</strong>$T(b_1)=b_1$"（$b_1\in\Pi$），只写结果不给理由要扣步骤分；第四步的两次矩阵乘法必须真的乘出来摆在卷面上——"由换基公式即得"在要求"验证"的题里是跳步。另注意 $\operatorname{tr}=2$ 的几何身份：它是像空间（平面 $\Pi$）的维数，本应与基无关。</p>
+</div>
+
+<h3>例 2 · Sylvester 行列式恒等式（约 10 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>结论是<strong>恒等式</strong> $\det(sI+AB)=\det(sI+BA)$（对任意 $n$ 阶方阵 $A,B$ 与数 $s$）。等式型，但没有 $\le/\ge$ 可拆——观察结构：两边只差"$AB$ 与 $BA$ 换序"。若 $A$ 可逆，换序用共轭一行抹平：$sI+AB=A(sI+BA)A^{-1}$。于是一般情形的骨架只剩一个问题：<strong>不可逆的 $A$ 怎么混进可逆的证法里</strong>。</p>
+  <p><span class="stage">【盘点】</span>库存三条：① $\det(XY)=\det X\det Y$，$\det P^{-1}=1/\det P$；② $\det(A+\varepsilon I)$ 是 $\varepsilon$ 的首一 $n$ 次多项式——非零多项式<strong>零点有限</strong>，故 $A+\varepsilon I$ 对几乎所有小 $\varepsilon$ 可逆（这正是<strong>工具三 · 特殊化侦察</strong>的代数版：先在"可逆"这个好侦察兵身上验证，再论证它能代表全军）；③ $\det$ 是诸元的多项式，关于 $\varepsilon$ <strong>连续</strong>——极限可以穿过去。</p>
+  <p><span class="stage">【会师】</span>倒推链：要证 $\det(sI+AB)=\det(sI+BA)$（<strong>工具六 · 划归</strong>）$\Longleftarrow$ 只需对每个 $0&lt;\varepsilon&lt;\delta$ 证 $\det(sI+A_\varepsilon B)=\det(sI+BA_\varepsilon)$，再令 $\varepsilon\to0^+$ $\Longleftarrow$ $A_\varepsilon=A+\varepsilon I$ 可逆（库存②）时用共轭 $sI+A_\varepsilon B=A_\varepsilon(sI+BA_\varepsilon)A_\varepsilon^{-1}$（库存①）。链条闭合，三环各取一件库存。</p>
+  <p><span class="stage">【定型】</span>卷面三段：可逆情形（一行共轭）→ 扰动存在性（多项式零点有限，必须交代"为什么存在这样的 $\delta$"）→ 取极限（必须交代"为什么极限合法"：$\det$ 连续）。"为什么想到加 $\varepsilon I$"是倒推痕迹，可以不写；但两个"为什么合法"是<strong>分点</strong>，删了就是跳步。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 扰动 + 取极限</strong>：恒等式在"可逆"条件下好证、题目却不给可逆时：加 $\varepsilon I$ 挤进可逆俱乐部（$\det(A+\varepsilon I)$ 是多项式，零点有限，$0&lt;\varepsilon\ll1$ 必可逆）→ 用完公式 → 令 $\varepsilon\to0^+$ 由连续性退出。这套"代数里的分析手法"是第 11 届题三官方解答的原装动作（官方扰动的是 $B_n=B+\frac1nI$），以后在秩不等式、特征值估计里还会反复上岗。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 2</strong>　设 $A,B$ 为任意 $n$ 阶复方阵，$s$ 为复数。证明：$\det(sI+AB)=\det(sI+BA)$。</p>
+  <hr>
+  <p class="proof-line"><strong>第一步（$A$ 可逆的情形）</strong>：此时
+  $$sI+AB=A(sI+BA)A^{-1}$$
+  （验证：$A(sI+BA)A^{-1}=sAA^{-1}+ABAA^{-1}=sI+AB$）。两边取行列式，
+  $$\det(sI+AB)=\det A\cdot\det(sI+BA)\cdot\det A^{-1}=\det(sI+BA).$$<span class="step-score">（4 分）</span></p>
+  <p class="proof-line"><strong>第二步（扰动：制造可逆）</strong>：设 $A$ 任意。考虑 $A_\varepsilon=A+\varepsilon I$。$\det(A+\varepsilon I)$ 是 $\varepsilon$ 的首一 $n$ 次多项式（即 $-A$ 的特征多项式在 $\varepsilon$ 处的值），非零多项式至多有 $n$ 个零点，故存在 $\delta>0$，使当 $0&lt;\varepsilon&lt;\delta$ 时 $\det(A_\varepsilon)\ne0$，即 $A_\varepsilon$ 可逆。<span class="step-score">（7 分）</span></p>
+  <p class="proof-line"><strong>第三步（取极限）</strong>：对每个 $0&lt;\varepsilon&lt;\delta$，由第一步（以 $A_\varepsilon$ 代 $A$）得
+  $$\det\bigl(sI+A_\varepsilon B\bigr)=\det\bigl(sI+BA_\varepsilon\bigr).$$
+  两边都是 $\varepsilon$ 的多项式，从而是 $\varepsilon$ 的连续函数；令 $\varepsilon\to0^+$，$A_\varepsilon\to A$，得
+  $$\det(sI+AB)=\det(sI+BA).\qquad\square$$<span class="step-score">（10 分）</span></p>
+  <p class="aside">书写点评：三个分点一个不能少——第一步的共轭（得分的骨架）、第二步"为什么存在 $\delta$"（多项式零点有限）、第三步"为什么能取极限"（$\det$ 连续）。后两句各一句话，但缺了就是逻辑豁口。另法（官方注）：对分块矩阵 $\begin{pmatrix}I&B\\A&sI\end{pmatrix}$ 分别左乘、右乘初等块阵（"打洞"），两边取行列式得 $\det(sI-AB)=\det(sI-BA)$ 对 $s\ne0$ 成立，再由多项式恒等定理延拓到 $s=0$——不用极限，用的是同一个"有限个零点"事实。</p>
+</div>
+
+<h2>§9 配套题目</h2>
+
+<p>铁律：<strong>先写在纸上，写到写不动再展开答案</strong>。模仿题照例 1、例 2 的卷面格式写；变式题先问自己"拆目标属于哪一型、哪个条件还没用"。</p>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 1</span>设 $T:\mathbb{R}^2\to\mathbb{R}^2$ 是关于直线 $y=x$ 的反射，$T(x,y)=(y,x)$。求 $T$ 在标准基 $\mathcal{E}$ 下的矩阵 $[T]_{\mathcal{E}}$ 与在基 $\mathcal{B}=\{b_1=(1,1)^T,\ b_2=(1,-1)^T\}$ 下的矩阵 $[T]_{\mathcal{B}}$，并验证 $[T]_{\mathcal{B}}=P^{-1}[T]_{\mathcal{E}}P$。</p>
+  <details class="answer">
+    <summary>参考答案（约 6 分书写量）</summary>
+    <p><strong>第一步</strong>：$T(e_1)=(0,1)^T=e_2$，$T(e_2)=(1,0)^T=e_1$，故 $[T]_{\mathcal{E}}=\begin{pmatrix}0&1\\1&0\end{pmatrix}$（2 分）。</p>
+    <p><strong>第二步</strong>：$b_1$ 在镜面直线上，$T(b_1)=b_1$；$b_2$ 与镜面垂直，$T(b_2)=(-1,1)^T=-b_2$。故 $[T]_{\mathcal{B}}=\operatorname{diag}(1,-1)$（4 分）。</p>
+    <p><strong>第三步</strong>：$P=\begin{pmatrix}1&1\\1&-1\end{pmatrix}$，$\det P=-2$，$P^{-1}=\dfrac12\begin{pmatrix}1&1\\1&-1\end{pmatrix}$（5 分）。</p>
+    <p><strong>第四步</strong>：$[T]_{\mathcal{E}}P=\begin{pmatrix}0&1\\1&0\end{pmatrix}\begin{pmatrix}1&1\\1&-1\end{pmatrix}=\begin{pmatrix}1&-1\\1&1\end{pmatrix}$；$P^{-1}([T]_{\mathcal{E}}P)=\dfrac12\begin{pmatrix}1&1\\1&-1\end{pmatrix}\begin{pmatrix}1&-1\\1&1\end{pmatrix}=\dfrac12\begin{pmatrix}2&0\\0&-2\end{pmatrix}=\operatorname{diag}(1,-1)=[T]_{\mathcal{B}}$。$\checkmark$（6 分）</p>
+    <p><strong>不变量核对</strong>：$\operatorname{tr}=0$、$\det=-1$、$\chi=(\lambda-1)(\lambda+1)$ 两边一致。<strong>易错点</strong>：$P^{-1}$ 与 $P$ 只相差因子 $\frac12$，粗心的同学会漏掉它——验算时 $\det P=-2\ne1$ 就是警报。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 2</span>（i）设 $A$ 可逆，$B$ 任意。证明：$AB$ 与 $BA$ 相似。（ii）举例说明：$A$ 不可逆时，$AB$ 与 $BA$ 可以<strong>不</strong>相似。</p>
+  <details class="answer">
+    <summary>参考答案（约 6 分书写量）</summary>
+    <p>（i）$BA=A^{-1}(AB)A$（验证：$A^{-1}(AB)A=(A^{-1}A)BA=BA$），而 $A^{-1}$ 可逆，由相似的定义 $AB\sim BA$（3 分）。</p>
+    <p>（ii）取 $A=\begin{pmatrix}0&1\\0&0\end{pmatrix}$，$B=\begin{pmatrix}1&0\\0&0\end{pmatrix}$。则 $AB=\begin{pmatrix}0&0\\0&0\end{pmatrix}=O$，而 $BA=\begin{pmatrix}0&1\\0&0\end{pmatrix}\ne O$。$\operatorname{rank}(AB)=0\ne1=\operatorname{rank}(BA)$，秩是相似不变量，故 $AB$ 与 $BA$ 不相似（6 分）。</p>
+    <p><strong>点评</strong>：这是"扰动法边界的活教材"——例 2 的恒等式 $\det(sI+AB)=\det(sI+BA)$ 能穿过极限（两边是多项式），但"相似"穿不过：$A+\varepsilon I$ 可逆时 $(A+\varepsilon I)B\sim B(A+\varepsilon I)$ 对每个小 $\varepsilon$ 成立，$\varepsilon\to0$ 后相似关系却断了。能传的是<strong>恒等式</strong>，传不了的是<strong>存在 $P$ 的命题</strong>（极限不保证那个 $P$ 有极限）。同时记住正面结论：$AB$ 与 $BA$ 总有相同的特征多项式（例 2），哪怕它们不相似。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 1</span>（i）设 $A\sim B$。证明：$A^2\sim B^2$，且 $\operatorname{tr}(A^2)=\operatorname{tr}(B^2)$。（ii）判断：对 2 阶矩阵，"$\operatorname{tr}A=\operatorname{tr}B$ 且 $\det A=\det B$"能否推出 $A\sim B$？</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：（i）相似保持乘法结构——同一个 $P$ 可以连用两次；（ii）2 阶时 $\operatorname{tr}$ 与 $\det$ 恰好决定 $\chi(\lambda)=\lambda^2-(\operatorname{tr})\lambda+\det$，于是问题变成"$\chi$ 相同是否推出相似"——本章头号陷阱。</p>
+    <p><strong>证明</strong>：（i）设 $B=P^{-1}AP$，则 $B^2=(P^{-1}AP)(P^{-1}AP)=P^{-1}A^2P$，故 $A^2\sim B^2$；迹是相似不变量，$\operatorname{tr}(A^2)=\operatorname{tr}(B^2)$。$\square$</p>
+    <p>（ii）不能。取 $A=I=\begin{pmatrix}1&0\\0&1\end{pmatrix}$，$B=\begin{pmatrix}1&1\\0&1\end{pmatrix}$：$\operatorname{tr}$ 同为 $2$，$\det$ 同为 $1$（$\chi$ 同为 $(\lambda-1)^2$），但对任何可逆 $P$ 有 $P^{-1}IP=I\ne B$，故不相似。$\square$</p>
+    <p><strong>点评</strong>：$\operatorname{tr}$、$\det$（乃至 $\chi$）全套相同也只能证"不相似"的反面无货——证相似必须构造 $P$ 或上标准形。唯一的好消息：若已知 $A,B$ 都可对角化，2 阶时 $\operatorname{tr}$、$\det$ 相同就够了（$\chi$ 相同 $\Rightarrow$ 同对角形 $\Rightarrow$ 传递）。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 2</span>设 $n$ 阶复方阵 $A$ 满足 $A^2=A$（幂等矩阵）。（i）证明：$A$ 相似于 $\operatorname{diag}(1,\dots,1,0,\dots,0)$，其中 $1$ 的个数为 $\operatorname{rank}A$；（ii）求 $\det(E+A)$（用 $\operatorname{tr}A$ 表示）。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：（i）对角化题先找特征基。$A^2=A$ 提示空间劈成两半：$V=\ker A\oplus\operatorname{im}A$（证：$\alpha=(\alpha-A\alpha)+A\alpha$，前半在 $\ker A$ 里——$A(\alpha-A\alpha)=A\alpha-A^2\alpha=0$；若 $\beta\in\ker A\cap\operatorname{im}A$，写 $\beta=A\gamma$，则 $\beta=A\gamma=A^2\gamma=A(A\gamma)=A\beta=0$）。在 $\operatorname{im}A$ 上 $A$ 是恒等（$\beta=A\gamma\Rightarrow A\beta=A^2\gamma=A\gamma=\beta$），在 $\ker A$ 上 $A$ 是零。</p>
+    <p><strong>证明</strong>：（i）由 $V=\ker A\oplus\operatorname{im}A$，取 $\operatorname{im}A$ 的一组基（$r=\operatorname{rank}A=\dim\operatorname{im}A$ 个向量）与 $\ker A$ 的一组基（$n-r$ 个）拼成 $V$ 的基。前组每个向量 $\beta$ 满足 $A\beta=\beta$，后组满足 $A\beta=0$，故 $A$ 在这组基下的矩阵为 $\operatorname{diag}(\underbrace{1,\dots,1}_{r},\underbrace{0,\dots,0}_{n-r})$，即 $A$ 与之相似。$\square$</p>
+    <p>（ii）相似保持特征多项式，故 $A$ 的特征值为 $1$（$r$ 重）与 $0$（$n-r$ 重），$\operatorname{tr}A=r$。于是
+    $$\det(E+A)=\prod_{i=1}^n(1+\lambda_i)=2^r\cdot1^{n-r}=2^r=2^{\operatorname{tr}A}.\qquad\square$$</p>
+    <p><strong>点评</strong>：（i）的直和分解其实就是"最小多项式 $x^2-x$ 无重根 $\Rightarrow$ 可对角化"的初等版（第 6 章回收）；（ii）是动作三的标准结账：可对角化时 $\det f(A)=\prod f(\lambda_i)$，最后把 $r$ 翻译成 $\operatorname{tr}A$ 用的是"迹 $=$ 特征值之和"——又一条相似不变量。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv3">真题节选</span><strong>（第 11 届题三，15 分）</strong>设 $A$ 为 $n$ 阶复方阵，$p(x)$ 为 $I-\overline{A}A$ 的特征多项式，其中 $\overline{A}$ 表 $A$ 的共轭矩阵。证明：$p(x)$ 必为实系数多项式。</p>
+  <p>这正是本章例 2 的主场。先回答三个梯子问题（写在纸上）：</p>
+  <p>（i）把 $p(t)=\det\bigl((t-1)I+\overline{A}A\bigr)$ 取共轭（$t$ 取实数），$\overline{p(t)}$ 的式子与原式差在哪一步？<br>
+  （ii）$\det(sI+AB)=\det(sI+BA)$ 这座桥怎么搭上这个差距——$A,B$ 分别取谁？$s$ 取谁？<br>
+  （iii）官方证这个恒等式时，"扰动 $+$ 取极限"用在哪一步、为什么非用不可？（另想：为什么只需对<strong>实数</strong> $t$ 验证 $\overline{p(t)}=p(t)$，就能断言系数全实？）</p>
+  <details class="answer">
+    <summary>梯子参考答案</summary>
+    <p>（i）$\overline{p(t)}=\det\bigl((t-1)I+A\overline{A}\bigr)$——矩阵从 $\overline{A}A$ 变成了 $A\overline{A}$，<strong>因子顺序翻了</strong>，其余全同。</p>
+    <p>（ii）恒等式说"乘积换序、行列式不变"：取恒等式中的两矩阵为 $A$ 与 $\overline{A}$、$s=t-1$，得 $\det\bigl((t-1)I+A\overline{A}\bigr)=\det\bigl((t-1)I+\overline{A}A\bigr)$，即 $\overline{p(t)}=p(t)$。</p>
+    <p>（iii）用在恒等式的证明里：当 $B$（官方取 $B_n=B+\frac1nI$）未必可逆时，先用可逆扰动项完成共轭，再取极限——非用不可，因为题中的 $A$ <strong>没有任何可逆假设</strong>。最后一问：$\overline{p(t)}=p(t)$ 对所有实数 $t$ 成立，即 $\sum(c_k-\bar c_k)t^k=0$ 在无穷多个 $t$ 上成立，由多项式恒等定理 $c_k=\bar c_k$，系数全实。</p>
+  </details>
+  <details class="answer">
+    <summary>官方解答全文（转录自官方参考答案）</summary>
+    <p>记 $p(t)=\det\bigl(tI-(I-A\overline{A})\bigr)=\det\bigl((t-1)I+A\overline{A}\bigr)$。对任何实数 $t$，</p>
+    <p>$$\overline{p(t)}=\det\bigl((t-1)I+\overline{A}A\bigr).$$</p>
+    <p><strong>引理</strong>：对任何两方阵 $A,B$ 有 $\det(sI+AB)=\det(sI+BA)$。证法：取可逆矩阵序列 $B_n\to B$（如 $B_n=B+\frac1nI$），由
+    $$\det(sI+AB_n)=\det B_n\,\det\bigl(sB_n^{-1}+A\bigr)=\det\bigl(sI+B_nA\bigr),$$
+    令 $n\to\infty$ 取极限即得。</p>
+    <p>用 $B=\overline{A}$ 代入：$\overline{p(t)}=\det\bigl((t-1)I+\overline{A}A\bigr)=\det\bigl((t-1)I+A\overline{A}\bigr)=p(t)$ 对所有实数 $t$ 成立，故 $p$ 的系数都是实数。$\square$</p>
+    <p><strong>注（官方另法）</strong>：用分块矩阵初等变换，
+    $$\begin{pmatrix}I&0\\-A&I\end{pmatrix}\begin{pmatrix}I&B\\A&sI\end{pmatrix}=\begin{pmatrix}I&B\\0&sI-AB\end{pmatrix},\qquad \begin{pmatrix}I&B\\A&sI\end{pmatrix}\begin{pmatrix}I&0\\-A/s&I\end{pmatrix}=\begin{pmatrix}I-BA/s&B\\0&sI\end{pmatrix}\ (s\ne0),$$
+    两边取行列式得 $\det(sI-AB)=\det(sI-BA)$ 对一切非零实数成立，而两边是至多为 $n$ 次的多项式，故恒等。</p>
+    <p><strong>复盘</strong>：整道题 $=$ 本章例 2（恒等式 $+$ 扰动取极限）$+$ 一步共轭观察。官方开头把 $p(t)$ 写成含 $A\overline{A}$ 的形式，与题面 $I-\overline{A}A$ 的特征多项式一致——因为由同一引理，$\overline{A}A$ 与 $A\overline{A}$ 特征多项式相同；这样共轭一作用恰好把顺序换回来，是本题的巧思所在。注意"对所有实数 $t$ 相等 $\Rightarrow$ 系数全实"这步用了多项式恒等定理——与扰动法取极限共享同一个地基："非零多项式零点有限"。<em>（题目与解答转录自第 11 届官方 PDF，见 <a href="真题索引/第11届_2019.md">真题索引</a>。）</em></p>
+  </details>
+</div>
+
+<h2>§9.5 熟练度训练场</h2>
+
+<p>理解只是入场券，<strong>考场上拼的是基本动作的速度</strong>。两种训练，每天 10 分钟：</p>
+
+<h3>训练一 · 翻卡快测（目标：每卡 10 秒内出答案）</h3>
+<div class="quiz" data-quiz="ch14-drill"></div>
+
+<h3>训练二 · 计时默写（写在纸上，掐表）</h3>
+<div class="calc box" data-tag="默写清单">
+  <p>① <strong>90 秒</strong>：默写换基公式全套——表示矩阵定义 $(T\varepsilon_1,\dots,T\varepsilon_n)=(\varepsilon_1,\dots,\varepsilon_n)[T]_{\mathcal{B}}$、过渡矩阵 $(\eta)=(\varepsilon)P$、坐标变换 $[\alpha]_{\text{旧}}=P[\alpha]_{\text{新}}$、换基公式 $[T]_{\text{新}}=P^{-1}[T]_{\text{旧}}P$（并说出 $P$ 的列是什么）；</p>
+  <p>② <strong>60 秒</strong>：默写 5 个相似不变量（$\operatorname{tr}$、$\det$、$\chi(\lambda)$、$\operatorname{rank}$、特征值）$+$ "$\chi$ 相同 $\nRightarrow$ 相似"的两组反例（$J$ vs $O$；$I$ vs $\begin{pmatrix}1&1\\0&1\end{pmatrix}$）；</p>
+  <p>③ <strong>3 分钟</strong>：默写 $\det(sI+AB)=\det(sI+BA)$ 的证明骨架（可逆情形一行共轭 $\to$ 扰动 $A+\varepsilon I$ 的存在性 $\to$ 取极限一句合法性）。</p>
+  <p><strong>过关标准</strong>：连续两天全对才算过。做不到就回到对应小节重读，再默。</p>
+</div>
+
+<h2>§10 六方向自测卡</h2>
+
+<div class="selftest">
+  <h3>合上书，拿张白纸，默写以下六项</h3>
+  <div class="st-item">
+    <p class="st-q"><em>=（它是什么）</em>　写出表示矩阵的定义（第 $j$ 列是什么）、换基公式、相似矩阵的定义。</p>
+    <details><summary>对照</summary><p>$[T]_{\mathcal{B}}$ 第 $j$ 列 $=T(\varepsilon_j)$ 在基 $\mathcal{B}$ 下的坐标；$[T]_{\text{新}}=P^{-1}[T]_{\text{旧}}P$（$P$ 的列 $=$ 新基的旧坐标）；$A\sim B\iff\exists$ 可逆 $P$，$B=P^{-1}AP$。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>←（什么带来它）</em>　矩阵为什么会"变脸"？相似的几何含义一句话。</p>
+    <details><summary>对照</summary><p>矩阵是变换在某组基上的读数，换基就换读数；$A\sim B$ $\iff$ 它们是同一线性变换在两组基下的表示矩阵——相似类 $=$ 同一变换的全体证件照。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>→（它带来什么）</em>　说出相似概念带来的三件东西。</p>
+    <details><summary>对照</summary><p>① 相似不变量（$\operatorname{tr}$、$\det$、$\chi$、$\operatorname{rank}$——证不相似、定参数）；② 对角化算幂 $A^n=PD^nP^{-1}$ 与 $\det f(A)=\prod f(\lambda_i)$；③ "挑最好看的基"的可能性——第 5 章对角化、第 7 章 Jordan 的动机。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>∈（实例）</em>　默写三对矩阵：一对相似（并给出 $P$）、一对 $\chi$ 同而不相似、一对可交换且可同时对角化。</p>
+    <details><summary>对照</summary><p>例：$\frac13\begin{pmatrix}2&-1&-1\\-1&2&-1\\-1&-1&2\end{pmatrix}\sim\operatorname{diag}(1,1,0)$，$P$ 的列取 $(1,-1,0),(1,1,-2),(1,1,1)$；$J=\begin{pmatrix}0&1\\0&0\end{pmatrix}$ 与 $O$（$\chi=\lambda^2$，秩不同）；$\operatorname{diag}(1,2)$ 与 $\operatorname{diag}(3,4)$（本身已同时对角）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>≠（区分）</em>　相似与相抵（等价）的区别；"$\chi$ 相同"与"相似"的区别。</p>
+    <details><summary>对照</summary><p>相抵：$B=PAQ$（$P,Q$ 独立可逆）$\iff$ 秩相等——只看形状的胖瘦；相似：$B=P^{-1}AP$（同一个 $P$ 两端互逆）——看变换本身，不变量一整套。$\chi$ 相同是相似的必要非充分条件（反例 $I$ vs $\begin{pmatrix}1&1\\0&1\end{pmatrix}$）；加上"都可对角化"才升级为充分条件。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>（为何要有它）</em>　为什么要研究相似，而不是直接研究矩阵？</p>
+    <details><summary>对照</summary><p>因为矩阵混进了"拍照角度"的噪声：同一个变换有无穷多张矩阵脸。研究变换本身，就要剔除角度——挑那张让结构现形的脸（对角、Jordan），并认准与角度无关的量（不变量）。相似正是"剔除角度"的精确说法；$A^{100}$、$|E+A^{2023}|$ 这类题全是"换对角度，计算归零"。</p></details>
+  </div>
+</div>
+
+<div class="net box" data-tag="间隔复习安排">
+  <p><strong>1 天后</strong>：重做六方向自测卡（不翻书）+ 翻卡快测第二轮；<strong>3 天后</strong>：重做变式 2 与真题节选的三个梯子问题 + 计时默写①③；<strong>1 周后</strong>：默写换基公式全套与 Sylvester 恒等式骨架，确认翻卡全部"会了"。</p>
+  <p>本章是<strong>高代第 5 章</strong>（特征值再认识：对角化判据）、<strong>第 6 章</strong>（Cayley-Hamilton 与最小多项式——扰动法的另一个主场）和<strong>第 7 章</strong>（Jordan 标准形："$\chi$ 相同而形不同"的最终裁决）的直接地基。</p>
+</div>
+
+<div class="chapnav">
+  <span><a href="ch13.html">← 第 3 章 · 线性映射、核与像：秩-零度定理</a></span>
+  <span><a href="index.html">首页</a></span>
+  <span><a href="ch15.html">第 5 章 · 特征值再认识：几何重数 vs 代数重数 →</a></span>
+</div>
+
+</div>
+
+<script src="assets/quiz.js"></script>
+<script>
+/* §9.5 翻卡数据 */
+registerQuiz("ch14-drill", [
+  { q: "表示矩阵 $[T]_{\\mathcal{B}}$ 的第 $j$ 列是什么？", a: "$T(\\varepsilon_j)$ 在基 $\\mathcal{B}$ 下的坐标 $[T\\varepsilon_j]_{\\mathcal{B}}$。表示矩阵就是逐列填出来的：$(T\\varepsilon_1,\\dots,T\\varepsilon_n)=(\\varepsilon_1,\\dots,\\varepsilon_n)[T]_{\\mathcal{B}}$。" },
+  { q: "新基 $=$ 旧基 $\\cdot\\,P$，坐标怎么变？", a: "$[\\alpha]_{\\text{旧}}=P[\\alpha]_{\\text{新}}$（等价地 $[\\alpha]_{\\text{新}}=P^{-1}[\\alpha]_{\\text{旧}}$）。口诀：基正着乘 $P$，坐标倒着乘 $P^{-1}$。" },
+  { q: "换基公式：$[T]_{\\text{新}}=?$", a: "$P^{-1}[T]_{\\text{旧}}P$。一行推导：$[T\\alpha]_{\\text{旧}}=[T]_{\\text{旧}}P[\\alpha]_{\\text{新}}=P[T]_{\\text{新}}[\\alpha]_{\\text{新}}$，对一切 $\\alpha$ 成立。" },
+  { q: "「$A$ 与 $B$ 相似」的定义与几何含义？", a: "$\\exists$ 可逆 $P$：$B=P^{-1}AP$；含义：$A,B$ 是同一线性变换在两组基下的表示矩阵——同一变换的全体证件照。" },
+  { q: "默写 5 个相似不变量。", a: "$\\operatorname{tr}$、$\\det$、特征多项式 $\\chi(\\lambda)=\\det(\\lambda I-A)$、$\\operatorname{rank}$、特征值（含代数重数）。" },
+  { q: "$\\chi_A=\\chi_B$ 能推出 $A\\sim B$ 吗？反例？", a: "不能。$I_2$ 与 $\\begin{pmatrix}1&1\\\\0&1\\end{pmatrix}$：$\\chi$ 同为 $(\\lambda-1)^2$，但 $P^{-1}IP=I$ 永不相似于它。（更糙的：$\\begin{pmatrix}0&1\\\\0&0\\end{pmatrix}$ 与 $O$，$\\chi=\\lambda^2$，秩 $1\\ne0$。）" },
+  { q: "$A$ 可逆时，一行证明 $\\det(sI+AB)=\\det(sI+BA)$。", a: "$sI+AB=A(sI+BA)A^{-1}$，两边取行列式。" },
+  { q: "$A$ 不可逆时怎么办？", a: "扰动 $A_\\varepsilon=A+\\varepsilon I$：$\\det(A+\\varepsilon I)$ 是 $\\varepsilon$ 的首一 $n$ 次多项式，零点有限，$0<\\varepsilon\\ll1$ 时可逆；用完可逆情形的公式，令 $\\varepsilon\\to0^{+}$（$\\det$ 连续）。" },
+  { q: "$A=PDP^{-1}$，$D=\\mathrm{diag}(\\lambda_i)$，则 $A^n=?$，$\\det(E+A^m)=?$", a: "$A^n=PD^nP^{-1}$；$\\det(E+A^m)=\\prod_i(1+\\lambda_i^m)$。（15 届题四：$1-(n/2)^{4046}$。）" },
+  { q: "$AB=BA$ 且 $A,B$ 都可对角化，有什么加强结论？", a: "可同时对角化：存在同一可逆 $P$，使 $P^{-1}AP$ 与 $P^{-1}BP$ 均为对角阵。（11 届题四证法 1 的思想原型。）" }
+]);
+</script>
+
+<script>
+/* §3.1 换基变脸探索器 */
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  var svg = document.getElementById("bw-svg");
+  var out = document.getElementById("bw-out");
+  /* 固定变换：沿 (1,1) 拉 2 倍，沿 (1,-1) 压 0.5 倍，标准基下 A = [[1.25,0.75],[0.75,1.25]] */
+  var A = [[1.25, 0.75], [0.75, 1.25]];
+  var b1 = { x: 1, y: 0 }, b2 = { x: 0, y: 1 };
+  var cx = 185, cy = 210, S = 50;
+  function px(x) { return cx + x * S; }
+  function py(y) { return cy - y * S; }
+  function mk(tag, attrs, parent) {
+    var el = document.createElementNS(NS, tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    (parent || svg).appendChild(el);
+    return el;
+  }
+  function tx(x, y, str, attrs, parent) {
+    var t = mk("text", attrs || {}, parent);
+    t.setAttribute("x", x); t.setAttribute("y", y);
+    t.textContent = str;
+    return t;
+  }
+  function arrowTo(x2, y2, color, w, op, dash, parent) {
+    var X1 = px(0), Y1 = py(0), X2 = px(x2), Y2 = py(y2);
+    var g = mk("line", { x1: X1, y1: Y1, x2: X2, y2: Y2, stroke: color, "stroke-width": w, opacity: op }, parent);
+    if (dash) g.setAttribute("stroke-dasharray", dash);
+    var dx = X2 - X1, dy = Y2 - Y1, len = Math.sqrt(dx * dx + dy * dy);
+    if (len > 14) {
+      var ux = dx / len, uy = dy / len, nx = -uy, ny = ux;
+      mk("polygon", { points: X2 + "," + Y2 + " " + (X2 - 9 * ux + 4 * nx) + "," + (Y2 - 9 * uy + 4 * ny) + " " + (X2 - 9 * ux - 4 * nx) + "," + (Y2 - 9 * uy - 4 * ny), fill: color, opacity: op }, parent);
+    }
+  }
+  function fmt(v) { return (Math.abs(v) < 0.005 ? 0 : v).toFixed(2); }
+  /* 静态背景 + 动态层 */
+  function drawStatic() {
+    svg.innerHTML = "";
+    var i;
+    for (i = -3; i <= 3; i++) {
+      mk("line", { x1: px(i), y1: py(-3.2), x2: px(i), y2: py(3.2), stroke: "#efe9dd", "stroke-width": 1 });
+      mk("line", { x1: px(-3.2), y1: py(i), x2: px(3.2), y2: py(i), stroke: "#efe9dd", "stroke-width": 1 });
+    }
+    mk("line", { x1: px(-3.2), y1: py(0), x2: px(3.2), y2: py(0), stroke: "#2b2620", "stroke-width": 1.5 });
+    mk("line", { x1: px(0), y1: py(-3.2), x2: px(0), y2: py(3.2), stroke: "#2b2620", "stroke-width": 1.5 });
+    /* 特征线 y=x 与 y=-x */
+    mk("line", { x1: px(-2.9), y1: py(-2.9), x2: px(2.9), y2: py(2.9), stroke: "#b45309", "stroke-width": 1.8, "stroke-dasharray": "7 5" });
+    mk("line", { x1: px(-2.9), y1: py(2.9), x2: px(2.9), y2: py(-2.9), stroke: "#b45309", "stroke-width": 1.8, "stroke-dasharray": "7 5" });
+    tx(px(2.75), py(2.75) - 8, "λ=2", { "font-size": 12, fill: "#b45309", "font-weight": "bold" });
+    tx(px(-2.85), py(2.75) - 8, "λ=0.5", { "font-size": 12, fill: "#b45309", "font-weight": "bold" });
+    /* 右侧面板（静态部分） */
+    tx(405, 46, "固定变换 T（开场谜题同款）：", { "font-size": 13, fill: "#2b2620", "font-weight": "bold" });
+    tx(405, 66, "沿 y=x 拉 2 倍，沿 y=−x 压 0.5 倍", { "font-size": 11.5, fill: "#5c554b" });
+    tx(405, 92, "标准基下的脸 A：", { "font-size": 12, fill: "#2b2620" });
+    tx(415, 112, "( 1.25 , 0.75 )", { "font-size": 12, fill: "#5c554b", "font-family": "monospace" });
+    tx(415, 130, "( 0.75 , 1.25 )", { "font-size": 12, fill: "#5c554b", "font-family": "monospace" });
+    tx(405, 186, "当前基下的脸 [T] = P⁻¹AP：", { "font-size": 12, fill: "#2b2620" });
+    tx(405, 268, "第 1 列 = T(b₁) 在新基下的坐标，", { "font-size": 10.5, fill: "#8a8175" });
+    tx(405, 284, "第 2 列 = T(b₂) 的坐标（定义在发光）。", { "font-size": 10.5, fill: "#8a8175" });
+  }
+  /* 动态文本槽 */
+  var tB1, tB2, tDet, tM00, tM01, tM10, tM11, tV1, tV2;
+  function buildSlots() {
+    tB1 = tx(405, 158, "", { "font-size": 12, fill: "#1d4ed8", "font-family": "monospace" });
+    tB2 = tx(405, 174, "", { "font-size": 12, fill: "#15803d", "font-family": "monospace" });
+    tDet = tx(560, 158, "", { "font-size": 12, fill: "#2b2620", "font-family": "monospace" });
+    tx(415, 208, "(", { "font-size": 13, fill: "#2b2620", "font-family": "monospace" });
+    tM00 = tx(452, 208, "", { "font-size": 13, fill: "#2b2620", "font-family": "monospace", "text-anchor": "middle" });
+    tx(486, 208, ",", { "font-size": 13, fill: "#2b2620", "font-family": "monospace", "text-anchor": "middle" });
+    tM01 = tx(522, 208, "", { "font-size": 13, fill: "#2b2620", "font-family": "monospace", "text-anchor": "middle" });
+    tx(556, 208, ")", { "font-size": 13, fill: "#2b2620", "font-family": "monospace" });
+    tx(415, 230, "(", { "font-size": 13, fill: "#2b2620", "font-family": "monospace" });
+    tM10 = tx(452, 230, "", { "font-size": 13, fill: "#2b2620", "font-family": "monospace", "text-anchor": "middle" });
+    tx(486, 230, ",", { "font-size": 13, fill: "#2b2620", "font-family": "monospace", "text-anchor": "middle" });
+    tM11 = tx(522, 230, "", { "font-size": 13, fill: "#2b2620", "font-family": "monospace", "text-anchor": "middle" });
+    tx(556, 230, ")", { "font-size": 13, fill: "#2b2620", "font-family": "monospace" });
+    tV1 = tx(405, 316, "", { "font-size": 12, fill: "#2b2620" });
+    tV2 = tx(405, 336, "", { "font-size": 12, fill: "#2b2620" });
+  }
+  function redraw() {
+    drawStatic();
+    buildSlots();
+    /* T(b) 的像（半透明虚线） */
+    var tb1 = { x: A[0][0] * b1.x + A[0][1] * b1.y, y: A[1][0] * b1.x + A[1][1] * b1.y };
+    var tb2 = { x: A[0][0] * b2.x + A[0][1] * b2.y, y: A[1][0] * b2.x + A[1][1] * b2.y };
+    arrowTo(tb1.x, tb1.y, "#1d4ed8", 1.8, 0.45, "5 4");
+    arrowTo(tb2.x, tb2.y, "#15803d", 1.8, 0.45, "5 4");
+    /* 基向量与手柄 */
+    arrowTo(b1.x, b1.y, "#1d4ed8", 2.6, 1, null);
+    arrowTo(b2.x, b2.y, "#15803d", 2.6, 1, null);
+    mk("circle", { cx: px(b1.x), cy: py(b1.y), r: 9, fill: "#1d4ed8", stroke: "#fff", "stroke-width": 2, cursor: "grab" });
+    mk("circle", { cx: px(b2.x), cy: py(b2.y), r: 9, fill: "#15803d", stroke: "#fff", "stroke-width": 2, cursor: "grab" });
+    tx(px(b1.x) + 14, py(b1.y) - 12, "b₁", { "font-size": 13, fill: "#1d4ed8", "font-weight": "bold" });
+    tx(px(b2.x) + 14, py(b2.y) - 12, "b₂", { "font-size": 13, fill: "#15803d", "font-weight": "bold" });
+    /* 矩阵计算 [T] = P⁻¹AP */
+    var a = b1.x, c = b1.y, b = b2.x, d = b2.y;
+    var det = a * d - b * c;
+    tB1.textContent = "b₁=(" + fmt(a) + "," + fmt(c) + ")ᵀ";
+    tB2.textContent = "b₂=(" + fmt(b) + "," + fmt(d) + ")ᵀ";
+    tDet.textContent = "det P=" + fmt(det);
+    tDet.setAttribute("fill", Math.abs(det) < 0.08 ? "#be123c" : "#2b2620");
+    var v1, v2, ok = Math.abs(det) >= 0.06;
+    if (ok) {
+      var ia = d / det, ib = -b / det, ic = -c / det, id = a / det;
+      var ap00 = A[0][0] * a + A[0][1] * c, ap01 = A[0][0] * b + A[0][1] * d;
+      var ap10 = A[1][0] * a + A[1][1] * c, ap11 = A[1][0] * b + A[1][1] * d;
+      var m00 = ia * ap00 + ib * ap10, m01 = ia * ap01 + ib * ap11;
+      var m10 = ic * ap00 + id * ap10, m11 = ic * ap01 + id * ap11;
+      tM00.textContent = fmt(m00); tM01.textContent = fmt(m01);
+      tM10.textContent = fmt(m10); tM11.textContent = fmt(m11);
+      var off1 = Math.abs(m01) < 0.03, off2 = Math.abs(m10) < 0.03;
+      tM01.setAttribute("fill", off1 ? "#15803d" : "#be123c");
+      tM10.setAttribute("fill", off2 ? "#15803d" : "#be123c");
+      if (off1 && off2) {
+        v1 = "✓ 对角！基对准了两条特征线：[T]=diag(" + fmt(m00) + "," + fmt(m11) + ")。";
+        v2 = "对角化 = 把基对准特征方向——第 5 章的全部追求。";
+      } else if (off2) {
+        v1 = "对齐一半：b₁ 在特征线上，第 1 列只剩对角元";
+        v2 = "（T(b₁) 是 b₁ 的倍数，坐标自然形如 (λ,0)ᵀ）。把 b₂ 也拖到另一条橙线上。";
+      } else if (off1) {
+        v1 = "对齐一半：b₂ 在特征线上，第 2 列只剩对角元。把 b₁ 也拖到另一条橙线上。";
+        v2 = "";
+      } else {
+        v1 = "歪脸一张：T(b₁)、T(b₂) 都要用 b₁、b₂ 混合表示。";
+        v2 = "拖动手柄去贴橙色特征线，看非对角元（红）归零。";
+      }
+    } else {
+      tM00.textContent = "—"; tM01.textContent = "—"; tM10.textContent = "—"; tM11.textContent = "—";
+      v1 = "⚠ b₁∥b₂ 几乎共线：det P≈0，这不是一组基，P⁻¹ 不存在。";
+      v2 = "基必须线性无关——把两个手柄拖开。";
+    }
+    tV1.textContent = v1; tV2.textContent = v2;
+    out.innerHTML = "当前矩阵 " + (ok ? "已算出（右上）" : "不存在") + "：<strong>第 j 列 = T(基向量 j) 的坐标</strong>。非对角元变绿即「对齐特征方向」。";
+  }
+  /* 拖拽：监听挂在持久的 svg 上 */
+  var dragTarget = null;
+  function evToData(ev) {
+    var r = svg.getBoundingClientRect();
+    return {
+      x: (ev.clientX - r.left) * (720 / r.width) - cx,
+      y: cy - (ev.clientY - r.top) * (400 / r.height)
+    };
+  }
+  function snap(v) {
+    /* 吸附特征线与坐标轴 */
+    if (Math.abs(v.x - v.y) < 0.1) { v.y = v.x; }
+    else if (Math.abs(v.x + v.y) < 0.1) { v.y = -v.x; }
+    else if (Math.abs(v.x) < 0.07) { v.x = 0; }
+    else if (Math.abs(v.y) < 0.07) { v.y = 0; }
+    return v;
+  }
+  svg.addEventListener("pointerdown", function (ev) {
+    var v = evToData(ev);
+    v.x /= S; v.y /= S;
+    var d1 = Math.hypot(v.x - b1.x, v.y - b1.y), d2 = Math.hypot(v.x - b2.x, v.y - b2.y);
+    if (Math.min(d1, d2) < 0.35) {
+      dragTarget = d1 <= d2 ? b1 : b2;
+      svg.setPointerCapture(ev.pointerId);
+      ev.preventDefault();
+    }
+  });
+  svg.addEventListener("pointermove", function (ev) {
+    if (!dragTarget) return;
+    var v = evToData(ev);
+    v.x /= S; v.y /= S;
+    v.x = Math.max(-3, Math.min(3, v.x));
+    v.y = Math.max(-3, Math.min(3, v.y));
+    v = snap(v);
+    dragTarget.x = v.x; dragTarget.y = v.y;
+    redraw();
+  });
+  svg.addEventListener("pointerup", function () { dragTarget = null; });
+  redraw();
+})();
+</script>
+
+</body>
+</html>

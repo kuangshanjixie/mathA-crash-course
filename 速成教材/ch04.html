@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数分第 4 章 · 闭区间上的连续函数：四大定理与两大证法 —— 数学A速成讲义</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+<div class="wrap">
+
+<div class="bookbar">
+  <span><a href="index.html">← 返回首页</a></span>
+  <span>卷一 · 数学分析 · 第 4 章</span>
+</div>
+
+<div class="chapter-kicker">CHAPTER 4 · 数学分析</div>
+<h1>闭区间上的连续函数：四大定理与两大证法</h1>
+
+<div class="exam box" data-tag="本章导览">
+  <p><strong>这一章在整张卷子上的位置</strong>：「$f$ 在闭区间 $[a,b]$ 上连续」是数分卷里出现频率最高的条件之一，而它能换来什么，全装在本章的四大定理里。第 15 届题二（15 分）整题站在「有界闭区域上连续函数必有最小值」上；第 14 届题六（20 分）整题考一致连续与非一致连续；第 13 届题二用「$w$ 在 $\overline B$ 上连续，故达到最大值」一句话开道；第 11 届题六(ii) 的「由连续性易见 $E$ 是一个区间」就是介值定理的一句话形态。<strong>零点/介值几乎年年作为步骤分出现</strong>，四大定理直接撑场时则是 15–20 分的整题。</p>
+  <p><strong>学完你能</strong>：① 默写四大定理的完整陈述，并说出每个条件被拆掉后漏掉什么（反例张口就来）；② 用区间套法完整写出零点定理的证明——这是本章的示范证明；③ 用 B–W 子列写出有界性定理的反证骨架；④ 把「证方程有根」「证存在 $\xi$ 使……」机械地翻译成零点定理 + 辅助函数；⑤ 背出「连续 + 闭区间」的库存清单，并给每条配一个开区间反例。</p>
+  <p><strong>前置</strong>：第 1 章（确界公理与六定理家族——区间套、B–W、有限覆盖是本章的机床）、第 2 章（连续与一致连续的概念，本章只用不重建）、第 3 章（单调有界与极限保号性）。摸底 B2 如果答不全，本章就是来补那个洞的。</p>
+</div>
+
+<h2>§1 开场谜题：在有洞的世界里，你画不过那条线</h2>
+
+<div class="hook box" data-tag="开场谜题">
+  <p>拿一支笔，不离开纸面，从高度 $-1$ 画到高度 $1$。问：笔尖经过高度 $0$ 吗？</p>
+  <p>「当然经过。」——废话？</p>
+  <p>别急。假设你的纸面是<strong>有理数世界</strong>：数轴上只有有理点，到处是洞（第 1 章见过：$\sqrt2$ 就是个洞）。现在画这条曲线：</p>
+  <p>$$f(x)=x^2-2,\qquad x\in\mathbb{Q}\cap[1,2].$$</p>
+  <p>在 $x=1$ 处 $f=-1$（地下），在 $x=2$ 处 $f=2$（地上）。这条曲线在有理数世界里「连续」——每个有理点处，$x$ 沿有理数逼近它时函数值都乖乖逼近。可是 $f(x)=0$ 要求 $x=\sqrt2$，而 $\sqrt2$ <strong>不在你的世界里</strong>。笔尖从 $-1$ 涨到 $2$，却在 $\sqrt2$ 那个洞上跳了过去——你<strong>画不过</strong>那条零线。</p>
+  <p>所以「笔不离纸面，从负到正必过零」根本不是废话。它依赖两样东西：<strong>纸面没有洞</strong>（实数完备性，第 1 章的公理），和<strong>笔真的不离纸</strong>（连续）。再把纸面限定成有限大小、含边框的一张纸（闭区间），你能买到的东西远不止「过零」这一件。</p>
+  <p>「连续 + 闭区间」到底买来了什么？<strong>四大定理就是答案</strong>：有界、最值、零点/介值、一致连续。而证明它们，要靠第 1 章六定理家族里的两台机床——<strong>区间套</strong>和 <strong>B–W 子列</strong>（有限覆盖在旁待命）。本章把四件货点和两大证法一次配齐。</p>
+</div>
+
+<p>先记住一句总纲：<strong>四个定理的条件完全相同——「$f$ 在 $[a,b]$ 上连续」。</strong>它们不是四个孤立的结论，而是同一张船票（连续）加同一个码头（闭区间）换来的四件行李。所以记本章的方法不是背四段话，而是背一张「库存清单」：看到条件，四件货自动上架。</p>
+
+<h2>§2 先看见它：有围墙的院子</h2>
+
+<div class="vision box" data-tag="直觉与图像">
+  <p>闭区间 $[a,b]$ 上的连续函数，图像是<strong>一个有围墙的院子里的一条不断线的绳</strong>：</p>
+  <ul>
+    <li>左右有围墙（$x$ 被关在 $a$ 与 $b$ 之间，端点含在院内）；</li>
+    <li>上下出不了事：绳子的海拔被两堵水平墙夹住（<strong>有界</strong>），而且一定摸到最高点和最低点（<strong>最值</strong>）——它们是实心点，不是够不着的天花板；</li>
+    <li>绳子若一端在地下、一端在地上，中途必然踩过地面（<strong>零点</strong>）；更一般地，两端海拔之间的每一个高度都被踩过（<strong>介值</strong>）；</li>
+    <li>整条绳子的「抖动」可以统一管理：任你要求振幅小于 $\varepsilon$，都存在一把统一的尺子 $\delta$，任取两点的水平距离小于 $\delta$，海拔差就小于 $\varepsilon$（<strong>一致连续</strong>）。</li>
+  </ul>
+</div>
+
+<figure>
+<svg viewBox="0 0 720 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="闭区间上的连续函数：围墙院子里的绳">
+  <!-- 围墙带（有界） -->
+  <rect x="120" y="52" width="520" height="208" fill="#0f766e" opacity="0.06"/>
+  <line x1="120" y1="52" x2="640" y2="52" stroke="#0f766e" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <line x1="120" y1="260" x2="640" y2="260" stroke="#0f766e" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="646" y="56" font-size="12.5" fill="#0f766e">一堵上围墙</text>
+  <text x="646" y="264" font-size="12.5" fill="#0f766e">一堵下围墙</text>
+  <!-- 坐标轴 -->
+  <line x1="60" y1="280" x2="700" y2="280" stroke="#2b2620" stroke-width="1.5"/>
+  <polygon points="710,280 698,275 698,285" fill="#2b2620"/>
+  <line x1="100" y1="285" x2="100" y2="30" stroke="#2b2620" stroke-width="1.5"/>
+  <polygon points="100,20 95,32 105,32" fill="#2b2620"/>
+  <!-- 零线 y=0 -->
+  <line x1="100" y1="170" x2="700" y2="170" stroke="#8a8175" stroke-width="1.2" stroke-dasharray="3 4"/>
+  <text x="76" y="174" font-size="13" fill="#5c554b">y = 0</text>
+  <!-- 端点围墙 -->
+  <line x1="120" y1="30" x2="120" y2="280" stroke="#5c554b" stroke-width="1" stroke-dasharray="2 3"/>
+  <line x1="640" y1="30" x2="640" y2="280" stroke="#5c554b" stroke-width="1" stroke-dasharray="2 3"/>
+  <text x="120" y="296" font-size="14" fill="#2b2620" text-anchor="middle">a</text>
+  <text x="640" y="296" font-size="14" fill="#2b2620" text-anchor="middle">b</text>
+  <!-- 连续曲线：f(a)&lt;0 起步，f(b)>0 收尾，过零 -->
+  <path d="M 120 210 C 165 190 185 150 225 118 C 260 90 290 68 310 70 C 340 73 360 140 390 168 C 420 196 440 238 480 244 C 520 250 560 205 590 165 C 608 142 622 128 640 122"
+        fill="none" stroke="#1d4ed8" stroke-width="2.8"/>
+  <!-- 端点（实心：闭区间含端点） -->
+  <circle cx="120" cy="210" r="5" fill="#1d4ed8"/>
+  <circle cx="640" cy="122" r="5" fill="#1d4ed8"/>
+  <text x="106" y="228" font-size="12.5" fill="#1d4ed8" text-anchor="end">f(a)&lt;0</text>
+  <text x="654" y="118" font-size="12.5" fill="#1d4ed8">f(b)&gt;0</text>
+  <!-- 零点 ξ -->
+  <circle cx="196" cy="170" r="5" fill="#be123c"/>
+  <text x="188" y="192" font-size="14" fill="#be123c" font-weight="bold">ξ</text>
+  <text x="188" y="207" font-size="11.5" fill="#be123c">零点：f(ξ) = 0</text>
+  <!-- 最高点 -->
+  <circle cx="310" cy="70" r="5" fill="#15803d"/>
+  <text x="322" y="62" font-size="12.5" fill="#15803d" font-weight="bold">最大值 M = f(ξ₁)：实心，摸得到</text>
+  <!-- 最低点 -->
+  <circle cx="480" cy="244" r="5" fill="#b45309"/>
+  <text x="408" y="274" font-size="12.5" fill="#b45309" font-weight="bold">最小值 m = f(ξ₂)：实心，摸得到</text>
+  <!-- 一致连续的小尺子 -->
+  <line x1="540" y1="40" x2="588" y2="40" stroke="#7c3aed" stroke-width="2.5"/>
+  <line x1="540" y1="35" x2="540" y2="45" stroke="#7c3aed" stroke-width="2.5"/>
+  <line x1="588" y1="35" x2="588" y2="45" stroke="#7c3aed" stroke-width="2.5"/>
+  <text x="596" y="44" font-size="12.5" fill="#7c3aed">一把统一的尺子 δ</text>
+</svg>
+<figcaption>四大定理一张图：围墙（有界）→ 实心最高最低点（最值）→ 过零（零点/介值）→ 统一尺子（一致连续）。</figcaption>
+</figure>
+
+<p>对照一下<strong>开区间</strong> $(0,1)$ 上的 $f(x)=\frac1x$：绳子在 $x\to0^+$ 处冲出任何上围墙——无界、没有最大值；越靠近 $0$ 抖得越快，统一的尺子不存在。它明明连续，却四货全漏——只因院子缺了左围墙（$0$ 不在院内），根本关不住。这个对照就是摸底 B2 的全部内容，现在把它升级成定理。</p>
+
+<h2>§3 精确定义：四大定理，逐符号朗读</h2>
+
+<div class="def">
+  <p class="def-title">定理 1（有界性定理）</p>
+  <p>设 $f$ 在闭区间 $[a,b]$ 上连续，则 $f$ 在 $[a,b]$ 上<strong>有界</strong>：$\exists\,M>0,\ \forall\,x\in[a,b],\ |f(x)|\le M$。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定理 2（最值定理）</p>
+  <p>设 $f$ 在 $[a,b]$ 上连续，则 $f$ 在 $[a,b]$ 上<strong>取到最大值与最小值</strong>：$\exists\,\xi_1,\xi_2\in[a,b]$，使
+  $$\forall\,x\in[a,b]:\quad f(\xi_2)\le f(x)\le f(\xi_1).$$
+  即 $\max$、$\min$ 存在——不只是 $\sup$、$\inf$ 存在（第 1 章的天花板，本章它被<strong>摸到</strong>了）。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定理 3（零点定理 / 介值定理）</p>
+  <p>设 $f$ 在 $[a,b]$ 上连续，且端点<strong>异号</strong>：$f(a)\,f(b)&lt;0$。则 $\exists\,\xi\in(a,b)$ 使 $f(\xi)=0$。</p>
+  <p><strong>介值版</strong>：设 $f$ 在 $[a,b]$ 上连续，$\mu$ 严格介于 $f(a)$ 与 $f(b)$ 之间，则 $\exists\,\xi\in(a,b)$ 使 $f(\xi)=\mu$。（两端之间的高度，一个都不跳。）</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定理 4（Cantor 一致连续定理）</p>
+  <p>设 $f$ 在 $[a,b]$ 上连续，则 $f$ 在 $[a,b]$ 上<strong>一致连续</strong>：
+  $$\forall\,\varepsilon>0,\ \exists\,\delta>0,\ \forall\,x',x''\in[a,b]:\ |x'-x''|&lt;\delta\ \Longrightarrow\ |f(x')-f(x'')|&lt;\varepsilon.$$</p>
+</div>
+
+<div class="symbol box" data-tag="逐符号朗读">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$f$ 在 $[a,b]$ 连续</td><td>"$f$ 在闭区间 $[a,b]$ 的每一点连续，端点处单侧连续"</td><td>两张船票：连续（笔不离纸）+ 闭区间（有限、含端点的院子）——四大定理共同的全部条件</td></tr>
+    <tr><td>$f(a)\,f(b)&lt;0$</td><td>"$f(a)$ 与 $f(b)$ 乘积为负——异号"</td><td>一端地下、一端地上；它还顺便保证 $\xi\ne a,b$，所以结论里 $\xi$ 落在<strong>开</strong>区间 $(a,b)$</td></tr>
+    <tr><td>$\exists\,\xi\in(a,b)$</td><td>"存在至少一个严格在内部的点 $\xi$"</td><td>$\exists$ 型结论：要<strong>构造</strong>。本章的构造器 = 区间套套出的点</td></tr>
+    <tr><td>$f(\xi)=0$</td><td>"$f$ 在 $\xi$ 处恰好等于零"</td><td>目标等式：构造出的 $\xi$ 必须真的踩线，靠连续性收口</td></tr>
+    <tr><td>$\forall\varepsilon&gt;0\ \exists\delta&gt;0$（定理 4）</td><td>"任给 $\varepsilon$，存在一把统一的 $\delta$"</td><td>$\delta$ 只许依赖 $\varepsilon$，<strong>不许依赖点</strong>——「一致」二字全部在这层量词顺序里（第 2 章）</td></tr>
+    <tr><td>$\forall x',x''\in[a,b],\ |x'-x''|&lt;\delta$</td><td>"院子里任意两个水平距离小于 $\delta$ 的点"</td><td>考验对象是<strong>所有点对</strong>，不是每个点各配一把尺子</td></tr>
+  </table>
+</div>
+
+<div class="think">
+  <p>别急着往下翻。<strong>用零点定理把介值定理推出来</strong>：设 $f$ 在 $[a,b]$ 连续，$\mu$ 严格介于 $f(a)$ 与 $f(b)$ 之间，要证 $\exists\,\xi,\ f(\xi)=\mu$。提示：$f(\xi)=\mu$ 就是「某个新函数在 $\xi$ 处等于 $0$」——把它移项移出来。写在纸上再展开。</p>
+  <details class="answer">
+    <summary>对照：介值定理的证明（三行）</summary>
+    <p>作辅助函数 $g(x)=f(x)-\mu$。$g$ 在 $[a,b]$ 上连续（连续函数减常数仍连续）。</p>
+    <p>$\mu$ 严格介于 $f(a),f(b)$ 之间 ⟹ $g(a)=f(a)-\mu$ 与 $g(b)=f(b)-\mu$ 异号，即 $g(a)g(b)&lt;0$。</p>
+    <p>由零点定理，$\exists\,\xi\in(a,b)$ 使 $g(\xi)=0$，即 $f(\xi)=\mu$。$\square$</p>
+    <p>看清楚了：<strong>介值定理 = 零点定理 + 一次移项</strong>。「移项造 $g$」这个动作本章要练成反射——它是工具八（辅助函数）的幼体。</p>
+  </details>
+</div>
+
+<div class="warn box" data-tag="头号陷阱：条件缺一，四货全漏">
+  <p>四大定理的条件只有两个零件：<strong>连续</strong>、<strong>闭区间</strong>。拆掉任何一个，反例必须张口就来（数 A 卷子上反例就是分数）：</p>
+  <table>
+    <tr><th>拆掉什么</th><th>反例</th><th>漏掉什么</th></tr>
+    <tr><td>「闭」→ 开区间 $(0,1)$</td><td>$f(x)=\dfrac1x$</td><td>无界；无最大值；不一致连续（越靠 $0$ 越陡，统一 $\delta$ 不存在）；连 Riemann 可积的入场券（有界）都没有</td></tr>
+    <tr><td>「闭」→ 开区间 $(0,1)$</td><td>$f(x)=x$</td><td>有界，但 $\sup=1$、$\inf=0$ 都摸不到——最大值、最小值双双缺席</td></tr>
+    <tr><td>「闭」→ 无界区间 $[0,+\infty)$</td><td>$f(x)=x^2$</td><td>连续却无最大值；不一致连续（远处任意陡）</td></tr>
+    <tr><td>「连续」→ 有间断点</td><td>$f(x)=\begin{cases}-1,&x\in[0,1]\\ \ \ 1,&x\in(1,2]\end{cases}$</td><td>$f(0)=-1&lt;0&lt;1=f(2)$ 却无零点，中间值 $0.5$ 无人认领——零点/介值断掉（有界、最值却幸存：$\max=1,\min=-1$ 都取到——破坏要精确到件）</td></tr>
+    <tr><td>「实数」→ 有理数世界（呼应谜题）</td><td>$f(x)=x^2-2$ 于 $\mathbb{Q}\cap[1,2]$</td><td>端点异号却无零点——零点定理在 $\mathbb{Q}$ 上根本不成立</td></tr>
+  </table>
+  <p>记法：<strong>缺「闭」，先想 $\frac1x$；缺「连续」，先想阶梯跳；缺「实数无缝」，先想 $x^2-2$。</strong></p>
+</div>
+
+<h3>3.1 两大证法：区间套与 B–W，两台机床</h3>
+
+<p>四大定理凭什么成立？凭第 1 章的六定理家族——「实数没有洞」的六张面孔里，最适合动手的是<strong>区间套定理</strong>和 <strong>B–W 子列定理</strong>。它们对应两种风格迥异的证法，都是「$\exists$ 型结论的构造机床」，都考。</p>
+
+<div class="trans box" data-tag="证法一 · 区间套法（二分，构造派）">
+  <p><strong>机床原理</strong>：每次把区间切成两半，<strong>保留目标性质还活着的那一半</strong>。区间越套越紧、长度趋于 $0$，由区间套定理套出唯一公共点 $\xi$——它就是你要构造的那个「存在」。最后用连续性收口。</p>
+  <p><strong>本章示范</strong>：零点定理的完整证明（$f(a)&lt;0&lt;f(b)$，二分造 $[a_n,b_n]$ 保持「左端 $\le0$、右端 $\ge0$」，套出 $\xi$，夹出 $f(\xi)=0$）——放在 §8 例 1，按总纲拆解详细写。它是全章最重要的一篇证明，要求能默写骨架。</p>
+</div>
+
+<div class="widget" id="bis-widget">
+  <p class="w-title">▶ 区间套探索器：亲手把根「套」出来</p>
+  <p class="w-row">曲线 $f(x)=x^3+x-1$（严格单增，唯一实根 $\xi\approx0.682328$）。初始区间 $[0,1]$：$f(0)=-1&lt;0$，$f(1)=1&gt;0$。点「二分一步」或拖动步数滑块，看 $[a_n,b_n]$ 如何按「左负右正」的不变量一步步收窄。<span style="color:#be123c">红竖线</span> = 左端 $a_n$（$f&lt;0$），<span style="color:#15803d">绿竖线</span> = 右端 $b_n$（$f&gt;0$），灰虚线 = 真根 $\xi$。</p>
+  <div class="w-row">
+    <button id="bis-step" type="button">二分一步</button>
+    <button id="bis-reset" type="button">重置</button>
+  </div>
+  <div class="w-row"><label>步数 n（0–14）</label>
+  <input type="range" id="bis-n" min="0" max="14" step="1" value="0"></div>
+  <div class="w-row"><label>放大镜：围绕当前区间中点看曲线局部（拉到最右，看「连续 ⟹ 局部像直线」）</label>
+  <input type="range" id="bis-z" min="0" max="9" step="1" value="0"></div>
+  <svg id="bis-svg-global" viewBox="0 0 720 240" xmlns="http://www.w3.org/2000/svg"></svg>
+  <svg id="bis-svg-zoom" viewBox="0 0 720 190" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div class="w-verdict" id="bis-out">加载中……（需要启用 JavaScript）</div>
+  <p class="w-row" style="font-size:0.88em;color:#5c554b">玩出这三个体验再往下走：<strong>①</strong> 连点 10 次「二分一步」：长度每步减半（$1\to\frac1{1024}$），但两端始终异号——不变量从没断过，根一直被关在里面；<strong>②</strong> 把 n 拖到 14：中点与 $\xi$ 的距离不超过 $2^{-15}$——「存在 $\xi$」被这台程序真的算了出来，例 1 的证明就是它的严格化；<strong>③</strong> 放大镜拉到最右：曲线在 $\xi$ 附近几乎是一条直线——这就是「连续」在微观下的模样，也是 $f(a_n)\to0^-$、$f(b_n)\to0^+$ 能合拢成 $f(\xi)=0$ 的原因。</p>
+</div>
+
+<div class="calc box" data-tag="证法二 · B–W 法（反证，抽子列派）：有界性定理">
+  <p><strong>定理 1 的反证骨架</strong>（四步，背骨架不背字）：</p>
+  <p class="proof-line"><strong>① 否定结论</strong>（工具四 · 量词否定）：设 $f$ 在 $[a,b]$ 上<strong>无界</strong>，即 $\forall\,n\ge1,\ \exists\,x_n\in[a,b]$ 使 $|f(x_n)|&gt;n$（工具五 · 生成序列：取 $M=n$ 逐个造点）。</p>
+  <p class="proof-line"><strong>② 抽子列</strong>：$\{x_n\}\subset[a,b]$ 有界，由 <strong>B–W 定理</strong>，存在收敛子列 $x_{n_k}\to x_0$；$[a,b]$ 是闭区间，极限跑不出去：$x_0\in[a,b]$。</p>
+  <p class="proof-line"><strong>③ 连续性收口</strong>：$f$ 在 $x_0$ 连续 ⟹ $f(x_{n_k})\to f(x_0)$，收敛数列必有界。</p>
+  <p class="proof-line"><strong>④ 对撞</strong>：但 $|f(x_{n_k})|&gt;n_k\to+\infty$。矛盾。$\square$</p>
+  <p class="aside">一句话：<strong>无界 ⟹ 抽一列函数值爆炸的点 ⟹ B–W 让它聚到院里某点 ⟹ 连续性不许爆炸</strong>。注意「闭」字用在第②步（$x_0$ 留在院里），「连续」用在第③步——条件在哪里进场，看得一清二楚。</p>
+</div>
+
+<div class="net box" data-tag="最值定理与 Cantor 定理的证明思路（只给路线）">
+  <p><strong>最值定理（定理 2）</strong>：两次借力。先由定理 1 得值域有界，确界公理给出 $M=\sup f([a,b])$（第 1 章：sup 永远在场）；再证 $M$ 被取到——若不然，$M-f(x)&gt;0$ 恒成立，$g(x)=\dfrac{1}{M-f(x)}$ 在 $[a,b]$ 连续，再由定理 1 得 $g$ 有界；但由 sup 第二条件（压不下）可取 $x_n$ 使 $f(x_n)&gt;M-\frac1n$，即 $g(x_n)&gt;n$，矛盾。$\square$　——看，<strong>第 1 章的「压不下」和本章定理 1 各用一次</strong>。</p>
+  <p><strong>Cantor 定理（定理 4）</strong>：B–W 反证，与定理 1 同一机床。设不一致连续（否定：$\exists\,\varepsilon_0&gt;0,\ \forall\,n,\ \exists\,x_n',x_n''\in[a,b]$，$|x_n'-x_n''|&lt;\frac1n$ 而 $|f(x_n')-f(x_n'')|\ge\varepsilon_0$）。B–W 抽 $x_{n_k}'\to x_0\in[a,b]$，由 $|x_{n_k}'-x_{n_k}''|&lt;\frac1{n_k}$ 得 $x_{n_k}''\to x_0$；连续性使两串函数值同趋于 $f(x_0)$，差趋于 $0$，与「恒 $\ge\varepsilon_0$」矛盾。$\square$　有限覆盖定理也能证它（每点一把局部尺子，有限把拼成统一尺子），那是第 1 章家族里另一张脸的用法。</p>
+</div>
+
+<h3>3.2 「连续 + 闭区间」的库存清单（盘点系统）</h3>
+
+<div class="net box" data-tag="库存清单：看到条件，五件货自动上架">
+  <p>第 0.5 章的盘点规则：条件不是用来看的，是用来取货的。「$f$ 在 $[a,b]$ 连续」这张取货单上共五件货：</p>
+  <table>
+    <tr><th>库存</th><th>一句话陈述</th><th>哪里进货</th><th>开区间反例（缺「闭」即漏）</th></tr>
+    <tr><td><strong>有界</strong></td><td>$\exists M,\ |f(x)|\le M$</td><td>定理 1（B–W 反证）</td><td>$\frac1x$ 于 $(0,1)$ 无界</td></tr>
+    <tr><td><strong>最值</strong></td><td>$\max,\min$ 被取到（不只 $\sup,\inf$）</td><td>定理 2（定理 1 + sup 压不下）</td><td>$x$ 于 $(0,1)$：$\sup=1$ 摸不到</td></tr>
+    <tr><td><strong>零点 / 介值</strong></td><td>异号必有根；中间值全取到</td><td>定理 3（区间套）</td><td>缺「连续」才漏：阶梯函数跳介值；缺「无缝」：$x^2-2$ 于 $\mathbb{Q}$</td></tr>
+    <tr><td><strong>一致连续</strong></td><td>一把 $\delta$ 管全区间</td><td>定理 4（B–W 或有限覆盖）</td><td>$\frac1x$ 于 $(0,1)$：靠 $0$ 处抖得太快</td></tr>
+    <tr><td><strong>可积</strong></td><td>Riemann 可积（Darboux 上下和合拢）</td><td>第 7 章预告：靠「有界 + 一致连续」压振幅</td><td>$\frac1x$ 于 $(0,1)$：无界，免谈</td></tr>
+  </table>
+  <p><strong>用法</strong>：证明卡壳时逐件问：「哪件货还没取？」第 15 届题二取的是「最值」，第 13 届题二取的也是它，第 14 届题六在「一致连续」这件货上做了整题文章，第 7 章会把第五件货补齐。</p>
+</div>
+
+<h3>3.3 三个出场姿势（应用预览）</h3>
+
+<div class="calc box" data-tag="姿势一 · 方程根的存在性（三行解决）">
+  <p><strong>例</strong>：证明方程 $x^3+x-1=0$ 在 $(0,1)$ 内至少有一根。</p>
+  <p class="proof-line">设 $f(x)=x^3+x-1$，多项式，在 $[0,1]$ 上连续。$f(0)=-1&lt;0$，$f(1)=1&gt;0$。由零点定理，$\exists\,\xi\in(0,1)$ 使 $f(\xi)=0$。$\square$</p>
+  <p class="aside">三行 = 连续（一句）+ 异号（一算）+ 定理（一引）。根的具体值 $\xi\approx0.6823$ 不用求——定理管「有」，不管「是多少」。（若要「只有一根」，用第 5 章的单调性：$f'(x)=3x^2+1&gt;0$。）</p>
+</div>
+
+<div class="trans box" data-tag="姿势二 · 介值定理的构造用法">
+  <p>要证「$\exists\,\xi,\ f(\xi)=\mu$」：不要原地找 $\xi$，<strong>移项造 $g(x)=f(x)-\mu$</strong>，把问题翻译成 $g$ 的零点。§3 的 think 已经亲手推过一遍；§8 例 2 是它的升级形态（$f(\xi)=\xi$ ⟹ 造 $g(x)=f(x)-x$）。</p>
+</div>
+
+<div class="trans box" data-tag="姿势三 · 最值定理在「内部 + 边界」论证中的角色">
+  <p>求有界闭区域上连续函数的最小值（第 15 届题二的结构）：最值定理先保证<strong>最小值存在</strong>——于是只需清点候选点：<strong>内部</strong>看驻点（偏导全零，第 6 章），<strong>边界</strong>分片讨论。两类穷尽，最小值必在其中。「内部唯一驻点 + 边界非负」的整体论证就合法了。完整真题与梯子问题在 §9 真题节选。</p>
+</div>
+
+<h2>§4 翻译轨：三个标准动作 + 一间练功房</h2>
+
+<div class="trans box" data-tag="动作一：「证方程有根」→ 零点定理三件套">
+  <p><strong>题面</strong>：「证明方程 …… 在 $(a,b)$ 内有（实）根」/「证明存在 $\xi\in(a,b)$ 使 $f(\xi)=0$」。</p>
+  <p><strong>翻译</strong>：① 移项，把方程写成 $g(x)=0$ 的形态（$g$ 是谁：左边减右边）；② 说连续：$g$ 在闭区间 $[a,b]$ 上连续（这句必须写，值步骤分）；③ 算端点：$g(a)g(b)&lt;0$。三件齐备，引零点定理。</p>
+  <p><strong>用在哪一步</strong>：这类题通常是整题的第一小问或中间步骤，写齐三件套，3–5 分到手；漏写「连续」二字，分点直接蒸发。</p>
+</div>
+
+<div class="trans box" data-tag="动作二：「证存在 ξ 使 f(ξ)=…」→ 移项造 g（工具八雏形）">
+  <p><strong>题面</strong>：「证明存在 $\xi$，使 $f(\xi)=$ 某表达式」（如 $f(\xi)=\xi$、$f(\xi)=\mu$、$f(\xi)=\frac{f(a)+f(b)}{2}$）。</p>
+  <p><strong>翻译</strong>：把右边全移到左边，造辅助函数 $g(x)=f(x)-(\text{右边})$，目标等价于 $g(\xi)=0$——回到动作一。<strong>先收编等号</strong>：若端点处 $g$ 已经为 $0$，$\xi$ 直接找到；否则端点严格异号，零点定理进场。</p>
+  <p>这就是第 0.5 章<strong>工具八 · 辅助函数</strong>的幼体：第 5 章中值定理题里它会长大成「倒推 $F$ 该长什么样」，本章先会造「$f$ 减目标」这种最朴素的。</p>
+</div>
+
+<div class="trans box" data-tag="动作三：「f 在 [a,b] 连续」出现在条件里 → 刷库存清单">
+  <p><strong>题面</strong>：条件中出现「$f$ 在 $[a,b]$ 上连续」（或多元版「在有界闭区域 $\overline\Omega$ 上连续」）。</p>
+  <p><strong>翻译</strong>：立即把 §3.2 的五件货摆上货架：有界（$|f|\le M$）、最值（$\max,\min$ 取到）、介值（中间值全取）、一致连续（统一 $\delta$）、可积（第 7 章）。然后问：本题要取哪件？——「最大值存在」取最值定理；「值域是区间」取介值定理；「振幅一致小」取 Cantor 定理。第 13 届题二官方解答第 3 行「$w\in C(\overline B)$，故在 $\overline B$ 上达到最大值」就是一次标准取货。</p>
+</div>
+
+<h3>4.4 翻译练功房：像学语言一样，大量互译</h3>
+
+<p>老规矩：<strong>先全部写在纸上，再逐条展开对照</strong>。每条不超过 1 分钟。</p>
+
+<div class="trans box" data-tag="互译 8 句">
+  <p><strong>T1</strong>　选择判断：$f$ 在 $[a,b]$ 上连续，下列哪些<strong>一定</strong>成立？（a）有界；（b）取到最大值；（c）可导；（d）一致连续；（e）值域含于 $[m,M]$ 且充满它；（f）Riemann 可积。</p>
+  <details class="answer"><summary>对照</summary><p>（a）（b）（d）（e）（f）成立——正是库存清单。（c）不成立：$f(x)=|x|$ 于 $[-1,1]$ 连续但在 $0$ 处不可导。<strong>易错</strong>：把「连续」和「可导」的强弱关系记反——可导 ⟹ 连续，反之不然（第 5 章细讲）。</p></details>
+  <p><strong>T2</strong>　自然→符号：「$f$ 在 $[a,b]$ 连续且端点异号，则必有一根严格落在区间内部。」</p>
+  <details class="answer"><summary>对照</summary><p>$f\in C[a,b]$，$f(a)f(b)&lt;0$ ⟹ $\exists\,\xi\in(a,b),\ f(\xi)=0$。<strong>关键</strong>：结论里是<strong>开区间</strong> $(a,b)$——异号条件保证 $\xi$ 不会是端点；若只写 $\xi\in[a,b]$，是翻译事故（$\xi=a$ 时 $f(a)=0$ 与异号矛盾）。</p></details>
+  <p><strong>T3</strong>　符号→自然：「$f([a,b])\subseteq[a,b]$」（$f$ 在 $[a,b]$ 连续）。它能推出 $g(x)=f(x)-x$ 在端点处的什么信息？</p>
+  <details class="answer"><summary>对照</summary><p>「$f$ 把区间映回自己肚子里」。$\forall x\in[a,b],\ a\le f(x)\le b$，特别地 $f(a)\ge a$、$f(b)\le b$，即 $g(a)\ge0$、$g(b)\le0$。再配上 $g$ 连续，零点定理给出不动点——这就是 §8 例 2 的全部弹药。</p></details>
+  <p><strong>T4</strong>　自然→符号（构造路径）：「证明存在 $\xi\in(0,1)$ 使 $f(\xi)=\xi^2$」（设 $f$ 在 $[0,1]$ 连续，$f(0)&gt;0$，$f(1)&lt;1$）。写出你的开局两行。</p>
+  <details class="answer"><summary>对照</summary><p>造 $g(x)=f(x)-x^2$，$g$ 在 $[0,1]$ 连续；$g(0)=f(0)&gt;0$，$g(1)=f(1)-1&lt;0$；零点定理 ⟹ $\exists\,\xi\in(0,1),\ g(\xi)=0$。<strong>反射</strong>：「$f(\xi)=\text{某式}$」$\to$「$g=f-\text{某式}$」$\to$ 查端点——动作二，不需要灵感。</p></details>
+  <p><strong>T5</strong>　判断 + 反例：「$f$ 在 $(a,b)$ 上连续且有界，则 $f$ 在 $(a,b)$ 上取到最大值。」对吗？</p>
+  <details class="answer"><summary>对照</summary><p>错。$f(x)=x$ 于 $(0,1)$：有界（$|f|&lt;1$），但任何 $x_0\in(0,1)$ 都有 $f\bigl(\frac{x_0+1}{2}\bigr)&gt;f(x_0)$——最大值永远可以再逼近 $1$ 却够不着。<strong>病灶</strong>：缺「闭」，$\sup=1$ 落在院外。有界性可以在开区间幸存（碰巧），最值不行。</p></details>
+  <p><strong>T6</strong>　符号→自然：「$\forall\varepsilon&gt;0,\ \exists\,\delta&gt;0,\ \forall x',x''\in[a,b]:\ |x'-x''|&lt;\delta\Rightarrow|f(x')-f(x'')|&lt;\varepsilon$。」它比普通连续强在哪？</p>
+  <details class="answer"><summary>对照</summary><p>「一把尺子量全院」：普通连续是每点 $x_0$ 各配一把 $\delta(x_0,\varepsilon)$；这里是先给 $\varepsilon$，就存在一把<strong>与点无关</strong>的统一 $\delta$。Cantor 定理说：闭区间上，两者其实一样强——「闭」把无穷多把局部尺子压成了一把（有限覆盖的画面）。</p></details>
+  <p><strong>T7</strong>　判断：「若 $f(a)f(b)&gt;0$，则 $f$ 在 $(a,b)$ 内无零点。」对吗？</p>
+  <details class="answer"><summary>对照</summary><p>错。$f(x)=x^2-1$ 于 $[-2,2]$：$f(-2)=f(2)=3&gt;0$，但 $\pm1$ 都是零点。零点定理只是<strong>充分条件</strong>：异号 ⟹ 有根；不异号，什么都不说。<strong>易错</strong>：把定理当「当且仅当」用——卷面上这是概念性丢分。</p></details>
+  <p><strong>T8</strong>　找坑：「$f$ 在 $[a,b]$ 上具有介值性（任意两点间的中间值都取到），所以 $f$ 连续。」这个推理合法吗？</p>
+  <details class="answer"><summary>对照</summary><p>不合法。反例：$f(x)=\sin\frac1x$（$x\ne0$），$f(0)=0$，于 $[-1,1]$——在 $0$ 处剧烈振荡不连续，但任何含 $0$ 的区间上它把所有 $[-1,1]$ 里的值都取遍，介值性成立。<strong>结论</strong>：介值性（Darboux 性）比连续<strong>弱</strong>；本章定理 3 的方向是「连续 ⟹ 介值」，不可逆。</p></details>
+</div>
+
+<h2>§5 类型识别：什么信号在召唤四大定理</h2>
+
+<div class="recog box" data-tag="识别反射表">
+  <table>
+    <tr><th>题面信号</th><th>反射</th></tr>
+    <tr><td>「证方程 …… 有根 / 有实根」「$\exists\xi,\ f(\xi)=0$」</td><td>零点定理三件套：移项成 $g$ → 说连续 → 算端点异号（动作一）</td></tr>
+    <tr><td>「证存在 $\xi$ 使 $f(\xi)=\cdots$」（如 $f(\xi)=\xi^2$、$f(\xi)=\mu$、$f(\xi)=\frac{f(a)+f(b)}2$）</td><td>移项造 $g=f-$ 右边，转零点定理；先收编端点等号（动作二，工具八雏形）</td></tr>
+    <tr><td>「$f$ 在 $[a,b]$ 连续」「在有界闭区域 $\overline\Omega$ 上连续」</td><td>刷库存清单：有界 / 最值 / 介值 / 一致连续 / 可积，问本题取哪件（动作三）</td></tr>
+    <tr><td>「最大值 / 最小值必存在」被当作推理前提</td><td>检查定义域：有界 + 闭 + 连续，三缺一则最值定理不能用，改用 sup 逼近（第 1 章）</td></tr>
+    <tr><td>「求有界闭区域上的最值」（多元）</td><td>最值定理管存在性 + 候选点两类：内部驻点、边界分片（15 届题二结构）</td></tr>
+    <tr><td>「一致连续 / 非一致连续」「统一的 $\delta$」</td><td>先看区间：闭区间 + 连续 ⟹ Cantor 定理直接判一致连续；非闭区间才需要硬证（14 届题六）</td></tr>
+    <tr><td>条件含 $\frac1x$、$\tan x$ 等在端点爆炸的函数</td><td>警报：四定理的先决条件可能不成立，先验「闭区间 + 连续」再放行</td></tr>
+    <tr><td>「二分」「区间套」「长度趋于 $0$ 的 $[a_n,b_n]$」</td><td>区间套机床开动：保持目标性质取半 → 套出 $\xi$ → 连续性收口（12 届题五的 min–max 套就是远亲）</td></tr>
+  </table>
+</div>
+
+<h2>§6 考法定位：它藏在哪里、值多少分</h2>
+
+<div class="exam box" data-tag="考法定位">
+  <table>
+    <tr><th>出处</th><th>题号</th><th>本章内容扮演什么角色</th><th>分值权重</th></tr>
+    <tr><td>第 15 届（2023）</td><td>题二</td><td>「内部唯一驻点 + 边界非负」的整体最值论证——最值定理（有界闭区域版）是整题的存在性地基</td><td>15 分（整题，本章 §9 真题节选）</td></tr>
+    <tr><td>第 14 届（2022）</td><td>题六</td><td>一致连续 / 非一致连续的判定整题（$[0,+\infty)$ 上不能用 Cantor——正说明「闭 + 有界」不可拆）；「一致连续 ⟹ 线性增长」判别</td><td>20 分（整题，概念地基在本章）</td></tr>
+    <tr><td>第 14 届（2022）</td><td>题五</td><td>开篇「记 $M=\sup_{[-1,2]}|f|$」取有界性；振幅 $\sup-\inf$ 估计的遥控器是一致连续</td><td>3–5 分步骤</td></tr>
+    <tr><td>第 13 届（2021）</td><td>题二</td><td>「$w\in C^2(B)\cap C(\overline B)$，故在 $\overline B$ 上达到最大值」——最值定理一句话开道，后面最大值原理才能开跑</td><td>关键步骤分</td></tr>
+    <tr><td>第 11 届（2019）</td><td>题六(ii)</td><td>「由连续性易见 $E$ 是一个区间」——介值定理的一句话形态（连续函数的像集是区间）</td><td>约 2 分步骤</td></tr>
+    <tr><td>第 12 届（2020）</td><td>题五</td><td>min–max 区间套 $[a_n,b_n]$ 夹逼收敛——区间套手法的考场形态</td><td>手法贯穿（15 分题的核心工具之一）</td></tr>
+  </table>
+  <p><strong>规律</strong>：四大定理直接成题时（15 届题二、14 届题六）是 15–20 分的大场面；更多时候它们是<strong>步骤分供应商</strong>——「故最大值存在」「故 $E$ 是区间」「记 $M=\sup|f|$」各值 2–5 分，而零点/介值几乎年年以「方程有根」「值域连续过渡」的形态藏在解题链条里。分步给分制下，这些是<strong>写下就给分、漏写就归零</strong>的基本功。</p>
+</div>
+
+<h2>§7 关系网：一张船票，四件行李，两台机床</h2>
+
+<p>本章所有角色的来龙去脉画在下面：<span style="color:#b45309">三角形</span>是来源与动机，<span style="color:#1d4ed8">圆角矩形</span>是公理与定义，<span style="color:#15803d">矩形</span>是定理，<span style="color:#7c3aed">六边形</span>是方法动作，<span style="color:#0f766e">椭圆</span>是应用出口。</p>
+
+<figure>
+<svg viewBox="0 0 720 580" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="四大定理关系网地图">
+  <defs>
+    <marker id="arr4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+
+  <!-- 图例 -->
+  <polygon points="30,16 22,30 38,30" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5"/>
+  <text x="44" y="28" font-size="11.5" fill="#5c554b">来源·动机</text>
+  <rect x="116" y="17" width="22" height="13" rx="6.5" fill="#eef3fe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="144" y="28" font-size="11.5" fill="#5c554b">公理·定义</text>
+  <rect x="222" y="17" width="22" height="13" fill="#ecf8f0" stroke="#15803d" stroke-width="1.5"/>
+  <text x="250" y="28" font-size="11.5" fill="#5c554b">定理</text>
+  <polygon points="300,23.5 306,16 320,16 326,23.5 320,31 306,31" fill="#f4effd" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="332" y="28" font-size="11.5" fill="#5c554b">方法·动作</text>
+  <ellipse cx="420" cy="23.5" rx="12" ry="7" fill="#ecf8f5" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="438" y="28" font-size="11.5" fill="#5c554b">应用·出口</text>
+
+  <!-- 来源三角 1：ℚ 的洞 -->
+  <polygon points="105,58 48,128 162,128" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="105" y="98" font-size="12" fill="#7a4a12" text-anchor="middle" font-weight="bold">ℚ 的洞</text>
+  <text x="105" y="114" font-size="10.5" fill="#7a4a12" text-anchor="middle">x²−2 画不过 0</text>
+
+  <!-- 来源三角 2：第 1 章六定理家族 -->
+  <polygon points="610,58 548,128 672,128" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="610" y="94" font-size="11.5" fill="#7a4a12" text-anchor="middle" font-weight="bold">第 1 章六定理家族</text>
+  <text x="610" y="110" font-size="10.5" fill="#7a4a12" text-anchor="middle">区间套 · B–W · 有限覆盖</text>
+
+  <!-- 圆角矩形：连续 + 闭区间 -->
+  <rect x="225" y="62" width="270" height="62" rx="31" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="360" y="88" font-size="15" fill="#1d4ed8" text-anchor="middle" font-weight="bold">连续 + 闭区间 [a,b]</text>
+  <text x="360" y="107" font-size="11.5" fill="#1d4ed8" text-anchor="middle">船票（笔不离纸）+ 码头（有限含端点）</text>
+
+  <!-- 三角1 → 圆角矩形 -->
+  <line x1="168" y1="93" x2="222" y2="93" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr4)"/>
+  <text x="196" y="84" font-size="10.5" fill="#5c554b" text-anchor="middle">动机</text>
+  <!-- 三角2 → 六边形（走线） -->
+  <polyline points="580,128 580,150 250,150 250,304" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr4)"/>
+  <polyline points="640,128 640,150 520,150 520,304" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr4)"/>
+  <text x="556" y="144" font-size="10.5" fill="#5c554b">提供机床</text>
+
+  <!-- 圆角矩形 → 四定理（分叉） -->
+  <polyline points="300,124 300,168 95,168 95,206" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr4)"/>
+  <polyline points="330,124 330,180 265,180 265,206" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr4)"/>
+  <polyline points="390,124 390,180 435,180 435,206" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr4)"/>
+  <polyline points="420,124 420,168 605,168 605,206" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr4)"/>
+  <text x="452" y="162" font-size="10.5" fill="#5c554b">同一张船票换四件行李</text>
+
+  <!-- 四定理（矩形） -->
+  <rect x="20" y="206" width="150" height="56" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="95" y="229" font-size="12.5" fill="#15803d" text-anchor="middle" font-weight="bold">① 有界性定理</text>
+  <text x="95" y="247" font-size="10.5" fill="#4a7c59" text-anchor="middle">|f| ≤ M：上下围墙</text>
+  <rect x="190" y="206" width="150" height="56" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="265" y="229" font-size="12.5" fill="#15803d" text-anchor="middle" font-weight="bold">② 最值定理</text>
+  <text x="265" y="247" font-size="10.5" fill="#4a7c59" text-anchor="middle">max/min 摸得到</text>
+  <rect x="360" y="206" width="150" height="56" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="435" y="229" font-size="12.5" fill="#15803d" text-anchor="middle" font-weight="bold">③ 零点 / 介值</text>
+  <text x="435" y="247" font-size="10.5" fill="#4a7c59" text-anchor="middle">异号必有根</text>
+  <rect x="530" y="206" width="150" height="56" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="605" y="229" font-size="12.5" fill="#15803d" text-anchor="middle" font-weight="bold">④ Cantor 定理</text>
+  <text x="605" y="247" font-size="10.5" fill="#4a7c59" text-anchor="middle">一把 δ 管全院</text>
+
+  <!-- 两六边形（证法） -->
+  <polygon points="155,340 185,308 315,308 345,340 315,372 185,372" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="250" y="336" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">区间套法（二分）</text>
+  <text x="250" y="353" font-size="10.5" fill="#6a55a3" text-anchor="middle">保性质取半 → 套出 ξ</text>
+  <polygon points="425,340 455,308 585,308 615,340 585,372 455,372" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="520" y="336" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">B–W 法（反证）</text>
+  <text x="520" y="353" font-size="10.5" fill="#6a55a3" text-anchor="middle">抽子列聚点 → 对撞连续</text>
+
+  <!-- 六边形 → 定理（证明谁） -->
+  <polyline points="250,308 250,290 435,290 435,265" fill="none" stroke="#7c3aed" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#arr4)"/>
+  <text x="330" y="284" font-size="10.5" fill="#7c3aed">证 ③（例 1 示范）</text>
+  <polyline points="520,308 520,288 95,288 95,265" fill="none" stroke="#7c3aed" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#arr4)"/>
+  <text x="250" y="300" font-size="10.5" fill="#7c3aed">证 ①</text>
+  <polyline points="560,308 590,290 605,265" fill="none" stroke="#7c3aed" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#arr4)"/>
+  <text x="596" y="288" font-size="10.5" fill="#7c3aed">证 ④</text>
+  <!-- 定理 ① → ② 的借力 -->
+  <line x1="170" y1="234" x2="186" y2="234" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr4)"/>
+  <text x="178" y="224" font-size="9.5" fill="#5c554b" text-anchor="middle">借力</text>
+
+  <!-- 四定理 → 应用（分叉） -->
+  <polyline points="435,262 435,296 140,296 140,462" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr4)"/>
+  <polyline points="460,262 460,310 320,310 320,462" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr4)"/>
+  <polyline points="265,262 265,330 500,330 500,462" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr4)"/>
+  <polyline points="605,262 605,350 650,350 650,462" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr4)"/>
+  <text x="470" y="306" font-size="10.5" fill="#5c554b">出口</text>
+
+  <!-- 四椭圆（应用） -->
+  <ellipse cx="140" cy="500" rx="118" ry="34" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="140" y="495" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">方程根的存在性</text>
+  <text x="140" y="512" font-size="10.5" fill="#3d7a70" text-anchor="middle">x³+x−1=0 型（三件套）</text>
+  <ellipse cx="330" cy="500" rx="100" ry="34" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="330" y="495" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">不动点存在</text>
+  <text x="330" y="512" font-size="10.5" fill="#3d7a70" text-anchor="middle">f(ξ)=ξ：造 g=f−x</text>
+  <ellipse cx="505" cy="500" rx="108" ry="34" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="505" y="495" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">最值论证结构</text>
+  <text x="505" y="512" font-size="10.5" fill="#3d7a70" text-anchor="middle">内部驻点+边界（15 届题二）</text>
+  <ellipse cx="655" cy="500" rx="62" ry="34" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="655" y="495" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">可积性</text>
+  <text x="655" y="512" font-size="10.5" fill="#3d7a70" text-anchor="middle">第 7 章预告</text>
+</svg>
+<figcaption>本章地图：一个洞（动机）+ 六定理家族（机床库）→「连续 + 闭区间」换四件行李，两台机床分别交货，四个出口通向后章。</figcaption>
+</figure>
+
+<div class="net box" data-tag="画面感锚点（记这些，不记条文）">
+  <table>
+    <tr><th>节点</th><th>一句话画面</th></tr>
+    <tr><td>ℚ 的洞（动机）</td><td>$x^2-2$ 在有理数世界从负涨到正，却在 $\sqrt2$ 上跳了过去——零点定理在那里是假的</td></tr>
+    <tr><td>连续 + 闭区间</td><td>有围墙的院子里一条不断线的绳</td></tr>
+    <tr><td>① 有界性</td><td>绳子冲不出上下围墙（B–W：想冲出去的点列被逼着聚到院里某点，连续性不许它炸）</td></tr>
+    <tr><td>② 最值</td><td>最高最低点是实心点——第 1 章的 sup 这次被摸到了</td></tr>
+    <tr><td>③ 零点 / 介值</td><td>从地下到地上必踩地面；两端之间的高度一个都不跳</td></tr>
+    <tr><td>④ Cantor</td><td>无穷多把局部尺子压成一把统一的尺子</td></tr>
+    <tr><td>区间套法</td><td>俄罗斯套娃：每刀保性质取半，套出 $\xi$ 后连续性收口</td></tr>
+    <tr><td>B–W 法</td><td>反证四步：否定 → 抽子列聚点 → 连续收口 → 对撞</td></tr>
+    <tr><td>四个出口</td><td>方程根（三件套）、不动点（造 $g$）、最值结构（内部+边界）、可积（第 7 章）</td></tr>
+  </table>
+  <p><strong>和已学知识的焊接点</strong>：你高数里「连续函数可积」「闭区间连续函数有最大值」全是直接信的，本章把它们的来路接通——来路就是第 1 章的实数完备性。第 2 章的一致连续概念在定理 4 里第一次兑现成定理；第 3 章的极限保号性是例 1 第三步的关节；第 5 章的中值定理题，会把例 2 的「移项造 $g$」升级成辅助函数主战场。</p>
+</div>
+
+<h2>§8 计算示范：先看真人怎么想，再看卷面怎么写</h2>
+
+<h3>例 1 · 区间套法证零点定理（本章示范证明，约 10 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>结论是「$\exists\,\xi\in(a,b),\ f(\xi)=0$」——最外层是 <strong>$\exists$ 型</strong>：查拆目标总表，骨架 = <strong>构造 + 验证</strong>。这次的构造对象不是能解出表达式的数（$\xi$ 根本算不出来），而是要用一台<strong>递归程序</strong>把它「生产」出来：区间套定理负责保证程序有输出。这是 $\exists$ 型的第二种构造形态——第 1 章是「倒推解出 $n$」，本章是「造一列对象逼出一个点」。</p>
+  <p><span class="stage">【盘点】</span>条件三条，各展开成产出：<br>
+  ① $f(a)&lt;0&lt;f(b)$：左端负、右端正——二分时的「保留规则」就从这里长出来；<br>
+  ② $f$ 连续：$x_n\to x_0$ ⟹ $f(x_n)\to f(x_0)$（第 2 章）——收口用；<br>
+  ③ 实数完备性：区间套定理（第 1 章六定理家族）——套出 $\xi$ 用。外加一件免费武器：<strong>极限保号性</strong>（$y_n\le0$ 且 $y_n\to L$ ⟹ $L\le0$，第 3 章）——把不等式传过极限。</p>
+  <p><span class="stage">【会师】</span>倒推链：要证 $f(\xi)=0$ $\Longleftarrow$ 只需 $f(\xi)\le0$ <strong>且</strong> $f(\xi)\ge0$（两头夹）$\Longleftarrow$ 只需 $f(\xi)=\lim f(a_n)$ 且 $f(a_n)\le0$；$f(\xi)=\lim f(b_n)$ 且 $f(b_n)\ge0$（保号性各传一次）$\Longleftarrow$ 只需 $\lim a_n=\lim b_n=\xi$ 且 $f$ 在 $\xi$ 连续 $\Longleftarrow$ 只需 $\{[a_n,b_n]\}$ 是区间套（长度 $\to0$）<strong>且不变量</strong> $f(a_n)\le0\le f(b_n)$ 永真 $\Longleftarrow$ 二分保留规则：看中点 $c_n$，$f(c_n)&gt;0$ 就让它当新右端，$f(c_n)&lt;0$ 就让它当新左端——不变量天然保持。链条闭合，每环都是库存货。</p>
+  <p><span class="stage">【定型】</span>卷面三段式：<strong>构造</strong>（递归定义 + 不变量）、<strong>套点</strong>（验证区间套两条件，引定理得 $\xi$）、<strong>夹值</strong>（连续 + 保号，得 $f(\xi)=0$）。草稿纸上的倒推一个字不留。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 区间套法（造 ∃ 对象的机床）</strong>：每次切一半，保留「目标性质还活着」的那一半；长度趋于 $0$ 保证套出唯一一点 $\xi$；连续性负责把「区间端点的性质」过户给 $\xi$。以后证明致密性、覆盖定理、乃至第 12 届题五的 min–max 夹逼，都是这台机床的再就业。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 1（零点定理）</strong>　设 $f$ 在 $[a,b]$ 上连续，$f(a)&lt;0&lt;f(b)$。证明：存在 $\xi\in(a,b)$ 使 $f(\xi)=0$。</p>
+  <hr>
+  <p><strong>证明</strong></p>
+  <p class="proof-line"><strong>第一步（构造区间套）</strong>：令 $a_1=a,\ b_1=b$，递归构造：设已有 $[a_n,b_n]$ 满足 $f(a_n)\le0\le f(b_n)$，取中点 $c_n=\dfrac{a_n+b_n}{2}$。若 $f(c_n)=0$，取 $\xi=c_n$ 即证毕；若 $f(c_n)&gt;0$，令 $[a_{n+1},b_{n+1}]=[a_n,c_n]$；若 $f(c_n)&lt;0$，令 $[a_{n+1},b_{n+1}]=[c_n,b_n]$。无论何种情形，</p>
+  <p>$$[a_{n+1},b_{n+1}]\subseteq[a_n,b_n],\qquad f(a_{n+1})\le0\le f(b_{n+1}),$$</p>
+  <p>即「左端非正、右端非负」是<strong>不变量</strong>。<span class="step-score">（4 分）</span></p>
+  <p class="proof-line"><strong>第二步（套出 $\xi$）</strong>：下设程序不终止。由构造，$a_n\le a_{n+1}\le b_{n+1}\le b_n$，且
+  $$b_n-a_n=\frac{b-a}{2^{\,n-1}}\to0\quad(n\to\infty),$$
+  故 $\{[a_n,b_n]\}$ 是区间套。由区间套定理，存在唯一的 $\xi\in\bigcap\limits_{n=1}^{\infty}[a_n,b_n]\subseteq[a,b]$，且 $\lim a_n=\lim b_n=\xi$。<span class="step-score">（7 分）</span></p>
+  <p class="proof-line"><strong>第三步（夹出 $f(\xi)=0$）</strong>：$f$ 在 $\xi$ 连续，故 $f(a_n)\to f(\xi)$，$f(b_n)\to f(\xi)$。由不变量 $f(a_n)\le0$ 及极限保号性，$f(\xi)\le0$；由 $f(b_n)\ge0$ 同理 $f(\xi)\ge0$。两式合得 $f(\xi)=0$。又 $f(a)&lt;0&lt;f(b)$ 而 $f(\xi)=0$，故 $\xi\ne a$ 且 $\xi\ne b$，即 $\xi\in(a,b)$。$\square$<span class="step-score">（10 分）</span></p>
+  <p class="aside">书写点评：三个分点各管一件事——第一步的不变量（没它第二步白套）、第二步的「长度 $\to0$」（没它区间套定理不能引）、第三步的保号性（没它 $f(\xi)\le0$ 出不来，属跳步归零区）。最后补「$\xi\ne a,b$」一句，是把结论从 $[a,b]$ 收紧到 $(a,b)$ 的卫生动作。</p>
+</div>
+
+<h3>例 2 · 不动点存在：值域含于定义域（约 8 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>「$\exists\,\xi\in[a,b],\ f(\xi)=\xi$」——$\exists$ 型，要构造。但 $f(\xi)=\xi$ 不是零点形态，查识别反射表：「$f(\xi)=$ 某式」$\to$ <strong>移项造 $g$</strong>（动作二）：$f(\xi)=\xi \iff f(\xi)-\xi=0 \iff g(\xi)=0$，其中 $g(x)=f(x)-x$。划归成例 1 管的事——<strong>工具六 · 划归</strong> + <strong>工具八 · 辅助函数</strong>（幼体形态）。</p>
+  <p><span class="stage">【盘点】</span>① $f$ 连续 ⟹ $g$ 连续（连续函数差仍连续，第 2 章）；② 值域 $\subseteq[a,b]$ 即 $\forall x\in[a,b],\ a\le f(x)\le b$。端点代入：$g(a)=f(a)-a\ge0$，$g(b)=f(b)-b\le0$。注意：这里只能拿到「$\ge$ / $\le$」带等号的版本——<strong>等号情形必须先收编</strong>（若 $g(a)=0$，$\xi=a$ 就是不动点，题已证完）。</p>
+  <p><span class="stage">【会师】</span>倒推：要 $g$ 在 $[a,b]$ 有零点 $\Longleftarrow$ 零点定理 $\Longleftarrow$ $g$ 连续 + 端点异号。异号从盘点②来，只差等号收编。链条闭合：先处理 $g(a)=0$ 或 $g(b)=0$ 的退化情形（白给的 $\xi$），剩下的严格异号交给零点定理。</p>
+  <p><span class="stage">【定型】</span>卷面四行：造 $g$ → 说连续 → 收编等号 → 零点定理。「先收编等号，再用严格异号」是用零点定理的固定卫生动作，漏了它证明有缝（虽然通常不扣分，但竞赛书里算瑕疵）。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 移项造 $g$</strong>：一切「证 $f(\xi)=\text{某式}$」的第一反应是把右边移过来造 $g(x)=f(x)-(\text{某式})$，然后查 $g$ 的零点。本例它是「$f(x)-x$」，中值定理题里它会变成「倒推出来的原函数 $F$」——同一个反射，不同段位（工具八，第 5 章成人礼）。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 2</strong>　设 $f$ 在 $[a,b]$ 上连续，且值域含于 $[a,b]$（即 $\forall x\in[a,b],\ a\le f(x)\le b$）。证明：存在 $\xi\in[a,b]$ 使 $f(\xi)=\xi$（$f$ 有不动点）。</p>
+  <hr>
+  <p><strong>证明</strong>　作辅助函数
+  $$g(x)=f(x)-x,\qquad x\in[a,b].$$<span class="step-score">（2 分）</span></p>
+  <p class="proof-line">$f$ 连续，$x$ 连续，故 $g$ 在 $[a,b]$ 上连续。<span class="step-score">（3 分）</span></p>
+  <p class="proof-line">若 $f(a)=a$，取 $\xi=a$ 即所求；若 $f(b)=b$，取 $\xi=b$ 即所求。<span class="step-score">（5 分）</span></p>
+  <p class="proof-line">下设 $f(a)\ne a$ 且 $f(b)\ne b$。由值域条件 $a\le f(x)\le b$，得 $f(a)&gt;a$，$f(b)&lt;b$，即
+  $$g(a)=f(a)-a&gt;0,\qquad g(b)=f(b)-b&lt;0.$$<span class="step-score">（7 分）</span></p>
+  <p class="proof-line">由零点定理，$\exists\,\xi\in(a,b)$ 使 $g(\xi)=0$，即 $f(\xi)=\xi$。各情形合起来，$f$ 在 $[a,b]$ 上必有不动点。$\square$<span class="step-score">（8 分）</span></p>
+  <p class="aside">书写点评：分点落在「造 $g$」「端点严格异号」两处；「$g$ 连续」一句看着废话，却是零点定理的准用条件，写了就是分。几何画面：$y=f(x)$ 的图像被关在正方形 $[a,b]\times[a,b]$ 里，从左边墙进、右边墙出，途中必与对角线 $y=x$ 相撞——这正是「值域含于定义域」的图像版。</p>
+</div>
+
+<h2>§9 配套题目</h2>
+
+<p>铁律：<strong>先写在纸上，写到写不动再展开答案</strong>。模仿题照例 1、例 2 的卷面格式写；变式题开始没有模板，先问自己「造哪个 $g$、用哪件库存」。</p>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 1</span>证明：方程 $x^3+x-1=0$ 在 $(0,1)$ 内至少有一个实根。</p>
+  <details class="answer">
+    <summary>参考答案（约 3 分书写量）</summary>
+    <p>设 $f(x)=x^3+x-1$。$f$ 是多项式，在 $[0,1]$ 上连续（1 分）。</p>
+    <p>$f(0)=-1&lt;0$，$f(1)=1&gt;0$，即 $f(0)f(1)&lt;0$（2 分）。</p>
+    <p>由零点定理，$\exists\,\xi\in(0,1)$ 使 $f(\xi)=0$，即方程在 $(0,1)$ 内至少有一实根。$\square$（3 分）</p>
+    <p><strong>易错点</strong>：① 连续那句必须写「在闭区间 $[0,1]$ 上」——零点定理吃的就是闭区间；② 别去求 $\xi$ 的值，定理管「有」不管「多少」。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 2</span>证明：方程 $x=\cos x$ 在 $\left(0,\dfrac{\pi}{2}\right)$ 内有根。</p>
+  <details class="answer">
+    <summary>参考答案（约 4 分书写量）</summary>
+    <p>移项：设 $g(x)=x-\cos x$（1 分），$g$ 在 $\left[0,\frac{\pi}{2}\right]$ 上连续（2 分）。</p>
+    <p>$g(0)=0-1=-1&lt;0$，$g\left(\frac{\pi}{2}\right)=\frac{\pi}{2}-0=\frac{\pi}{2}&gt;0$（3 分）。</p>
+    <p>由零点定理，$\exists\,\xi\in\left(0,\frac{\pi}{2}\right)$ 使 $g(\xi)=0$，即 $\xi=\cos\xi$。$\square$（4 分）</p>
+    <p><strong>易错点</strong>：直接对 $\cos x$ 用零点定理是死路——$\cos0=1$、$\cos\frac\pi2=0$ 不异号。<strong>先移项成 $g$</strong>，动作二就是干这个的。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 1</span>设 $f$ 在 $[0,1]$ 上连续，$f(0)=f(1)$。证明：存在 $\xi\in\left[0,\dfrac12\right]$ 使 $f(\xi)=f\left(\xi+\dfrac12\right)$。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：结论是「某式 $=$ 某式」，移项造 $g$：要 $f(\xi)-f\bigl(\xi+\frac12\bigr)=0$，自然设 $g(x)=f(x)-f\bigl(x+\frac12\bigr)$。注意 $g$ 只在 $\left[0,\frac12\right]$ 上有定义——<strong>定义域自动缩半</strong>。</p>
+    <p><strong>证明</strong>：设 $g(x)=f(x)-f\bigl(x+\frac12\bigr)$，$x\in\left[0,\frac12\right]$，$g$ 连续。</p>
+    <p>端点：$g(0)=f(0)-f\bigl(\frac12\bigr)$；$g\bigl(\frac12\bigr)=f\bigl(\frac12\bigr)-f(1)=f\bigl(\frac12\bigr)-f(0)=-g(0)$（用到 $f(0)=f(1)$）。</p>
+    <p>若 $g(0)=0$，则 $\xi=0$ 合要求；否则 $g(0)\,g\bigl(\frac12\bigr)=-g(0)^2&lt;0$，由零点定理 $\exists\,\xi\in\left(0,\frac12\right)$ 使 $g(\xi)=0$。$\square$</p>
+    <p><strong>点评</strong>：$f(0)=f(1)$ 恰好翻译成「$g$ 两端异号」——条件的每条产出都要落到 $g$ 的端点上。收编等号那一步，和例 2 同一个卫生动作。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 2</span>设 $f$ 在 $[a,b]$ 上连续，记 $m=\min\limits_{[a,b]}f$，$M=\max\limits_{[a,b]}f$。证明：$f$ 的值域恰好是闭区间 $[m,M]$。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：集合等式型 ⟹ 互相包含（拆目标总表）。$\subseteq$ 由最值定义白给；$\supseteq$ 要靠介值定理把 $[m,M]$ 里每个值「取出来」。两个定理各管一半：<strong>最值定理管两端，介值定理管中间</strong>。</p>
+    <p><strong>证明</strong>：① 由最值定理，$m,M$ 确实被取到（故记号 $\min,\max$ 合法），设 $f(x_1)=M$，$f(x_2)=m$，$x_1,x_2\in[a,b]$；且 $\forall x\in[a,b],\ m\le f(x)\le M$，即 $f([a,b])\subseteq[m,M]$。</p>
+    <p>② 反向：任取 $\mu\in[m,M]$。若 $\mu=m$ 或 $\mu=M$，已被 $x_2,x_1$ 取到；设 $m&lt;\mu&lt;M$。$f$ 在以 $x_1,x_2$ 为端点的闭子区间上连续，$\mu$ 严格介于 $f(x_2)=m$ 与 $f(x_1)=M$ 之间，由介值定理，存在该子区间内的 $\xi$（从而 $\xi\in[a,b]$）使 $f(\xi)=\mu$。故 $[m,M]\subseteq f([a,b])$。</p>
+    <p>合起来 $f([a,b])=[m,M]$。$\square$</p>
+    <p><strong>点评</strong>：「闭区间上连续函数的值域是闭区间」——第 11 届题六(ii)「由连续性易见 $E$ 是一个区间」的白话版就是它。$\mu$ 落在以 $x_1,x_2$ 为端点的<strong>子区间</strong>上用介值定理，位置细节别写丢。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv3">真题节选</span><strong>（第 15 届题二，15 分）</strong>设 $f(x,y,z)=x^2+(y^2+z^2)(1-x)^3$。</p>
+  <p>(1) 计算 $f$ 的驻点。</p>
+  <p>(2) 求 $f$ 在 $\Sigma$ 上的最小值，其中 $\Sigma$ 是 $\left\{(x,y,z)\,\big|\,|x|\le2,\ y^2+z^2\le4\right\}$ 的边界。</p>
+  <p>(3) 求 $f$ 在椭球 $x^2+\dfrac{y^2}{2}+\dfrac{z^2}{3}\le1$ 上的最小值。</p>
+  <p>这是「连续 + 有界闭区域 ⟹ 最值存在」的多元整题。先回答三个梯子问题（写在纸上）：</p>
+  <p>（i）为什么「$f$ 在 $\overline\Omega$（柱体含边界）上的最小值<strong>一定存在</strong>」不用证明就可以直接调用？它把问题从「存不存在」变成了什么？<br>
+  （ii）最小值点的候选只有哪两类？为什么「内部全部驻点 + 边界全部情形」就穷尽了所有可能？<br>
+  （iii）第 (3) 问为什么能直接白捡第 (2) 问的结论？「集合越小，最小值越大」用在哪里？</p>
+  <details class="answer">
+    <summary>梯子参考答案</summary>
+    <p>（i）最值定理的有界闭区域版：$\overline\Omega$ 有界、闭，$f$ 是多项式故连续 ⟹ 最小值必在某点取到。于是问题从「存在性」变成「<strong>在哪些候选点里找</strong>」——只需比较候选值。</p>
+    <p>（ii）两类：内部点（则必为驻点——可微函数在内部最值点处偏导全零，第 6 章）与边界点（分片讨论）。最小值点不在内部就在边界，没有第三种位置，所以两类穷尽。「内部唯一驻点 + 边界分片」的合法性的全部根据就是这个二分。</p>
+    <p>（iii）椭球 $\subseteq\overline\Omega$，小集合上的最小值 $\ge$ 大集合上的最小值。由 (1)(2)，$f$ 在 $\overline\Omega$ 上的最小值为 $0$（内部唯一驻点 $(0,0,0)$ 处 $f=0$，边界 $\Sigma$ 上 $f\ge0$），故椭球上最小值 $\ge0$；又 $(0,0,0)$ 在椭球内且 $f(0,0,0)=0$，故等号成立，最小值 $=0$。</p>
+  </details>
+  <details class="answer">
+    <summary>官方解答全文（转录自官方参考答案）</summary>
+    <p><strong>(1)</strong> 偏导方程组
+    $$\begin{cases}f_x=2x-3(y^2+z^2)(1-x)^2,\\ f_y=2y(1-x)^3,\\ f_z=2z(1-x)^3.\end{cases}$$
+    由第二式 $x_0=1$ 或 $y_0=0$；$x_0=1$ 与第一式矛盾，故全空间唯一驻点 $(x_0,y_0,z_0)=(0,0,0)$。<span class="step-score">（5 分）</span></p>
+    <p><strong>(2)</strong> 分解 $\Sigma=\Sigma_1\cup\Sigma_2\cup\Sigma_3$：$\Sigma_1=\{x\in[-2,2],\ y^2+z^2=4\}$（侧面），$\Sigma_2=\{x=2,\ y^2+z^2\le4\}$，$\Sigma_3=\{x=-2,\ y^2+z^2\le4\}$（两底）。</p>
+    <p>在 $\Sigma_1$ 上 $f=x^2+4(1-x)^3=:g_1(x)$，$g_1'(\xi)=2\xi-12(1-\xi)^2=0$ 得 $\xi_1=\frac32,\ \xi_2=\frac23$；比较
+    $$g_1(2)=0,\quad g_1(-2)=112,\quad g_1\!\left(\tfrac32\right)=\tfrac74,\quad g_1\!\left(\tfrac23\right)=\tfrac{16}{27},$$
+    故 $\Sigma_1$ 上最小值为 $0$（或不必求驻点，直接说明 $g_1\ge0$ 且 $g_1(2)=0$）。</p>
+    <p>在 $\Sigma_2$ 上 $f=4-(y^2+z^2)\ge0$；在 $\Sigma_3$ 上 $f=4+27(y^2+z^2)\ge0$。故 $f$ 在 $\Sigma$ 上最小值为 $0$。<span class="step-score">（10 分）</span></p>
+    <p><strong>(3)</strong> 椭球 $x^2+\frac{y^2}{2}+\frac{z^2}{3}\le1$ 完全含于 $\Sigma$ 围成的区域 $\Omega$ 内，$f$ 在 $\Omega$ 内唯一驻点 $(0,0,0)$，$f(0,0,0)=0$，结合 (2) 得 $f$ 在 $\overline\Omega$ 上最小值为 $0$，进而椭球上最小值就是 $0$。<span class="step-score">（15 分）</span></p>
+    <p><strong>复盘</strong>：本题用本章的哪个动作？——<strong>动作三（刷库存清单）</strong>：「连续 + 有界闭区域」直接取「最值存在」这件货，把整题翻译成候选点清点。内部驻点唯一（5 分）是微分计算；边界三片（5 分）里 $\Sigma_1$ 化归一元函数最值，而官方注记「或不必求驻点，直接 $g_1\ge0$」是<strong>能不算就不算</strong>的书写智慧：目标是下界 $0$，放缩比求根更快。第 (3) 问的「小集合 min $\ge$ 大集合 min」一句话白捡 5 分。<em>（题目与解答转录自第 15 届官方 PDF，见 <a href="真题索引/第15届_2023.md">真题索引</a>。）</em></p>
+  </details>
+</div>
+
+<h2>§9.5 熟练度训练场</h2>
+
+<p>四大定理是「默写级」的基本功——考场上它们以步骤分形态出现，<strong>写得快且一字不差</strong>才算过关。两种训练，每天 10 分钟：</p>
+
+<h3>训练一 · 翻卡快测（目标：每卡 10 秒内出答案）</h3>
+<div class="quiz" data-quiz="ch04-drill"></div>
+
+<h3>训练二 · 计时默写（写在纸上，掐表）</h3>
+<div class="calc box" data-tag="默写清单">
+  <p>① <strong>90 秒</strong>：默写四大定理完整陈述——共同条件「$f\in C[a,b]$」+ 四段结论，条件、量词、开闭区间各缺一处即错（零点定理的结论里是 $(a,b)$，Cantor 定理里 $\delta$ 在 $\forall x',x''$ 之前）；</p>
+  <p>② <strong>3 分钟</strong>：默写零点定理区间套证明的骨架（三步：构造 $[a_n,b_n]$ 保持左负右正；长度 $\to0$ 套出 $\xi$；连续 + 保号夹出 $f(\xi)=0$；可以不写细节，但「不变量」「$b_n-a_n=\frac{b-a}{2^{n-1}}\to0$」「保号性」「$\xi\ne a,b$」四个关键步必须在）；</p>
+  <p>③ <strong>60 秒</strong>：默写库存清单五条（有界 / 最值 / 零点·介值 / 一致连续 / 可积）+ 每条配一个开区间（或缺条件）反例。</p>
+  <p><strong>过关标准</strong>：连续两天全对才算过。做不到就回到对应小节重读，再默。</p>
+</div>
+
+<h2>§10 六方向自测卡</h2>
+
+<div class="selftest">
+  <h3>合上书，拿张白纸，默写以下六项</h3>
+  <div class="st-item">
+    <p class="st-q"><em>=（它是什么）</em>　默写四大定理（有界 / 最值 / 零点·介值 / Cantor）的完整陈述。</p>
+    <details><summary>对照</summary><p>共同条件：$f$ 在 $[a,b]$ 连续。① $\exists M,\ |f|\le M$；② $\exists\xi_1,\xi_2\in[a,b]$，$f(\xi_2)\le f(x)\le f(\xi_1)$；③ $f(a)f(b)&lt;0\Rightarrow\exists\xi\in(a,b),f(\xi)=0$（介值：$\mu$ 严格介于端点值之间 ⟹ $\exists\xi,f(\xi)=\mu$）；④ $\forall\varepsilon&gt;0\ \exists\delta&gt;0\ \forall x',x''\in[a,b]:|x'-x''|&lt;\delta\Rightarrow|f(x')-f(x'')|&lt;\varepsilon$。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>←（什么带来它）</em>　四大定理靠什么证出来？为什么它们在 $\mathbb{Q}$ 上不成立？</p>
+    <details><summary>对照</summary><p>靠第 1 章六定理家族（实数完备性的等价面孔）：零点定理用区间套（二分套出 $\xi$），有界性与 Cantor 用 B–W（反证抽子列），Cantor 也可用有限覆盖。$\mathbb{Q}$ 上 $x^2-2$ 端点异号却无零点——所有定理的最终根基是「实数没有洞」。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>→（它带来什么）</em>　说出四大定理的四条主要出口。</p>
+    <details><summary>对照</summary><p>① 方程根的存在性（零点定理三件套）；② 不动点与「$f(\xi)=\cdots$」类（移项造 $g$，工具八雏形）；③ 最值论证结构（内部驻点 + 边界分片，15 届题二）；④ 一致连续 → 振幅控制 → 第 7 章 Riemann 可积。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>∈（实例）</em>　各默一个：零点定理的、最值定理的、Cantor 定理的应用实例。</p>
+    <details><summary>对照</summary><p>零点：$x^3+x-1=0$ 在 $(0,1)$ 有根（$f(0)=-1,f(1)=1$）。最值：15 届题二，$f=x^2+(y^2+z^2)(1-x)^3$ 在有界闭柱体上最小值存在且 $=0$。Cantor：闭区间上连续函数必有统一 $\delta$；反面对照 $\frac1x$ 于 $(0,1)$ 不一致连续。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>≠（区分）</em>　$\sup f$ 与 $\max f$ 的区别？「介值性」与「连续」谁强？</p>
+    <details><summary>对照</summary><p>有界时 $\sup f$ 永远存在（第 1 章公理），$\max f$ 要「连续 + 闭区间」才保证存在（定理 2 正是证「sup 被取到」）；$\max$ 存在 ⟺ $\sup$ 被取到。介值性比连续弱：$\sin\frac1x$（补 $f(0)=0$）有介值性却不连续——定理 3 不可逆。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>（为何要有它）</em>　「从负到正必过零」画个图不就完了，为什么要四大定理？</p>
+    <details><summary>对照</summary><p>图在 $\mathbb{Q}$ 世界就失效（$x^2-2$ 跳过 $\sqrt2$）——直觉依赖「实数无缝」，必须把它说清并用上。竞赛卷面上，「故最大值存在」「故 $E$ 是区间」这类步骤分全靠四定理兜底；它们同时是积分理论（第 7 章）与最值论证（15 届题二）的地基。</p></details>
+  </div>
+</div>
+
+<div class="net box" data-tag="间隔复习安排">
+  <p><strong>1 天后</strong>：重做六方向自测卡（不翻书）+ 翻卡快测第二轮；<strong>3 天后</strong>：重做变式 1、变式 2 与真题节选的梯子问题 + 计时默写②③；<strong>1 周后</strong>：默写零点定理证明全文（例 1 卷面格式），确认翻卡全部「会了」。</p>
+  <p><strong>与前后章的联结</strong>：本章是<strong>第 7 章</strong>（Riemann 可积性）的直接地基——「连续 ⟹ 可积」的证明就是「有界 + 一致连续（Cantor）压振幅」；与<strong>第 2 章</strong>的接口是一致连续概念（那里建立概念，本章兑现成 Cantor 定理）；与<strong>第 1 章</strong>的接口是区间套与 B–W 两台机床。第 14 届题六（20 分）在 $[0,+\infty)$ 上考一致连续——Cantor 用不了的场子，正是检验你是否真懂「闭」字分量的地方。</p>
+</div>
+
+<div class="chapnav">
+  <span><a href="ch03.html">← 第 3 章 · 单调有界与递推数列</a></span>
+  <span><a href="index.html">首页</a></span>
+  <span><a href="ch05.html">第 5 章 · 微分中值定理家族与辅助函数构造术 →</a></span>
+</div>
+
+</div>
+
+<script src="assets/quiz.js"></script>
+<script>
+/* §9.5 翻卡数据 */
+registerQuiz("ch04-drill", [
+  { q: "四大定理的共同条件是什么？一句话各说什么？", a: "「$f$ 在 $[a,b]$ 连续」。①有界 $|f|\\le M$；②取到 $\\max,\\min$；③端点异号必有零点（介值：中间值全取）；④一致连续（一把 $\\delta$ 管全院）。" },
+  { q: "零点定理完整陈述？", a: "$f\\in C[a,b]$，$f(a)f(b)&lt;0$ ⟹ $\\exists\\,\\xi\\in(a,b),\\ f(\\xi)=0$。结论里是开区间——异号保证 $\\xi$ 不是端点。" },
+  { q: "$f(a)f(b)>0$ 能推出无零点吗？", a: "不能。$f(x)=x^2-1$ 于 $[-2,2]$：端点同为 $+3$，$\\pm1$ 都是零点。零点定理只是充分条件。" },
+  { q: "$\\frac1x$ 在 $(0,1)$ 上破坏了库存清单的哪几件？", a: "有界、最值（最大值缺席）、一致连续、可积——四件全漏。缺「闭」的典型后果。" },
+  { q: "$f(x)=x$ 在 $(0,1)$ 上破坏了哪一件？", a: "最值：$\\sup=1,\\inf=0$ 都够不着。有界、介值、一致连续都幸存——反例要精确到件。" },
+  { q: "证「$\\exists\\xi,\\ f(\\xi)=\\xi$」的标准动作？", a: "造 $g(x)=f(x)-x$；值域 $\\subseteq[a,b]$ 给 $g(a)\\ge0\\ge g(b)$；先收编等号，再零点定理。" },
+  { q: "区间套法证零点定理的三步骨架？", a: "①二分构造 $[a_n,b_n]$ 保持「左负右正」不变量；②$b_n-a_n=\\frac{b-a}{2^{n-1}}\\to0$ 套出唯一 $\\xi$；③连续 + 保号夹出 $f(\\xi)=0$。" },
+  { q: "B–W 法证有界性定理的反证四步？", a: "无界 ⟹ 取 $|f(x_n)|>n$；B–W 抽 $x_{n_k}\\to x_0\\in[a,b]$；连续 ⟹ $f(x_{n_k})\\to f(x_0)$ 有界；与 $>n_k\\to\\infty$ 对撞。" },
+  { q: "最值定理证明里，$\\frac{1}{M-f(x)}$ 是干什么的？", a: "若 $M=\\sup f$ 取不到，它连续 ⟹（定理 1）有界；但 sup 压不下给出 $f(x_n)>M-\\frac1n$ 即它 $>n$，矛盾。——sup 被取到，max 成立。" },
+  { q: "Cantor 定理的「一致」强在哪？开区间反例？", a: "$\\delta$ 只依赖 $\\varepsilon$、与点无关。$\\frac1x$ 于 $(0,1)$：靠 $0$ 越抖越快，统一 $\\delta$ 不存在。" }
+]);
+</script>
+
+<script>
+/* §3.1 区间套探索器 */
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  function f(x) { return x * x * x + x - 1; }
+  var ROOT = 0.6823278038280193;
+  var nS = document.getElementById("bis-n");
+  var zS = document.getElementById("bis-z");
+  var out = document.getElementById("bis-out");
+  var gSvg = document.getElementById("bis-svg-global");
+  var zSvg = document.getElementById("bis-svg-zoom");
+  var n = 0;
+
+  function mk(svg, tag, attrs) {
+    var el = document.createElementNS(NS, tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    svg.appendChild(el);
+    return el;
+  }
+  function txt(svg, x, y, s, attrs) {
+    var t = mk(svg, "text", attrs || {});
+    t.setAttribute("x", x); t.setAttribute("y", y);
+    t.textContent = s;
+    return t;
+  }
+
+  /* ---------- 全局图（静态部分画一次） ---------- */
+  function gpx(x) { return 60 + x * 630; }          /* x∈[0,1] → [60,690] */
+  function gpy(y) { return 112.5 - y * 76; }        /* y∈[-1.15,1.15] → [200,25] */
+  /* y = 0 线 */
+  mk(gSvg, "line", { x1: 40, y1: gpy(0), x2: 700, y2: gpy(0), stroke: "#8a8175", "stroke-width": 1.2, "stroke-dasharray": "3 4" });
+  txt(gSvg, 36, gpy(0) + 4, "y = 0", { "font-size": 12, fill: "#5c554b", "text-anchor": "end" });
+  /* x 轴刻度 */
+  [[0, "0"], [0.5, "0.5"], [1, "1"]].forEach(function (tk) {
+    mk(gSvg, "line", { x1: gpx(tk[0]), y1: 206, x2: gpx(tk[0]), y2: 214, stroke: "#2b2620", "stroke-width": 1.5 });
+    txt(gSvg, gpx(tk[0]), 228, tk[1], { "font-size": 13, fill: "#2b2620", "text-anchor": "middle" });
+  });
+  mk(gSvg, "line", { x1: 40, y1: 210, x2: 700, y2: 210, stroke: "#2b2620", "stroke-width": 1.5 });
+  /* 曲线 */
+  var d = "";
+  for (var i = 0; i <= 120; i++) {
+    var x = i / 120;
+    d += (i === 0 ? "M " : " L ") + gpx(x).toFixed(1) + " " + gpy(f(x)).toFixed(1);
+  }
+  mk(gSvg, "path", { d: d, fill: "none", stroke: "#1d4ed8", "stroke-width": 2.6 });
+  /* 真根 ξ（灰虚线） */
+  mk(gSvg, "line", { x1: gpx(ROOT), y1: 30, x2: gpx(ROOT), y2: 205, stroke: "#8a8175", "stroke-width": 1.4, "stroke-dasharray": "5 4" });
+  txt(gSvg, gpx(ROOT) + 8, 44, "ξ ≈ 0.682328", { "font-size": 12, fill: "#5c554b" });
+  /* 动态元素 */
+  var band = mk(gSvg, "rect", { y: 28, height: 178, fill: "#b45309", opacity: 0.15 });
+  var bandLab = txt(gSvg, 0, 22, "", { "font-size": 11.5, fill: "#b45309", "text-anchor": "middle", "font-weight": "bold" });
+  var la = mk(gSvg, "line", { y1: 30, y2: 205, stroke: "#be123c", "stroke-width": 2.4 });
+  var lb = mk(gSvg, "line", { y1: 30, y2: 205, stroke: "#15803d", "stroke-width": 2.4 });
+  var lc = mk(gSvg, "line", { y1: 96, y2: 205, stroke: "#7c3aed", "stroke-width": 1.6, "stroke-dasharray": "4 3" });
+
+  /* ---------- 放大图（每次重画） ---------- */
+  function drawZoom(c, h, a, b) {
+    zSvg.innerHTML = "";
+    var x0 = c - h, x1 = c + h;
+    function zx(x) { return 45 + (x - x0) / (x1 - x0) * 640; }
+    var y0 = f(x0), y1 = f(x1), dy = (y1 - y0) * 0.15;
+    var ya = y0 - dy, yb = y1 + dy;
+    function zy(y) { return 165 - (y - ya) / (yb - ya) * 140; }
+    /* 边框与标题 */
+    mk(zSvg, "rect", { x: 45, y: 20, width: 640, height: 150, fill: "none", stroke: "#e3ddd2", "stroke-width": 1 });
+    txt(zSvg, 48, 14, "放大镜：窗口 = 当前中点 ± " + h.toExponential(1), { "font-size": 11.5, fill: "#5c554b" });
+    /* y = 0 线 */
+    if (0 >= ya && 0 <= yb) {
+      mk(zSvg, "line", { x1: 45, y1: zy(0), x2: 685, y2: zy(0), stroke: "#8a8175", "stroke-width": 1.1, "stroke-dasharray": "3 4" });
+      txt(zSvg, 42, zy(0) + 4, "y = 0", { "font-size": 11, fill: "#5c554b", "text-anchor": "end" });
+    }
+    /* 曲线（局部） */
+    var dz = "";
+    for (var i = 0; i <= 80; i++) {
+      var x = x0 + (x1 - x0) * i / 80;
+      dz += (i === 0 ? "M " : " L ") + zx(x).toFixed(1) + " " + zy(f(x)).toFixed(1);
+    }
+    mk(zSvg, "path", { d: dz, fill: "none", stroke: "#1d4ed8", "stroke-width": 2.4 });
+    /* 端点竖线 */
+    mk(zSvg, "line", { x1: zx(a), y1: 20, x2: zx(a), y2: 170, stroke: "#be123c", "stroke-width": 2.2 });
+    txt(zSvg, zx(a), 184, "a_n", { "font-size": 11.5, fill: "#be123c", "text-anchor": "middle" });
+    mk(zSvg, "line", { x1: zx(b), y1: 20, x2: zx(b), y2: 170, stroke: "#15803d", "stroke-width": 2.2 });
+    txt(zSvg, zx(b), 184, "b_n", { "font-size": 11.5, fill: "#15803d", "text-anchor": "middle" });
+    /* 根 */
+    mk(zSvg, "line", { x1: zx(ROOT), y1: 20, x2: zx(ROOT), y2: 170, stroke: "#5c554b", "stroke-width": 1.2, "stroke-dasharray": "5 4" });
+    txt(zSvg, zx(ROOT), 32, "ξ", { "font-size": 12, fill: "#5c554b", "text-anchor": "middle", "font-weight": "bold" });
+  }
+
+  function fmt(v) { return Math.abs(v) < 0.01 ? v.toExponential(2) : v.toFixed(4); }
+
+  function update() {
+    var z = parseInt(zS.value, 10);
+    var a = 0, b = 1;
+    for (var i = 0; i < n; i++) {
+      var c0 = (a + b) / 2;
+      if (f(c0) > 0) b = c0; else a = c0;
+    }
+    var c = (a + b) / 2, len = b - a, err = len / 2;
+    band.setAttribute("x", gpx(a));
+    band.setAttribute("width", Math.max(gpx(b) - gpx(a), 1.4));
+    bandLab.setAttribute("x", Math.min(Math.max((gpx(a) + gpx(b)) / 2, 60), 660));
+    bandLab.textContent = n === 0 ? "初始区间 [0, 1]" : "[a_n, b_n]";
+    la.setAttribute("x1", gpx(a)); la.setAttribute("x2", gpx(a));
+    lb.setAttribute("x1", gpx(b)); lb.setAttribute("x2", gpx(b));
+    lc.setAttribute("x1", gpx(c)); lc.setAttribute("x2", gpx(c));
+    drawZoom(c, 0.55 * Math.pow(0.5, z), a, b);
+    var lenS = n >= 8 ? len.toExponential(3) : len.toFixed(8);
+    var errS = n >= 8 ? err.toExponential(2) : err.toFixed(8);
+    out.innerHTML = "第 " + n + " 步：[a_n, b_n] = [" + a.toFixed(8) + ", " + b.toFixed(8) + "]" +
+      "（长度 = 2^(-" + n + ") = " + lenS + "）<br>" +
+      "f(a_n) ≈ " + fmt(f(a)) + "（&lt;0，红线），f(b_n) ≈ " + fmt(f(b)) + "（&gt;0，绿线）——不变量仍在<br>" +
+      "<strong>中点 c = " + c.toFixed(8) + "，与真根 ξ 的距离 ≤ " + errS + "</strong>";
+  }
+
+  document.getElementById("bis-step").addEventListener("click", function () {
+    if (n < 14) { n++; nS.value = n; update(); }
+  });
+  document.getElementById("bis-reset").addEventListener("click", function () {
+    n = 0; nS.value = 0; zS.value = 0; update();
+  });
+  nS.addEventListener("input", function () { n = parseInt(nS.value, 10); update(); });
+  zS.addEventListener("input", update);
+  update();
+})();
+</script>
+
+</body>
+</html>

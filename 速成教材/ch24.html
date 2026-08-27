@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>解几第 3 章 · 切平面、切锥面与截面：解几最高频家族 —— 数学A速成讲义</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+<div class="wrap">
+
+<div class="bookbar">
+  <span><a href="index.html">← 返回首页</a></span>
+  <span>卷三 · 解析几何 · 第 3 章</span>
+</div>
+
+<div class="chapter-kicker">CHAPTER 3 · 解析几何</div>
+<h1>切平面、切锥面与截面：解几最高频家族</h1>
+
+<div class="exam box" data-tag="本章导览">
+  <p><strong>这一章在整张卷子上的位置</strong>：解析几何在数学 A 卷上雷打不动是<strong>题一、15 分</strong>（全卷 15%）。本章主角"切平面—切锥面—极平面"是这 15 分里<strong>最高频的家族</strong>：第 16 届题一（15 分）整题考它——双叶双曲面 $S:x^2+y^2-z^2=-2$ 以 $M_0(1,1,-1)$ 为顶点的切锥面 $\Sigma$，以及切点所在平面 $\pi:x+y+z+2=0$；第 11、15 届的"相切轨迹"题、第 14 届的"直线在曲面上"题、第 12 届的"直线与球面求交"题，用的也是同一套语言。</p>
+  <p><strong>学完你能</strong>：① 默写切平面与法线的两种公式（隐式梯度版 + 显式偏导版）并逐符号朗读；② 用"设切点法"三步推出任意外点的极平面；③ 把"直线与二次曲面的位置关系"翻译成一元二次判别式三态（含 $A=0$、$A=B=C=0$ 两个特例）；④ 复刻第 16 届题一的完整解答（15 分书写量）；⑤ 一句话判型平面截二次曲面的截面曲线。</p>
+  <p><strong>前置</strong>：卷三第 1 章的直线参数方程与消参、第 2 章的二次曲面标准形；高数的偏导数。</p>
+</div>
+
+<h2>§1 开场谜题：手电筒照球，影子边界是什么？</h2>
+
+<div class="hook box" data-tag="开场谜题">
+  <p>夜里拿手电筒照一个皮球，墙上出现一团影子。问：<strong>影子的边界是什么曲线？</strong></p>
+  <p>脱口而出的答案是"圆"。不一定——墙斜一点是椭圆，再斜下去能斜出抛物线、双曲线。影子边界是一条<strong>圆锥曲线</strong>：从点光源出发、擦着球面过去的那些光线织成一个圆锥面，墙（一张平面）截它，截痕当然是圆锥曲线。这不稀奇。</p>
+  <p>真正反直觉的是下一句：<strong>这些擦边光线与球面的切点，在球面上连成一条空间曲线——它居然整个躺在一个平面上。</strong>光源往前挪、往侧移，这条曲线跟着变，但无论什么位置，全体切点始终被一只看不见的平面"压"得死死的，一个也跑不出去。</p>
+  <p>这不是巧合。那只平面叫外点的<strong>极平面</strong>；那束切线织成的锥面叫<strong>切锥面</strong>。把皮球换成双叶双曲面 $S:x^2+y^2-z^2=-2$，光源放在 $M_0(1,1,-1)$，问"切点们躺在哪只平面上"——这就是第 16 届题一，15 分。答案 $x+y+z+2=0$ 是天上掉下来的吗？一点也不。本章把这只看不见的平面从手电筒底下请出来，变成你手上的三步流程。</p>
+</div>
+
+<h2>§2 先看见它：压扁成椭圆看 2D 版</h2>
+
+<div class="vision box" data-tag="直觉与图像">
+  <p>把三维场景压成平面图：球变成椭圆，点光源 $P$ 在椭圆外，恰好有<strong>两条</strong>"擦边"光线，分别切椭圆于 $T_1$、$T_2$。盯住两个事实：</p>
+  <ul>
+    <li><strong>切点连线 $T_1T_2$ 永远是一条直线</strong>（蓝虚线）——$P$ 爱怎么挪怎么挪，它只是在转动，从不弯曲。它叫 $P$ 的<strong>极线</strong>；</li>
+    <li>两条光线延长打到墙上，墙上两个端点就是 2D 版的"影子边界"——升回三维，这两个点膨胀成墙与锥面交出的<strong>一整条圆锥曲线</strong>。</li>
+  </ul>
+  <p>三维词典：椭圆 → 曲面；两条切线 → 切锥面；极线 → <strong>极平面</strong>；切点连线 → 切触曲线（它 = 极平面 ∩ 曲面）。第 16 届题一 = 把"球"换成双叶双曲面、把"墙"换成"切点自己躺的那只平面"。</p>
+</div>
+
+<figure>
+<svg viewBox="0 0 720 345" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="手电筒照球的 2D 版：极线与影子边界">
+  <!-- 墙 -->
+  <line x1="90" y1="30" x2="90" y2="320" stroke="#2b2620" stroke-width="3"/>
+  <text x="96" y="338" font-size="13" fill="#2b2620">墙</text>
+  <!-- 影子边界 -->
+  <line x1="90" y1="126" x2="90" y2="298" stroke="#be123c" stroke-width="7"/>
+  <text x="102" y="218" font-size="12.5" fill="#be123c">影子边界（三维版：一条圆锥曲线）</text>
+  <!-- 球（椭圆） -->
+  <ellipse cx="230" cy="160" rx="110" ry="70" fill="#ecf8f5" stroke="#0f766e" stroke-width="2.5"/>
+  <text x="150" y="272" font-size="13" fill="#0f766e">球（压成椭圆看）</text>
+  <!-- 光线的延长段（虚） -->
+  <line x1="303" y1="108" x2="90" y2="126" stroke="#b45309" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <line x1="230" y1="230" x2="90" y2="298" stroke="#b45309" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <!-- 两条切线（实） -->
+  <line x1="520" y1="90" x2="303" y2="108" stroke="#b45309" stroke-width="2.5"/>
+  <line x1="520" y1="90" x2="230" y2="230" stroke="#b45309" stroke-width="2.5"/>
+  <text x="400" y="62" font-size="12.5" fill="#b45309">擦着球面过去的光线（切线）</text>
+  <!-- 切点连线（极线） -->
+  <line x1="303" y1="108" x2="230" y2="230" stroke="#1d4ed8" stroke-width="2" stroke-dasharray="7 5"/>
+  <text x="108" y="66" font-size="12.5" fill="#1d4ed8">切点连线 = 极线（三维版：极平面上的圆）</text>
+  <!-- 切点 -->
+  <circle cx="303" cy="108" r="4.5" fill="#1d4ed8"/>
+  <text x="312" y="104" font-size="12.5" fill="#1d4ed8">T₁</text>
+  <circle cx="230" cy="230" r="4.5" fill="#1d4ed8"/>
+  <text x="240" y="244" font-size="12.5" fill="#1d4ed8">T₂</text>
+  <!-- 点光源 -->
+  <circle cx="520" cy="90" r="8" fill="#b45309"/>
+  <polygon points="536,80 556,90 536,100" fill="#b45309"/>
+  <text x="532" y="72" font-size="13" fill="#b45309" font-weight="bold">点光源 P</text>
+</svg>
+<figcaption>无论 $P$ 怎么动，切点连线 $T_1T_2$ 始终是一条直线——三维里它升级为一张平面（极平面），切点在曲面上画出的圆整个躺在那张平面上。</figcaption>
+</figure>
+
+<h2>§3 精确定义：逐符号朗读</h2>
+
+<div class="def">
+  <p class="def-title">定义 1（曲面的切平面与法线）</p>
+  <p>设曲面 $S:F(x,y,z)=0$，$P_0=(x_0,y_0,z_0)\in S$，$F$ 在 $P_0$ 可微且 $\nabla F(P_0)\ne\mathbf 0$。$S$ 在 $P_0$ 处的<strong>切平面</strong>为
+  $$F_x(P_0)(x-x_0)+F_y(P_0)(y-y_0)+F_z(P_0)(z-z_0)=0,\quad\text{即}\quad \nabla F(P_0)\cdot(X-P_0)=0;$$
+  <strong>法线</strong>为过 $P_0$、以 $\nabla F(P_0)$ 为方向向量的直线：$\dfrac{x-x_0}{F_x(P_0)}=\dfrac{y-y_0}{F_y(P_0)}=\dfrac{z-z_0}{F_z(P_0)}$（某分母为零时，对应坐标恒等于 $P_0$ 的该坐标）。</p>
+  <p><strong>梯度凭什么当法向量？</strong>任取 $S$ 上过 $P_0$ 的曲线 $\mathbf r(t)$，有 $F(\mathbf r(t))\equiv0$，对 $t$ 求导得 $\nabla F(P_0)\cdot\mathbf r'(t_0)=0$——<strong>曲面上每条曲线的切向都垂直于同一个向量 $\nabla F(P_0)$</strong>。全体切向铺满一张平面，那张平面就是切平面。这就是"切线全体铺满切平面"的全部依据。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定义 1′（显式曲面的版本）</p>
+  <p>$z=f(x,y)$ 在 $(x_0,y_0)$ 处的切平面：
+  $$z-z_0=f_x(x_0,y_0)(x-x_0)+f_y(x_0,y_0)(y-y_0).$$
+  （取 $F=z-f(x,y)$，则 $\nabla F=(-f_x,-f_y,1)$，代回定义 1 即得。法线方向是 $(f_x,f_y,-1)$，别丢了 $z$ 分量的 $-1$。）</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定义 2（空间曲线的切线与法平面）</p>
+  <p>曲线 $\mathbf r(t)=(x(t),y(t),z(t))$ 在 $t_0$ 处 $\mathbf r'(t_0)\ne\mathbf0$。<strong>切线</strong>：$X=\mathbf r(t_0)+s\,\mathbf r'(t_0)$；<strong>法平面</strong>：$\mathbf r'(t_0)\cdot\bigl(X-\mathbf r(t_0)\bigr)=0$。</p>
+  <p>附注：两曲面交线 $F=0\cap G=0$ 的切向量 $=\nabla F\times\nabla G$（它既要躺在 $F$ 的切平面里、又要躺在 $G$ 的切平面里）。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定义 3（切锥面与极平面，本章主角）</p>
+  <p>设 $Q$ 为二次曲面，$P$ 为曲面外一点。从 $P$ 向 $Q$ 引的所有切线构成以 $P$ 为顶点的锥面，叫<strong>切锥面</strong>；全体切点的轨迹（切触曲线）躺在一张平面上，这张平面叫 $P$ 关于 $Q$ 的<strong>极平面</strong>。</p>
+  <p><strong>极平面公式（替换法则）</strong>：二次曲面方程里 $x^2\to x_0x$，$y^2\to y_0y$，$z^2\to z_0z$（交叉项 $xy\to\frac{x_0y+xy_0}{2}$，一次项 $x\to\frac{x+x_0}{2}$），把切点坐标换成外点坐标，即得极平面。</p>
+  <p><strong>以 16 届题一为例推导一遍</strong>。$S:x^2+y^2-z^2=-2$，切点 $T=(x_0,y_0,z_0)$ 处 $\nabla F=(2x_0,2y_0,-2z_0)$，切平面
+  $$x_0(x-x_0)+y_0(y-y_0)-z_0(z-z_0)=0\ \xRightarrow{\ x_0^2+y_0^2-z_0^2=-2\ }\ xx_0+yy_0-zz_0=-2.$$
+  $M_0T$ 是切线 $\iff M_0$ 在 $T$ 的切平面上（二次曲面上，过切点的切线恰好铺满切平面）。代入 $M_0(1,1,-1)$：
+  $$x_0\cdot1+y_0\cdot1-z_0\cdot(-1)=-2\ \Longrightarrow\ x_0+y_0+z_0=-2,$$
+  即极平面 $\pi:x+y+z+2=0$。<strong>这就是 16 届题一第 (2) 问的答案，三行推完。</strong></p>
+</div>
+
+<div class="calc box" data-tag="特例：球面的切平面（垂径）">
+  <p>球面 $x^2+y^2+z^2=R^2$ 在 $(x_0,y_0,z_0)$ 处：切平面 $xx_0+yy_0+zz_0=R^2$，法向量 $=(x_0,y_0,z_0)=$ 半径方向。所以<strong>球面切平面垂直于过切点的半径，法线必过球心</strong>——平面几何"垂径定理"的空间原版。涉及球的"相切"题（11 届、15 届题一），这句话经常一步顶半页计算。</p>
+</div>
+
+<div class="calc box" data-tag="直线与二次曲面的位置关系：判别式三态">
+  <p>直线 $X(t)=P+t\mathbf v$ 代入二次曲面 $Q$，整理得关于 $t$ 的方程
+  $$At^2+Bt+C=0\quad(A=\text{方向 }\mathbf v\text{ 的二次项}).$$
+  $A\ne0$ 时：<strong>$\Delta>0$ 两个交点（割线）；$\Delta=0$ 相切（$t$ 为重根，直线是切线）；$\Delta&lt;0$ 相离</strong>。<br>
+  $A=0$（渐近方向）：退成一次方程，至多一个交点；<br>
+  $A=B=C=0$：恒等式——<strong>整条直线躺在曲面上</strong>（直母线，14 届题一用的就是这条；第 4 章直纹面的主场）。</p>
+</div>
+
+<div class="calc box" data-tag="截面曲线判型（一句话版）">
+  <p>平面 $\pi$ 截二次曲面得一条圆锥曲线（截痕）。判型看"锥面退化"：取过曲面中心且与 $\pi$ 平行的平面 $\pi_0$，看它与<strong>渐近锥面</strong>的相对位置——$\pi_0$ 与锥面交于<strong>两条母线</strong> ⟹ 截痕是<strong>双曲线</strong>；$\pi_0$ 与锥面<strong>相切</strong>（一条母线）⟹ <strong>抛物线</strong>；$\pi_0$ 与锥面<strong>只交于顶点</strong> ⟹ <strong>椭圆</strong>。（锥面本身退化时截痕可以是两条直线。严格判型用第 2 章的主轴化，这里先建立几何图像。）</p>
+</div>
+
+<div class="symbol box" data-tag="逐符号朗读">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$\nabla F(P_0)=(F_x,F_y,F_z)\big|_{P_0}$</td><td>"$F$ 在 $P_0$ 的梯度——三个偏导拼成的向量"</td><td>曲面的"垂直方向检测仪"：它就是法向量</td></tr>
+    <tr><td>$\nabla F(P_0)\cdot(X-P_0)=0$</td><td>"梯度点乘（动点减 $P_0$）等于零"</td><td>切平面：与法向量垂直的方向全体</td></tr>
+    <tr><td>$\dfrac{x-x_0}{F_x}=\dfrac{y-y_0}{F_y}=\dfrac{z-z_0}{F_z}$</td><td>"三个分式连等"</td><td>法线：过 $P_0$ 沿梯度方向的直线</td></tr>
+    <tr><td>$x^2\to x_0x$，$z^2\to z_0z$</td><td>"平方项劈开，一半给切点（或外点）"</td><td>替换法则：从曲面方程秒写切平面 / 极平面</td></tr>
+    <tr><td>$x_0+y_0+z_0=-2$</td><td>"切点坐标满足的一个线性方程"</td><td>极平面：全体切点被压进的那只平面（16 届题一的 $\pi$）</td></tr>
+    <tr><td>$\Delta=B^2-4AC$</td><td>"代入后一元二次方程的判别式"</td><td>位置关系裁判：$&gt;0$ 相交，$=0$ 相切，$&lt;0$ 相离</td></tr>
+  </table>
+  <p>注意切平面与极平面的<strong>对偶</strong>：同一个替换法则，把"切点坐标"留在原地、代入"外点坐标"，切平面就变成极平面。点在面上时，外点=切点，两者重合——所以切锥面问题一律要求顶点在曲面外。</p>
+</div>
+
+<div class="think">
+  <p>别急着往下翻。<strong>拿张纸，用替换法则写出球面 $x^2+y^2+z^2=R^2$ 关于外点 $(0,0,d)$（$d&gt;R&gt;0$）的极平面，并说出切点轨迹的形状和大小。</strong>写完再展开对照。</p>
+  <details class="answer">
+    <summary>对照：球面的极平面</summary>
+    <p>切点 $(x_0,y_0,z_0)$ 处切平面 $xx_0+yy_0+zz_0=R^2$，过 $(0,0,d)$ 得 $dz_0=R^2$，即 $z_0=\dfrac{R^2}{d}$。极平面是水平面 $z=\dfrac{R^2}{d}$。</p>
+    <p>因 $\frac{R^2}{d}&lt;R$，它截球面得一个<strong>圆</strong>（切触圆），半径 $\sqrt{R^2-\frac{R^4}{d^2}}=\dfrac{R\sqrt{d^2-R^2}}{d}$。手电筒照球时，影子边界的"发源地"就是这个圆；$d\to+\infty$ 时 $z\to0$，圆趋向大圆——远光源的影子边界接近半个球的大小。</p>
+  </details>
+</div>
+
+<h3>3.1 亲手摸一摸切锥面与极平面（交互）</h3>
+
+<div class="widget" id="cone-widget">
+  <p class="w-title">▶ 切锥面与极平面探索器（2D 类比版）：拖动 P，看极线怎么转</p>
+  <p class="w-row">椭圆代表曲面，<strong style="color:#b45309">橙色点 P</strong> 是外点（直接用鼠标/手指拖动它），<strong style="color:#1d4ed8">蓝虚线</strong>是极线（两个切点的连线），<strong style="color:#b45309">橙线</strong>是两条切线。滑杆改变椭圆胖瘦（半轴 $b$）。</p>
+  <div class="w-row"><label>椭圆半轴 b（0.7–1.7，a 固定为 2）</label>
+  <input type="range" id="conew-b" min="0.7" max="1.7" step="0.05" value="1.2"></div>
+  <svg id="conew-svg" viewBox="0 0 720 410" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div class="w-verdict" id="conew-out">加载中……（需要启用 JavaScript）</div>
+  <p class="w-row" style="font-size:0.88em;color:#5c554b">玩出这三个体验再往下走：<strong>①</strong> 把 P 拖到远处角落——极线越来越贴近一条过中心的直线（三维版：远光源的切触圆趋向大圆）；<strong>②</strong> 让 P 绕椭圆转一圈——切点此消彼长，极线跟着转动，但它<strong>永远是一条直线</strong>；<strong>③</strong> 把 P 拖进椭圆内部——切线消失，再拖到椭圆上——两条切线并成一条。三维版：外部点 → 切锥面，面上点 → 切平面，内部点 → 什么也没有（所以 16 届题一的 $M_0$ 必须在 $S$ 外）。</p>
+</div>
+
+<h2>§4 翻译轨：三个标准动作 + 一间练功房</h2>
+
+<p>本章语言在卷面上只有三种用法。练成反射，解几题一的一半分数就有了着落。</p>
+
+<div class="trans box" data-tag="动作一：求切平面与法线（梯度法）">
+  <p><strong>题面</strong>："求曲面 … 在点 $P_0$ 处的切平面（与法线）"。</p>
+  <p><strong>翻译</strong>：固定四步——① <strong>先验证 $P_0$ 在曲面上</strong>（代入方程，顺手验证 $\nabla F(P_0)\ne\mathbf0$）；② 算 $\nabla F$ 并代入 $P_0$；③ 写 $\nabla F(P_0)\cdot(X-P_0)=0$ 并化简；④ 法线 $=P_0+t\nabla F(P_0)$。</p>
+  <p>二次曲面走高速：直接用<strong>替换法则</strong>写切平面（$x^2\to x_0x$ 等），再展开核对一次。第 ① 步看似废话，点不在面上时整题归零——它是免费的分。</p>
+</div>
+
+<div class="trans box" data-tag="动作二：求切点轨迹 / 极平面（设切点法）">
+  <p><strong>题面</strong>："从点 $P$ 向曲面引切线，求切点轨迹 / 切点所在平面"（16 届题一第 (2) 问原句："求 $S^+\cap\Sigma$ 所在平面 $\pi$ 的方程"）。</p>
+  <p><strong>翻译</strong>：三步——① <strong>设切点</strong> $T=(x_0,y_0,z_0)$（切点是"设"出来的未知数，不是"解"出来的）；② 写 $T$ 处切平面（替换法则）；③ 代入外点 $P$，得到 $T$ 满足的<strong>线性方程</strong>——那就是极平面，切点轨迹 = 极平面 ∩ 曲面。</p>
+  <p>若题目进一步要<strong>切锥面的方程</strong>，走动作三：方向判别式 $=0$ 再消参（见真题节选官方解答第 (1) 问）。</p>
+</div>
+
+<div class="trans box" data-tag="动作三：直线与曲面的位置关系（代入 + 判别式）">
+  <p><strong>题面</strong>："直线与曲面相切 / 求交点 / 判断位置关系"（16 届题一第 (1) 问、14 届题一、12 届题一）。</p>
+  <p><strong>翻译</strong>：直线参数式 $X(t)=P+t\mathbf v$ 代入曲面方程，整理成 $At^2+Bt+C=0$：</p>
+  <p>相切 $\iff\Delta=0$（重根）；相交两点 $\iff\Delta>0$；相离 $\iff\Delta&lt;0$；<strong>直线整条在曲面上 $\iff A=B=C=0$</strong>（14 届题一求直母线就是这么干的）。</p>
+  <p>球面情形可以绕道秒杀：相切 $\iff$ 球心到直线距离 $=R$；点在面上时相切 $\iff$ 方向 $\perp$ 半径（垂径）。</p>
+</div>
+
+<h3>4.4 翻译练功房：像学语言一样，大量互译</h3>
+
+<p>下面 8 句，先全部写在纸上，再逐条展开对照。每条不超过 1 分钟。</p>
+
+<div class="trans box" data-tag="互译 8 句">
+  <p><strong>T1</strong>　自然→符号："曲面 $F(x,y,z)=0$ 在 $P_0$ 处的切平面。"</p>
+  <details class="answer"><summary>对照</summary><p>$\nabla F(P_0)\cdot(X-P_0)=0$。<strong>易错</strong>：动笔前不验证 $P_0\in S$；$\nabla F(P_0)=\mathbf0$ 处（奇点）没有切平面，公式失效。</p></details>
+  <p><strong>T2</strong>　自然→符号："$z=f(x,y)$ 在 $(x_0,y_0)$ 处的切平面。"</p>
+  <details class="answer"><summary>对照</summary><p>$z-z_0=f_x(x_0,y_0)(x-x_0)+f_y(x_0,y_0)(y-y_0)$。<strong>易错</strong>：整理成 $f_x x+f_y y-z=\cdots$ 时把 $z$ 的系数写成 $1$——它是 $-1$。</p></details>
+  <p><strong>T3</strong>　符号→自然："$xx_0+yy_0-zz_0=-2$" 是什么？</p>
+  <details class="answer"><summary>对照</summary><p>双叶双曲面 $x^2+y^2-z^2=-2$ 在切点 $(x_0,y_0,z_0)$ 处的切平面（替换法则：$x^2\to x_0x$ 等）。同一个式子，把 $(x_0,y_0,z_0)$ 换成外点坐标、把 $(x,y,z)$ 当切点，就变成<strong>极平面</strong>——一式两用，看主语是谁。</p></details>
+  <p><strong>T4</strong>　自然→符号："直线 $L$ 与二次曲面 $S$ 相切。"</p>
+  <details class="answer"><summary>对照</summary><p>$L$ 的参数式代入 $S$ 得 $At^2+Bt+C=0$，相切 $\iff\Delta=B^2-4AC=0$（$t$ 为重根）。<strong>易错</strong>：写成 $\Delta\ge0$——那是"有交点"，包含相交两点。</p></details>
+  <p><strong>T5</strong>　自然→符号："从外点 $P=(2,2,2)$ 向椭球面 $\frac{x^2}{4}+y^2+z^2=1$ 引切线，切点 $(x_0,y_0,z_0)$ 满足什么？"</p>
+  <details class="answer"><summary>对照</summary><p>切平面 $\frac{xx_0}{4}+y_0y+z_0z=1$ 过 $P$：$\frac{2x_0}{4}+2y_0+2z_0=1$，即 $x_0+4y_0+4z_0=2$（极平面）。<strong>关键</strong>：结果必须是关于 $(x_0,y_0,z_0)$ 的<strong>线性</strong>方程——算出二次的就是代错了地方。</p></details>
+  <p><strong>T6</strong>　判断（说理由）："顶点 $P$ 落在曲面上时，'以 $P$ 为顶点的切锥面'变成什么？"</p>
+  <details class="answer"><summary>对照</summary><p>退化成 $P$ 点处的切平面本身——此时极平面 $=$ 切平面，从 $P$ 出发与曲面相切的直线恰好铺满切平面。所以"切锥面"这个词隐含着<strong>顶点在曲面外</strong>；16 届题一的 $M_0(1,1,-1)$ 满足 $1+1-1=1\ne-2$，确实在 $S$ 外。</p></details>
+  <p><strong>T7</strong>　找坑：写出 $S:x^2+y^2-z^2=-2$ 在点 $(1,1,2)$ 处的切平面，并指出两种典型错法。</p>
+  <details class="answer"><summary>对照</summary><p>先验证：$1+1-4=-2$ ✓ 在面上。替换法则：$x+y-2z=-2$，即 $x+y-2z+2=0$。<strong>坑一</strong>：$z$ 项符号写错，得 $x+y+2z=-2$（曲面方程里 $z^2$ 带负号，替换后仍带负号）；<strong>坑二</strong>：不验证点在面上就套公式。</p></details>
+  <p><strong>T8</strong>　符号→自然 + 追问：联立 "$x_0^2+y_0^2-z_0^2=-2$ 与 $x_0+y_0+z_0=-2$" 表示什么几何对象？</p>
+  <details class="answer"><summary>对照</summary><p>16 届题一的切点轨迹：曲面 $S$ 与极平面 $\pi$ 的交线（一条圆锥曲线），即 $S^+\cap\Sigma$ 所在的曲线。追问答案：这正是"切锥面与曲面的切触曲线"——它躺在平面上，就是开场谜题里"影子边界的发源地"。</p></details>
+</div>
+
+<h2>§5 类型识别：什么信号在召唤本章</h2>
+
+<div class="recog box" data-tag="识别反射表">
+  <table>
+    <tr><th>题面信号</th><th>反射</th></tr>
+    <tr><td>"求 … 的切平面 / 法线"</td><td>梯度法四步：验证在面上 → 算 $\nabla F$ → 点乘公式 → 法线参数式</td></tr>
+    <tr><td>"$z=f(x,y)$ 的切平面"</td><td>偏导版本 $z-z_0=f_x\Delta x+f_y\Delta y$（$z$ 项系数 $-1$）</td></tr>
+    <tr><td>"从 $P$ 引曲面的切线 / 切线全体 / 切锥面 / 切点轨迹"</td><td>设切点法：设 $T$ → 写切平面 → 代入 $P$ → 极平面；要锥面方程走判别式 + 消参</td></tr>
+    <tr><td>"直线与曲面相交 / 相切 / 相离"</td><td>参数式代入 → $At^2+Bt+C=0$ → 判别式三态</td></tr>
+    <tr><td>"直线在曲面上 / 求直母线 / 直纹"</td><td>代入后要求对一切 $t$ 成立：$A=B=C=0$（14 届题一；通向第 4 章）</td></tr>
+    <tr><td>"截面是什么曲线 / 判型"</td><td>过中心平行截面 vs 渐近锥：两条母线 → 双曲线，相切 → 抛物线，只交顶点 → 椭圆</td></tr>
+    <tr><td>"球面 … 相切"</td><td>垂径最快：切平面 $\perp$ 半径；球心距 $=$ 半径和/差；球心到直线距离 $=R$</td></tr>
+  </table>
+</div>
+
+<h2>§6 考法定位：它藏在哪里、值多少分</h2>
+
+<div class="exam box" data-tag="考法定位">
+  <table>
+    <tr><th>出处</th><th>题号</th><th>本章语言扮演什么角色</th><th>分值权重</th></tr>
+    <tr><td>第 16 届（2024）</td><td>题一</td><td>本章全家桶：判别式相切条件 + 消参求切锥面（(1) 问），设切点法 / 极平面（(2) 问）</td><td>15 分（整题直接命中）</td></tr>
+    <tr><td>第 15 届（2023）</td><td>题一</td><td>"球面与定直线相切" $\iff$ 球心到直线距离 $=$ 半径（相切的距离语言）</td><td>15 分</td></tr>
+    <tr><td>第 14 届（2022）</td><td>题一</td><td>"直线落在单叶双曲面上" $\iff$ 代入后 $A=B=C=0$（位置关系的极端情形）</td><td>15 分</td></tr>
+    <tr><td>第 12 届（2020）</td><td>题一</td><td>直线与单位球面求交点：代入参数式解一元二次（球极投影构型）</td><td>15 分中约 12 分</td></tr>
+    <tr><td>第 11 届（2019）</td><td>题一</td><td>动球与两嵌套球均相切 $\iff$ 球心距 $=$ 半径和/差（相切的距离语言）</td><td>15 分</td></tr>
+  </table>
+  <p><strong>规律</strong>：解几雷打不动是题一、15 分；近七届里<strong>至少五届</strong>直接落在"直线与曲面的位置关系 / 相切"这条主线上，第 16 届更是把本章两个主角（切锥面、极平面）整题端出。切平面家族的三个动作（梯度、设切点、代入判别式）是解几 15 分里性价比最高的储备——它们同时也是第 2 章（二次曲面判型）和第 4 章（直纹面）的入场语言。</p>
+</div>
+
+<h2>§7 关系网：一只手电筒照出的家族</h2>
+
+<p>本章地图：<span style="color:#b45309">三角形</span>是来源与动机，<span style="color:#1d4ed8">圆角矩形</span>是公理与定义，<span style="color:#15803d">矩形</span>是定理，<span style="color:#7c3aed">六边形</span>是方法动作，<span style="color:#0f766e">椭圆</span>是应用出口。顺着箭头走一遍，就是本章的全部逻辑。</p>
+
+<figure>
+<svg viewBox="0 0 720 540" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="切平面家族关系网地图">
+  <defs>
+    <marker id="arr24" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+
+  <!-- 图例 -->
+  <polygon points="30,16 22,30 38,30" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5"/>
+  <text x="44" y="28" font-size="11.5" fill="#5c554b">来源·动机</text>
+  <rect x="116" y="17" width="22" height="13" rx="6.5" fill="#eef3fe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="144" y="28" font-size="11.5" fill="#5c554b">公理·定义</text>
+  <rect x="222" y="17" width="22" height="13" fill="#ecf8f0" stroke="#15803d" stroke-width="1.5"/>
+  <text x="250" y="28" font-size="11.5" fill="#5c554b">定理</text>
+  <polygon points="300,23.5 306,16 320,16 326,23.5 320,31 306,31" fill="#f4effd" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="332" y="28" font-size="11.5" fill="#5c554b">方法·动作</text>
+  <ellipse cx="420" cy="23.5" rx="12" ry="7" fill="#ecf8f5" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="438" y="28" font-size="11.5" fill="#5c554b">应用·出口</text>
+
+  <!-- 来源（三角） -->
+  <polygon points="100,56 48,120 152,120" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="100" y="92" font-size="12.5" fill="#7a4a12" text-anchor="middle" font-weight="bold">手电筒照球</text>
+  <text x="100" y="108" font-size="10.5" fill="#7a4a12" text-anchor="middle">影子边界在哪</text>
+
+  <!-- 来源 → 定义 -->
+  <line x1="158" y1="88" x2="216" y2="88" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr24)"/>
+  <text x="187" y="78" font-size="11" fill="#5c554b" text-anchor="middle">逼出工具</text>
+
+  <!-- 定义（圆角矩形） -->
+  <rect x="222" y="58" width="200" height="60" rx="30" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="322" y="84" font-size="14" fill="#1d4ed8" text-anchor="middle" font-weight="bold">梯度 ∇F = 法向量</text>
+  <text x="322" y="103" font-size="10.5" fill="#1d4ed8" text-anchor="middle">曲面上所有切向都 ⊥ 它</text>
+
+  <!-- 定义 → 三定理 -->
+  <polyline points="270,118 270,146 110,146 110,168" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr24)"/>
+  <text x="188" y="140" font-size="11" fill="#5c554b" text-anchor="middle">展开成公式</text>
+  <line x1="330" y1="118" x2="346" y2="168" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr24)"/>
+  <text x="352" y="152" font-size="11" fill="#5c554b">外点代入</text>
+  <polyline points="400,118 400,146 610,146 610,168" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr24)"/>
+  <text x="505" y="140" font-size="11" fill="#5c554b" text-anchor="middle">直线代入曲面</text>
+
+  <!-- 三定理（矩形） -->
+  <rect x="30" y="168" width="160" height="64" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="110" y="194" font-size="12.5" fill="#15803d" text-anchor="middle" font-weight="bold">切平面公式</text>
+  <text x="110" y="212" font-size="10.5" fill="#4a7c59" text-anchor="middle">替换法则 x²→x₀x</text>
+  <rect x="280" y="168" width="160" height="64" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="360" y="194" font-size="12.5" fill="#15803d" text-anchor="middle" font-weight="bold">极平面</text>
+  <text x="360" y="212" font-size="10.5" fill="#4a7c59" text-anchor="middle">切点全体共面</text>
+  <rect x="530" y="168" width="160" height="64" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="610" y="194" font-size="12.5" fill="#15803d" text-anchor="middle" font-weight="bold">判别式三态</text>
+  <text x="610" y="212" font-size="10.5" fill="#4a7c59" text-anchor="middle">Δ&gt;0 · Δ=0 · Δ&lt;0</text>
+
+  <!-- 切平面 → 极平面 -->
+  <line x1="190" y1="200" x2="280" y2="200" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr24)"/>
+  <text x="235" y="192" font-size="10.5" fill="#5c554b" text-anchor="middle">设切点+代入外点</text>
+
+  <!-- 定理 → 三方法 -->
+  <polyline points="330,232 330,264 150,264 150,290" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr24)"/>
+  <text x="238" y="258" font-size="11" fill="#5c554b" text-anchor="middle">压缩成动作</text>
+  <polyline points="600,232 600,264 400,264 400,290" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr24)"/>
+  <text x="500" y="258" font-size="11" fill="#5c554b" text-anchor="middle">三态即位置关系</text>
+  <line x1="655" y1="232" x2="640" y2="290" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr24)"/>
+  <text x="662" y="264" font-size="10.5" fill="#5c554b">看母线</text>
+
+  <!-- 三方法（六边形） -->
+  <polygon points="72,320 98,290 202,290 228,320 202,350 98,350" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="150" y="316" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">设切点法</text>
+  <text x="150" y="334" font-size="10.5" fill="#6a55a3" text-anchor="middle">切点是设出来的</text>
+  <polygon points="322,320 348,290 452,290 478,320 452,350 348,350" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="400" y="316" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">代入+判别式</text>
+  <text x="400" y="334" font-size="10.5" fill="#6a55a3" text-anchor="middle">相交 / 相切 / 相离</text>
+  <polygon points="542,320 568,290 672,290 698,320 672,350 568,350" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="620" y="316" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">截面判型</text>
+  <text x="620" y="334" font-size="10.5" fill="#6a55a3" text-anchor="middle">平行面 vs 渐近锥</text>
+
+  <!-- 方法 → 出口 -->
+  <line x1="150" y1="350" x2="150" y2="428" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr24)"/>
+  <text x="160" y="392" font-size="10.5" fill="#5c554b">同一动作</text>
+  <polyline points="172,350 172,386 372,386 372,428" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr24)"/>
+  <text x="272" y="380" font-size="10.5" fill="#5c554b" text-anchor="middle">第(2)问：设切点</text>
+  <line x1="412" y1="350" x2="406" y2="428" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr24)"/>
+  <text x="420" y="392" font-size="10.5" fill="#5c554b">第(1)问：判别式</text>
+  <line x1="620" y1="350" x2="620" y2="428" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr24)"/>
+  <text x="630" y="392" font-size="10.5" fill="#5c554b">判型同源</text>
+
+  <!-- 三出口（椭圆） -->
+  <ellipse cx="150" cy="462" rx="118" ry="34" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="150" y="458" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">高考切线的三维升级</text>
+  <text x="150" y="476" font-size="10.5" fill="#3d7a70" text-anchor="middle">同一个设切点法</text>
+  <ellipse cx="400" cy="462" rx="118" ry="34" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="400" y="458" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">第 16 届题一（15 分）</text>
+  <text x="400" y="476" font-size="10.5" fill="#3d7a70" text-anchor="middle">切锥面+极平面整题</text>
+  <ellipse cx="620" cy="462" rx="95" ry="34" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="620" y="458" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">第 2 章 · 判型</text>
+  <text x="620" y="476" font-size="10.5" fill="#3d7a70" text-anchor="middle">截面曲线分类</text>
+</svg>
+<figcaption>本章地图：一只手电筒逼出"梯度=法向量"，它一头长出切平面与极平面，一头长出判别式三态，最后在 16 届题一会师。</figcaption>
+</figure>
+
+<div class="net box" data-tag="画面感锚点（记这些，不记条文）">
+  <table>
+    <tr><th>节点</th><th>一句话画面</th><th>擅长场景</th></tr>
+    <tr><td>梯度 = 法向量</td><td>曲面上所有曲线的切向都躲着它走</td><td>一切切平面问题的总开关</td></tr>
+    <tr><td>切平面公式</td><td>平方项劈开，一半给切点</td><td>"求 … 的切平面/法线"（3–5 分步骤）</td></tr>
+    <tr><td>极平面</td><td>外点一按，全体切点被压进一只平面</td><td>"切点轨迹 / 切线全体"（16 届题一 (2) 问）</td></tr>
+    <tr><td>判别式三态</td><td>一元二次的 Δ 是位置关系的裁判</td><td>相交/相切/相离；切锥面方程（16 届 (1) 问）</td></tr>
+    <tr><td>设切点法</td><td>切点是设出来的未知数，不是解出来的</td><td>一切"切点满足什么条件"的问题</td></tr>
+    <tr><td>代入 + 判别式</td><td>直线参数式一进曲面，几何变代数</td><td>直线与曲面的一切位置关系题</td></tr>
+    <tr><td>截面判型</td><td>平行截面与渐近锥比高矮：两条母线 / 相切 / 相离</td><td>"截面是什么曲线"（第 2 章判型的几何版）</td></tr>
+  </table>
+  <p><strong>和你已学知识的焊接点</strong>：① 卷三第 1 章的直线参数方程与消参——本章动作三的两条腿；② 卷三第 2 章的二次曲面标准形与渐近锥——截面判型的严格版在那里；③ 高考里"设切点求圆锥曲线切线"的老动作——本章设切点法就是它的三维原版，一字未改。</p>
+</div>
+
+<h2>§8 计算示范：先看真人怎么想，再看卷面怎么写</h2>
+
+<p>老规矩，每道例题分两层：<strong>按总纲拆解</strong>（程序怎么跑）+ <strong>卷面书写</strong>（分步给分格式）。</p>
+
+<h3>例 1 · 梯度法求切平面与法线（约 5 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>"求切平面与法线"——$P\land Q$ 两小问，各套一次定义 1；这是<strong>计算型</strong>题，骨架由公式直接给出，没有证明负担。但公式有一条前置条件：$P_0\in S$ 且 $\nabla F(P_0)\ne\mathbf0$。<strong>先验证、再动笔</strong>——程序第 3 步的库存检查。</p>
+  <p><span class="stage">【盘点】</span>$F=\dfrac{x^2}{4}+y^2+z^2-1$ 的产出：① 多项式，处处可微；② $\nabla F=\left(\dfrac x2,\ 2y,\ 2z\right)$；③ 代入 $P_0=\left(1,\frac12,\frac{\sqrt2}{2}\right)$：$\frac14+\frac14+\frac12=1$ ✓ 在面上；④ $\nabla F(P_0)=\left(\frac12,\ 1,\ \sqrt2\right)\ne\mathbf0$ ✓ 非奇点。</p>
+  <p><span class="stage">【会师】</span>切平面 $\Longleftarrow$ 梯度点乘公式（<strong>工具六 · 划归</strong>：直接套定理）；法线 $\Longleftarrow$ 过 $P_0$ 以梯度为方向。交叉验证：替换法则 $\frac{xx_0}{4}+yy_0+zz_0=1$ 应得同一平面——两条独立路线对答案（<strong>工具三 · 特殊化侦察</strong>的精神：能核对就核对）。</p>
+  <p><span class="stage">【定型】</span>卷面四行：验证在面上 → 算梯度 → 写切平面 → 写法线。方向向量乘非零常数不变直线，取整更好看。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 梯度法四步</strong>：验证在面上（+ 非奇点）→ 算 $\nabla F(P_0)$ → $\nabla F(P_0)\cdot(X-P_0)=0$ → 法线 $X=P_0+t\nabla F(P_0)$。第 ① 步是免费的分，也是唯一的"陷阱位"。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 1</strong>　求椭球面 $\dfrac{x^2}{4}+y^2+z^2=1$ 在点 $P_0=\left(1,\dfrac12,\dfrac{\sqrt2}{2}\right)$ 处的切平面与法线。</p>
+  <hr>
+  <p class="proof-line"><strong>解</strong>　设 $F(x,y,z)=\dfrac{x^2}{4}+y^2+z^2-1$。</p>
+  <p class="proof-line"><strong>①（验证）</strong>　$\dfrac{1^2}{4}+\left(\dfrac12\right)^2+\left(\dfrac{\sqrt2}{2}\right)^2=\dfrac14+\dfrac14+\dfrac12=1$，故 $P_0$ 在曲面上。<span class="step-score">（1 分）</span></p>
+  <p class="proof-line"><strong>②（算梯度）</strong>　$\nabla F=\left(\dfrac{x}{2},\ 2y,\ 2z\right)$，$\nabla F(P_0)=\left(\dfrac12,\ 1,\ \sqrt2\right)\ne\mathbf0$，即为切平面的法向量。<span class="step-score">（2 分）</span></p>
+  <p class="proof-line"><strong>③（切平面）</strong>　$\dfrac12(x-1)+1\cdot\left(y-\dfrac12\right)+\sqrt2\left(z-\dfrac{\sqrt2}{2}\right)=0$，化简得
+  $$x+2y+2\sqrt2\,z=4.$$
+  <span class="step-score">（4 分）</span></p>
+  <p class="proof-line"><strong>④（法线）</strong>　$\dfrac{x-1}{1}=\dfrac{y-\frac12}{2}=\dfrac{z-\frac{\sqrt2}{2}}{2\sqrt2}$（方向取 $(1,2,2\sqrt2)$，与梯度成比例）。<span class="step-score">（5 分）</span></p>
+  <p class="aside">书写点评：核对——替换法则 $\frac{x\cdot1}{4}+y\cdot\frac12+z\cdot\frac{\sqrt2}{2}=1$，两边乘 4 正是 $x+2y+2\sqrt2z=4$ ✓。③是核心分点；只写答案不写"由梯度得法向量"，过程分可能打折。</p>
+</div>
+
+<h3>例 2 · 设切点法求极平面（16 届题一第 (2) 问的裸版，约 8 分书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>"求切点满足的方程"——结论的逻辑形态是<strong>$\forall$ 型</strong>：任取切点 $T$，证 $T$ 满足一个线性方程。查拆目标总表：任取 + 全程一般化处理。它同时也是"轨迹"题的标准程序：设动点 → 翻译它满足的全部条件 → 消参。</p>
+  <p><span class="stage">【盘点】</span>"$T(x_0,y_0,z_0)$ 是从 $M_0$ 引向 $S$ 的切线的切点"产出两条：① $T\in S$：$x_0^2+y_0^2-z_0^2=-2$；② 直线 $M_0T$ 与 $S$ 在 $T$ <strong>相切</strong>。关键翻译：② $\iff$ $M_0$ 在 $T$ 的切平面上（二次曲面上，过切点的切线恰好铺满切平面）。</p>
+  <p><span class="stage">【会师】</span>倒推链：要 $T$ 的线性方程 $\Longleftarrow$ 把"相切"翻译成 $M_0\in$ 切平面 $\Longleftarrow$ 写出 $T$ 处切平面（例 1 同款替换法则）$\Longleftarrow$ 库存①化简。链条闭合，每环都是库存货。</p>
+  <div class="scratch">
+    <p>为什么"相切 $\iff M_0$ 在切平面上"？把 $M_0T$ 参数化 $X(t)=T+t(M_0-T)$ 代入 $S$：常数项 $=F(T)=0$；一次项系数 $=2\bigl[x_0(1-x_0)+y_0(1-y_0)-z_0(-1-z_0)\bigr]=2(x_0+y_0+z_0+2)$——它正比于"切平面方程在 $M_0$ 处的值"。相切（$t=0$ 为重根）$\iff$ 一次项 $=0$ $\iff$ $M_0$ 满足切平面方程。<strong>判别式路线与极平面路线在这里会师</strong>——16 届官方解答第 (2) 问用的就是这条重根语言。</p>
+  </div>
+  <p><span class="stage">【定型】</span>卷面四步：设切点 → 用在面上 → 写切平面 → 代入 $M_0$。与官方解答逐行对得上。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 设切点法</strong>：切点是"设"出来的未知数 $(x_0,y_0,z_0)$，不是"解"出来的。高考里"设切点求切线"的动作，在三维一字不改——它只是把切平面方程里的两个主语（切点 / 外点）各就各位。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 2</strong>　设双叶双曲面 $S:x^2+y^2-z^2=-2$，$M_0(1,1,-1)$。从 $M_0$ 向 $S$ 引切线，求全体切点满足的平面方程。</p>
+  <hr>
+  <p class="proof-line"><strong>解</strong>　设 $T(x_0,y_0,z_0)$ 是从 $M_0$ 引向 $S$ 的任一切线的切点。</p>
+  <p class="proof-line"><strong>①</strong>　$T\in S$：$x_0^2+y_0^2-z_0^2=-2$。<span class="step-score">（1 分）</span></p>
+  <p class="proof-line"><strong>②</strong>　记 $F=x^2+y^2-z^2+2$，$\nabla F(T)=(2x_0,\,2y_0,\,-2z_0)\ne\mathbf0$，故 $T$ 处切平面为
+  $$x_0(x-x_0)+y_0(y-y_0)-z_0(z-z_0)=0.$$<span class="step-score">（3 分）</span></p>
+  <p class="proof-line"><strong>③</strong>　用①化简（$x_0^2+y_0^2-z_0^2=-2$），切平面即
+  $$xx_0+yy_0-zz_0=-2.$$<span class="step-score">（5 分）</span></p>
+  <p class="proof-line"><strong>④</strong>　$M_0T$ 与 $S$ 相切 $\iff$ $M_0(1,1,-1)$ 在该切平面上，代入得
+  $$x_0\cdot1+y_0\cdot1-z_0\cdot(-1)=-2,\quad\text{即}\quad x_0+y_0+z_0=-2.$$<span class="step-score">（7 分）</span></p>
+  <p class="proof-line"><strong>⑤</strong>　故全体切点满足 $x+y+z+2=0$——这就是极平面 $\pi$（即 16 届题一的 $S^+\cap\Sigma$ 所在平面）。<span class="step-score">（8 分）</span></p>
+  <p class="aside">书写点评：④的"$\iff$"依据见拆解框草稿纸（二次曲面上，过切点的切线铺满切平面）。若题目再要求切锥面 $\Sigma$ 的方程，走动作三：方向判别式 $=0$ 再消参——完整过程见 §9 真题节选的官方解答。</p>
+</div>
+
+<h2>§9 配套题目</h2>
+
+<p>铁律：<strong>先写在纸上，写到写不动再展开答案</strong>。模仿题照例 1、例 2 的卷面格式写；变式题先问自己"第一反应是什么"。</p>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 1</span>求曲面 $z=x^2+2y^2$ 在点 $(1,1,3)$ 处的切平面与法线。</p>
+  <details class="answer">
+    <summary>参考答案（约 5 分书写量）</summary>
+    <p><strong>① 验证</strong>：$1^2+2\cdot1^2=3$ ✓ 点在面上（1 分）。</p>
+    <p><strong>②</strong> $f_x=2x$，$f_y=4y$，在 $(1,1)$ 处 $f_x=2$，$f_y=4$（2 分）。</p>
+    <p><strong>③ 切平面</strong>：$z-3=2(x-1)+4(y-1)$，即 $2x+4y-z=3$（4 分）。</p>
+    <p><strong>④ 法线</strong>：$\dfrac{x-1}{2}=\dfrac{y-1}{4}=\dfrac{z-3}{-1}$（5 分）。</p>
+    <p><strong>易错点</strong>：法线方向是 $(f_x,f_y,-1)=(2,4,-1)$，不是 $(2,4,1)$——$z$ 分量的 $-1$ 来自 $F=z-f(x,y)$ 的 $\nabla F=(-f_x,-f_y,1)$。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 2</span>求球面 $x^2+y^2+z^2=6$ 在点 $(1,-1,2)$ 处的切平面与法线，并说明法线有什么几何特征。</p>
+  <details class="answer">
+    <summary>参考答案（约 5 分书写量）</summary>
+    <p><strong>① 验证</strong>：$1+1+4=6$ ✓（1 分）。</p>
+    <p><strong>②</strong> $\nabla F=(2x,2y,2z)$，代入得 $(2,-2,4)$（2 分）。</p>
+    <p><strong>③ 切平面</strong>：$2(x-1)-2(y+1)+4(z-2)=0$，即 $x-y+2z=6$（替换法则一步可得：$xx_0+yy_0+zz_0=6$）（4 分）。</p>
+    <p><strong>④ 法线</strong>：$\dfrac{x-1}{1}=\dfrac{y+1}{-1}=\dfrac{z-2}{2}$，即过原点、方向 $(1,-1,2)$ 的直线（5 分）。</p>
+    <p><strong>几何特征</strong>：法线就是半径所在的直线，<strong>必过球心</strong>——切平面 $\perp$ 半径（垂径定理的空间版）。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 1</span>从点 $P(0,0,5)$ 向球面 $x^2+y^2+z^2=9$ 引切线。求：（i）切点轨迹；（ii）切线长 $|PT|$（$T$ 为切点）。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：（i）设切点法：球面极平面 $=$ 替换法则 + 代入外点；（ii）垂径：$OT\perp PT$，直角三角形解决。</p>
+    <p><strong>（i）</strong> 设切点 $T(x_0,y_0,z_0)$，切平面 $xx_0+yy_0+zz_0=9$。$PT$ 相切 $\iff$ $P$ 在切平面上：$5z_0=9$，即 $z_0=\dfrac95$。故切点轨迹是平面 $z=\dfrac95$ 截球面所得的<strong>圆</strong>：
+    $$x^2+y^2=9-\frac{81}{25}=\frac{144}{25},\quad z=\frac95,$$
+    圆心 $\left(0,0,\frac95\right)$，半径 $\dfrac{12}{5}$。</p>
+    <p><strong>（ii）</strong> 由垂径 $OT\perp PT$，$|PT|=\sqrt{|OP|^2-R^2}=\sqrt{25-9}=4$。</p>
+    <p><strong>点评</strong>：（i）就是手电筒谜题里"切点共面"的球面版；（ii）的 $\sqrt{|OP|^2-R^2}$ 是球面切线长的万能公式。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 2</span>已知直线 $L:x=1+t,\ y=2+2t,\ z=3+\lambda t$ 过球面 $x^2+y^2+z^2=14$ 上的点 $(1,2,3)$。问 $\lambda$ 为何值时 $L$ 与球面相切？（要求用两种方法。）</p>
+  <details class="answer">
+    <summary>参考答案</summary>
+    <p><strong>法一（代入 + 判别式）</strong>：代入球面方程：$(1+t)^2+(2+2t)^2+(3+\lambda t)^2=14$，整理得
+    $$(5+\lambda^2)t^2+(10+6\lambda)t=0$$
+    （常数项为 $0$，因为 $(1,2,3)$ 在球面上——$t=0$ 已经是一个根）。相切 $\iff$ $t=0$ 为<strong>重根</strong> $\iff$ 一次项系数 $10+6\lambda=0$，得 $\lambda=-\dfrac53$。</p>
+    <p><strong>法二（垂径）</strong>：点在球面上时，相切 $\iff$ 直线方向 $\perp$ 半径：$(1,2,\lambda)\cdot(1,2,3)=5+3\lambda=0$，得 $\lambda=-\dfrac53$。</p>
+    <p><strong>点评</strong>：点在面上时判别式条件退化为"一次项 $=0$"（$B=0$）；球面情形垂径一步秒杀。两法同答，互相印证。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv3">真题节选</span><strong>（第 16 届题一，15 分）</strong>设双叶双曲面 $S:\ x^2+y^2-z^2=-2$。记以 $M_0(1,1,-1)$ 为顶点且与 $S$ 的上半叶
+  $$S^+=\left\{(x,y,z)\in S\ \big|\ z\ge\sqrt{2}\right\}$$
+  相切的所有切线构成的锥面为 $\Sigma$。</p>
+  <p>（1）求锥面 $\Sigma$ 的方程；（2）求 $S^+\cap\Sigma$ 所在平面 $\pi$ 的方程。</p>
+  <p>先回答三个梯子问题（写在纸上）：</p>
+  <p>（i）"所有切线构成的锥面"——为什么这批直线真的织成一个（二次）锥面？提示：方向 $(l,m,n)$ 满足的条件是二次<strong>齐次</strong>方程，而方向与 $(x-1,y-1,z+1)$ 成比例。<br>
+  （ii）切点轨迹为什么共面？提示：例 2 的设切点法——切平面方程对"切点"的依赖是线性的。<br>
+  （iii）$S^+\cap\Sigma$ 与 $\pi$ 是什么关系？锥面上落在 $S$ 上的点，什么时候正好是切点？提示：把连线代入 $S$，$t=0$ 已经是根，"相切"就是一次项系数为零。</p>
+  <details class="answer">
+    <summary>梯子参考答案</summary>
+    <p>（i）相切条件 $\Delta=0$ 是关于方向 $(l,m,n)$ 的二次齐次方程；齐次意味着它<strong>只管方向、不管大小</strong>，把 $(l,m,n)$ 换成 $(x-1,y-1,z+1)$ 立即得到动点 $(x,y,z)$ 的方程——以 $M_0$ 为顶点的二次锥面。"方向条件"与"锥面方程"是同一件东西的两种口音。</p>
+    <p>（ii）$T$ 处切平面 $xx_0+yy_0-zz_0=-2$ 对 $(x_0,y_0,z_0)$ 是线性的；"$M_0T$ 相切 $\iff$ $M_0$ 在该切平面上"代入后仍是 $T$ 的线性方程 $x_0+y_0+z_0=-2$——一个线性方程 $=$ 一只平面，全体切点被压进 $S\cap\pi$。</p>
+    <p>（iii）若 $M_1\in S^+\cap\Sigma$，连线 $M_0M_1$ 代入 $S$：$t=0$（即 $M_1$）已是根；$M_1$ 是切点 $\iff$ 重根 $\iff$ 一次项系数 $-2(x_1+y_1+z_1+2)=0$ $\iff$ $M_1\in\pi$。故 $S^+\cap\Sigma=S^+\cap\pi$——平面 $\pi$ 上的一段曲线。</p>
+  </details>
+  <details class="answer">
+    <summary>官方解答骨架（转录自第 16 届官方参考答案）</summary>
+    <p><strong>第 (1) 问</strong>　过 $M_0$、方向 $(l,m,n)$ 的直线 $L:x=1+lt,\ y=1+mt,\ z=-1+nt$ 代入 $S$ 得
+    $$(l^2+m^2-n^2)t^2+2(l+m+n)t+3=0.$$<span class="step-score">（4 分）</span></p>
+    <p>相切 $\iff$ 判别式为零：$4(l+m+n)^2-12(l^2+m^2-n^2)=0$，即
+    $$l^2+m^2-2n^2-lm-ln-mn=0.$$</p>
+    <p>以 $(l,m,n)\propto(x-1,\,y-1,\,z+1)$ 消参（上式关于 $l,m,n$ 二次齐次，直接代入）：
+    $$\Sigma:\ (x-1)^2+(y-1)^2-2(z+1)^2-(x-1)(y-1)-(x-1)(z+1)-(y-1)(z+1)=0.$$<span class="step-score">（7 分）</span></p>
+    <p><strong>第 (2) 问</strong>　设 $M_1(x_1,y_1,z_1)\in S^+\cap\Sigma$，令 $M=M_1+t\,\overrightarrow{M_0M_1}$ 参数化连线，代入 $S$ 并利用 $x_1^2+y_1^2-z_1^2=-2$ 化得：常数项为 $0$，一次项系数为 $-2(x_1+y_1+z_1+2)$。</p>
+    <p>$M_1$ 为切点 $\iff$ $t=0$ 是重根 $\iff$ 一次项系数为零 $\iff$ $x_1+y_1+z_1+2=0$，故
+    $$\pi:\ x+y+z+2=0.$$<span class="step-score">（15 分）</span></p>
+    <p><strong>复盘</strong>：第 (1) 问 $=$ 本章<strong>动作三</strong>（代入 + 判别式 + 消参，约 7 分），第 (2) 问 $=$ 例 2 的<strong>设切点法</strong>（官方用"重根 $\iff$ 一次项为零"的语言写，与"$M_0$ 在切平面上"是同一件事的两种口音，约 8 分）。15 分全部落在本章动作覆盖范围内。<em>（题目与解答骨架转录自第 16 届官方 PDF，见 <a href="真题索引/第16届_2024.md">真题索引</a>。）</em></p>
+  </details>
+</div>
+
+<h2>§9.5 熟练度训练场</h2>
+
+<p>理解只是入场券，<strong>考场上拼的是基本动作的速度</strong>。两种训练，每天 10 分钟：</p>
+
+<h3>训练一 · 翻卡快测（目标：每卡 10 秒内出答案）</h3>
+<div class="quiz" data-quiz="ch24-drill"></div>
+
+<h3>训练二 · 计时默写（写在纸上，掐表）</h3>
+<div class="calc box" data-tag="默写清单">
+  <p>① <strong>60 秒</strong>：默写切平面两个公式——隐式 $\nabla F(P_0)\cdot(X-P_0)=0$、显式 $z-z_0=f_x(x-x_0)+f_y(y-y_0)$，外加球面特例 $xx_0+yy_0+zz_0=R^2$；</p>
+  <p>② <strong>90 秒</strong>：默写极平面推导全流程（以 16 届题一为例：设切点 $T(x_0,y_0,z_0)$ → 切平面 $xx_0+yy_0-zz_0=-2$ → 代入 $M_0(1,1,-1)$ → $x_0+y_0+z_0=-2$，即 $\pi:x+y+z+2=0$）；</p>
+  <p>③ <strong>60 秒</strong>：默写判别式三态表（$\Delta&gt;0$ 相交 / $\Delta=0$ 相切 / $\Delta&lt;0$ 相离，附 $A=0$ 渐近方向、$A=B=C=0$ 直线在曲面上两个特例）。</p>
+  <p><strong>过关标准</strong>：连续两天全对才算过。做不到就回到对应小节重读，再默。</p>
+</div>
+
+<h2>§10 六方向自测卡</h2>
+
+<div class="selftest">
+  <h3>合上书，拿张白纸，默写以下六项</h3>
+  <div class="st-item">
+    <p class="st-q"><em>=（它是什么）</em>　默写切平面的定义（隐式公式 + "梯度为什么是法向量"一句话理由）与极平面的定义。</p>
+    <details><summary>对照</summary><p>切平面：$\nabla F(P_0)\cdot(X-P_0)=0$；理由：面上过 $P_0$ 的曲线 $F(\mathbf r(t))\equiv0$，求导得 $\nabla F\cdot\mathbf r'=0$，所有切向 $\perp$ 同一向量。极平面：外点 $P$ 引向二次曲面的切线之切点全体满足的线性方程（替换法则下，把切平面里的切点坐标与外点坐标对调所得）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>←（什么带来它）</em>　"切线全体铺满切平面"与"切点全体共面"各由哪句话保证？</p>
+    <details><summary>对照</summary><p>前者：$\nabla F\cdot\mathbf r'=0$（所有切向垂直同一向量，铺满一张平面）。后者：切平面方程对切点与外点的依赖都是<strong>线性</strong>的（替换法则 $x^2\to x_0x$ 两边都是一次）——代入外点，得到的是切点的线性方程。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>→（它带来什么）</em>　这套语言能直接拿下哪些真题分数？</p>
+    <details><summary>对照</summary><p>16 届题一 15 分整题（切锥面 + 极平面）；11、15 届"相切轨迹"题的距离语言；14 届"直线在曲面上"（$A=B=C=0$）；12 届"直线与球面求交"的代入消参；截面判型通向第 2 章。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>∈（实例）</em>　默写三个切平面：球面 $x^2+y^2+z^2=6$ 在 $(1,-1,2)$；椭球面 $\frac{x^2}{4}+y^2+z^2=1$ 在 $(1,\frac12,\frac{\sqrt2}{2})$；$S:x^2+y^2-z^2=-2$ 在 $(1,1,2)$。</p>
+    <details><summary>对照</summary><p>$x-y+2z=6$；$x+2y+2\sqrt2\,z=4$；$x+y-2z=-2$（即 $x+y-2z+2=0$）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>≠（区分）</em>　最易混的一对：切平面 vs 极平面；再一对：相切 vs 相交。</p>
+    <details><summary>对照</summary><p>切平面以<strong>切点</strong>为参数（每个切点一张），极平面以<strong>外点</strong>为参数（每个外点一张）；同一个替换法则，代入的角色互换；点在面上时二者重合（切锥退化为切平面）。相切 $\Delta=0$ 是<strong>重根</strong>，不是"两个很近的交点"（那是 $\Delta&gt;0$ 的相交）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>（为何要有它）</em>　为什么需要"切锥面 / 极平面"这两个对象？</p>
+    <details><summary>对照</summary><p>因为题目问的不是"一张切平面"，而是"<strong>全体</strong>切线 / <strong>全体</strong>切点"：切锥面把无穷多条切线压缩成一个方程，极平面把无穷多个切点压缩成一个线性方程。没有它们，16 届题一这种"切线全体构成什么、切点躺在哪"的问题无从下笔；手电筒影子的边界也由它们决定。</p></details>
+  </div>
+</div>
+
+<div class="net box" data-tag="间隔复习安排">
+  <p><strong>1 天后</strong>：重做六方向自测卡（不翻书）+ 翻卡快测第二轮；<strong>3 天后</strong>：重做变式 1 与真题节选的三个梯子问题 + 计时默写②③；<strong>1 周后</strong>：把 §4 动作二（设切点法）默写一遍，确认翻卡全部"会了"。</p>
+  <p>本章与上一章（二次曲面判型）合起来覆盖解几题一的两大家族；下一章《旋转曲面与直纹面》（14 届题一的直母线在那里等你）是本章"$A=B=C=0$"特例的展开。</p>
+</div>
+
+<div class="chapnav">
+  <span><a href="ch23.html">← 第 2 章 · 二次曲面：标准形、分类与主轴化</a></span>
+  <span><a href="index.html">首页</a></span>
+  <span><a href="ch25.html">第 4 章 · 旋转曲面与直纹面：直钢丝焊出的双曲面 →</a></span>
+</div>
+
+</div>
+
+<script src="assets/quiz.js"></script>
+<script>
+/* §9.5 翻卡数据 */
+registerQuiz("ch24-drill", [
+  { q: "$F(x,y,z)=0$ 在 $P_0$ 处的切平面公式？", a: "$\\nabla F(P_0)\\cdot(X-P_0)=0$。梯度就是法向量；动笔前先验证 $P_0$ 在面上。" },
+  { q: "$z=f(x,y)$ 在 $(x_0,y_0)$ 处的切平面？", a: "$z-z_0=f_x(x-x_0)+f_y(y-y_0)$。注意 $z$ 项系数是 $-1$（移项后 $f_x x+f_y y-z=\\cdots$）。" },
+  { q: "二次曲面的替换法则？", a: "$x^2\\to x_0x$，$y^2\\to y_0y$，$z^2\\to z_0z$（交叉项 $xy\\to\\frac{x_0y+xy_0}{2}$）。例：$x^2+y^2-z^2=-2$ 在 $(x_0,y_0,z_0)$ 的切平面是 $xx_0+yy_0-zz_0=-2$。" },
+  { q: "「直线与二次曲面相切」的代数翻译？", a: "参数式代入得 $At^2+Bt+C=0$，相切 $\\iff\\Delta=0$（$t$ 为重根）。别写成 $\\Delta\\ge0$。" },
+  { q: "判别式三态（$A\\ne0$ 前提）？两个特例？", a: "$\\Delta>0$ 相交两点；$\\Delta=0$ 相切；$\\Delta<0$ 相离。特例：$A=0$ 渐近方向；$A=B=C=0$ 整条直线在曲面上。" },
+  { q: "设切点法求极平面的三步？", a: "设切点 $T(x_0,y_0,z_0)$ → 写 $T$ 处切平面（替换法则）→ 代入外点 $P$，得到 $T$ 的线性方程 = 极平面。" },
+  { q: "16 届题一的极平面方程？", a: "$x+y+z+2=0$（由 $x_0+y_0+z_0=-2$ 改写主语得来）。" },
+  { q: "球面 $x^2+y^2+z^2=R^2$ 在 $(x_0,y_0,z_0)$ 的切平面？几何特征？", a: "$xx_0+yy_0+zz_0=R^2$；法向量 = 半径，即切平面 $\\perp$ 半径（垂径），法线过球心。" },
+  { q: "从 $(0,0,d)$（$d>R$）向球 $x^2+y^2+z^2=R^2$ 引切线，切点轨迹？", a: "一个圆：极平面 $z=R^2/d$ 截球所得，半径 $\\frac{R\\sqrt{d^2-R^2}}{d}$。手电筒影子的「发源地」。" },
+  { q: "外点 $P$ 落在曲面上时，切锥面退化成什么？", a: "$P$ 点的切平面本身（此时极平面 = 切平面）。所以切锥面问题都要求顶点在曲面外。" }
+]);
+</script>
+
+<script>
+/* §3.1 切锥面与极平面探索器（2D 类比版） */
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  var svg = document.getElementById("conew-svg");
+  var out = document.getElementById("conew-out");
+  var bSlider = document.getElementById("conew-b");
+  var CX = 360, CY = 205, S = 85, A = 2;
+  var P = { u: 2.7, v: 1.15 };
+  function X(u) { return CX + u * S; }
+  function Y(v) { return CY - v * S; }
+  function mk(tag, attrs) {
+    var el = document.createElementNS(NS, tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    svg.appendChild(el);
+    return el;
+  }
+  function mkText(attrs) {
+    var t = mk("text", attrs || {});
+    return t;
+  }
+  /* 元素：椭圆、极线、两条切线、两个切点、P */
+  var ell = mk("ellipse", { fill: "#fdf3e3", stroke: "#0f766e", "stroke-width": 2.5 });
+  var polar = mk("line", { stroke: "#1d4ed8", "stroke-width": 2, "stroke-dasharray": "7 5" });
+  var tan1 = mk("line", { stroke: "#b45309", "stroke-width": 2 });
+  var tan2 = mk("line", { stroke: "#b45309", "stroke-width": 2 });
+  var tp1 = mk("circle", { r: 4.5, fill: "#1d4ed8" });
+  var tp2 = mk("circle", { r: 4.5, fill: "#1d4ed8" });
+  var lab1 = mkText({ "font-size": 12, fill: "#1d4ed8" });
+  var lab2 = mkText({ "font-size": 12, fill: "#1d4ed8" });
+  var pdot = mk("circle", { r: 9, fill: "#b45309", cursor: "grab" });
+  var plab = mkText({ "font-size": 13, fill: "#b45309", "font-weight": "bold" });
+  var ellab = mkText({ "font-size": 12, fill: "#0f766e" });
+  pdot.style.touchAction = "none";
+
+  function hide(el) { el.setAttribute("display", "none"); }
+  function show(el) { el.setAttribute("display", ""); }
+
+  function update() {
+    var b = parseFloat(bSlider.value);
+    ell.setAttribute("cx", CX); ell.setAttribute("cy", CY);
+    ell.setAttribute("rx", A * S); ell.setAttribute("ry", b * S);
+    ellab.setAttribute("x", CX - A * S + 8); ellab.setAttribute("y", CY + b * S - 8);
+    ellab.textContent = "椭圆 x²/4 + y²/b² = 1（b = " + b.toFixed(2) + "）";
+    var u = P.u, v = P.v;
+    pdot.setAttribute("cx", X(u)); pdot.setAttribute("cy", Y(v));
+    plab.setAttribute("x", Math.min(X(u) + 12, 640)); plab.setAttribute("y", Y(v) - 10);
+    plab.textContent = "P(" + u.toFixed(2) + ", " + v.toFixed(2) + ")";
+
+    var g = u * u / (A * A) + v * v / (b * b);
+    var al = u / (A * A), be = v / (b * b);
+    var den = al * al + be * be;
+    if (den < 1e-12) {
+      hide(polar); hide(tan1); hide(tan2); hide(tp1); hide(tp2); hide(lab1); hide(lab2);
+      out.innerHTML = "<strong>P 在椭圆中心：极线退到无穷远处——往任意方向拖开它。</strong>";
+      return;
+    }
+    /* 极线 αx+βy=1 的可视线段 */
+    var p0x = al / den, p0y = be / den;
+    var pts = [];
+    var i, x, y;
+    var xs = [-3.95, 3.95], ys = [-2.2, 2.2];
+    for (i = 0; i < 2; i++) {
+      x = xs[i];
+      if (Math.abs(be) > 1e-12) {
+        y = (1 - al * x) / be;
+        if (y >= -2.25 && y <= 2.25) pts.push([x, y]);
+      }
+    }
+    for (i = 0; i < 2; i++) {
+      y = ys[i];
+      if (Math.abs(al) > 1e-12) {
+        x = (1 - be * y) / al;
+        if (x >= -4.0 && x <= 4.0) pts.push([x, y]);
+      }
+    }
+    if (pts.length >= 2) {
+      show(polar);
+      polar.setAttribute("x1", X(pts[0][0])); polar.setAttribute("y1", Y(pts[0][1]));
+      polar.setAttribute("x2", X(pts[1][0])); polar.setAttribute("y2", Y(pts[1][1]));
+    } else hide(polar);
+
+    /* 切点：X(t) = p0 + t·(−β, α) 代入椭圆 */
+    var A2 = be * be / (A * A) + al * al / (b * b);
+    var B2 = -2 * p0x * be / (A * A) + 2 * p0y * al / (b * b);
+    var C2 = p0x * p0x / (A * A) + p0y * p0y / (b * b) - 1;
+    var disc = B2 * B2 - 4 * A2 * C2;
+    var eq = "极线：" + al.toFixed(3) + "·x + " + be.toFixed(3) + "·y = 1";
+    if (disc > 1e-9) {
+      var sq = Math.sqrt(disc);
+      var ta = (-B2 + sq) / (2 * A2), tb = (-B2 - sq) / (2 * A2);
+      var t1x = p0x - be * ta, t1y = p0y + al * ta;
+      var t2x = p0x - be * tb, t2y = p0y + al * tb;
+      show(tan1); show(tan2); show(tp1); show(tp2); show(lab1); show(lab2);
+      tan1.setAttribute("x1", X(u)); tan1.setAttribute("y1", Y(v));
+      tan1.setAttribute("x2", X(t1x)); tan1.setAttribute("y2", Y(t1y));
+      tan2.setAttribute("x1", X(u)); tan2.setAttribute("y1", Y(v));
+      tan2.setAttribute("x2", X(t2x)); tan2.setAttribute("y2", Y(t2y));
+      tp1.setAttribute("cx", X(t1x)); tp1.setAttribute("cy", Y(t1y));
+      tp2.setAttribute("cx", X(t2x)); tp2.setAttribute("cy", Y(t2y));
+      lab1.setAttribute("x", X(t1x) + 8); lab1.setAttribute("y", Y(t1y) - 6);
+      lab2.setAttribute("x", X(t2x) + 8); lab2.setAttribute("y", Y(t2y) + 14);
+      lab1.textContent = "T₁(" + t1x.toFixed(2) + ", " + t1y.toFixed(2) + ")";
+      lab2.textContent = "T₂(" + t2x.toFixed(2) + ", " + t2y.toFixed(2) + ")";
+      out.innerHTML = '<span class="ok">P 在椭圆外</span>：两条切线切于 T₁、T₂；' + eq +
+        '。<br><strong>拖动 P——切点连线一直在动，但它永远是一条直线。</strong>三维版：切线 → 切锥面，极线 → 极平面，T₁T₂ → 切触曲线 = 极平面 ∩ 曲面。';
+    } else if (disc > -1e-7) {
+      hide(tan1); hide(tan2); hide(tp1); hide(tp2); hide(lab1); hide(lab2);
+      out.innerHTML = '<span class="no">P 在椭圆上</span>：两条切线并成一条——极线就是 P 点处的切线。' + eq +
+        '。<br><strong>三维版：顶点落在曲面上时，切锥面退化为切平面。</strong>';
+    } else {
+      hide(tan1); hide(tan2); hide(tp1); hide(tp2); hide(lab1); hide(lab2);
+      out.innerHTML = '<span class="no">P 在椭圆内</span>：过 P 的每条直线都与椭圆相交，没有切线。' + eq +
+        '（与椭圆不相交）。<br><strong>内部点没有切锥面——所以 16 届题一的 M₀ 必须在 S 外。</strong>';
+    }
+  }
+
+  /* 拖动 P */
+  var dragging = false;
+  function toMath(e) {
+    var pt = svg.createSVGPoint();
+    pt.x = e.clientX; pt.y = e.clientY;
+    var p = pt.matrixTransform(svg.getScreenCTM().inverse());
+    return { u: (p.x - CX) / S, v: (CY - p.y) / S };
+  }
+  function clamp(x, a, b) { return Math.min(Math.max(x, a), b); }
+  pdot.addEventListener("pointerdown", function (e) {
+    dragging = true;
+    pdot.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  });
+  pdot.addEventListener("pointermove", function (e) {
+    if (!dragging) return;
+    var m = toMath(e);
+    P.u = clamp(m.u, -3.9, 3.9);
+    P.v = clamp(m.v, -2.15, 2.15);
+    update();
+  });
+  pdot.addEventListener("pointerup", function () { dragging = false; });
+  pdot.addEventListener("pointercancel", function () { dragging = false; });
+  bSlider.addEventListener("input", update);
+  update();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数分第 10 章 · 多元微积分与三大公式：Green / Gauss / Stokes —— 数学A速成讲义</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+<div class="wrap">
+
+<div class="bookbar">
+  <span><a href="index.html">← 返回首页</a></span>
+  <span>卷一 · 数学分析 · 第 10 章</span>
+</div>
+
+<div class="chapter-kicker">CHAPTER 10 · 数学分析</div>
+<h1>多元微积分与三大公式：Green / Gauss / Stokes</h1>
+
+<div class="exam box" data-tag="本章导览">
+  <p><strong>这一章在整张卷子上的位置</strong>：本章是数分卷的收官章，广度最大。直接考<strong>多元函数微分学</strong>的真题屡见不鲜：第 15 届题二（15 分）整题是"驻点 + 有界闭区域最值"的候选点分类；第 13 届题二（15 分）把 $\nabla$、$\Delta$ 与"最大值点处 $\nabla w=0$"用在单位球区域上；第一型曲线积分的弧长背景则以"可求长曲线"出现在第 12 届题六（20 分）。三大公式本身在近七届（11–17 届）索引中<strong>没有直接整题</strong>——如实告诉你：它们是重积分计算、路径无关判据、解几切平面与场论语言的公共底盘，竞赛里更常以"工具"而非"主角"出场。本章值 <strong>0–15 分</strong>：碰上多元最值题就是整题，碰不上则以步骤分渗透。</p>
+  <p><strong>学完你能</strong>：① 默写三大公式及其使用三件套（闭？正向/外侧？$C^1$？）并各配一个经典应用；② 跑通 Lagrange 乘数法全流程，并说出它与"内部驻点 + 边界分片"的配合关系；③ 换元三步不走样，极坐标 $r$、球坐标 $\rho^2\sin\varphi$ 的 Jacobi 脱口而出；④ 一句话区分第一型与第二型积分，判断路径无关并记得单连通条件；⑤ 用 $\int_{\partial\Omega}\omega=\int_\Omega d\omega$ 一句话讲清三大公式为什么是"一个定理"。</p>
+  <p><strong>前置</strong>：第 4 章（连续函数最值定理）、第 7 章（Newton–Leibniz 公式与 Riemann 积分）、高数的多元微分计算功底（偏导、二重积分会算）。</p>
+</div>
+
+<h2>§1 开场谜题：操场上的风</h2>
+
+<div class="hook box" data-tag="开场谜题">
+  <p>操场上有阵风——每一点 $(x,y)$ 处有一个风速向量 $\mathbf{F}(x,y)=(P(x,y),\,Q(x,y))$。你沿操场边界跑一整圈，风有时推你、有时挡你。全程下来风对你做的功是
+  $$W=\oint_{\partial D}P\,dx+Q\,dy.$$</p>
+  <p>现在换一个从没看过你跑步的人：他哪儿也不去，只在操场<strong>内部</strong>的每一点放一个小风车，测出该点风的"打转强度"$\dfrac{\partial Q}{\partial x}-\dfrac{\partial P}{\partial y}$，然后把全操场的风车读数全部加起来。</p>
+  <p>两个互不相干的测量——一个只在边界上，一个只在内部——<strong>得到的竟然是同一个数</strong>：
+  $$\oint_{\partial D}P\,dx+Q\,dy=\iint_D\left(\frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y}\right)dx\,dy.$$</p>
+  <p>不信？本章 §8 例 1 当场兑现：$\mathbf{F}=(x^2-y,\ y^2+x)$，绕单位圆跑一圈的功，两种算法都是 $2\pi$。</p>
+  <p>凭什么？<strong>局部信息拼出整体信息，这不是巧合，是微积分的基本结构。</strong>回忆 Newton–Leibniz 公式：$f(b)-f(a)=\int_a^b f'(x)\,dx$——函数在<strong>边界</strong>（两个端点）上的取值差，等于导数在<strong>内部</strong>（整个区间）的总和。Green 公式不过把"区间"换成"平面区域"、"端点"换成"闭曲线"、"$f'$"换成"旋度"。换到空间：闭曲面包着体（Gauss）、空间曲线张着曲面（Stokes）——同一个定理的三张高维面孔。抓住这条主线，三大公式就不是三坨符号，而是<strong>一个</strong>定理。本章先把多元微分与积分的工具快速补齐，再把这三张面孔逐一认清。</p>
+</div>
+
+<h2>§2 先看见它：边界与内部的四张对照表</h2>
+
+<div class="vision box" data-tag="直觉与图像">
+  <p>盯着下面这张图：红色闭曲线是操场边界（取<strong>正向</strong>——沿着走，操场恒在左手侧），蓝色小圈是内部各点的小风车。Green 公式断言：<strong>沿边界攒下的总功 = 内部所有小风车转速的总和</strong>。内部每一点是微分信息（导数），边界一圈是整体信息（积分）——导数填平积分，这就是"微积分基本定理"在高维的长相。</p>
+</div>
+
+<figure>
+<svg viewBox="0 0 720 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Green 公式的图像：边界环流等于内部旋度总和">
+  <!-- 区域 -->
+  <path d="M 360 42 C 520 32 622 92 600 142 C 578 196 460 202 360 197 C 238 192 138 182 128 130 C 118 78 222 52 360 42 Z"
+        fill="#eef3fe" stroke="#be123c" stroke-width="2.5"/>
+  <!-- 边界正向箭头（顶部，逆时针向左） -->
+  <polygon points="370,34 352,42 370,50" fill="#be123c"/>
+  <text x="360" y="24" font-size="13" fill="#be123c" text-anchor="middle" font-weight="bold">边界 ∂D：正向走一圈（区域在左手侧）</text>
+  <!-- 内部小风车（旋度） -->
+  <g stroke="#1d4ed8" stroke-width="2" fill="none">
+    <circle cx="300" cy="92" r="12"/>
+    <polygon points="312,88 318,94 310,97" fill="#1d4ed8" stroke="none"/>
+    <circle cx="428" cy="82" r="12"/>
+    <polygon points="440,78 446,84 438,87" fill="#1d4ed8" stroke="none"/>
+    <circle cx="492" cy="140" r="12"/>
+    <polygon points="504,136 510,142 502,145" fill="#1d4ed8" stroke="none"/>
+    <circle cx="352" cy="152" r="12"/>
+    <polygon points="364,148 370,154 362,157" fill="#1d4ed8" stroke="none"/>
+    <circle cx="252" cy="140" r="12"/>
+    <polygon points="264,136 270,142 262,145" fill="#1d4ed8" stroke="none"/>
+  </g>
+  <text x="360" y="120" font-size="13" fill="#1d4ed8" text-anchor="middle">内部 D：每点一个小风车（旋度 ∂Q/∂x − ∂P/∂y）</text>
+  <!-- 底部等式 -->
+  <text x="360" y="222" font-size="13.5" fill="#2b2620" text-anchor="middle" font-weight="bold">∮_∂D Pdx + Qdy　=　∬_D（∂Q/∂x − ∂P/∂y）dA</text>
+  <text x="40" y="222" font-size="12" fill="#be123c" text-anchor="start">边界的功</text>
+  <text x="680" y="222" font-size="12" fill="#1d4ed8" text-anchor="end">内部旋度总和</text>
+</svg>
+<figcaption>Green 公式：边界的整体测量 = 内部的微分信息求和。Gauss、Stokes 是同一张图换到更高维。</figcaption>
+</figure>
+
+<p>把四兄弟排成一张表，"一个定理"就看得清清楚楚——每升一维，区域、边界、"导数"各换一张脸，但"<strong>边界上的函数信息 = 内部的导数总和</strong>"这一行骨架纹丝不动：</p>
+
+<div class="symbol box" data-tag="四兄弟对照表">
+  <table>
+    <tr><th>公式</th><th>区域 $\Omega$</th><th>边界 $\partial\Omega$</th><th>"导数"的角色由谁扮演</th></tr>
+    <tr><td>Newton–Leibniz</td><td>区间 $[a,b]$</td><td>两个端点（$b$ 正 $a$ 负）</td><td>$f'(x)$</td></tr>
+    <tr><td>Green</td><td>平面有界闭区域 $D$</td><td>闭曲线 $\partial D$（正向）</td><td>二维旋度 $\dfrac{\partial Q}{\partial x}-\dfrac{\partial P}{\partial y}$</td></tr>
+    <tr><td>Gauss</td><td>空间有界闭区域 $\Omega$</td><td>闭曲面 $\partial\Omega$（外侧）</td><td>散度 $\operatorname{div}\mathbf{F}=\dfrac{\partial P}{\partial x}+\dfrac{\partial Q}{\partial y}+\dfrac{\partial R}{\partial z}$</td></tr>
+    <tr><td>Stokes</td><td>有向曲面 $\Sigma$</td><td>空间闭曲线 $\partial\Sigma$（右手法则定向）</td><td>旋度 $\operatorname{curl}\mathbf{F}=\nabla\times\mathbf{F}$</td></tr>
+  </table>
+  <p>这张表值得抄在纸上。以后每背一次公式，先问：这一维里区域是谁、边界是谁、导数是谁——三问答完，公式自己写出来。</p>
+</div>
+
+<h2>§3 精确定义：六组工具，逐件过关</h2>
+
+<p>本章广度大，定义分六组：3.1 多元微分快速通道、3.2 隐函数、3.3 条件极值、3.4 重积分换元、3.5 线面积分、3.6 三大公式。每组只抓两件事：<strong>会用</strong>（计算的格式）与<strong>会写关键步</strong>（卷面上哪句话不能省）。</p>
+
+<h3>3.1 多元微分快速通道</h3>
+
+<div class="def">
+  <p class="def-title">定义（偏导数与全微分）</p>
+  <p>$$f_x(x_0,y_0)=\lim_{h\to0}\frac{f(x_0+h,y_0)-f(x_0,y_0)}{h}\quad(\text{把 }y\text{ 钉死，对 }x\text{ 求导}).$$</p>
+  <p>称 $f$ 在 $(x_0,y_0)$ <strong>可微</strong>，如果存在常数 $A,B$ 使
+  $$\Delta f=A\,\Delta x+B\,\Delta y+o\!\left(\sqrt{\Delta x^2+\Delta y^2}\right).$$
+  此时必有 $A=f_x,\ B=f_y$，记 $df=f_x\,dx+f_y\,dy$（全微分）。</p>
+  <p><strong>关系链</strong>：偏导连续 $\Longrightarrow$ 可微 $\Longrightarrow$ 偏导存在且 $f$ 连续。箭头都不可逆——"$f(x,y)=\frac{xy}{x^2+y^2}$（原点补 $0$）"是偏导存在但不连续的标准反例。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">链式法则（含抽象函数，竞赛常考写法）</p>
+  <p>设 $z=f(u,v)$，$u=u(x,y)$，$v=v(x,y)$ 都可微，则
+  $$\frac{\partial z}{\partial x}=f_1'\,\frac{\partial u}{\partial x}+f_2'\,\frac{\partial v}{\partial x},\qquad
+  \frac{\partial z}{\partial y}=f_1'\,\frac{\partial u}{\partial y}+f_2'\,\frac{\partial v}{\partial y},$$
+  其中 $f_1',f_2'$ 表示 $f$ 对<strong>第一、第二个槽位</strong>求偏导（代入的仍是 $u(x,y),v(x,y)$）。二阶（设 $f\in C^2$，故 $f_{12}''=f_{21}''$）：
+  $$\frac{\partial^2 z}{\partial x^2}=f_{11}''\,(u_x)^2+2f_{12}''\,u_xv_x+f_{22}''\,(v_x)^2+f_1'\,u_{xx}+f_2'\,v_{xx}.$$</p>
+  <p><strong>书写纪律</strong>：抽象 $f(u,v)$ 求二阶导时，$f_1'$ 和 $f_2'$ <strong>仍是 $(u,v)$ 的函数</strong>，再对 $x$ 求导必须重新走一遍链式法则——漏掉 $f_1'u_{xx}$ 这类"二阶尾巴"是最常见的错误。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定义（梯度、方向导数、Hessian 与极值判别）</p>
+  <p>梯度 $\nabla f=(f_x,f_y,f_z)$。沿单位向量 $\boldsymbol{l}^0=(\cos\alpha,\cos\beta,\cos\gamma)$ 的<strong>方向导数</strong>
+  $$\frac{\partial f}{\partial \boldsymbol{l}}=\nabla f\cdot\boldsymbol{l}^0=|\nabla f|\cos\theta.$$
+  故梯度方向是 $f$ <strong>增长最快</strong>的方向，$|\nabla f|$ 是最大方向导数；梯度垂直于等值面（这正是曲面 $F(x,y,z)=0$ 的法向量——解几卷的切平面全靠它）。</p>
+  <p>驻点（$\nabla f=\mathbf0$）处的判别：二元情形记 $A=f_{xx},\ B=f_{xy},\ C=f_{yy}$，
+  $$AC-B^2>0\ \begin{cases}A>0 & \text{极小}\\ A&lt;0 & \text{极大}\end{cases}\qquad AC-B^2&lt;0\ \text{不是极值（鞍点）}\qquad AC-B^2=0\ \text{判别失效}.$$
+  一般情形：Hessian 矩阵 $H=\left(\dfrac{\partial^2 f}{\partial x_i\partial x_j}\right)$ 正定 ⟹ 极小，负定 ⟹ 极大，不定 ⟹ 鞍点。（呼应第 15 届题二：该题靠驻点<strong>方程讨论</strong>判唯一性，Hessian 判别是另一条常用路线。）</p>
+</div>
+
+<div class="symbol box" data-tag="逐符号朗读">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$f_1',\ f_2'$</td><td>"$f$ 对第一个 / 第二个变量槽位求偏导"</td><td>抽象函数链式求导的记账法——槽位不认名字，只认位置</td></tr>
+    <tr><td>$\nabla f$</td><td>"$f$ 的梯度，各偏导拼成的向量"</td><td>身兼三职：最陡上升方向、方向导数发生器、等值面法向量</td></tr>
+    <tr><td>$\nabla f\cdot\boldsymbol{l}^0$</td><td>"梯度点乘单位方向"</td><td>把"沿 $\boldsymbol l$ 的变化率"折成一次点乘</td></tr>
+    <tr><td>$AC-B^2$</td><td>"Hessian 的行列式（二元）"</td><td>驻点性质的总开关：正则有极值，负则鞍点，零则闭嘴</td></tr>
+  </table>
+</div>
+
+<h3>3.2 隐函数存在定理：陈述 + 使用格式</h3>
+
+<div class="def">
+  <p class="def-title">定理（隐函数存在定理，二元版）</p>
+  <p>设 $F(x,y)$ 在 $(x_0,y_0)$ 附近 $C^1$，$F(x_0,y_0)=0$，且 $\boxed{F_y(x_0,y_0)\ne0}$。则在 $(x_0,y_0)$ 附近，方程 $F(x,y)=0$ <strong>唯一</strong>确定 $C^1$ 函数 $y=y(x)$（$y(x_0)=y_0$），且
+  $$y'(x)=-\frac{F_x}{F_y}\Big|_{(x,\,y(x))}.$$</p>
+  <p><strong>使用格式</strong>：① 验证 $F(x_0,y_0)=0$；② 验证关键偏导 $F_y(x_0,y_0)\ne0$（这一步是定理的开关，卷面必写）；③ 套求导公式。例：$x^2+y^2=1$ 在 $y_0\ne0$ 处局部确定 $y=y(x)$，$y'=-x/y$；在 $(\pm1,0)$ 处 $F_y=0$——圆在那里"竖起来了"，$y$ 确实无法表成 $x$ 的函数，定理不用的恰是定理管不了的地方。</p>
+  <p><strong>方程组情形（一句话）</strong>：两个方程 $F(x,y,u,v)=0,\ G(x,y,u,v)=0$ 在一点附近能解出 $u,v$ 作为 $x,y$ 的函数，判别条件是 Jacobi 行列式
+  $$\frac{\partial(F,G)}{\partial(u,v)}=\begin{vmatrix}F_u & F_v\\ G_u & G_v\end{vmatrix}\ne0\quad(\text{“对谁解，就对谁求 Jacobi”}).$$</p>
+</div>
+
+<h3>3.3 条件极值：Lagrange 乘数法</h3>
+
+<div class="def">
+  <p class="def-title">定理（Lagrange 乘数法）</p>
+  <p>设 $f,g$ 在约束曲面 $S=\{g=c\}$ 附近 $C^1$，且在 $S$ 上 $\nabla g\ne\mathbf0$。若 $f$ 在 $S$ 上的点 $P_0$ 处取条件极值，则存在实数 $\lambda$ 使
+  $$\nabla f(P_0)=\lambda\,\nabla g(P_0)\qquad(\text{几何：}f\text{ 的等值面与约束面在 }P_0\text{ 处相切}).$$</p>
+  <p><strong>工作流程（四步）</strong>：① <strong>存在性先行</strong>——若约束集有界闭且 $f$ 连续，最值必存在（第 4 章），先写这句；② 验 $\nabla g\ne\mathbf0$，列方程组 $\nabla f=\lambda\nabla g$ 联立 $g=c$（$n+1$ 个方程，$n+1$ 个未知量 $x_1,\dots,x_n,\lambda$）；③ 解出<strong>全部</strong>候选点；④ 比较候选点处的函数值，大者为最大、小者为最小。</p>
+  <p><strong>与有界闭区域最值问题的配合（15 届题二结构）</strong>：求 $f$ 在有界闭区域 $\overline\Omega$ 上的最值，候选点只有两类——<strong>内部</strong>：$\nabla f=\mathbf0$ 的驻点（可微函数在内部极值点处梯度必为零）；<strong>边界</strong>：$\partial\Omega$ 分片，每片用 Lagrange、代入消元或直接放缩。两类穷尽，最值必在其中。第 4 章管"存在"，本章管"怎么找"。</p>
+</div>
+
+<h3>3.4 重积分换元：Jacobi 行列式</h3>
+
+<div class="def">
+  <p class="def-title">定理（二重积分换元公式）</p>
+  <p>设变换 $x=x(u,v),\ y=y(u,v)$ 是 $D'$ 到 $D$ 的 $C^1$ 一一对应，且 Jacobi 行列式
+  $$J=\frac{\partial(x,y)}{\partial(u,v)}=\begin{vmatrix}x_u & x_v\\ y_u & y_v\end{vmatrix}\ne0\quad\text{于 }D'.$$
+  则
+  $$\iint_D f(x,y)\,dx\,dy=\iint_{D'} f\bigl(x(u,v),y(u,v)\bigr)\,\boxed{|J|}\,du\,dv.$$</p>
+  <p><strong>绝对值不能丢</strong>：面积元永远非负，$J&lt;0$ 只说明变换把定向翻了个面。三重积分同理，$J=\dfrac{\partial(x,y,z)}{\partial(u,v,w)}$。</p>
+</div>
+
+<div class="calc box" data-tag="三套标准坐标，脱口而出">
+  <p><strong>极坐标</strong> $x=r\cos\theta,\ y=r\sin\theta$：$\ J=r\ \Longrightarrow\ dx\,dy=r\,dr\,d\theta$。</p>
+  <p><strong>柱坐标</strong>（极坐标 + $z$）：$\ dxdydz=r\,dr\,d\theta\,dz$。</p>
+  <p><strong>球坐标</strong> $x=\rho\sin\varphi\cos\theta,\ y=\rho\sin\varphi\sin\theta,\ z=\rho\cos\varphi$（$\rho\ge0$，$\varphi\in[0,\pi]$ 为与 $z$ 轴夹角，$\theta\in[0,2\pi)$）：$\ J=\rho^2\sin\varphi\ \Longrightarrow\ dxdydz=\rho^2\sin\varphi\,d\rho\,d\varphi\,d\theta$。</p>
+  <p><strong>换元三步（卷面格式）</strong>：① <strong>区域</strong>：把 $D$ 的边界逐条翻译成新坐标，写出 $D'$ 的不等式组；② <strong>被积函数</strong>：$x,y$ 全部代入换新；③ <strong>乘 $|J|$</strong>。三步缺一，答案必错——而改卷老师第一步就看你的 $r$（或 $\rho^2\sin\varphi$）写了没有。</p>
+</div>
+
+<h3>3.5 亲手摸一摸 Jacobi：极坐标换元探索器（交互）</h3>
+
+<div class="widget" id="polar-widget">
+  <p class="w-title">▶ 极坐标探索器：同一个格子，两个世界</p>
+  <p class="w-row">左图是 $(\theta,r)$ 平面上的<strong>规则矩形网格</strong>（横轴 $\theta$、纵轴 $r$）；右图是它经 $x=r\cos\theta,\ y=r\sin\theta$ 映到 $xy$ 平面的样子。<strong style="color:#b45309">橙色高亮格</strong>在两个世界里是<strong>同一个小格</strong>——看它的面积怎么变。</p>
+  <div class="w-row"><label>外半径 R（拖动看两图同步缩放）</label>
+  <input type="range" id="polarw-r" min="0.4" max="1" step="0.05" value="1"></div>
+  <div class="w-row"><label>网格密度 n（径向 n 等分、角向 2n 等分）</label>
+  <input type="range" id="polarw-n" min="3" max="12" step="1" value="6"></div>
+  <div class="w-row">
+    <svg id="polarw-left" viewBox="0 0 360 220" xmlns="http://www.w3.org/2000/svg" style="max-width:48%"></svg>
+    <svg id="polarw-right" viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg" style="max-width:48%"></svg>
+  </div>
+  <div class="w-verdict" id="polarw-out">加载中……（需要启用 JavaScript）</div>
+  <p class="w-row" style="font-size:0.88em;color:#5c554b">玩出这三个体验再往下走：<strong>①</strong> 把 n 从 3 拖到 12，看高亮格从"弯梯形"越来越像"边长 $r\Delta\theta$ 乘 $\Delta r$ 的小矩形"；<strong>②</strong> 注意读数：小格的精确面积 $=\frac12(r_2^2-r_1^2)\Delta\theta=r_{\text{中}}\,\Delta r\,\Delta\theta$——因子 $r$ <strong>不是近似，是精确地</strong>长出来的，这就是 $dxdy=r\,drd\theta$ 的几何来源；<strong>③</strong> 对比最内圈（$r\approx0$）与最外圈的格子：同样的 $\Delta r\,\Delta\theta$，面积差了近 $r$ 倍——原点附近格子"瘦成针"，这正是 $J=r$ 在 $r=0$ 处退化（变换在那里不再一一对应）的原因。</p>
+</div>
+
+<h3>3.5 第一型 / 第二型线面积分：一对最容易混的兄弟</h3>
+
+<div class="def">
+  <p class="def-title">定义（四件货，一张表）</p>
+  <table>
+    <tr><th></th><th>第一型（对弧长/面积）</th><th>第二型（对坐标/投影）</th></tr>
+    <tr><td>曲线</td><td>$\displaystyle\int_C f\,ds=\int_\alpha^\beta f\bigl(x(t),y(t)\bigr)\sqrt{x'^2+y'^2}\,dt$<br>（$\alpha&lt;\beta$，与方向<strong>无关</strong>）</td><td>$\displaystyle\int_C P\,dx+Q\,dy=\int_\alpha^\beta\bigl(Px'+Qy'\bigr)dt$<br>（$t$ 从<strong>起点</strong>到终点，换向<strong>变号</strong>）</td></tr>
+    <tr><td>曲面</td><td>$\displaystyle\iint_\Sigma f\,dS=\iint_D f\,\bigl|\mathbf r_u\times\mathbf r_v\bigr|\,du\,dv$<br>$z=z(x,y)$ 时 $dS=\sqrt{1+z_x^2+z_y^2}\,dxdy$<br>（与侧无关）</td><td>$\displaystyle\iint_\Sigma P\,dydz+Q\,dzdx+R\,dxdy=\iint_\Sigma \mathbf F\cdot\mathbf n\,dS$<br>（通量；换侧变号。$\iint R\,dxdy=\pm\iint_D R\,dxdy$，<strong>上侧正、下侧负</strong>）</td></tr>
+    <tr><td>物理原型</td><td>质量、弧长、面积</td><td>功、通量、环量</td></tr>
+  </table>
+  <p><strong>一句话区分</strong>：第一型积分微元 $ds,dS$ 自带长度/面积，是"标量的累加"，方向无关；第二型积分微元 $dx,dydz$ 是<strong>投影</strong>，带符号，方向/侧是它的命。第二型曲面积分的投影正负：看该点法向量 $\mathbf n$ 与对应坐标轴的夹角，锐角取正、钝角取负。</p>
+</div>
+
+<h3>3.6 三大公式：精确陈述 + 使用条件</h3>
+
+<div class="def">
+  <p class="def-title">Green 公式</p>
+  <p>设 $D\subset\mathbb R^2$ 为有界闭区域，$\partial D$ 分段光滑并取<strong>正向</strong>（沿边界行进时 $D$ 恒在左手侧；若 $D$ 有洞，外边界逆时针、内边界顺时针），$P,Q$ 在包含 $D$ 的开集上 $C^1$。则
+  $$\oint_{\partial D}P\,dx+Q\,dy=\iint_D\left(\frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y}\right)dx\,dy.$$</p>
+</div>
+
+<div class="def">
+  <p class="def-title">Gauss 公式（散度定理）</p>
+  <p>设 $\Omega\subset\mathbb R^3$ 为有界闭区域，$\partial\Omega$ 分片光滑并取<strong>外侧</strong>，$P,Q,R$ 在包含 $\Omega$ 的开集上 $C^1$。则
+  $$\oiint_{\partial\Omega}P\,dy\,dz+Q\,dz\,dx+R\,dx\,dy=\iiint_\Omega\left(\frac{\partial P}{\partial x}+\frac{\partial Q}{\partial y}+\frac{\partial R}{\partial z}\right)dx\,dy\,dz,$$
+  即 $\displaystyle\oiint_{\partial\Omega}\mathbf F\cdot\mathbf n\,dS=\iiint_\Omega\operatorname{div}\mathbf F\,dV$：流出闭曲面的总通量 = 内部散度的总和。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">Stokes 公式</p>
+  <p>设 $\Sigma$ 为分片光滑的<strong>有向</strong>曲面，$\partial\Sigma$ 分段光滑，其方向与 $\Sigma$ 的侧满足<strong>右手法则</strong>（右手四指沿边界方向弯曲，拇指指向曲面法向 $\mathbf n$），$P,Q,R$ 在包含 $\Sigma$ 的开集上 $C^1$。则
+  $$\oint_{\partial\Sigma}P\,dx+Q\,dy+R\,dz=\iint_\Sigma\left(\frac{\partial R}{\partial y}-\frac{\partial Q}{\partial z}\right)dydz+\left(\frac{\partial P}{\partial z}-\frac{\partial R}{\partial x}\right)dzdx+\left(\frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y}\right)dxdy,$$
+  即 $\displaystyle\oint_{\partial\Sigma}\mathbf F\cdot d\mathbf r=\iint_\Sigma(\operatorname{curl}\mathbf F)\cdot\mathbf n\,dS$。取 $\Sigma$ 为平面区域即退化回 Green。</p>
+</div>
+
+<div class="symbol box" data-tag="逐符号朗读（三大公式通用语）">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$\oint,\ \oiint$</td><td>"沿闭曲线 / 闭曲面的积分"</td><td>积分号上的圆圈 = 边界是封闭的——三大公式的入场券</td></tr>
+    <tr><td>正向（Green）</td><td>"沿着走，区域在左手边"</td><td>方向反了，整个等式差一个负号——扣分重灾区</td></tr>
+    <tr><td>外侧（Gauss）</td><td>"法向量朝外指"</td><td>通量以"流出为正"记账</td></tr>
+    <tr><td>右手法则（Stokes）</td><td>"四指沿边界，拇指给法向"</td><td>曲线方向与曲面侧互相锁定，动一个必须动另一个</td></tr>
+    <tr><td>$C^1$ 于包含区域的<strong>开集</strong></td><td>"在区域及其边界上都连续可微"</td><td>被积函数在边界上有奇点（如原点的 $\frac{-y\,dx+x\,dy}{x^2+y^2}$）时公式直接失效——挖洞或绕开是后话</td></tr>
+    <tr><td>$\operatorname{div}\mathbf F$</td><td>"$F$ 的散度：$P_x+Q_y+R_z$"</td><td>该点"冒出多少流体"——源的强度</td></tr>
+    <tr><td>$\operatorname{curl}\mathbf F$</td><td>"$F$ 的旋度：$\nabla\times\mathbf F$"</td><td>小风车的转速与转轴方向</td></tr>
+  </table>
+</div>
+
+<div class="think">
+  <p>别急着承认三大公式。<strong>拿张纸，在矩形 $D=[a,b]\times[c,d]$ 上亲手把 Green 公式推出来</strong>——只用 Newton–Leibniz 公式和累次积分换序，四行就够。写完再展开对照。</p>
+  <details class="answer">
+    <summary>对照：矩形上的 Green = 两次 N–L</summary>
+    <p>$$\iint_D\frac{\partial Q}{\partial x}\,dxdy=\int_c^d\!\!\int_a^b\frac{\partial Q}{\partial x}dx\,dy=\int_c^d\bigl[Q(b,y)-Q(a,y)\bigr]dy=\oint_{\partial D}Q\,dy,$$
+    （最后一步：矩形四边中，只有右边界 $x=b$（向上）与左边界 $x=a$（向下）上 $dy\ne0$，两底边 $dy=0$。）同理
+    $$-\iint_D\frac{\partial P}{\partial y}\,dxdy=-\int_a^b\bigl[P(x,d)-P(x,c)\bigr]dx=\oint_{\partial D}P\,dx.$$
+    两式相加即 Green。一般区域：切成小矩形，内部公共边方向相反而抵消，只剩最外一圈——<strong>内部相消、边界留存</strong>，这就是"局部拼整体"的全部机关，也是 Gauss、Stokes 证明的同一个套路。</p>
+  </details>
+</div>
+
+<div class="calc box" data-tag="三个经典应用（默写级）">
+  <p><strong>① Green 算面积</strong>：取 $P=0,Q=x$，得 $S_D=\displaystyle\oint_{\partial D}x\,dy$；同理 $S_D=-\oint y\,dx=\dfrac12\oint(x\,dy-y\,dx)$。把面积变成边界上的线积分——§9 变式 1 用它三行算出椭圆面积 $\pi ab$。</p>
+  <p><strong>② Gauss 算通量与体积</strong>：$\operatorname{div}\mathbf F$ 若是常数，通量 $=$ 常数 $\times$ 体积；取 $\mathbf F=(x,0,0)$ 得 $V_\Omega=\displaystyle\oiint_{\partial\Omega}x\,dydz$，取 $\mathbf F=(x,y,z)$ 得 $V_\Omega=\dfrac13\oiint(x\,dydz+y\,dzdx+z\,dxdy)$。</p>
+  <p><strong>③ Stokes 化线积分为面积分</strong>：空间闭曲线 $C$ 难算时，任取一张以 $C$ 为边界的曲面 $\Sigma$（<strong>挑最好算的</strong>，比如平面圆片），$\oint_C\mathbf F\cdot d\mathbf r=\iint_\Sigma(\operatorname{curl}\mathbf F)\cdot\mathbf n\,dS$。选曲面的自由度是 Stokes 最值钱的地方。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定理（平面曲线积分与路径无关的四等价）</p>
+  <p>设 $D$ 为平面<strong>单连通</strong>区域（无洞），$P,Q\in C^1(D)$。以下四条等价：</p>
+  <p>① $\displaystyle\int_C P\,dx+Q\,dy$ 在 $D$ 内与路径无关（只由起终点决定）；<br>
+  ② 沿 $D$ 内<strong>任意</strong>闭曲线，$\oint P\,dx+Q\,dy=0$；<br>
+  ③ 存在势函数 $u(x,y)$ 使 $du=P\,dx+Q\,dy$（保守场）；<br>
+  ④ $D$ 内处处 $\dfrac{\partial Q}{\partial x}=\dfrac{\partial P}{\partial y}$（旋度为零）。</p>
+  <p><strong>单连通不能少</strong>：在挖去原点的平面上，$\omega=\dfrac{-y\,dx+x\,dy}{x^2+y^2}$ 满足④（直接验证两边都是 $\dfrac{y^2-x^2}{(x^2+y^2)^2}$），但沿单位圆一周 $\oint\omega=\displaystyle\int_0^{2\pi}dt=2\pi\ne0$——洞的存在让④推不出②。空间版：单连通区域上 $\operatorname{curl}\mathbf F=\mathbf0$ ⟺ 保守 ⟺ 有势函数。</p>
+</div>
+
+<h3>3.7 统一视角：一个定理的四张面孔</h3>
+
+<div class="net box" data-tag="微积分基本定理的高维化">
+  <p>把 §2 的对照表再压缩一行，就是本章的总纲：
+  $$\int_{\partial\Omega}\omega=\int_\Omega d\omega\qquad\text{（边界上的 }\omega\text{ = 内部的 }d\omega\text{）}.$$</p>
+  <p>$\omega$ 是"被积的那堆东西"（微分形式），$d$ 是"对它求导的那台机器"（外微分），$\partial$ 是"取边界"。Newton–Leibniz、Green、Gauss、Stokes 分别对应 $\Omega$ = 区间、平面区域、空间体、曲面。<strong>它们是一个定理在四个维度上的化身</strong>——考试里你不需要会外微分的严格理论，但这句话能救命：忘记公式符号时，回到"边界 = 内部导数和"，从量纲和方向感把公式重新拼出来。</p>
+</div>
+
+<h2>§4 翻译轨：三个标准动作 + 一间练功房</h2>
+
+<p>多元微积分在卷面上只有三种召唤姿势。练成反射，本章毕业。</p>
+
+<div class="trans box" data-tag="动作一：闭曲线/闭曲面积分 → 三大公式（验三件套）">
+  <p><strong>题面</strong>："计算 $\oint_C P\,dx+Q\,dy$（$C$ 为闭曲线）" / "计算 $\oiint_\Sigma \mathbf F\cdot\mathbf n\,dS$（$\Sigma$ 为闭曲面）"。</p>
+  <p><strong>翻译</strong>：三大公式待命，先验<strong>三件套</strong>，再动手：</p>
+  <p>① <strong>闭？</strong>曲线闭/曲面闭才能直接用；不闭就补一段（补上的那段单独算，最后减掉）。<br>
+  ② <strong>方向/侧对？</strong>Green 要正向（左手侧），Gauss 要外侧，Stokes 要右手法则；不对就先调号。<br>
+  ③ <strong>$C^1$？</strong>$P,Q,R$ 在所围区域（含边界）上连续可微；有奇点（如原点）就挖个小洞把奇点剜掉，在环形区域上用公式。</p>
+  <p>三件套验完写一句话："由 Green（Gauss/Stokes）公式……"——这句话在分步给分制下值 2 分，<strong>不写照样算的出数，但条件句漏了就是跳步</strong>。</p>
+</div>
+
+<div class="trans box" data-tag="动作二：条件最值 → Lagrange 四步 / 有界闭区域候选点分类">
+  <p><strong>题面</strong>："求 $f$ 在约束 $g=c$ 下的最值" / "求 $f$ 在有界闭区域 $\overline\Omega$ 上的最值"（第 15 届题二原型）。</p>
+  <p><strong>翻译</strong>：先写<strong>存在性</strong>（约束集/区域有界闭 + $f$ 连续 ⟹ 最值存在，第 4 章），把"存不存在"变成"在哪儿"。然后穷尽候选：</p>
+  <p>① 纯约束（等式 $g=c$）：Lagrange 方程组 $\nabla f=\lambda\nabla g$ + $g=c$ 的全部解；<br>
+  ② 有界闭区域：内部 $\nabla f=\mathbf0$ 的全部驻点 + 边界分片（每片：Lagrange / 代入化归一元 / 直接放缩）；<br>
+  ③ 比较全部候选值，最大者即最大值。<strong>漏比较 = 没做完</strong>；只求出候选值不下结论，分步给分制下最后 2–3 分拿不到。</p>
+</div>
+
+<div class="trans box" data-tag="动作三：积分域有对称性 → 换元三步">
+  <p><strong>题面</strong>：二重积分域含 $x^2+y^2$（圆、环、扇形），三重积分域含 $x^2+y^2+z^2$（球、球壳、锥）。</p>
+  <p><strong>翻译</strong>：极坐标 / 球坐标待命，按换元三步书写：① 区域边界逐条翻译（"$x^2+y^2\le R^2$" $\to$ "$0\le r\le R,\ 0\le\theta\le2\pi$"）；② 被积函数代入；③ 乘 $|J|$——$r$ 或 $\rho^2\sin\varphi$。卷面反射：<strong>先写 Jacobi 再算</strong>，养成肌肉记忆。</p>
+</div>
+
+<h3>4.4 翻译练功房：像学语言一样，大量互译</h3>
+
+<p>学翻译和学外语一样：<strong>看 3 个示范是输入，写 8 个互译才是输出</strong>。下面 8 句，先全部写在纸上（自然 ↔ 符号、判断、找坑），再逐条展开对照。每条不超过 1 分钟。</p>
+
+<div class="trans box" data-tag="互译 8 句">
+  <p><strong>T1</strong>　判断（说理由）："$\displaystyle\int_C f\,ds$ 中把 $C$ 的方向反过来，积分变号。"对吗？</p>
+  <details class="answer"><summary>对照</summary><p>错。那是<strong>第一型</strong>曲线积分，$ds$ 是弧长微元，与方向无关——参数化时一律取参数从小到大。变号的是第二型 $\int_C P\,dx+Q\,dy$（投影带方向）。<strong>易混点</strong>：两类积分的分界线就是"方向"二字。</p></details>
+  <p><strong>T2</strong>　自然→符号 + 解释："$C$ 取正向"在 Green 公式里到底是什么意思？若 $D$ 是圆环（中间一个洞），两条边界各怎么定向？</p>
+  <details class="answer"><summary>对照</summary><p>沿 $C$ 行进时区域 $D$ 恒在<strong>左手侧</strong>。圆环 $D=\{1\le x^2+y^2\le4\}$：外圆 $x^2+y^2=4$ 逆时针，内圆 $x^2+y^2=1$ <strong>顺时针</strong>——只有这样，沿内圆走时环域才在左手。记错内边界方向，答案差一个内圈积分的符号。</p></details>
+  <p><strong>T3</strong>　符号→自然：换元公式 $\iint_D f\,dxdy=\iint_{D'}f\,|J|\,dudv$ 中，$J&lt;0$ 时为什么仍取 $|J|$？</p>
+  <details class="answer"><summary>对照</summary><p>面积元 $dxdy$ 与 $dudv$ 都是非负的量，$|J|$ 是<strong>面积放大率</strong>；$J$ 的符号只记录变换有没有把定向翻过来（如镜射 $x=-u,y=v$ 时 $J=-1$），与面积大小无关。丢绝对值，在被积函数不对称时直接出错。</p></details>
+  <p><strong>T4</strong>　判断（说理由）：$P,Q$ 在圆环 $D=\{1\le x^2+y^2\le4\}$ 上 $C^1$ 且处处 $\frac{\partial Q}{\partial x}=\frac{\partial P}{\partial y}$。则 $\int P\,dx+Q\,dy$ 在 $D$ 内与路径无关。对吗？</p>
+  <details class="answer"><summary>对照</summary><p>不一定。路径无关四等价要求 $D$ <strong>单连通</strong>，圆环有洞。反例就在洞里：$\frac{-y\,dx+x\,dy}{x^2+y^2}$ 旋度处处为零，绕内洞一周却是 $2\pi$。<strong>反射</strong>：用④判路径无关前，先数区域有几个洞。</p></details>
+  <p><strong>T5</strong>　自然→符号："求 $f(x,y,z)$ 在约束 $g(x,y,z)=0$ 下的最大值。"列出你要解的方程组，并说出动笔前必须先写的一句话。</p>
+  <details class="answer"><summary>对照</summary><p>先写：约束集有界闭 + $f$ 连续 ⟹ 最大值<strong>存在</strong>（这句是后文"比较即得最值"的合法执照）。方程组：$f_x=\lambda g_x,\ f_y=\lambda g_y,\ f_z=\lambda g_z,\ g=0$——四个方程解四个未知量 $x,y,z,\lambda$；解出的全部 $(x,y,z)$ 是候选点，比较函数值下结论。<strong>易错</strong>：漏掉 $\nabla g\ne\mathbf0$ 的检查，或只求出 $\lambda&gt;0$ 一支就收笔。</p></details>
+  <p><strong>T6</strong>　判断（说理由）：Stokes 公式中，把曲面 $\Sigma$ 换成另一侧（法向反向），等号还成立吗？</p>
+  <details class="answer"><summary>对照</summary><p>看你怎么处理边界。右手法则把侧与边界方向<strong>锁死</strong>：侧反向，边界正向也反转——两边同时变号，等式仍然成立。只翻一侧、不改边界方向，等式立刻错。<strong>记忆</strong>：侧与边界方向是捆绑销售，不单卖。</p></details>
+  <p><strong>T7</strong>　计算反射：看到 $\iint_{x^2+y^2\le R^2}$ 与 $\iiint_{x^2+y^2+z^2\le R^2}$，你的第一反应各是什么？</p>
+  <details class="answer"><summary>对照</summary><p>前者极坐标：$dxdy=r\,drd\theta$，$x^2+y^2=r^2$；后者球坐标：$dV=\rho^2\sin\varphi\,d\rho d\varphi d\theta$，$x^2+y^2+z^2=\rho^2$。被积函数或区域里出现平方和，就是换元三步的发令枪。</p></details>
+  <p><strong>T8</strong>　找坑：计算 $\oint_C(x^2-y)dx+(y^2+x)dy$，其中 $C$ 是<strong>顺时针</strong>的单位圆。直接套 Green 得 $2\pi$，对不对？</p>
+  <details class="answer"><summary>对照</summary><p>不对。Green 公式要<strong>正向</strong>（逆时针），顺时针差一个负号：正确答案是 $-2\pi$。<strong>分步给分制下</strong>，方向看错 = 整题符号错，后面全对也救不回来。动手前先在图上画个箭头确认定向。（本题完整示范见 §8 例 1。）</p></details>
+</div>
+
+<h2>§5 类型识别：什么信号在召唤哪个公式</h2>
+
+<div class="recog box" data-tag="识别反射表">
+  <table>
+    <tr><th>题面信号</th><th>反射</th></tr>
+    <tr><td>"闭曲线上的第二型线积分"（平面）</td><td>Green 待命：验正向 + $C^1$，旋度简单就是白送</td></tr>
+    <tr><td>"闭曲面的通量 / $\oiint$"</td><td>Gauss 待命：验外侧 + $C^1$，散度常数则通量 = 常数×体积</td></tr>
+    <tr><td>"空间闭曲线的线积分"</td><td>Stokes 待命：挑一张好算的曲面，右手法则定向</td></tr>
+    <tr><td>"约束 …… 下的最值 / 条件极值"</td><td>Lagrange 四步：存在性 → 方程组 → 全候选 → 比较</td></tr>
+    <tr><td>"有界闭区域上的最值"</td><td>内部驻点 + 边界分片，两类穷尽（15 届题二结构）</td></tr>
+    <tr><td>"二重积分，域是圆/环/扇形或含 $x^2+y^2$"</td><td>极坐标：先写 $dxdy=r\,drd\theta$ 再算</td></tr>
+    <tr><td>"三重积分，域是球/球壳/锥或含 $x^2+y^2+z^2$"</td><td>球坐标：$dV=\rho^2\sin\varphi\,d\rho d\varphi d\theta$</td></tr>
+    <tr><td>"$F(x,y)=0$ 确定 $y=y(x)$ / 隐函数求导"</td><td>隐函数定理：先验 $F_y\ne0$，再套 $y'=-F_x/F_y$</td></tr>
+  </table>
+</div>
+
+<h2>§6 考法定位：它藏在哪里、值多少分</h2>
+
+<div class="exam box" data-tag="考法定位">
+  <table>
+    <tr><th>出处</th><th>题号</th><th>本章内容扮演什么角色</th><th>分值权重</th></tr>
+    <tr><td>第 15 届（2023）</td><td>题二</td><td>三元多项式的驻点方程、柱体边界分片、椭球上"内部唯一驻点 + 边界最小值"整体论证——本章 ①③ 的完整主场</td><td>15 分（整题）</td></tr>
+    <tr><td>第 13 届（2021）</td><td>题二</td><td>单位球 $B\subset\mathbb R^n$ 上的椭圆方程组：$\nabla$、$\Delta$ 记号熟练度 + "最大值点处 $\nabla w=0$、$-\Delta w\ge0$"——多元微分学在球面区域背景下的运用</td><td>15 分（整题，本章供语言）</td></tr>
+    <tr><td>第 12 届（2020）</td><td>题六</td><td>可求长曲线：折线长在划分加细下的极限——第一型曲线积分"弧长微元 $ds$"的严格定义背景</td><td>20 分（背景相关）</td></tr>
+    <tr><td>第 11–17 届</td><td>—</td><td>Green / Gauss / Stokes 三大公式<strong>无直接整题</strong>（索引逐题核实）；其思想以换元、通量、路径无关的工具形态待命</td><td>0 分（如实说明）</td></tr>
+  </table>
+  <p><strong>规律</strong>：数学 A 类初赛的多元部分，<strong>考"多元微分学"远多于考"三大公式"</strong>——多元最值/驻点在题二位置两届连坐（13 届、15 届，各 15 分），是名副其实的"题二常客"；而 Green/Gauss/Stokes 在近七届没当过主角。给你的时间分配建议：①③（微分通道 + Lagrange/最值流程 + 换元三步）必须练到默写级，这是接 15 分整题的手；三大公式以"精确陈述 + 三件套 + 三个经典应用"的规格掌握，保证被问到时零失误，并用统一视角把它们焊死成一个定理，记忆成本立减三分之二。</p>
+</div>
+
+<h2>§7 关系网：一个定理的四张面孔</h2>
+
+<p>本章地图：<span style="color:#b45309">三角形</span>是来源与动机，<span style="color:#1d4ed8">圆角矩形</span>是定义层，<span style="color:#15803d">矩形</span>是定理，<span style="color:#7c3aed">六边形</span>是方法动作，<span style="color:#0f766e">椭圆</span>是应用出口。从左往右顺着箭头走一遍：N–L 公式升维成三大公式，定义层喂出三个方法动作，最后各自通往计算与论证的出口。</p>
+
+<figure>
+<svg viewBox="0 0 720 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="多元微积分关系网地图">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+
+  <!-- 图例 -->
+  <polygon points="30,16 22,30 38,30" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5"/>
+  <text x="44" y="28" font-size="11.5" fill="#5c554b">来源·动机</text>
+  <rect x="116" y="17" width="22" height="13" rx="6.5" fill="#eef3fe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="144" y="28" font-size="11.5" fill="#5c554b">定义</text>
+  <rect x="196" y="17" width="22" height="13" fill="#ecf8f0" stroke="#15803d" stroke-width="1.5"/>
+  <text x="224" y="28" font-size="11.5" fill="#5c554b">定理</text>
+  <polygon points="280,23.5 286,16 300,16 306,23.5 300,31 286,31" fill="#f4effd" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="312" y="28" font-size="11.5" fill="#5c554b">方法·动作</text>
+  <ellipse cx="420" cy="23.5" rx="12" ry="7" fill="#ecf8f5" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="438" y="28" font-size="11.5" fill="#5c554b">应用·出口</text>
+
+  <!-- 来源：N-L 公式（三角） -->
+  <polygon points="105,95 55,185 155,185" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="105" y="132" font-size="12.5" fill="#7a4a12" text-anchor="middle" font-weight="bold">N–L 公式</text>
+  <text x="105" y="148" font-size="10" fill="#7a4a12" text-anchor="middle">f(b)−f(a)=∫f′</text>
+  <text x="105" y="164" font-size="10" fill="#7a4a12" text-anchor="middle">（第 7 章）</text>
+
+  <!-- 定义层（圆角矩形） -->
+  <rect x="25" y="200" width="150" height="60" rx="30" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="100" y="221" font-size="11.5" fill="#1d4ed8" text-anchor="middle" font-weight="bold">定义层（§3）</text>
+  <text x="100" y="237" font-size="10" fill="#1d4ed8" text-anchor="middle">梯度 · Jacobi · 隐函数</text>
+  <text x="100" y="251" font-size="10" fill="#1d4ed8" text-anchor="middle">第一/二型线面积分</text>
+
+  <!-- 三大公式（矩形） -->
+  <rect x="230" y="60" width="160" height="48" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="310" y="80" font-size="12.5" fill="#15803d" text-anchor="middle" font-weight="bold">Green 公式</text>
+  <text x="310" y="97" font-size="10" fill="#4a7c59" text-anchor="middle">∮Pdx+Qdy = ∬(∂Q/∂x−∂P/∂y)dA</text>
+  <rect x="230" y="150" width="160" height="48" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="310" y="170" font-size="12.5" fill="#15803d" text-anchor="middle" font-weight="bold">Gauss 公式</text>
+  <text x="310" y="187" font-size="10" fill="#4a7c59" text-anchor="middle">∯ F·n dS = ∭ div F dV</text>
+  <rect x="230" y="240" width="160" height="48" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="310" y="260" font-size="12.5" fill="#15803d" text-anchor="middle" font-weight="bold">Stokes 公式</text>
+  <text x="310" y="277" font-size="10" fill="#4a7c59" text-anchor="middle">∮ F·dr = ∬ (curl F)·n dS</text>
+
+  <!-- 方法（六边形） -->
+  <polygon points="455,84 480,60 580,60 605,84 580,108 480,108" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="530" y="80" font-size="12" fill="#7c3aed" text-anchor="middle" font-weight="bold">路径无关判据</text>
+  <text x="530" y="96" font-size="10" fill="#6a55a3" text-anchor="middle">四等价（单连通！）</text>
+  <polygon points="455,174 480,150 580,150 605,174 580,198 480,198" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="530" y="170" font-size="12" fill="#7c3aed" text-anchor="middle" font-weight="bold">Lagrange 流程</text>
+  <text x="530" y="186" font-size="10" fill="#6a55a3" text-anchor="middle">∇f=λ∇g → 比候选</text>
+  <polygon points="455,264 480,240 580,240 605,264 580,288 480,288" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="530" y="260" font-size="12" fill="#7c3aed" text-anchor="middle" font-weight="bold">换元三步</text>
+  <text x="530" y="276" font-size="10" fill="#6a55a3" text-anchor="middle">区域 · 被积 · |J|</text>
+
+  <!-- 出口（椭圆） -->
+  <ellipse cx="70" cy="425" rx="65" ry="30" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="70" y="421" font-size="11.5" fill="#0f766e" text-anchor="middle" font-weight="bold">解几卷接口</text>
+  <text x="70" y="437" font-size="10" fill="#3d7a70" text-anchor="middle">切平面 · 法向量</text>
+  <ellipse cx="250" cy="425" rx="120" ry="30" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="250" y="421" font-size="11.5" fill="#0f766e" text-anchor="middle" font-weight="bold">最值论证</text>
+  <text x="250" y="437" font-size="10" fill="#3d7a70" text-anchor="middle">内部驻点+边界（15 届题二）</text>
+  <ellipse cx="520" cy="425" rx="110" ry="30" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="520" y="421" font-size="11.5" fill="#0f766e" text-anchor="middle" font-weight="bold">面积·体积·通量·环量</text>
+  <text x="520" y="437" font-size="10" fill="#3d7a70" text-anchor="middle">计算出口</text>
+
+  <!-- 边：三角 → 三大公式 -->
+  <line x1="155" y1="120" x2="226" y2="80" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="158" y1="145" x2="226" y2="172" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="155" y1="170" x2="226" y2="256" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="60" y="52" font-size="11" fill="#5c554b">同一张面孔 ×3：边界信息 = 内部导数总和</text>
+
+  <!-- 边：定义层 → Lagrange -->
+  <polyline points="175,212 215,212 215,129 430,129 430,174 450,174" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="300" y="122" font-size="10.5" fill="#5c554b" text-anchor="middle">∇f = λ∇g</text>
+  <!-- 边：定义层 → 换元 -->
+  <polyline points="175,248 195,248 195,219 425,219 425,264 450,264" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="300" y="212" font-size="10.5" fill="#5c554b" text-anchor="middle">|J| 与区域对应</text>
+
+  <!-- 边：Green → 路径无关 -->
+  <line x1="390" y1="84" x2="448" y2="84" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="394" y="74" font-size="10" fill="#5c554b">旋度 = 0</text>
+
+  <!-- 边：Lagrange → 最值论证 -->
+  <polyline points="480,198 442,214 442,360 310,396" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="360" y="352" font-size="10.5" fill="#5c554b" text-anchor="middle">候选点分类</text>
+
+  <!-- 边：换元 → 计算出口 -->
+  <line x1="530" y1="290" x2="526" y2="391" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="540" y="342" font-size="10.5" fill="#5c554b">好算的坐标系</text>
+
+  <!-- 边：Gauss → 计算出口 -->
+  <polyline points="390,180 437,180 437,129 618,129 618,410" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="624" y="270" font-size="10.5" fill="#5c554b">通量 · 体积</text>
+
+  <!-- 边：定义层 → 解几接口 -->
+  <line x1="95" y1="262" x2="82" y2="391" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="58" y="332" font-size="10.5" fill="#5c554b" text-anchor="middle">法向量</text>
+</svg>
+<figcaption>本章地图：一个 N–L 公式升维成三张面孔，定义层喂出三件方法武器，各自通往计算出口、最值论证与解几卷。</figcaption>
+</figure>
+
+<div class="net box" data-tag="画面感锚点（记这些，不记条文）">
+  <table>
+    <tr><th>节点</th><th>一句话画面</th><th>擅长场景</th></tr>
+    <tr><td>N–L 公式</td><td>两个端点的差 = 区间里导数的总和</td><td>一切"边界 = 内部"公式的母亲</td></tr>
+    <tr><td>Green</td><td>沿操场跑一圈的功 = 场内小风车转速之和</td><td>平面闭曲线线积分；算面积 $\oint x\,dy$</td></tr>
+    <tr><td>Gauss</td><td>流出气球的总风量 = 球内每个气嘴的强度之和</td><td>闭曲面通量；散度为常数时白送体积</td></tr>
+    <tr><td>Stokes</td><td>沿草帽檐的环量 = 草帽面上旋度的总和</td><td>空间闭曲线；自由换一张好算的"帽面"</td></tr>
+    <tr><td>换元三步</td><td>歪地方换个坐标摆正：区域、被积、乘 $|J|$</td><td>圆/球对称的积分域</td></tr>
+    <tr><td>Lagrange 流程</td><td>等值面与约束面相切处才有极值</td><td>条件最值；有界闭区域边界片的处理</td></tr>
+    <tr><td>路径无关判据</td><td>无旋场里，搬家费只看出小区和进小区</td><td>改路径简化计算；找势函数（先数洞）</td></tr>
+  </table>
+  <p><strong>和你已学知识的焊接点</strong>：第 4 章的最值定理给"候选点分类"发执照（存在性），第 7 章的 N–L 与 Riemann 和是本章全部公式的地基；高数里的二重积分计算功底在这里升级成"换元三步"的格式自觉；梯度 = 等值面法向量这一条，会在解几卷的切平面、法线问题里反复取款。</p>
+</div>
+
+<h2>§8 计算示范：先看真人怎么想，再看卷面怎么写</h2>
+
+<p>每个例题分两层：<strong>思路揭秘</strong>（真实的思考过程，含选路标准）+ <strong>卷面书写</strong>（分步给分格式）。前者教你"怎么想出来"，后者教你"写出来拿分"。</p>
+
+<h3>例 1 · Green 公式计算线积分（约 8 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>计算型目标：求一个确定的数。计算题没有"证明骨架"，它的本质动作是<strong>工具六 · 划归</strong>——把对象化归到好算的形状。摆在桌面上的两条路：① 参数化 $x=\cos t,\ y=\sin t$ 硬算（保底，但 $\cos^2t\sin t$ 这类项要耐着性子积）；② Green 公式，把线积分划归为二重积分。选哪条？<strong>先看旋度的脾气</strong>：$\dfrac{\partial Q}{\partial x}-\dfrac{\partial P}{\partial y}=1-(-1)=2$ 是常数——二重积分退化成"$2\times$ 面积"，白送。这就是选路标准：<strong>旋度越简单，Green 越赚</strong>。</p>
+  <p><span class="stage">【盘点】</span>$P=x^2-y,\ Q=y^2+x$ 都是多项式 ⟹ $\mathbb R^2$ 上 $C^1$；$C$ 是单位圆、取正向、封闭。三件套（闭？正向？$C^1$？）逐项打勾，Green 公式合法。</p>
+  <p><span class="stage">【会师】</span>倒推链：要算 $\oint_C$ ⟸（Green）只需算 $\iint_D 2\,dxdy$ ⟸ 只需知道单位圆面积 $=\pi$。两环，全是库存货，没有一步靠"想"。</p>
+  <p><span class="stage">【定型】</span>卷面三段：验条件一句话 → 套公式 → 算二重积分。本题倒推痕迹为零，但"验条件"那句必须显式出现——分步给分制下它是独立分点，不是客套话。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 三段式</strong>：「验条件 → 套公式 → 算二重（三重）积分」是一切三大公式计算题的通用骨架。头号扣分点是<strong>方向</strong>：顺时针 = 负向，整个答案差一个负号；动手前先在图上画箭头确认定向。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 1</strong>　计算 $\displaystyle\oint_C (x^2-y)\,dx+(y^2+x)\,dy$，其中 $C$ 为单位圆 $x^2+y^2=1$，取正向。</p>
+  <hr>
+  <p class="proof-line"><strong>解</strong>　记 $P=x^2-y$，$Q=y^2+x$，它们在 $\mathbb R^2$ 上连续可微；$C$ 为封闭曲线并取正向，所围闭区域记为 $D$。由 Green 公式，<span class="step-score">（2 分）</span></p>
+  <p class="proof-line">$$\oint_C P\,dx+Q\,dy=\iint_D\left(\frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y}\right)dx\,dy=\iint_D\bigl(1-(-1)\bigr)\,dx\,dy.$$<span class="step-score">（5 分）</span></p>
+  <p class="proof-line">$$=2\iint_D dx\,dy=2\cdot\pi\cdot1^2=2\pi.\quad\square$$<span class="step-score">（8 分）</span></p>
+  <p class="aside">书写点评：① "连续可微 + 封闭正向"那句是条件分，不写可能被扣；② 旋度算错（$\partial P/\partial y=-1$ 看成 $1$）则全题归零，偏导这一步值得回头瞄一眼；③ 交叉验证：参数化硬算也得 $2\pi$（$\int_0^{2\pi}\sin^2t\,dt=\pi$、$\int_0^{2\pi}\cos^2t\,dt=\pi$，含 $\sin t\cos^2t$ 的项整周期积分为零）——考场有时间就双保险。</p>
+</div>
+
+<h3>例 2 · Lagrange 乘数法求条件最值（约 10 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>"最大值"是 $\exists$ 型：存在点使 $f$ 取到最大，并求出这个值。查拆目标总表得骨架：<strong>构造候选集合 → 证明穷尽 → 比较</strong>。穷尽的合法性来自 Lagrange 定理：约束极值点必满足 $\nabla f=\lambda\nabla g$——候选只有方程组的解，没有漏网之鱼。</p>
+  <p><span class="stage">【盘点】</span>① 约束集 $S$ 是单位球面：有界、闭；$f=x+2y+3z$ 连续 ⟹ <strong>最大值存在</strong>（第 4 章最值定理）——这句话先白捡，它是后文"比较即得最值"的执照；② $g=x^2+y^2+z^2-1$，$\nabla g=(2x,2y,2z)$ 在 $S$ 上处处 $\ne\mathbf0$ ⟹ Lagrange 条件适用；③ $f$ 是线性函数，方程组必然可解。</p>
+  <p><span class="stage">【会师】</span>$\nabla f=(1,2,3)=\lambda(2x,2y,2z)$ ⟹ $x:y:z=1:2:3$ ⟸ 代入约束得两支候选 $\pm\frac{1}{\sqrt{14}}(1,2,3)$ ⟸ 比较 $f=\pm\sqrt{14}$ ⟸ 大者为最大值。每一环都是机械操作；$\lambda$ 本身<strong>不必解出</strong>——消元比求 $\lambda$ 快。</p>
+  <p><span class="stage">【定型前 · 备胎验证】</span>Cauchy–Schwarz 独立给出 $x+2y+3z\le\sqrt{1^2+2^2+3^2}\cdot\sqrt{x^2+y^2+z^2}=\sqrt{14}$——两条路答案对上，才敢交卷。这是<strong>工具三 · 特殊化侦察</strong>的终点形态：证明写完，用独立方法对一下数。</p>
+  <p><span class="stage">【定型】</span>卷面四段：存在性 → 方程组 → 全部候选 → 比较下结论。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 最值题三段论</strong>：存在性先行，候选穷尽，比较收尾。漏"存在性"：你求出的只是极值<strong>嫌疑犯</strong>，最值未必存在；漏"比较"：结论没落地；漏负号那支候选：题目改问最小值时直接归零——<strong>两支都列</strong>是纪律。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 2</strong>　求 $f(x,y,z)=x+2y+3z$ 在球面 $x^2+y^2+z^2=1$ 上的最大值。</p>
+  <hr>
+  <p class="proof-line"><strong>解</strong>　设 $S=\{(x,y,z):x^2+y^2+z^2=1\}$。$S$ 有界闭，$f$ 连续，故 $f$ 在 $S$ 上的最大值存在。<span class="step-score">（2 分）</span></p>
+  <p class="proof-line">记 $g=x^2+y^2+z^2-1$，在 $S$ 上 $\nabla g=(2x,2y,2z)\ne\mathbf0$。由 Lagrange 乘数法，极值点满足
+  $$1=2\lambda x,\quad 2=2\lambda y,\quad 3=2\lambda z,\quad x^2+y^2+z^2=1.$$<span class="step-score">（5 分）</span></p>
+  <p class="proof-line">由前三式得 $x:y:z=1:2:3$，设 $(x,y,z)=t(1,2,3)$，代入约束：$14t^2=1$，$t=\pm\dfrac{1}{\sqrt{14}}$。候选点为
+  $$P_1=\frac{1}{\sqrt{14}}(1,2,3),\qquad P_2=-\frac{1}{\sqrt{14}}(1,2,3).$$<span class="step-score">（8 分）</span></p>
+  <p class="proof-line">比较：$f(P_1)=\dfrac{1+4+9}{\sqrt{14}}=\sqrt{14}$，$f(P_2)=-\sqrt{14}$。故最大值为 $\boxed{\sqrt{14}}$，在 $P_1$ 处取得。$\square$<span class="step-score">（10 分）</span></p>
+  <p class="aside">书写点评：① 存在性一句值 2 分——它是"比较即得最值"的合法执照，不是废话；② $\lambda$ 不必解出，比值消元更快；③ 备胎答案 Cauchy–Schwarz 也得 $\sqrt{14}$，考场上两法互检只要 10 秒。</p>
+</div>
+
+<h2>§9 配套题目</h2>
+
+<p>铁律：<strong>先写在纸上，写到写不动再展开答案</strong>。模仿题照例 1、例 2 的卷面格式写；变式题开始没有模板，先问自己"题面信号在召唤哪个公式"（§5 表）。</p>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 1</span>设 $C$ 为椭圆 $\dfrac{x^2}{4}+y^2=1$ 的正向边界，计算 $\displaystyle\oint_C 3x^2y\,dx+(x^3+2y)\,dy$。</p>
+  <details class="answer">
+    <summary>参考答案（约 6 分书写量）</summary>
+    <p>记 $P=3x^2y$，$Q=x^3+2y$，在 $\mathbb R^2$ 上连续可微；$C$ 封闭正向。由 Green 公式（2 分），
+    $$\oint_C P\,dx+Q\,dy=\iint_D\left(\frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y}\right)dx\,dy=\iint_D(3x^2-3x^2)\,dx\,dy=0.\quad(6\text{ 分})$$</p>
+    <p>另解（更快）：$u=x^3y+y^2$ 满足 $du=P\,dx+Q\,dy$，被积式是全微分，沿闭路积分恒为 $0$。<strong>易错点</strong>：去参数化椭圆硬算——旋度为零的场，闭路积分必是 $0$，动笔前先算旋度能省五分钟。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 2</span>求 $f(x,y,z)=2x+y+2z$ 在球面 $x^2+y^2+z^2=1$ 上的最大值与最小值。</p>
+  <details class="answer">
+    <summary>参考答案（约 8 分书写量）</summary>
+    <p>球面 $S$ 有界闭，$f$ 连续，最大、最小值均存在（2 分）。$\nabla g=(2x,2y,2z)\ne\mathbf0$ 于 $S$，Lagrange 方程组：
+    $$2=2\lambda x,\quad 1=2\lambda y,\quad 2=2\lambda z,\quad x^2+y^2+z^2=1.\quad(4\text{ 分})$$
+    前三式得 $x:y:z=2:1:2$，设 $(x,y,z)=t(2,1,2)$，代入约束：$9t^2=1$，$t=\pm\frac13$，候选 $\pm\frac13(2,1,2)$（6 分）。比较：$f=\frac{4+1+4}{3}=3$ 与 $-3$。最大值 $3$ 于 $\frac13(2,1,2)$，最小值 $-3$ 于 $-\frac13(2,1,2)$（8 分）。</p>
+    <p><strong>自查</strong>：Cauchy–Schwarz：$|2x+y+2z|\le\sqrt{4+1+4}\cdot1=3$ ✓。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 1</span>用 Green 公式求椭圆 $\dfrac{x^2}{a^2}+\dfrac{y^2}{b^2}=1$（$a,b&gt;0$）所围区域的面积。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：Green 公式里取 $P=0,\ Q=x$，则 $\dfrac{\partial Q}{\partial x}-\dfrac{\partial P}{\partial y}=1$，于是
+    $$S_D=\iint_D1\,dxdy=\oint_{\partial D}x\,dy$$
+    ——面积变成边界上的线积分（§3.6 经典应用①）。</p>
+    <p><strong>计算</strong>：正向参数化 $x=a\cos t,\ y=b\sin t$，$t:0\to2\pi$，$dy=b\cos t\,dt$：
+    $$S=\oint_{\partial D}x\,dy=\int_0^{2\pi}a\cos t\cdot b\cos t\,dt=ab\int_0^{2\pi}\cos^2t\,dt=\pi ab.\quad\square$$</p>
+    <p><strong>点评</strong>：$\int_0^{2\pi}\cos^2t\,dt=\pi$ 是默写级积分。同一招还有 $S=-\oint y\,dx=\frac12\oint(x\,dy-y\,dx)$——沿边界走一圈就把面积量出来，这是"边界信息 = 内部信息"最直观的存折。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 2</span>计算 $\displaystyle\iiint_\Omega(x^2+y^2+z^2)\,dx\,dy\,dz$，其中 $\Omega=\{x^2+y^2+z^2\le1\}$。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：区域与被积函数都是 $x^2+y^2+z^2$ 的形状——§5 表：球坐标待命，换元三步。</p>
+    <p><strong>计算</strong>：① 区域：$0\le\rho\le1,\ 0\le\varphi\le\pi,\ 0\le\theta\le2\pi$；② 被积：$x^2+y^2+z^2=\rho^2$；③ Jacobi：$dV=\rho^2\sin\varphi\,d\rho\,d\varphi\,d\theta$。
+    $$\iiint_\Omega\rho^2\,dV=\int_0^{2\pi}d\theta\int_0^\pi\sin\varphi\,d\varphi\int_0^1\rho^4\,d\rho=2\pi\cdot2\cdot\frac15=\frac{4\pi}{5}.\quad\square$$</p>
+    <p><strong>点评</strong>：三个积分各自独立（被积可分离、限为常数）是球坐标最舒服的形态。<strong>易错</strong>：① 把 $\rho^2\sin\varphi$ 写成 $\rho^2$（丢了 $\sin\varphi$）；② 与极坐标记号混用——球坐标里 $\rho$ 是到<strong>原点</strong>的距离，柱/极坐标的 $r$ 是到 <strong>$z$ 轴</strong>的距离，同一卷面上别换着用。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv3">真题节选</span><strong>（第 15 届题二 (3)，15 分题之第三问）</strong>设 $f(x,y,z)=x^2+(y^2+z^2)(1-x)^3$。求 $f$ 在椭球 $x^2+\dfrac{y^2}{2}+\dfrac{z^2}{3}\le1$ 上的最小值。</p>
+  <p>背景：第 (1) 问已求得 $f$ 在全空间的唯一驻点 $(0,0,0)$；第 (2) 问已求得 $f$ 在柱体 $\{|x|\le2,\ y^2+z^2\le4\}$ 边界 $\Sigma$ 上的最小值为 $0$（两问的完整转录见<strong>第 4 章 §9 真题节选</strong>）。先回答三个梯子问题（写在纸上）：</p>
+  <p>（i）有界闭区域上最小值点的候选只有哪两类？本题里它们各自由哪一问供应？<br>
+  （ii）官方为什么没有对椭球面使用 Lagrange 乘数法？它用了哪句"白捡"的话绕开了整块计算？<br>
+  （iii）如果把第 (3) 问孤立出来考（不给你 (1)(2) 的结论），你的完整流程是什么？</p>
+  <details class="answer">
+    <summary>梯子参考答案</summary>
+    <p>（i）两类：内部驻点（$\nabla f=\mathbf0$，第 (1) 问已算：全空间唯一驻点原点）与边界点（分片讨论或 Lagrange，第 (2) 问已把柱体边界 $\Sigma$ 的三片处理完）。最小值点不在内部就在边界，没有第三种位置——二分即穷尽。</p>
+    <p>（ii）因为<strong>椭球 $\subseteq$ 柱体 $\overline\Omega$</strong>：小集合上的最小值 $\ge$ 大集合上的最小值；而 $f$ 在 $\overline\Omega$ 上的最小值由 (1)(2) 已知为 $0$（内部唯一驻点处 $f=0$，边界 $\Sigma$ 上 $f\ge0$），又原点在椭球内且 $f(0,0,0)=0$，下界 $0$ 被取到——一句话绕过对椭球面的 Lagrange 计算。识别"已证结论可复用"是<strong>工具六 · 划归</strong>的考场形态。</p>
+    <p>（iii）标准流程：存在性（椭球有界闭 + $f$ 连续）→ 内部解 $\nabla f=\mathbf0$ 得唯一驻点 $(0,0,0)$，$f=0$ → 边界椭球面上用 Lagrange（$\nabla f=\lambda\nabla g$，$g=x^2+\frac{y^2}{2}+\frac{z^2}{3}-1$）求全部候选并比较。计算量可观——这正是官方看出包含关系后选择绕行的原因。</p>
+  </details>
+  <details class="answer">
+    <summary>官方解答全文（转录自官方参考答案）</summary>
+    <p><strong>(3)</strong> 椭球 $x^2+\frac{y^2}{2}+\frac{z^2}{3}\le1$ 完全含于 $\Sigma$ 围成的区域 $\Omega$ 内，$f$ 在 $\Omega$ 内唯一驻点 $(0,0,0)$，$f(0,0,0)=0$，结合 (2) 得 $f$ 在 $\overline\Omega$ 上最小值为 $0$，进而椭球上最小值就是 $0$。<span class="step-score">（15 分）</span></p>
+    <p><strong>复盘</strong>：本题与<strong>第 4 章的真题节选互补</strong>——第 4 章重在最值定理的<strong>存在性</strong>（为什么敢写 $\min$）并转录了全题三问；本节重<strong>多元候选点分类流程</strong>本身：内部驻点 + 边界分片的二分穷尽，是本节 §4 动作二的完整实战。注意官方的书写智慧：对椭球面本可走 Lagrange 硬算，看出"椭球 $\subseteq$ 柱体"后一句"小集合 $\min\ge$ 大集合 $\min$"白捡 5 分——<strong>能不算就不算</strong>，但前提是你会算（梯子 (iii)）。<em>（题目与解答转录自第 15 届官方 PDF，见 <a href="真题索引/第15届_2023.md">真题索引</a>；(1)(2) 问转录见第 4 章 §9。）</em></p>
+  </details>
+</div>
+
+<h2>§9.5 熟练度训练场</h2>
+
+<p>本章是<strong>默写密集型</strong>：三大公式的陈述、两个 Jacobi、Lagrange 流程，考场上写得快且一字不差才算过关。两种训练，每天 10 分钟：</p>
+
+<h3>训练一 · 翻卡快测（目标：每卡 10 秒内出答案）</h3>
+<div class="quiz" data-quiz="ch10-drill"></div>
+
+<h3>训练二 · 计时默写（写在纸上，掐表）</h3>
+<div class="calc box" data-tag="默写清单">
+  <p>① <strong>3 分钟</strong>：默写三大公式（Green / Gauss / Stokes）的完整陈述——区域、边界定向、$C^1$ 条件、公式本体，一条不许缺；</p>
+  <p>② <strong>60 秒</strong>：默写极坐标与球坐标的变换式、Jacobi 行列式（$r$ 与 $\rho^2\sin\varphi$）及换元三步；</p>
+  <p>③ <strong>90 秒</strong>：默写 Lagrange 乘数法四步流程 + 路径无关四等价（含单连通前提）。</p>
+  <p><strong>过关标准</strong>：连续两天全对才算过。做不到就回到 §3.6、§3.4、§3.3 重读，再默。</p>
+</div>
+
+<h2>§10 六方向自测卡</h2>
+
+<div class="selftest">
+  <h3>合上书，拿张白纸，默写以下六项</h3>
+  <div class="st-item">
+    <p class="st-q"><em>=（它是什么）</em>　默写 Green、Gauss、Stokes 三大公式（各含定向条件），并各配一句大白话。</p>
+    <details><summary>对照</summary><p>Green：$\oint_{\partial D}Pdx+Qdy=\iint_D(Q_x-P_y)dA$（正向 = 区域在左手；边界的功 = 内部旋度和）。Gauss：$\oiint_{\partial\Omega}\mathbf F\cdot\mathbf n\,dS=\iiint_\Omega\operatorname{div}\mathbf F\,dV$（外侧；流出量 = 内部源强度和）。Stokes：$\oint_{\partial\Sigma}\mathbf F\cdot d\mathbf r=\iint_\Sigma(\operatorname{curl}\mathbf F)\cdot\mathbf n\,dS$（右手法则；帽檐环量 = 帽面旋度和）。共同条件：被积函数在含区域的开集上 $C^1$。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>←（什么带来它）</em>　三大公式从哪来？用一句话说出它们的共同祖先与统一写法。</p>
+    <details><summary>对照</summary><p>Newton–Leibniz 公式（第 7 章）的高维化：$f(b)-f(a)=\int_a^bf'$ 中"边界上的函数信息 = 内部的导数总和"升维即成三大公式；统一写法 $\int_{\partial\Omega}\omega=\int_\Omega d\omega$。矩形上 Green 可徒手用两次 N–L 推出（§3.6 的 .think）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>→（它带来什么）</em>　说出三大公式 + Lagrange 流程各自的至少一个直接应用出口。</p>
+    <details><summary>对照</summary><p>Green → 面积公式 $S=\oint x\,dy$；Gauss → 通量/体积公式 $V=\oiint x\,dydz$；Stokes → 空间线积分自由换曲面；Green 旋度为零 → 路径无关四等价（保守场/势函数）；Lagrange → 条件最值与有界闭区域最值论证（15 届题二）；梯度 → 解几切平面法向量。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>∈（实例）</em>　默写三个本章算过的数：例 1 的线积分、变式 1 的椭圆面积、例 2 的条件最大值。</p>
+    <details><summary>对照</summary><p>$\oint_C(x^2-y)dx+(y^2+x)dy=2\pi$（Green，旋度恒为 $2$）；$S_{\text{椭圆}}=\oint x\,dy=\pi ab$；$\max_{x^2+y^2+z^2=1}(x+2y+3z)=\sqrt{14}$（Lagrange，$P_1=(1,2,3)/\sqrt{14}$）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>≠（区分）</em>　第一型与第二型曲线积分的两处根本区别；"$\partial Q/\partial x=\partial P/\partial y$ 就能推出路径无关"这句话缺了什么前提？</p>
+    <details><summary>对照</summary><p>① 微元不同：$ds$（弧长，无向）vs $dx,dy$（投影，有向）；② 换向后果不同：第一型不变，第二型变号。缺的前提：<strong>单连通</strong>——有洞区域上 $\frac{-y\,dx+x\,dy}{x^2+y^2}$ 旋度为零但绕洞一周 $=2\pi\ne0$。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>（为何要有它）</em>　直接参数化什么都能算，为什么还要三大公式？</p>
+    <details><summary>对照</summary><p>两个场景非它不可：① 旋度/散度简单（常数）时，边界积分 ⇌ 区域积分互相白送（例 1 的 $2\pi$、变式 1 的 $\pi ab$），哪边好算算哪边；② 理论判断（路径无关、保守场判据、Stokes 自由换面）根本没有"硬算"的替代品。更根本：它们把 N–L 的"边界 = 内部"结构推到高维，是场论与 PDE 的语言底座（13 届题二的 $\nabla,\Delta$ 就在这个语言里）。</p></details>
+  </div>
+</div>
+
+<div class="net box" data-tag="间隔复习 + 数分卷总复盘指引">
+  <p><strong>本章复习</strong>：<strong>1 天后</strong>：重做六方向自测卡（不翻书）+ 翻卡快测第二轮；<strong>3 天后</strong>：重做变式 1、变式 2 与真题节选的梯子问题 + 计时默写①②；<strong>1 周后</strong>：把 §3.6 三大公式与 §3.3 Lagrange 流程各默写一遍，确认翻卡全部"会了"。</p>
+  <p><strong>数分卷 10 章总复盘（本章是收官章，从现在起进入循环）</strong>：六方向自测卡按 <strong>5 天一轮</strong>循环——第 1 天 ch01+ch02、第 2 天 ch03+ch04、第 3 天 ch05+ch06、第 4 天 ch07+ch08、第 5 天 ch09+ch10；翻卡快测每天任选两章各过一遍；计时默写只保留各章"不过关"的项目。进入真题季（第 11–15 周，每周一套第 11→17 届）后，每套卷子的错题先映射回章节，对应章的自测卡<strong>加做一次</strong>。考前至少完成两轮全循环。</p>
+</div>
+
+<div class="chapnav">
+  <span><a href="ch09.html">← 第 9 章 · 级数：判敛、一致收敛与幂级数</a></span>
+  <span><a href="index.html">首页</a></span>
+  <span><a href="ch11.html">卷二 · 高等代数 · 第 1 章：从矩阵到线性空间 →</a></span>
+</div>
+
+</div>
+
+<script src="assets/quiz.js"></script>
+<script>
+/* §9.5 翻卡数据 */
+registerQuiz("ch10-drill", [
+  { q: "Green 公式的使用三件套？", a: "闭曲线、正向（沿走区域在左手侧）、$P,Q$ 在含 $D$ 的开集上 $C^1$。缺一条的补救：不闭先补段、反向调号、有奇点挖洞。" },
+  { q: "极坐标的 Jacobi？几何上哪来的？", a: "$J=r$，$dxdy=r\\,dr\\,d\\theta$。环扇小格精确面积 $=\\frac12(r_2^2-r_1^2)\\Delta\\theta=\\bar r\\,\\Delta r\\Delta\\theta$（$\\bar r$ 取 $r$ 的中值）——因子 $r$ 是面积精确长出来的，不是近似。" },
+  { q: "球坐标的 Jacobi？两个角各是什么？", a: "$J=\\rho^2\\sin\\varphi$。$\\varphi\\in[0,\\pi]$ 是与 $z$ 轴的夹角，$\\theta\\in[0,2\\pi)$ 是方位角；$dV=\\rho^2\\sin\\varphi\\,d\\rho\\,d\\varphi\\,d\\theta$。" },
+  { q: "重积分换元三步？", a: "① 区域边界逐条翻译成新坐标；② 被积函数代入换新；③ 乘 $|J|$——绝对值不能丢（面积放大率非负，$J<0$ 只是翻转定向）。" },
+  { q: "$\\oint_{\\partial D}x\\,dy$ 等于什么？怎么来的？", a: "$D$ 的面积。Green 取 $P=0,Q=x$：$\\frac{\\partial Q}{\\partial x}-\\frac{\\partial P}{\\partial y}=1$。配套：$S=-\\oint y\\,dx=\\frac12\\oint(x\\,dy-y\\,dx)$。" },
+  { q: "平面曲线积分路径无关的四等价？前提？", a: "① 与路径无关 ⟺ ② 任意闭路积分为零 ⟺ ③ 势函数 $u$ 存在（$du=Pdx+Qdy$）⟺ ④ $\\frac{\\partial Q}{\\partial x}=\\frac{\\partial P}{\\partial y}$ 处处。前提「单连通」：有洞时④推不出②（绕洞 $2\\pi$ 反例）。" },
+  { q: "Lagrange 乘数法四步流程？", a: "① 存在性先行（约束集有界闭 + $f$ 连续 ⟹ 最值存在）；② 验 $\\nabla g\\ne\\mathbf0$，列 $\\nabla f=\\lambda\\nabla g$ 联立 $g=c$；③ 解出全部候选点；④ 比较函数值下结论。" },
+  { q: "第一型 vs 第二型曲线积分，一句话区别？", a: "第一型对弧长 $ds$：与方向无关，参数从小到大；第二型对坐标 $dx,dy$（投影）：换向变号。物理原型：质量 vs 功。" },
+  { q: "隐函数定理的开关条件与求导公式？", a: "$F(x_0,y_0)=0$ 且 $F_y(x_0,y_0)\\ne0$ ⟹ 局部唯一确定 $y=y(x)$，$y'=-F_x/F_y$。$F_y=0$ 处定理闭嘴（圆在 $(\\pm1,0)$ 处「竖起来」）。" },
+  { q: "Stokes 与 Gauss 的方向各怎么定？", a: "Stokes：右手法则——四指沿边界方向，拇指即曲面法向，侧与边界方向捆绑（动一个必须动另一个）；Gauss：取外侧，通量以流出为正。" }
+]);
+</script>
+
+<script>
+/* §3.5 极坐标换元探索器 */
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  var svgL = document.getElementById("polarw-left");
+  var svgR = document.getElementById("polarw-right");
+  var out = document.getElementById("polarw-out");
+  var rSlider = document.getElementById("polarw-r");
+  var nSlider = document.getElementById("polarw-n");
+
+  function mk(svg, tag, attrs) {
+    var el = document.createElementNS(NS, tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    svg.appendChild(el);
+    return el;
+  }
+  function mkText(svg, x, y, str, attrs) {
+    var t = mk(svg, "text", attrs || {});
+    t.setAttribute("x", x); t.setAttribute("y", y);
+    t.textContent = str;
+    return t;
+  }
+
+  /* 左图坐标映射：theta∈[0,2π] → x∈[40,340]；r∈[0,1] → y∈[190,30] */
+  function LX(th) { return 40 + th / (2 * Math.PI) * 300; }
+  function LY(r) { return 190 - r * 160; }
+  /* 右图坐标映射：中心 (160,160)，r=1 → 140px，y 轴向上 */
+  function RX(r, th) { return 160 + 140 * r * Math.cos(th); }
+  function RY(r, th) { return 160 - 140 * r * Math.sin(th); }
+
+  function update() {
+    var R = parseFloat(rSlider.value);
+    var n = parseInt(nSlider.value, 10);
+    var nth = 2 * n;               /* 角向等分数 */
+    var dTh = 2 * Math.PI / nth;   /* Δθ */
+    var dR = R / n;                /* Δr */
+    var k = Math.max(2, n - 2);    /* 高亮环：介于 r_{k-1} 与 r_k */
+    var i0 = 1;                    /* 高亮扇区：介于 θ_1 与 θ_2 */
+    var i, j;
+
+    /* ===== 左图 ===== */
+    svgL.innerHTML = "";
+    mkText(svgL, 180, 18, "（θ, r）世界：规则网格", { "font-size": 12, fill: "#5c554b", "text-anchor": "middle" });
+    /* 网格线 */
+    for (i = 0; i <= nth; i++) {
+      var th = i * dTh;
+      mk(svgL, "line", { x1: LX(th), y1: LY(R), x2: LX(th), y2: LY(0), stroke: "#c9c2b4", "stroke-width": 1 });
+    }
+    for (j = 0; j <= n; j++) {
+      var rr = j * dR;
+      mk(svgL, "line", { x1: LX(0), y1: LY(rr), x2: LX(2 * Math.PI), y2: LY(rr), stroke: "#c9c2b4", "stroke-width": 1 });
+    }
+    /* 高亮格 */
+    var r1 = (k - 1) * dR, r2 = k * dR;
+    var tha = i0 * dTh, thb = (i0 + 1) * dTh;
+    mk(svgL, "rect", {
+      x: LX(tha), y: LY(r2), width: LX(thb) - LX(tha), height: LY(r1) - LY(r2),
+      fill: "#b45309", opacity: 0.45, stroke: "#b45309", "stroke-width": 1.5
+    });
+    /* 外框与轴标 */
+    mk(svgL, "rect", { x: LX(0), y: LY(R), width: 300, height: LY(0) - LY(R), fill: "none", stroke: "#2b2620", "stroke-width": 2 });
+    mkText(svgL, 344, 200, "θ", { "font-size": 13, fill: "#2b2620" });
+    mkText(svgL, 336, 212, "2π", { "font-size": 11, fill: "#2b2620" });
+    mkText(svgL, 28, 34, "r", { "font-size": 13, fill: "#2b2620" });
+    mkText(svgL, 28, LY(R) + 4, "R", { "font-size": 11, fill: "#2b2620" });
+    mkText(svgL, 40, 208, "0", { "font-size": 11, fill: "#2b2620" });
+
+    /* ===== 右图 ===== */
+    svgR.innerHTML = "";
+    mkText(svgR, 160, 18, "xy 世界：x=rcosθ, y=rsinθ 映后的变形网格", { "font-size": 12, fill: "#5c554b", "text-anchor": "middle" });
+    /* 圆环 */
+    for (j = 1; j <= n; j++) {
+      mk(svgR, "circle", { cx: 160, cy: 160, r: 140 * j * dR, fill: "none", stroke: "#c9c2b4", "stroke-width": 1 });
+    }
+    /* 射线 */
+    for (i = 0; i < nth; i++) {
+      var th2 = i * dTh;
+      mk(svgR, "line", { x1: 160, y1: 160, x2: RX(R, th2), y2: RY(R, th2), stroke: "#c9c2b4", "stroke-width": 1 });
+    }
+    /* 高亮格：外弧 → 内弧 */
+    var M = 14, m, pts = [];
+    for (m = 0; m <= M; m++) {
+      var t1 = tha + (thb - tha) * m / M;
+      pts.push(RX(r2, t1).toFixed(2) + "," + RY(r2, t1).toFixed(2));
+    }
+    for (m = 0; m <= M; m++) {
+      var t2 = thb - (thb - tha) * m / M;
+      pts.push(RX(r1, t2).toFixed(2) + "," + RY(r1, t2).toFixed(2));
+    }
+    mk(svgR, "polygon", { points: pts.join(" "), fill: "#b45309", opacity: 0.45, stroke: "#b45309", "stroke-width": 1.5 });
+    /* 外圆 */
+    mk(svgR, "circle", { cx: 160, cy: 160, r: 140 * R, fill: "none", stroke: "#2b2620", "stroke-width": 2 });
+
+    /* ===== 读数 ===== */
+    var rMid = (r1 + r2) / 2;
+    var Aleft = dR * dTh;
+    var Aright = 0.5 * (r2 * r2 - r1 * r1) * dTh;
+    out.innerHTML =
+      "高亮格：第 " + k + " 环（r∈[" + r1.toFixed(3) + ", " + r2.toFixed(3) + "]）、第 2 扇区（Δθ = " + dTh.toFixed(3) + "，Δr = " + dR.toFixed(3) + "）。<br>" +
+      "左图（θ,r 世界）面积 = Δr·Δθ = <strong>" + Aleft.toFixed(4) + "</strong>；" +
+      "右图（xy 世界）精确面积 = ½(r₂²−r₁²)Δθ = r<sub>中</sub>·Δr·Δθ = <strong>" + Aright.toFixed(4) + "</strong>　＝　r<sub>中</sub>（= " + rMid.toFixed(3) + "）× 左图面积。<br>" +
+      "<strong>同一个格子，面积差了因子 r——这就是 Jacobi：dxdy = r dr dθ。</strong>n 越大，格子越像边长 r·Δθ 乘 Δr 的小矩形。";
+  }
+  rSlider.addEventListener("input", update);
+  nSlider.addEventListener("input", update);
+  update();
+})();
+</script>
+
+</body>
+</html>

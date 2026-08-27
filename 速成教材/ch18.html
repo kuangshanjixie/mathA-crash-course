@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高代第 8 章 · 内积空间：酉、Hermite、正规与谱定理 —— 数学A速成讲义</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+<div class="wrap">
+
+<div class="bookbar">
+  <span><a href="index.html">← 返回首页</a></span>
+  <span>卷二 · 高等代数 · 第 8 章</span>
+</div>
+
+<div class="chapter-kicker">CHAPTER 8 · 高等代数</div>
+<h1>内积空间：酉、Hermite、正规与谱定理</h1>
+
+<div class="exam box" data-tag="本章导览">
+  <p><strong>这一章在整张卷子上的位置</strong>：内积空间与谱定理是高代证明大题的<strong>开门动作</strong>。第 13 届题四（20 分）证对称酉矩阵 $P=\overline{Q}Q^{-1}$，官方解答第一行就是"$P$ 为酉矩阵故为正规矩阵，存在酉矩阵 $U$ 使 $U^{-1}PU=D$"（2 分点）；第 12 届题三（15 分）官方 7 分点"$C$ 视为复矩阵是酉矩阵，可复对角化"用的正是谱定理；第 15 届题四（15 分）开门 2 分点"$A$ 为实对称矩阵，可对角化"是它的实数版本。它几乎不以"证明谱定理"的形态出现，而是让你<strong>引用</strong>它拿入场券——值 <strong>2–7 分的步骤分</strong>，外加特征值画像（实 / 模 1 / 纯虚）这件随身携带的武器。</p>
+  <p><strong>学完你能</strong>：① 默写复内积三条公理，说清共轭为什么钉在第二槽（说不清就去玩 §3.3 的实验台）；② 把酉 / 正交 / Hermite / 反 Hermite / 正规五个定义互译，并各报特征值画像；③ 用"内积两边倒"证特征向量正交类命题（例 1 手法）；④ 默写谱定理与 Schur 骨架，会给"证可对角化"的题开门。</p>
+  <p><strong>前置</strong>：卷二第 5 章<a href="ch15.html">特征值再认识</a>的特征值与特征向量语言；你线代课学过的正交矩阵和那句"实对称矩阵可正交对角化"——本章就是来解释那句口诀凭什么成立、它在复数世界里的真身是谁。</p>
+</div>
+
+<h2>§1 开场谜题："对称"凭什么这么神？</h2>
+
+<div class="hook box" data-tag="开场谜题">
+  <p>你大学背过一句口诀：<strong>实对称矩阵可正交对角化</strong>。背得滚瓜烂熟，但凭什么？"对称"两个字到底买到了什么？先看三个矩阵：</p>
+  <p>$$A_1=\begin{pmatrix}0&-1\\1&0\end{pmatrix}\quad(\text{旋转 }90^\circ,\ \text{正交}),\qquad
+  A_2=\begin{pmatrix}2&1+i\\1-i&1\end{pmatrix},\qquad
+  A_3=\frac1{\sqrt2}\begin{pmatrix}1&i\\i&1\end{pmatrix}.$$</p>
+  <p>逐个查"对称"：$A_1^T=-A_1$，反称；$A_2^T=\begin{pmatrix}2&1-i\\1+i&1\end{pmatrix}\ne A_2$，连对称都不是；$A_3^T=A_3$ 倒是对称——可它带 $i$，"实对称"的口诀管不着它。</p>
+  <p>但事实是：<strong>它们三个全都能被"保长度的基"对角化</strong>（酉对角化）。$A_1$ 甚至在实数里连一个特征值都没有（特征值是 $\pm i$），到了复数里照样服服帖帖。可见"对称"不是真正的共同基因。真正的基因是一条乘法交换律：</p>
+  <p>$$AA^{*}=A^{*}A\qquad(\text{正规矩阵：与自己的共轭转置交换})$$</p>
+  <p>$A_1$ 正交、$A_2$ Hermite、$A_3$ 酉——它们分属三个小家族，而这三个小家族全部住在"正规"这个大家族里。本章的主定理（<strong>谱定理</strong>）说：<strong>正规 $\iff$ 可酉对角化</strong>，一句不多一句不少。你背的那句口诀，只是它在实数里的一个推论。</p>
+</div>
+
+<p>但在讲这个大家族之前，有一块更基础的砖必须先烧对：<strong>复向量的"长度"到底是什么？</strong>顺手写下实数里的公式"长度平方 = 分量平方和"试试：</p>
+<p>$$x=(i,0):\ \sum x_k^2=-1;\qquad x=(1,i):\ \sum x_k^2=0;\qquad x=(1+i,\,1):\ \sum x_k^2=1+2i.$$</p>
+<p>长度平方是负数？非零向量的长度是 $0$？长度平方是个复数？——没有共轭，整个内积大厦在复数里当场塌方。补救只有一个：<strong>给第二个槽位钉上共轭</strong>，$\langle x,y\rangle=\sum x_k\overline{y_k}$。于是上面三例的"长度平方"变成 $1$、$2$、$3$，全是安分的非负实数。这个共轭为什么要钉、钉在哪个槽，就是 §3.3 实验台让你亲手拖出来的体验。</p>
+
+<h2>§2 先看见它：一张家族合影，一幅特征值栖息地</h2>
+
+<div class="vision box" data-tag="直觉与图像">
+  <p>左图：三个子族的<strong>特征值住在哪</strong>——Hermite 的特征值钉死在实轴上，酉的特征值钉死在单位圆上，反 Hermite 的钉死在虚轴上。右图：它们全是<strong>正规家族</strong>的成员（对角阵是家族里最平凡的成员）；实对称是 Hermite 的实数部，正交是酉的实数部。一张图记住全章的人物关系。</p>
+</div>
+
+<figure>
+<svg viewBox="0 0 720 310" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="正规家族与特征值栖息地">
+  <!-- 左：复平面栖息地 -->
+  <text x="180" y="24" font-size="13.5" fill="#2b2620" text-anchor="middle" font-weight="bold">特征值栖息地（复平面）</text>
+  <line x1="50" y1="170" x2="310" y2="170" stroke="#1d4ed8" stroke-width="3"/>
+  <line x1="180" y1="45" x2="180" y2="295" stroke="#15803d" stroke-width="3"/>
+  <circle cx="180" cy="170" r="75" fill="none" stroke="#be123c" stroke-width="3"/>
+  <text x="300" y="160" font-size="12" fill="#1d4ed8" text-anchor="end">实轴</text>
+  <text x="188" y="58" font-size="12" fill="#15803d">虚轴</text>
+  <!-- 点：Hermite 实轴 -->
+  <circle cx="262" cy="170" r="5" fill="#1d4ed8"/>
+  <circle cx="120" cy="170" r="5" fill="#1d4ed8"/>
+  <!-- 点：酉 单位圆 -->
+  <circle cx="233" cy="117" r="5" fill="#be123c"/>
+  <circle cx="135" cy="228" r="5" fill="#be123c"/>
+  <!-- 点：反 Hermite 虚轴 -->
+  <circle cx="180" cy="88" r="5" fill="#15803d"/>
+  <circle cx="180" cy="238" r="5" fill="#15803d"/>
+  <text x="180" y="306" font-size="11.5" fill="#5c554b" text-anchor="middle">蓝 = Hermite（实）　红 = 酉（模 1）　绿 = 反 Hermite（纯虚）</text>
+
+  <!-- 右：家族合影 -->
+  <text x="530" y="24" font-size="13.5" fill="#2b2620" text-anchor="middle" font-weight="bold">家族合影：都是正规矩阵</text>
+  <rect x="360" y="38" width="345" height="258" rx="14" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="532" y="58" font-size="12.5" fill="#b45309" text-anchor="middle" font-weight="bold">正规：AA* = A*A（对角阵是最平凡的成员）</text>
+  <ellipse cx="455" cy="185" rx="88" ry="72" fill="#1d4ed8" fill-opacity="0.10" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="448" y="140" font-size="12.5" fill="#1d4ed8" text-anchor="middle" font-weight="bold">Hermite</text>
+  <text x="448" y="156" font-size="11" fill="#1d4ed8" text-anchor="middle">A* = A</text>
+  <text x="420" y="215" font-size="10.5" fill="#1d4ed8" text-anchor="middle">实对称 ⊂</text>
+  <ellipse cx="612" cy="185" rx="88" ry="72" fill="#be123c" fill-opacity="0.08" stroke="#be123c" stroke-width="2"/>
+  <text x="620" y="140" font-size="12.5" fill="#be123c" text-anchor="middle" font-weight="bold">酉</text>
+  <text x="620" y="156" font-size="11" fill="#be123c" text-anchor="middle">A*A = I</text>
+  <text x="648" y="215" font-size="10.5" fill="#be123c" text-anchor="middle">正交 ⊂</text>
+  <ellipse cx="533" cy="105" rx="70" ry="34" fill="#15803d" fill-opacity="0.10" stroke="#15803d" stroke-width="2"/>
+  <text x="533" y="101" font-size="12" fill="#15803d" text-anchor="middle" font-weight="bold">反 Hermite</text>
+  <text x="533" y="116" font-size="10.5" fill="#15803d" text-anchor="middle">A* = −A（实反称 ⊂）</text>
+  <text x="533" y="196" font-size="11.5" fill="#7a4a12" text-anchor="middle" font-weight="bold">Hermite ∩ 酉</text>
+  <text x="533" y="212" font-size="10.5" fill="#7a4a12" text-anchor="middle">特征值 ±1（对合）</text>
+  <text x="533" y="282" font-size="11" fill="#7a4a12" text-anchor="middle">交集之外还有大片：diag(2, i) 正规，三族都不属</text>
+</svg>
+<figcaption>三个子族的特征值各有法定住所；它们连同对角阵一起，构成正规家族。谱定理：这个家族 $=$ 可酉对角化的全部。</figcaption>
+</figure>
+
+<p>两张图各记住一句话。左图：<strong>特征值的住所由"自伴方式"决定</strong>——$A^*=A$ 钉实轴，$A^*A=I$ 钉单位圆，$A^*=-A$ 钉虚轴，全部由"内积两边倒"一句话推出（§3.7、例 1）。右图：<strong>正规是唯一的大前提</strong>——属于任何一个小家族都自动正规，自动可酉对角化；而家族之外（比如 Jordan 块）连对角化都谈不上。</p>
+
+<h2>§3 精确定义：逐符号朗读</h2>
+
+<h3>3.1 复内积：共轭钉在第二槽</h3>
+
+<div class="def">
+  <p class="def-title">定义（$\mathbb C^n$ 的标准内积）</p>
+  <p>对 $x=(x_1,\dots,x_n)^T,\ y=(y_1,\dots,y_n)^T\in\mathbb C^n$，定义
+  $$\langle x,y\rangle=\sum_{k=1}^n x_k\overline{y_k}=y^{*}x,$$
+  其中 $y^{*}=\overline{y}^{T}$ 是共轭转置。它满足三条公理：</p>
+  <p>$$\text{（i）第一槽线性：}\ \langle ax+by,\,z\rangle=a\langle x,z\rangle+b\langle y,z\rangle;$$
+  $$\text{（ii）共轭对称：}\ \langle x,y\rangle=\overline{\langle y,x\rangle};$$
+  $$\text{（iii）正定性：}\ \langle x,x\rangle\ge 0,\ \text{且}\ \langle x,x\rangle=0\iff x=0.$$</p>
+  <p>由（i）（ii）得<strong>第二槽共轭线性</strong>：$\langle x,\,ay+bz\rangle=\overline a\langle x,y\rangle+\overline b\langle x,z\rangle$——第二槽提数要加共轭。</p>
+</div>
+
+<div class="symbol box" data-tag="逐符号朗读">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$\langle x,y\rangle=\sum x_k\overline{y_k}$</td><td>"$x$ 与 $y$ 的内积 $=$ 逐分量 $x_k$ 乘 $y_k$ 的共轭，再求和"</td><td>共轭钉在第二槽——全章的生死线，例 1 的链条就靠它闭合</td></tr>
+    <tr><td>$\langle x,x\rangle=\sum|x_k|^2$</td><td>"$x$ 与自己的内积 $=$ 模方和"</td><td>永远是非负实数，"长度平方"有了着落</td></tr>
+    <tr><td>$\langle ax+by,z\rangle=a\langle x,z\rangle+b\langle y,z\rangle$</td><td>"第一槽的线性组合原样拆开"</td><td>线性在第一槽（本书约定，另一派约定相反）</td></tr>
+    <tr><td>$\langle x,ay\rangle=\overline a\langle x,y\rangle$</td><td>"第二槽提出数 $a$，要变成 $\overline a$"</td><td>共轭对称的代价；忘了它，共轭推导处处错号</td></tr>
+  </table>
+  <p>另一派教材把共轭钉在第一槽（物理系惯例）。两派都是合法内积，但全书必须统一——本书固定<strong>共轭在第二槽、线性在第一槽</strong>，与官方解答的 $\langle Ax,y\rangle=\langle x,A^{*}y\rangle$ 配套。</p>
+</div>
+
+<div class="think">
+  <p>先动手。由第一槽线性与共轭对称，<strong>自己推出第二槽的提数法则</strong>：$\langle x,ay\rangle=\,?$
+  （提示：$\langle x,ay\rangle=\overline{\langle ay,x\rangle}$，再把 $a$ 从第一槽提出来。）写完再展开。</p>
+  <details class="answer">
+    <summary>对照</summary>
+    <p>$\langle x,ay\rangle=\overline{\langle ay,x\rangle}=\overline{a\langle y,x\rangle}=\overline a\cdot\overline{\langle y,x\rangle}=\overline a\langle x,y\rangle.$</p>
+    <p>一行推完，但它是全章使用频率最高的一行：Hermite 特征值为实、例 1 的链条、Gram–Schmidt 的投影系数，全靠这个"第二槽提数加共轭"。</p>
+  </details>
+</div>
+
+<div class="warn box" data-tag="著名坑：忘了共轭，长度崩塌">
+  <p>若把内积错写成 $\sum x_k y_k$（不取共轭），则 $\langle x,x\rangle=\sum x_k^2$：</p>
+  <table>
+    <tr><th>$x$</th><th>错版"长度平方" $\sum x_k^2$</th><th>正版 $\sum|x_k|^2$</th></tr>
+    <tr><td>$(i,0)$</td><td>$-1$（负数！）</td><td>$1$</td></tr>
+    <tr><td>$(1,i)$</td><td>$0$（非零向量长度为零！）</td><td>$2$</td></tr>
+    <tr><td>$(1,2i)$</td><td>$-3$</td><td>$5$</td></tr>
+    <tr><td>$(1+i,\,1)$</td><td>$1+2i$（复数！）</td><td>$3$</td></tr>
+  </table>
+  <p>正定性、实性、"非零向量长度非零"三条全崩——错版根本不是一个内积。<strong>共轭不是装饰，是刚需。</strong>§3.3 的实验台让你亲手把这个点拖出复平面。</p>
+</div>
+
+<div class="net box" data-tag="ℝⁿ 与 ℂⁿ 对照表（实数版全是复数版的特例）">
+  <table>
+    <tr><th></th><th>$\mathbb R^n$</th><th>$\mathbb C^n$</th></tr>
+    <tr><td>内积</td><td>$x\cdot y=\sum x_k y_k=y^Tx$</td><td>$\langle x,y\rangle=\sum x_k\overline{y_k}=y^{*}x$</td></tr>
+    <tr><td>对称性</td><td>$\langle x,y\rangle=\langle y,x\rangle$</td><td>$\langle x,y\rangle=\overline{\langle y,x\rangle}$</td></tr>
+    <tr><td>第二槽提数</td><td>原样提出</td><td>提出加共轭</td></tr>
+    <tr><td>保长度矩阵</td><td>正交：$A^TA=I$</td><td>酉：$A^{*}A=I$</td></tr>
+    <tr><td>自伴矩阵</td><td>对称：$A^T=A$</td><td>Hermite：$A^{*}=A$</td></tr>
+    <tr><td>反对称版</td><td>反称：$A^T=-A$</td><td>反 Hermite：$A^{*}=-A$</td></tr>
+  </table>
+  <p>记忆锚点：<strong>实数版 $=$ 复数版把共轭删掉</strong>（实数的共轭是自己）。所以 $\mathbb R$ 上的公式一律是 $\mathbb C$ 上公式的退化；学复版一次，实版白送。</p>
+</div>
+
+<h3>3.2 范数与 Cauchy–Schwarz</h3>
+
+<div class="def">
+  <p class="def-title">定义（范数）与 Cauchy–Schwarz 不等式</p>
+  <p>$\|x\|=\sqrt{\langle x,x\rangle}=\sqrt{\sum|x_k|^2}$（正定性保证根号下非负）。Cauchy–Schwarz：
+  $$\bigl|\langle x,y\rangle\bigr|\le\|x\|\,\|y\|,$$
+  等号成立当且仅当 $x,y$ 共线（一个为另一个的倍数）——证明与实数版同一套路：对复参数 $t$ 展开 $\|x-ty\|^2\ge0$，取最优的 $t=\langle x,y\rangle/\|y\|^2$ 整理即得。</p>
+</div>
+
+<h3>3.3 亲手摸一摸：共轭为什么是刚需（交互）</h3>
+
+<div class="widget" id="conj-widget">
+  <p class="w-title">▶ 共轭刚需实验台：拖复向量 x = (x₁, x₂)，看两种"长度平方"的命运</p>
+  <p class="w-row">四个滑块分别控制 $x_1,x_2$ 的实部与虚部。左图（复平面）：<strong style="color:#be123c">大红点</strong>是无共轭的"长度平方" $S=x_1^2+x_2^2$（蓝、橙小点是 $x_1^2,x_2^2$）。右图（实轴）：<strong style="color:#15803d">绿点</strong>是有共轭的 $N=|x_1|^2+|x_2|^2$。</p>
+  <div class="w-row"><label>Re x₁（拖到 0，配合 Im x₁ = 1 造出 x₁ = i）</label>
+  <input type="range" id="cnj-a1" min="-2" max="2" step="0.1" value="1"></div>
+  <div class="w-row"><label>Im x₁</label>
+  <input type="range" id="cnj-b1" min="-2" max="2" step="0.1" value="1"></div>
+  <div class="w-row"><label>Re x₂</label>
+  <input type="range" id="cnj-a2" min="-2" max="2" step="0.1" value="1"></div>
+  <div class="w-row"><label>Im x₂</label>
+  <input type="range" id="cnj-b2" min="-2" max="2" step="0.1" value="0"></div>
+  <svg id="cnjw-svg" viewBox="0 0 720 300" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div class="w-verdict" id="cnjw-out">加载中……（需要启用 JavaScript）</div>
+  <p class="w-row" style="font-size:0.88em;color:#5c554b">玩出这三个体验再往下走：<strong>①</strong> 拖出 $x=(i,0)$（Re x₁ = 0、Im x₁ = 1、x₂ = 0）：$S=-1$，"长度平方"是负数；<strong>②</strong> 拖出 $x=(1+i,\,1)$（初始位置）：$S=1+2i$，大红点直接离开实轴——它连实数都不是；<strong>③</strong> 怎么拖都行，绿点永远不离开右半轴；再找找让 $N=0$ 的唯一配置（正定性：只有 $x=0$）。</p>
+</div>
+
+<h3>3.4 标准正交基与 Gram–Schmidt 正交化</h3>
+
+<div class="def">
+  <p class="def-title">定义（标准正交基）与展开公式</p>
+  <p>基 $\{e_1,\dots,e_n\}$ 满足 $\langle e_i,e_j\rangle=\delta_{ij}$（两两正交且长度为 1），称为<strong>标准正交基</strong>。此时展开系数就是内积：
+  $$x=\sum_{i=1}^n\langle x,e_i\rangle\,e_i,\qquad \|x\|^2=\sum_{i=1}^n\bigl|\langle x,e_i\rangle\bigr|^2\ (\text{Parseval}).$$</p>
+</div>
+
+<div class="def">
+  <p class="def-title">流程（Gram–Schmidt 正交化）</p>
+  <p>任给基 $a_1,\dots,a_n$，递推造标准正交基：$u_1=a_1$，$e_1=u_1/\|u_1\|$；
+  $$u_k=a_k-\sum_{i=1}^{k-1}\langle a_k,e_i\rangle\,e_i,\qquad e_k=\frac{u_k}{\|u_k\|}\quad(k=2,\dots,n).$$
+  减去的是 $a_k$ 在已造好的 $e_i$ 上的<strong>正交投影</strong>；系数 $\langle a_k,e_i\rangle$ 里 $e_i$ 在第二槽——共轭自动跟上。</p>
+</div>
+
+<div class="calc box" data-tag="2 维算例（共轭在场，一步都不能省）">
+  <p>在 $\mathbb C^2$ 中把 $a_1=(1,i)^T,\ a_2=(1,2)^T$ 正交化。</p>
+  <p>① $\|a_1\|^2=|1|^2+|i|^2=2$，$e_1=\dfrac1{\sqrt2}(1,i)^T$。</p>
+  <p>② $\langle a_2,e_1\rangle=\dfrac1{\sqrt2}\bigl(1\cdot\overline1+2\cdot\overline i\bigr)=\dfrac{1-2i}{\sqrt2}$（第二槽的 $i$ 提出变 $-i$）。</p>
+  <p>③ $u_2=a_2-\langle a_2,e_1\rangle e_1=(1,2)^T-\dfrac{1-2i}{2}(1,i)^T=\dfrac12\bigl(1+2i,\ 2-i\bigr)^T$（用了 $(1-2i)i=2+i$）。</p>
+  <p>④ $\|u_2\|^2=\dfrac{|1+2i|^2+|2-i|^2}{4}=\dfrac{5+5}{4}=\dfrac52$，$e_2=\dfrac1{\sqrt{10}}\bigl(1+2i,\ 2-i\bigr)^T$。</p>
+  <p class="aside">自查：$\langle e_1,e_2\rangle\propto 1\cdot\overline{(1+2i)}+i\cdot\overline{(2-i)}=(1-2i)+i(2+i)=0$ ✓。若第②步忘了共轭（把 $\overline i$ 当成 $i$），算出的系数变成 $\frac{1+2i}{\sqrt2}$，第③步减出来的"剩余"与 $e_1$ 根本不垂直——你可以亲手验证这个翻车现场。</p>
+</div>
+
+<h3>3.5 正交补：$V=W\oplus W^{\perp}$</h3>
+
+<div class="def">
+  <p class="def-title">定义与定理（正交补分解）</p>
+  <p>设 $W$ 是（有限维）内积空间 $V$ 的子空间，$W^{\perp}=\{x\in V:\langle x,w\rangle=0\ \forall w\in W\}$。则
+  $$V=W\oplus W^{\perp},\qquad \dim W+\dim W^{\perp}=\dim V.$$</p>
+  <p>证明就是 Gram–Schmidt 的兑现：取 $W$ 的标准正交基 $e_1,\dots,e_r$，则任意 $x=p+(x-p)$，其中 $p=\sum_{i=1}^r\langle x,e_i\rangle e_i\in W$，而 $x-p$ 与每个 $e_i$ 正交故 $\in W^{\perp}$（和 $=V$）；又 $x\in W\cap W^{\perp}\Rightarrow\langle x,x\rangle=0\Rightarrow x=0$（交 $=\{0\}$）。$\square$</p>
+</div>
+
+<h3>3.6 酉矩阵与正交矩阵：保长度的矩阵</h3>
+
+<div class="def">
+  <p class="def-title">定义（酉矩阵 / 正交矩阵）</p>
+  <p>$U\in\mathbb C^{n\times n}$ 满足 $U^{*}U=I$ 称为<strong>酉矩阵</strong>；$A\in\mathbb R^{n\times n}$ 满足 $A^TA=I$ 称为<strong>正交矩阵</strong>（正交 $=$ 实的酉：实矩阵 $A^{*}=A^T$）。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定理（酉的等价刻画，五条全等价）</p>
+  <p>（i）$U^{*}U=I$；　（ii）$UU^{*}=I$（即 $U^{-1}=U^{*}$）；　（iii）$\langle Ux,Uy\rangle=\langle x,y\rangle$（保内积）；　（iv）$\|Ux\|=\|x\|$（保长度）；　（v）$U$ 的列（行）构成 $\mathbb C^n$ 的标准正交基。</p>
+  <p>关键一环：(iii) $\Rightarrow$ (i)：$\langle Ux,Uy\rangle=(Uy)^{*}(Ux)=y^{*}U^{*}Ux$，它对一切 $x,y$ 等于 $y^{*}x$ 当且仅当 $U^{*}U=I$；(v) 只是 $(U^{*}U)_{ij}=\langle u_j,u_i\rangle=\delta_{ij}$ 的逐元素朗读。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定理（酉矩阵的特征值模为 1）</p>
+  <p>$Ux=\lambda x$，$x\ne0$。保长度给出 $\|x\|=\|Ux\|=|\lambda|\,\|x\|$，故 $|\lambda|=1$。实正交矩阵作为酉矩阵的特例：特征值模为 1，实特征值只能是 $\pm1$，非实特征值共轭成对。$\square$</p>
+</div>
+
+<h3>3.7 伴随、Hermite、反 Hermite</h3>
+
+<div class="def">
+  <p class="def-title">定义（伴随 / 自伴 / 反自伴）</p>
+  <p>$A$ 的<strong>伴随</strong>（共轭转置）$A^{*}=\overline{A}^{T}$，它是唯一满足下式的矩阵：
+  $$\langle Ax,y\rangle=\langle x,A^{*}y\rangle\qquad(\forall x,y\in\mathbb C^n),$$
+  因为 $\langle Ax,y\rangle=y^{*}Ax=(A^{*}y)^{*}x=\langle x,A^{*}y\rangle$。运算律：$(AB)^{*}=B^{*}A^{*}$，$(A^{*})^{*}=A$，$(\lambda A)^{*}=\overline\lambda A^{*}$。</p>
+  <p>$A^{*}=A$ 称 <strong>Hermite（自伴）</strong>；$A^{*}=-A$ 称<strong>反 Hermite</strong>。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定理（Hermite 特征值为实；反 Hermite 特征值为纯虚）</p>
+  <p>设 $Ax=\lambda x$，$x\ne0$，$A^{*}=A$。内积两边倒：
+  $$\lambda\langle x,x\rangle=\langle\lambda x,x\rangle=\langle Ax,x\rangle=\langle x,A^{*}x\rangle=\langle x,Ax\rangle=\langle x,\lambda x\rangle=\overline\lambda\langle x,x\rangle.$$
+  $\langle x,x\rangle&gt;0$，故 $\lambda=\overline\lambda$，即 $\lambda\in\mathbb R$。反 Hermite 时同一链条多一个负号，得 $\lambda=-\overline\lambda$，即 $\lambda$ 为纯虚数或 $0$。$\square$</p>
+</div>
+<p>注意链条里两处机关：左端 $\lambda$ 从<strong>第一槽</strong>原样提出；右端 $\lambda$ 从<strong>第二槽</strong>提出变成 $\overline\lambda$。这条"两边倒"就是例 1 与几乎所有特征值画像证明的母机。</p>
+
+<h3>3.8 Schur 定理：任何复方阵都能酉三角化</h3>
+
+<div class="def">
+  <p class="def-title">定理（Schur 酉三角化）</p>
+  <p>对任意 $n$ 阶复方阵 $A$，存在酉矩阵 $U$ 使 $U^{*}AU=T$ 为上三角矩阵（$T$ 的对角元即 $A$ 的全部特征值，计重数）。</p>
+</div>
+<p><strong>证明骨架（对阶数 $n$ 归纳，Gram–Schmidt 是关节）</strong>：</p>
+<ol>
+  <li>$n=1$ 平凡。设 $n-1$ 阶成立。</li>
+  <li>取 $A$ 的一个特征值 $\lambda_1$ 与<strong>单位</strong>特征向量 $u_1$（$\mathbb C$ 上特征值必存在——这就是必须在复数域施工的原因）。</li>
+  <li>把 $u_1$ 扩充为 $\mathbb C^n$ 的标准正交基（先扩成基，再 Gram–Schmidt），拼成酉矩阵 $U_1=[\,u_1\ \ W\,]$。则
+  $$U_1^{*}AU_1=\begin{pmatrix}\lambda_1&*\\0&B\end{pmatrix},$$
+  第一列来自 $Au_1=\lambda_1u_1$；左下角的零来自正交性：$(U_1^{*}AU_1)_{i1}=\langle Au_1,u_i\rangle=\lambda_1\langle u_1,u_i\rangle=0$（$i\ge2$）。</li>
+  <li>对 $n-1$ 阶的 $B$ 用归纳假设：存在酉 $V$ 使 $V^{*}BV=T_1$ 上三角。令 $U=U_1\operatorname{diag}(1,V)$，则 $U$ 为酉矩阵且 $U^{*}AU$ 上三角。$\square$</li>
+</ol>
+
+<h3>3.9 谱定理：正规 ⟺ 可酉对角化</h3>
+
+<div class="def">
+  <p class="def-title">定义（正规矩阵）</p>
+  <p>满足 $AA^{*}=A^{*}A$ 的复方阵称为<strong>正规矩阵</strong>。Hermite（$A^{*}=A$）、反 Hermite（$A^{*}=-A$）、酉（$A^{*}A=I$）、对角阵都是正规矩阵；实对称、实反称、正交矩阵看作复矩阵后也都是。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定理（谱定理 / 正规矩阵的酉对角化）</p>
+  <p>$$A\ \text{正规}\ \iff\ \text{存在酉矩阵 }U\text{ 使 }U^{*}AU=\operatorname{diag}(\lambda_1,\dots,\lambda_n).$$</p>
+</div>
+
+<div class="calc box" data-tag="完整证明（这个推导干净漂亮，必须会背）">
+  <p><strong>证明</strong>　（$\Longleftarrow$）设 $U^{*}AU=\Lambda$ 对角，$U$ 酉，则 $A=U\Lambda U^{*}$，
+  $$AA^{*}=U\Lambda\Lambda^{*}U^{*}=U\Lambda^{*}\Lambda U^{*}=A^{*}A$$
+  （对角阵两两交换），即 $A$ 正规。对角阵必正规——"正规"这个条件一分不多。</p>
+  <p>（$\Longrightarrow$）由 Schur 定理，存在酉 $U$ 使 $U^{*}AU=T$ 上三角。$A$ 正规则 $T$ 正规：
+  $$TT^{*}=U^{*}A(UU^{*})A^{*}U=U^{*}AA^{*}U=U^{*}A^{*}AU=T^{*}T.$$
+  下证<strong>引理：上三角 + 正规 ⟹ 对角</strong>。对阶数归纳：$n=1$ 平凡；设 $n-1$ 成立，把 $T$ 分块 $T=\begin{pmatrix}t_{11}&r\\0&T_1\end{pmatrix}$，比较 $TT^{*}$ 与 $T^{*}T$ 的 $(1,1)$ 元：
+  $$(TT^{*})_{11}=\sum_{j=1}^n|t_{1j}|^2=|t_{11}|^2+\|r\|^2,\qquad (T^{*}T)_{11}=|t_{11}|^2$$
+  （$T$ 上三角，第一列只有 $t_{11}$ 非零）。正规要求两式相等，故 $\|r\|^2=0$，即 $r=0$。于是 $T=\operatorname{diag}(t_{11},T_1)$，$T_1$ 仍是正规的上三角阵，由归纳假设 $T_1$ 对角，故 $T$ 对角。$\square$</p>
+  <p class="aside">点评：整个谱定理的"硬内容"只有一行——$(TT^{*})_{11}$ 比 $(T^{*}T)_{11}$ 多出第一行的模方和 $\|r\|^2$；正规性把这个差额强行归零，右上角就被逐行清干净了。考场上引用"正规 ⟹ 酉对角化"时，背后真正发生的就是这件事。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">推论链（子族的特征值画像，全部一句话）</p>
+  <p>① <strong>Hermite ⟺ 可酉对角化且特征值全实</strong>：$D=U^{*}AU$ 时 $D^{*}=U^{*}A^{*}U=D$，对角阵自共轭即对角元全实。</p>
+  <p>② <strong>酉 ⟺ 可酉对角化且特征值全模 1</strong>：$D^{*}D=U^{*}A^{*}AU=I$，即 $|d_i|=1$。</p>
+  <p>③ <strong>反 Hermite ⟺ 可酉对角化且特征值全纯虚</strong>：同①，$D^{*}=-D$。</p>
+  <p>④ <strong>正规 ⟹ 不同特征值的特征向量互相正交</strong>（§9 变式 1 由你证——用的正是例 1 的链条 + 例 2 的引理）。</p>
+</div>
+
+<h3>3.10 实版本：你背过的那句口诀</h3>
+
+<div class="def">
+  <p class="def-title">定理（实谱定理）</p>
+  <p>设 $A$ 为 $n$ 阶<strong>实对称</strong>矩阵（$A^T=A$）。则 $A$ 的特征值全为实数，且存在<strong>实正交矩阵</strong> $Q$ 使
+  $$Q^{T}AQ=\operatorname{diag}(\lambda_1,\dots,\lambda_n),\qquad \lambda_i\in\mathbb R.$$</p>
+</div>
+<p>证明两步。① <strong>特征值实</strong>：把 $A$ 看作复矩阵，$A^{*}=\overline A^{T}=A^T=A$ 是 Hermite，由 §3.7 特征值全实。② <strong>实版 Schur</strong>：归纳在 $\mathbb R$ 内进行——每步取实特征值 $\lambda_1$（①保证存在）与实单位特征向量，扩成 $\mathbb R^n$ 的标准正交基，得正交阵 $Q_1$ 使 $Q_1^{T}AQ_1=\begin{pmatrix}\lambda_1&*\\0&B\end{pmatrix}$，$B$ 仍实对称；归纳得正交阵 $Q$ 使 $Q^{T}AQ=T$ 为实上三角。但 $T$ 对称（$T^{T}=Q^{T}A^{T}Q=T$），<strong>对称的上三角阵只能是对角阵</strong>。$\square$</p>
+<p>口诀的真身至此显形：实对称 ⊂ Hermite ⊂ 正规，"可正交对角化"只是谱定理在实数里的投影。第 9 章的二次型正定性（特征值全正）就站在这块地基上。</p>
+
+<h2>§4 翻译轨：三个标准动作 + 一间练功房</h2>
+
+<p>谱定理这一族在卷面上只有三种用法：证正交、开门对角化、把"酉/正交"条件变现。练成反射，本章毕业。</p>
+
+<div class="trans box" data-tag="动作一：证 ⟨x,y⟩ = 0（内积两边倒）">
+  <p><strong>题面</strong>："证明（Hermite / 酉 / 正规 / 反 Hermite 矩阵）不同特征值的特征向量正交"。</p>
+  <p><strong>翻译</strong>：目标是"一个复数等于 $0$"——给它乘上非零因子 $\lambda-\mu$（题面 $\lambda\ne\mu$ 白送），把特征值从两边分别放出来：</p>
+  <p>$$\lambda\langle x,y\rangle=\langle Ax,y\rangle=\langle x,A^{*}y\rangle=\cdots=\mu\langle x,y\rangle\ \Longrightarrow\ (\lambda-\mu)\langle x,y\rangle=0.$$</p>
+  <p><strong>用在哪一步、值多少分</strong>：链条的每一环都要有名有姓（第一槽线性、伴随、自伴条件、第二槽提数加共轭、特征值画像）——这是分步给分制下典型的"一环一分"。完整示范见 §8 例 1。</p>
+</div>
+
+<div class="trans box" data-tag="动作二：证可对角化（查正规，一句话开门）">
+  <p><strong>题面</strong>："证明 $A$ 可（酉）对角化" / 题面给出 $A$ 是 Hermite、酉、实对称、正交中的一个。</p>
+  <p><strong>翻译</strong>：不要去数 $n$ 个无关特征向量——先查它落在哪个子族，落入即正规，正规即酉对角化：</p>
+  <p>"$A$ Hermite（酉 / 反 Hermite / 实对称）$\Rightarrow A$ 正规 $\Rightarrow$ 由谱定理，存在酉 $U$ 使 $U^{*}AU$ 对角。"</p>
+  <p><strong>值多少分</strong>：这一行就是第 13 届题四开门的 2 分点、第 12 届题三的 7 分点、第 15 届题四开门的 2 分点。写完它，之后所有动作都在对角阵上做。</p>
+</div>
+
+<div class="trans box" data-tag="动作三：真题原句长这样（第 12 届题三）">
+  <p><strong>原句</strong>："$C$ 也是正交矩阵；$C$ 视为复矩阵是酉矩阵，可复对角化。"</p>
+  <p><strong>翻译</strong>：一句话用掉本章两件货：</p>
+  <p>① 实正交 $\Rightarrow$ 复酉（实矩阵 $A^{*}=A^{T}$，所以 $A^{T}A=I$ 就是 $A^{*}A=I$）——小翻译，白送但必须先想到；<br>
+  ② 酉 $\Rightarrow$ 正规 $\Rightarrow$ 可酉对角化（谱定理）——对角化之后，特征值全部落在单位圆上（画像 ②），实特征值只剩 $\pm1$，非实的共轭成对。</p>
+  <p>官方解答后面的 12 分点（数特征值奇偶、判 $\det C&lt;0$）全部站在②递过来的这幅画像上。看到"正交矩阵"四个字，反射出"酉 + 模 1"，入场券就到手了。</p>
+</div>
+
+<h3>4.4 翻译练功房：像学语言一样，大量互译</h3>
+
+<p>老规矩：<strong>先把 8 句全部写在纸上，再逐条展开对照</strong>。每条不超过 1 分钟。</p>
+
+<div class="trans box" data-tag="互译 8 句">
+  <p><strong>T1</strong>　自然→符号："$U$ 是酉矩阵。"</p>
+  <details class="answer"><summary>对照</summary><p>$U^{*}U=I$（等价地 $UU^{*}=I$、$U^{-1}=U^{*}$、列标准正交）。<strong>易错</strong>：写成 $U^{T}U=I$——那是实正交的条件；复矩阵少了共轭，"保长度"立刻塌方（回 §3.3 拖一拖）。</p></details>
+  <p><strong>T2</strong>　自然→符号 + 两个追问："A 是正规矩阵。" 对角阵正规吗？$\begin{pmatrix}1&1\\0&1\end{pmatrix}$ 呢？</p>
+  <details class="answer"><summary>对照</summary><p>$AA^{*}=A^{*}A$。对角阵正规（对角阵两两交换——这就是谱定理 $\Longleftarrow$ 方向白送的原因）。$\begin{pmatrix}1&1\\0&1\end{pmatrix}$：$AA^{*}=\begin{pmatrix}2&1\\1&1\end{pmatrix}\ne\begin{pmatrix}1&1\\1&2\end{pmatrix}=A^{*}A$，不正规——它是 Jordan 块，本来就连对角化都不行。</p></details>
+  <p><strong>T3</strong>　判断（共轭位置）："$\langle x,y\rangle=\sum x_k\overline{y_k}$ 与 $\langle x,y\rangle=\sum\overline{x_k}y_k$ 是不是同一个内积？"</p>
+  <details class="answer"><summary>对照</summary><p>互为共轭：前者线性在第一槽（本书约定），后者线性在第二槽，各自都是合法内积，但全书必须统一用前者，否则 $\langle Ax,y\rangle=\langle x,A^{*}y\rangle$ 的公式要跟着翻面。最致命的是两边都不加共轭：$\langle x,x\rangle=\sum x_k^2$ 可以是负数甚至复数，根本不是内积。</p></details>
+  <p><strong>T4</strong>　符号→自然 + 追问："$A^{*}A=I$。" 它的三个等价说法？</p>
+  <details class="answer"><summary>对照</summary><p>保内积 $\langle Ax,Ay\rangle=\langle x,y\rangle$；保长度 $\|Ax\|=\|x\|$；列（行）标准正交。<strong>用法</strong>：题面说"保长度"立刻翻译成 $A^{*}A=I$ 这个能算的式子；题面给 $A^{*}A=I$ 立刻反射出特征值模 1。</p></details>
+  <p><strong>T5</strong>　判断（说理由）："实正交矩阵看作复矩阵是酉矩阵。"</p>
+  <details class="answer"><summary>对照</summary><p>对。实矩阵 $A^{*}=\overline A^{T}=A^{T}$，故 $A^{T}A=I$ 与 $A^{*}A=I$ 是同一个条件。第 12 届题三官方解答的第一步"$C$ 视为复矩阵是酉矩阵，可复对角化" $=$ 这句小翻译 + 谱定理，值 7 分。</p></details>
+  <p><strong>T6</strong>　找坑："Hermite 矩阵就是对称矩阵的复数版，所以 $A^{*}=A\iff A^{T}=A$。"</p>
+  <details class="answer"><summary>对照</summary><p>错。$A^{*}=\overline A^{T}$ 比转置多一道共轭。反例：$A=\begin{pmatrix}0&i\\-i&0\end{pmatrix}$ 满足 $A^{*}=A$（Hermite），但 $A^{T}=-A$（反而是反称）。第 13 届题四的"对称酉矩阵"是 $P^{T}=P$（无共轭）加 $P^{*}P=I$（有共轭）——两个条件各管各的，谁也不能想当然换成 Hermite。</p></details>
+  <p><strong>T7</strong>　自然→符号："正规阵 $A$ 的属于 $\lambda$ 的特征向量，也是 $A^{*}$ 的特征向量。"</p>
+  <details class="answer"><summary>对照</summary><p>$Ax=\lambda x\Longrightarrow A^{*}x=\overline\lambda x$（例 2 的结论）。<strong>易错</strong>：写成 $A^{*}x=\lambda x$（忘共轭）或 $A^{*}x=\lambda^{-1}x$——后者只是酉矩阵的特例（$|\lambda|=1$ 时 $\overline\lambda=\lambda^{-1}$），不是正规阵的通律。</p></details>
+  <p><strong>T8</strong>　判断 + 追问："任何复方阵都可酉对角化。" 那任何复方阵能做到的最好的是什么？</p>
+  <details class="answer"><summary>对照</summary><p>错：谱定理说可酉对角化 $\iff$ 正规，反例 Jordan 块 $\begin{pmatrix}1&1\\0&1\end{pmatrix}$（T2 已验不正规）。任何复方阵的最好结果是 <strong>Schur</strong>：酉相似于上三角——对角线上特征值齐了，但右上角清不干净；清得干净的恰好是正规阵（$(1,1)$ 元比较逐行清零）。</p></details>
+</div>
+
+<h2>§5 类型识别：什么信号在召唤谱定理</h2>
+
+<div class="recog box" data-tag="识别反射表">
+  <table>
+    <tr><th>题面信号</th><th>反射</th></tr>
+    <tr><td>"复矩阵 + 对角化 / 标准形"</td><td>先查正规 $AA^{*}=A^{*}A$：正规 ⟺ 可酉对角化；不正规也有 Schur 上三角兜底</td></tr>
+    <tr><td>"实对称"</td><td>特征值全实 + 可正交对角化（实谱定理）；下一章二次型正定性的地基</td></tr>
+    <tr><td>"酉 / 正交"</td><td>保长度 $\|Ax\|=\|x\|$；特征值模 1（实特征值 $\pm1$）；列标准正交</td></tr>
+    <tr><td>"Hermite / 自伴"</td><td>特征值实；不同特征值特征向量正交（例 1 链条）</td></tr>
+    <tr><td>"反 Hermite / 实反称"</td><td>特征值纯虚；同一根"两边倒"链条照走（§9 模仿 1）</td></tr>
+    <tr><td>"保长度 / 保内积 / $\langle Ax,Ay\rangle=\langle x,y\rangle$"</td><td>就是酉（正交）：翻译成 $A^{*}A=I$ 再动手</td></tr>
+    <tr><td>"对称 + 酉双条件"</td><td>13 届题四型：酉 ⟹ 正规白送，酉对角化开局；转置与共轭转置分开用</td></tr>
+    <tr><td>"$A^{*}$ 的特征值 / 特征向量"</td><td>例 2：正规阵 $Ax=\lambda x\iff A^{*}x=\overline\lambda x$</td></tr>
+  </table>
+</div>
+
+<h2>§6 考法定位：它藏在哪里、值多少分</h2>
+
+<div class="exam box" data-tag="考法定位">
+  <table>
+    <tr><th>出处</th><th>题号</th><th>本章扮演什么角色</th><th>分值权重</th></tr>
+    <tr><td>第 13 届（2021）</td><td>题四</td><td>开门 2 分点"$P$ 为酉矩阵故为正规矩阵，存在酉 $U$ 使 $U^{-1}PU=D$"；特征值模 1（$|\alpha_i|=1$）是第 4 步造 $\overline E=E^{-1}$ 的关键</td><td>20 分大题的开门 + 中段</td></tr>
+    <tr><td>第 12 届（2020）</td><td>题三</td><td>"$C$ 视为复矩阵是酉矩阵，可复对角化"（7 分点）；特征值画像：模 1 ⟹ 实特征值 $\pm1$、非实共轭成对（12 分点）</td><td>15 分大题的两个主分点</td></tr>
+    <tr><td>第 15 届（2023）</td><td>题四</td><td>"$A$ 为实对称矩阵，可对角化"（2 分点）——谱定理实版本开门，后面才可对 $A^{2023}$ 动手</td><td>15 分大题的开门</td></tr>
+  </table>
+  <p><strong>规律</strong>：谱定理的形态是<strong>开门动作</strong>——近几届没有一届让你"证明谱定理"，但届届让你<strong>引用</strong>它：写对"正规 ⟹ 酉对角化"或"实对称 ⟹ 可正交对角化"这一行，2–7 分到手，之后所有动作都在对角阵上做。特征值画像（Hermite 实 / 酉模 1 / 反 Hermite 纯虚）则是随手调用的小武器，第 12 届题三把它用成了主分点。</p>
+</div>
+
+<h2>§7 关系网：一个坑、一条内积、一副家族谱</h2>
+
+<p>本章所有角色的来龙去脉画在下面：<span style="color:#b45309">三角形</span>是来源与动机，<span style="color:#1d4ed8">圆角矩形</span>是公理与定义，<span style="color:#15803d">矩形</span>是定理，<span style="color:#7c3aed">六边形</span>是方法动作，<span style="color:#0f766e">椭圆</span>是应用出口。顺着箭头走一遍：坑逼出内积，内积长出家族，家族会师于谱定理，谱定理分发到各个出口。</p>
+
+<figure>
+<svg viewBox="0 0 720 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="内积空间关系网地图">
+  <defs>
+    <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+
+  <!-- 图例 -->
+  <polygon points="30,16 22,30 38,30" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5"/>
+  <text x="44" y="28" font-size="11.5" fill="#5c554b">来源·动机</text>
+  <rect x="116" y="17" width="22" height="13" rx="6.5" fill="#eef3fe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="144" y="28" font-size="11.5" fill="#5c554b">公理·定义</text>
+  <rect x="222" y="17" width="22" height="13" fill="#ecf8f0" stroke="#15803d" stroke-width="1.5"/>
+  <text x="250" y="28" font-size="11.5" fill="#5c554b">定理</text>
+  <polygon points="300,23.5 306,16 320,16 326,23.5 320,31 306,31" fill="#f4effd" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="332" y="28" font-size="11.5" fill="#5c554b">方法·动作</text>
+  <ellipse cx="420" cy="23.5" rx="12" ry="7" fill="#ecf8f5" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="438" y="28" font-size="11.5" fill="#5c554b">应用·出口</text>
+
+  <!-- 来源：复长度的坑（三角） -->
+  <polygon points="95,52 45,118 145,118" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="95" y="88" font-size="12" fill="#7a4a12" text-anchor="middle" font-weight="bold">复长度的坑</text>
+  <text x="95" y="104" font-size="10.5" fill="#7a4a12" text-anchor="middle">Σx² 跑出实轴</text>
+
+  <!-- 坑 → 内积 -->
+  <line x1="150" y1="88" x2="262" y2="88" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="206" y="78" font-size="11" fill="#5c554b" text-anchor="middle">逼出共轭</text>
+
+  <!-- 内积（圆角矩形） -->
+  <rect x="270" y="58" width="200" height="60" rx="30" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="370" y="84" font-size="14" fill="#1d4ed8" text-anchor="middle" font-weight="bold">复内积 ⟨x,y⟩=Σxₖȳₖ</text>
+  <text x="370" y="103" font-size="11" fill="#1d4ed8" text-anchor="middle">范数 · 正交 · Cauchy–Schwarz</text>
+
+  <!-- 内积 → 三家族（肘形） -->
+  <polyline points="300,118 300,150 120,150 120,176" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="206" y="142" font-size="11" fill="#5c554b" text-anchor="middle">定义伴随</text>
+  <polyline points="370,118 370,150 330,150 330,176" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="352" y="142" font-size="11" fill="#5c554b" text-anchor="middle">保内积</text>
+  <polyline points="440,118 440,150 540,150 540,176" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="494" y="142" font-size="11" fill="#5c554b" text-anchor="middle">子族入住</text>
+
+  <!-- 家族行（矩形） -->
+  <rect x="45" y="180" width="150" height="60" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="120" y="204" font-size="12.5" fill="#15803d" text-anchor="middle" font-weight="bold">伴随 A*</text>
+  <text x="120" y="222" font-size="10.5" fill="#4a7c59" text-anchor="middle">⟨Ax,y⟩=⟨x,A*y⟩</text>
+  <rect x="255" y="180" width="150" height="60" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="330" y="204" font-size="12.5" fill="#15803d" text-anchor="middle" font-weight="bold">酉 / 正交 A*A=I</text>
+  <text x="330" y="222" font-size="10.5" fill="#4a7c59" text-anchor="middle">保长度 · 列标准正交</text>
+  <rect x="465" y="180" width="150" height="60" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="540" y="204" font-size="12.5" fill="#15803d" text-anchor="middle" font-weight="bold">正规 AA*=A*A</text>
+  <text x="540" y="222" font-size="10.5" fill="#4a7c59" text-anchor="middle">Hermite·酉·反H·对角</text>
+
+  <!-- 酉/正交 → Schur -->
+  <line x1="330" y1="240" x2="330" y2="314" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="338" y="282" font-size="11" fill="#5c554b">归纳拼标准正交基</text>
+
+  <!-- 正规 → 谱定理 -->
+  <line x1="555" y1="240" x2="570" y2="309" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="592" y="280" font-size="11" fill="#5c554b">主角登场</text>
+
+  <!-- Schur（矩形） -->
+  <rect x="220" y="320" width="170" height="60" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="305" y="344" font-size="12.5" fill="#15803d" text-anchor="middle" font-weight="bold">Schur 定理</text>
+  <text x="305" y="362" font-size="10.5" fill="#4a7c59" text-anchor="middle">任意复方阵酉相似上三角</text>
+
+  <!-- Schur → 谱定理 -->
+  <line x1="392" y1="350" x2="464" y2="350" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="428" y="340" font-size="10.5" fill="#5c554b" text-anchor="middle">T 正规⟹T 对角</text>
+
+  <!-- 谱定理（矩形 c 位） -->
+  <rect x="470" y="315" width="240" height="70" fill="#ecf8f0" stroke="#15803d" stroke-width="3"/>
+  <text x="590" y="343" font-size="14" fill="#15803d" text-anchor="middle" font-weight="bold">谱定理（本章 c 位）</text>
+  <text x="590" y="363" font-size="11.5" fill="#4a7c59" text-anchor="middle">正规 ⟺ 可酉对角化</text>
+
+  <!-- 伴随 → 内积两边倒 -->
+  <line x1="120" y1="240" x2="120" y2="446" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="128" y="348" font-size="11" fill="#5c554b">两端换槽</text>
+
+  <!-- Schur → Schur 归纳 -->
+  <line x1="330" y1="380" x2="330" y2="446" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+  <!-- 谱定理 → ‖Ax‖=‖A*x‖ -->
+  <line x1="570" y1="385" x2="550" y2="446" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="585" y="420" font-size="11" fill="#5c554b">比平方</text>
+
+  <!-- 方法行（六边形） -->
+  <polygon points="45,480 70,452 170,452 195,480 170,508 70,508" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="120" y="476" font-size="12" fill="#7c3aed" text-anchor="middle" font-weight="bold">内积两边倒</text>
+  <text x="120" y="492" font-size="10" fill="#6a55a3" text-anchor="middle">⟨Ax,y⟩↔⟨x,A*y⟩</text>
+  <polygon points="255,480 280,452 380,452 405,480 380,508 280,508" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="330" y="476" font-size="12" fill="#7c3aed" text-anchor="middle" font-weight="bold">Schur 归纳</text>
+  <text x="330" y="492" font-size="10" fill="#6a55a3" text-anchor="middle">单位特征向量扩基</text>
+  <polygon points="465,480 490,452 590,452 615,480 590,508 490,508" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="540" y="476" font-size="12" fill="#7c3aed" text-anchor="middle" font-weight="bold">‖Ax‖=‖A*x‖</text>
+  <text x="540" y="492" font-size="10" fill="#6a55a3" text-anchor="middle">λ 特征向量↔λ̄</text>
+
+  <!-- 谱定理 → 画像（肘形，绕开六边形） -->
+  <polyline points="470,355 446,355 446,525 150,525 150,546" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="452" y="470" font-size="11" fill="#5c554b">推论链</text>
+  <!-- 内积两边倒 → 画像 -->
+  <line x1="120" y1="508" x2="120" y2="546" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="128" y="532" font-size="11" fill="#5c554b">例 1</text>
+  <!-- 谱定理 → 第 9 章（肘形） -->
+  <polyline points="520,385 520,415 425,415 425,548 418,560" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="431" y="470" font-size="11" fill="#5c554b">实版本</text>
+  <!-- 方法 → 13 届题四 -->
+  <line x1="545" y1="508" x2="555" y2="546" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="566" y="532" font-size="11" fill="#5c554b">开门动作</text>
+
+  <!-- 出口行（椭圆） -->
+  <ellipse cx="120" cy="580" rx="108" ry="30" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="120" y="576" font-size="11.5" fill="#0f766e" text-anchor="middle" font-weight="bold">子族特征值画像</text>
+  <text x="120" y="592" font-size="10" fill="#3d7a70" text-anchor="middle">实 / 模 1 / 纯虚</text>
+  <ellipse cx="330" cy="580" rx="102" ry="30" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="330" y="576" font-size="11.5" fill="#0f766e" text-anchor="middle" font-weight="bold">第 9 章 · 二次型正定</text>
+  <text x="330" y="592" font-size="10" fill="#3d7a70" text-anchor="middle">特征值全正 ⟺ 正定</text>
+  <ellipse cx="560" cy="580" rx="115" ry="30" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="560" y="576" font-size="11.5" fill="#0f766e" text-anchor="middle" font-weight="bold">13 届题四 P=Q̄Q⁻¹</text>
+  <text x="560" y="592" font-size="10" fill="#3d7a70" text-anchor="middle">12 届题三 · 15 届题四</text>
+</svg>
+<figcaption>本章地图：一个坑逼出一条内积，内积长出三族矩阵，三族会师于谱定理，谱定理把特征值画像、二次型和三道真题分发出去。</figcaption>
+</figure>
+
+<div class="net box" data-tag="画面感锚点（记这些，不记条文）">
+  <table>
+    <tr><th>角色</th><th>一句话画面</th><th>擅长场景</th></tr>
+    <tr><td>复长度的坑</td><td>忘了共轭，"长度平方"跑出实轴甚至变负</td><td>§3.3 实验台：拖出 $S=-1$</td></tr>
+    <tr><td>复内积</td><td>共轭钉在第二槽的"双线性规矩"</td><td>全章地基；第二槽提数加共轭</td></tr>
+    <tr><td>伴随 $A^{*}$</td><td>把 $A$ 从内积左槽倒到右槽的搬运工</td><td>一切"两边倒"证明的关节</td></tr>
+    <tr><td>酉 / 正交</td><td>保长度的矩阵；列是标准正交基</td><td>特征值全在单位圆上（模 1）</td></tr>
+    <tr><td>正规</td><td>与自己的伴随交换——最大的"好矩阵"家族</td><td>谱定理的精确边界，一分不多</td></tr>
+    <tr><td>Schur + 谱定理</td><td>任意阵三角化；正规阵对角化</td><td>高代证明题的开门 2–7 分</td></tr>
+    <tr><td>内积两边倒</td><td>$\langle Ax,y\rangle\leftrightarrow\langle x,A^{*}y\rangle$</td><td>特征向量正交类证明的第一反应</td></tr>
+    <tr><td>$\|Ax\|=\|A^{*}x\|$</td><td>正规阵作用前后，$A$ 与 $A^{*}$ 等长</td><td>例 2；$\lambda\leftrightarrow\overline\lambda$ 的跳板</td></tr>
+  </table>
+  <p><strong>和已学知识的焊接点</strong>：① 卷二第 5 章的可对角化判据（数 $n$ 个无关特征向量）——谱定理把它升级为"验一次乘法交换"，这是能拿进考场的效率差；② 卷二第 2 章的直和：$V=W\oplus W^{\perp}$ 是正交直和，正规阵的特征子空间分解 $V=\bigoplus_i V_{\lambda_i}$ 自动是正交直和；③ 你线代课背的"实对称可正交对角化"——§3.10 已把它证成谱定理的实数投影；④ 出口第 9 章：二次型 $x^TAx$ 的正定性判定"特征值全正"，正是 Hermite 谱定理的嫡系推论。</p>
+</div>
+
+<h2>§8 例题：先看真人怎么想，再看卷面怎么写</h2>
+
+<p>两道例题都是"内积两边倒"这一母机的两个标准产品：例 1 证正交，例 2 证等长。拆解层教你程序怎么跑，卷面层教你分怎么拿。</p>
+
+<h3>例 1 · Hermite 矩阵不同特征值的特征向量正交（约 6 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>结论是 $\langle x,y\rangle=0$——<strong>一个复数等于 $0$</strong>。查拆目标总表"等式型"：标准打法是给它乘一个非零因子证乘积为 $0$。$\lambda-\mu$ 是现成的非零因子（题面 $\lambda\ne\mu$ 白送）——骨架定为：证 $(\lambda-\mu)\langle x,y\rangle=0$。</p>
+  <p><span class="stage">【盘点】</span>库存四件：① $Ax=\lambda x$，② $Ay=\mu y$（特征值从左右两边各出场一次的门票）；③ $A^{*}=A$（$\langle Ax,y\rangle$ 与 $\langle x,Ay\rangle$ 可互倒）；④ Hermite ⟹ $\lambda,\mu$ 实（§3.7——第二槽提出来的共轭因此消掉，这是链条能闭合的暗扣）。</p>
+  <p><span class="stage">【会师】</span>倒推链：$\langle x,y\rangle=0\Longleftarrow(\lambda-\mu)\langle x,y\rangle=0\Longleftarrow\lambda\langle x,y\rangle=\mu\langle x,y\rangle\Longleftarrow\langle Ax,y\rangle=\langle x,Ay\rangle$（左边让 $\lambda$ 从第一槽出来，右边让 $\overline\mu=\mu$ 从第二槽出来）$\Longleftarrow$ 伴随定义 + 库存③。链条闭合，每环一件库存，没有一环靠灵感。</p>
+  <p><span class="stage">【定型】</span>卷面写一条链式等式，每环标依据；"乘 $\lambda-\mu$"的倒推动机一个字不写——只写"考察 $\lambda\langle x,y\rangle$ 与 $\mu\langle x,y\rangle$"。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 内积两边倒</strong>：要证 $\langle x,y\rangle=0$，手里有 $Ax=\lambda x$、$Ay=\mu y$——把 $\langle Ax,y\rangle$ 用伴随倒成 $\langle x,A^{*}y\rangle$。左槽放 $A$ 的特征值出来，右槽放 $A^{*}$ 的特征值出来，比较即得。凡"特征向量正交"类命题，第一反应都是它：Hermite、反 Hermite、酉、正规（§9 各题）全走这一条流水线。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 1</strong>　设 $A$ 为 $n$ 阶 Hermite 矩阵（$A^{*}=A$），$\lambda,\mu$ 是 $A$ 的两个不同特征值，$x,y$ 为对应的特征向量。证明：$\langle x,y\rangle=0$。</p>
+  <hr>
+  <p class="proof-line"><strong>证明</strong>　由 Hermite 矩阵特征值为实数（§3.7），$\lambda=\overline\lambda$，$\mu=\overline\mu$。<span class="step-score">（1 分）</span></p>
+  <p class="proof-line">一方面，由内积对第一槽线性，
+  $$\lambda\langle x,y\rangle=\langle\lambda x,y\rangle=\langle Ax,y\rangle.$$<span class="step-score">（3 分）</span></p>
+  <p class="proof-line">另一方面，由伴随的定义、$A^{*}=A$、第二槽提数加共轭以及 $\mu$ 为实数，
+  $$\langle Ax,y\rangle=\langle x,A^{*}y\rangle=\langle x,Ay\rangle=\langle x,\mu y\rangle=\overline\mu\langle x,y\rangle=\mu\langle x,y\rangle.$$<span class="step-score">（5 分）</span></p>
+  <p class="proof-line">于是 $(\lambda-\mu)\langle x,y\rangle=0$，而 $\lambda\ne\mu$，故 $\langle x,y\rangle=0$，即 $x\perp y$。$\square$<span class="step-score">（6 分）</span></p>
+  <p class="aside">书写点评：分点在"链式等式每一环都有名有姓"——第一槽线性、伴随、自伴、第二槽共轭、特征值实，五个依据一个不能省；直接写"显然正交"归零。注意 $\langle x,\mu y\rangle=\overline\mu\langle x,y\rangle$ 这一步的共轭是全题最脆的关节：本题里 $\mu$ 实，漏写共轭恰好"看不出错"，但到了反 Hermite 版本（§9 模仿 1）立刻翻车。</p>
+</div>
+
+<h3>例 2 · 正规矩阵：$\|Ax\|=\|A^{*}x\|$ 与特征向量的 $\lambda\leftrightarrow\overline\lambda$（约 8 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>（i）是<strong>等式型</strong>（两个长度相等）——长度本身没法动用代数条件，先平方翻译成内积：$\|Ax\|^2=\|A^{*}x\|^2$，即 $\langle Ax,Ax\rangle=\langle A^{*}x,A^{*}x\rangle$。（ii）是 $\iff$ 型——但不分两段证：它是（i）作用于平移阵 $A-\lambda I$ 的一句话推论（<strong>工具六 · 划归</strong>）。</p>
+  <p><span class="stage">【盘点】</span>库存只有一件硬货：正规 $AA^{*}=A^{*}A$——它必须恰好用一次。软件两件：伴随恒等式 $\langle Ax,y\rangle=\langle x,A^{*}y\rangle$ 及其镜像 $\langle x,Ay\rangle=\langle A^{*}x,y\rangle$（对 $A^{*}$ 用伴随，$(A^{*})^{*}=A$）。待验一件：$A-\lambda I$ 仍正规（与 $A$ 共用同一对 $AA^{*}$ 与 $A^{*}A$）。</p>
+  <p><span class="stage">【会师】</span>倒推：$\|Ax\|^2-\|A^{*}x\|^2=\langle A^{*}Ax,x\rangle-\langle AA^{*}x,x\rangle=\langle(A^{*}A-AA^{*})x,x\rangle=0\Longleftarrow$ 正规。倒推把"为什么想到比平方"显形：<strong>只有平方才能把长度换成内积，只有内积才能把 $A$ 从外槽倒成 $A^{*}$</strong>。正着写就是卷面那条四连等式。（ii）的会师：$Ax=\lambda x\iff(A-\lambda I)x=0\iff\|(A-\lambda I)x\|=0$，由（i）$\iff\|(A-\lambda I)^{*}x\|=0\iff A^{*}x=\overline\lambda x$。</p>
+  <p><span class="stage">【定型】</span>（i）卷面写四连等式，每步标依据；（ii）先一句话验 $A-\lambda I$ 正规，再对 $x$ 用（i）——<strong>不要把（i）的证明重抄一遍</strong>，划归的分数就在"不重抄"里。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 ×2</strong>：① <strong>比平方</strong>——证长度（不）相等，先平方化内积，再让伴随进场；② <strong>平移保正规</strong>——$A$ 正规 ⟹ $A-\lambda I$ 正规，于是"$A$ 在 $\lambda$ 处的行为"全部划归"$A-\lambda I$ 在 $0$ 处的行为"。第 13 届题四的 $P=\overline{Q}Q^{-1}$ 造法、§9 变式 1 的正交性证明，都是这两件动作的组合。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 2</strong>　设 $A$ 为 $n$ 阶正规矩阵（$AA^{*}=A^{*}A$）。证明：（i）对任意 $x\in\mathbb C^n$，$\|Ax\|=\|A^{*}x\|$；（ii）对 $x\ne0$，$Ax=\lambda x\iff A^{*}x=\overline\lambda x$。</p>
+  <hr>
+  <p class="proof-line"><strong>证明</strong>　（i）对任意 $x\in\mathbb C^n$，由伴随的定义，
+  $$\|Ax\|^2=\langle Ax,Ax\rangle=\langle A^{*}Ax,x\rangle.$$<span class="step-score">（2 分）</span></p>
+  <p class="proof-line">同理由 $(A^{*})^{*}=A$，
+  $$\|A^{*}x\|^2=\langle A^{*}x,A^{*}x\rangle=\langle AA^{*}x,x\rangle.$$<span class="step-score">（4 分）</span></p>
+  <p class="proof-line">而 $A$ 正规，$A^{*}A=AA^{*}$，两式右端相等，故 $\|Ax\|^2=\|A^{*}x\|^2$，即 $\|Ax\|=\|A^{*}x\|$。<span class="step-score">（5 分）</span></p>
+  <p class="proof-line">（ii）令 $B=A-\lambda I$。则
+  $$BB^{*}=(A-\lambda I)(A^{*}-\overline\lambda I)=AA^{*}-\overline\lambda A-\lambda A^{*}+|\lambda|^2I=B^{*}B,$$
+  最后一步用了 $AA^{*}=A^{*}A$，故 $B$ 正规。<span class="step-score">（7 分）</span></p>
+  <p class="proof-line">对 $B$ 用（i）：$\|Bx\|=\|B^{*}x\|$，于是 $Bx=0\iff B^{*}x=0$，即
+  $$Ax=\lambda x\iff(A^{*}-\overline\lambda I)x=0\iff A^{*}x=\overline\lambda x.\ \square$$<span class="step-score">（8 分）</span></p>
+  <p class="aside">书写点评：（i）的分点在两处"倒"——$\langle Ax,Ax\rangle=\langle A^{*}Ax,x\rangle$ 与 $\langle A^{*}x,A^{*}x\rangle=\langle AA^{*}x,x\rangle$，第二处用的是镜像恒等式 $\langle x,Ay\rangle=\langle A^{*}x,y\rangle$，卷面上最好点名 $(A^{*})^{*}=A$，否则这一步算跳步。（ii）若把（i）的证明重抄一遍，不扣分但暴露你没看见"划归"；正规阵的全部谱信息在 $A$ 与 $A^{*}$ 之间共轭对称，这句话是 §9 变式 1 与第 13 届题四的跳板。</p>
+</div>
+
+<h2>§9 配套题目</h2>
+
+<p>铁律：<strong>先写在纸上，写到写不动再展开答案</strong>。模仿题照例 1、例 2 的卷面格式写；变式题开始需要把两个动作组合起来。</p>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 1</span>设 $A$ 为反 Hermite 矩阵（$A^{*}=-A$），$\lambda,\mu$ 是 $A$ 的两个不同特征值，$x,y$ 为对应的特征向量。证明：$\langle x,y\rangle=0$。</p>
+  <details class="answer">
+    <summary>参考答案（约 6 分书写量）</summary>
+    <p>由 §3.7，反 Hermite 矩阵特征值为纯虚数或 $0$，故 $\overline\lambda=-\lambda$，$\overline\mu=-\mu$（1 分）。</p>
+    <p>一方面 $\lambda\langle x,y\rangle=\langle\lambda x,y\rangle=\langle Ax,y\rangle$（3 分）。</p>
+    <p>另一方面 $\langle Ax,y\rangle=\langle x,A^{*}y\rangle=\langle x,-Ay\rangle=\langle x,-\mu y\rangle=\overline{(-\mu)}\langle x,y\rangle=(-\overline\mu)\langle x,y\rangle=\mu\langle x,y\rangle$（5 分）。</p>
+    <p>于是 $(\lambda-\mu)\langle x,y\rangle=0$，由 $\lambda\ne\mu$ 得 $\langle x,y\rangle=0$。$\square$（6 分）</p>
+    <p><strong>易错点</strong>：$\langle x,-\mu y\rangle$ 提数时 $-\mu$ 整体加共轭得 $-\overline\mu$，再用 $\overline\mu=-\mu$ 收尾——两处符号各错一次就"恰好"抵消成对的答案，考场自查要逐环查依据，不能只对结果。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 2</span>设 $A$ 为正规矩阵。证明：$\ker A=\ker A^{*}$（即 $Ax=0\iff A^{*}x=0$）。</p>
+  <details class="answer">
+    <summary>参考答案（约 4 分书写量）</summary>
+    <p>由例 2（i），$\|Ax\|=\|A^{*}x\|$ 对一切 $x$ 成立（2 分）。于是
+    $$Ax=0\iff\|Ax\|=0\iff\|A^{*}x\|=0\iff A^{*}x=0.\ \square\ (4\text{ 分})$$</p>
+    <p><strong>自查</strong>：这就是例 2（ii）在 $\lambda=0$ 处的特例。若你的证明重算了四连等式，说明"划归"还没长成反射。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 1</span>设 $A$ 为正规矩阵，$\lambda,\mu$ 是 $A$ 的两个不同特征值，$x,y$ 为对应的特征向量。证明：$\langle x,y\rangle=0$。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：例 1 的链条在"$\langle x,A^{*}y\rangle=\langle x,Ay\rangle$"这一步断了——正规阵没有 $A^{*}=A$。补上例 2（ii）这块砖：$Ay=\mu y\Rightarrow A^{*}y=\overline\mu y$。两个动作的组合，各管一环。</p>
+    <p><strong>证明</strong>：由例 2（ii），$A^{*}y=\overline\mu y$。于是
+    $$\lambda\langle x,y\rangle=\langle\lambda x,y\rangle=\langle Ax,y\rangle=\langle x,A^{*}y\rangle=\langle x,\overline\mu y\rangle=\overline{(\overline\mu)}\langle x,y\rangle=\mu\langle x,y\rangle,$$
+    即 $(\lambda-\mu)\langle x,y\rangle=0$，由 $\lambda\ne\mu$ 得 $\langle x,y\rangle=0$。$\square$</p>
+    <p><strong>点评</strong>：这就是谱定理推论链④——正规阵的不同特征子空间互相正交，$V=\bigoplus_i V_{\lambda_i}$ 自动是<strong>正交</strong>直和（第 2 章的直和语言 + 本章的正交）。也是酉对角化"列是标准正交基"的另一半故事。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 2</span>（画像反推）设 $A$ 为正规矩阵。（i）若 $A$ 的特征值全为实数，证明 $A$ 是 Hermite；（ii）若 $A$ 的特征值全模 $1$，证明 $A$ 是酉矩阵。</p>
+  <details class="answer">
+    <summary>参考答案</summary>
+    <p>（i）$A$ 正规，由谱定理存在酉 $U$ 使 $A=UDU^{*}$，$D=\operatorname{diag}(\lambda_1,\dots,\lambda_n)$。特征值全实即 $D$ 为实对角阵，$D^{*}=D$。于是
+    $$A^{*}=(UDU^{*})^{*}=UD^{*}U^{*}=UDU^{*}=A,$$
+    即 $A$ Hermite。$\square$</p>
+    <p>（ii）同上证 $A=UDU^{*}$。特征值全模 $1$ 即 $D^{*}D=\operatorname{diag}(|\lambda_1|^2,\dots,|\lambda_n|^2)=I$。于是
+    $$A^{*}A=(UD^{*}U^{*})(UDU^{*})=UD^{*}DU^{*}=UU^{*}=I,$$
+    即 $A$ 为酉矩阵。$\square$</p>
+    <p><strong>点评</strong>：与推论链①②合读，画像全是<strong>当且仅当</strong>：Hermite ⟺ 正规+实特征值，酉 ⟺ 正规+模 1 特征值。在对角阵上验性质（$D^{*}=D$、$D^{*}D=I$），再共轭回来——"先对角化，再在对角阵上办事"是谱定理的标准用法。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv3">真题节选</span><strong>（第 13 届题四，20 分）</strong>设 $P$ 为对称酉矩阵，证明：存在可逆复矩阵 $Q$ 使得 $P=\overline{Q}Q^{-1}$。</p>
+  <p>"对称"是 $P^T=P$（无共轭），"酉"是 $P^{*}P=I$（有共轭）——两个条件各管各的（T6 的坑）。先回答三个梯子问题（写在纸上）：</p>
+  <p>（i）$P$ 是酉矩阵，为什么<strong>立刻</strong>是正规矩阵？由谱定理你白拿哪两样东西（$P$ 的形状、特征值的位置）？<br>
+  （ii）先看对角版：若 $P=D=\operatorname{diag}(\alpha_1,\dots,\alpha_n)$ 已是对角阵，$|\alpha_i|=1$，取 $\beta_i^2=\alpha_i$，$E=\operatorname{diag}(\beta_i,\dots,\beta_n)$。验证 $\overline E=E^{-1}$，并检查 $Q=\overline E$ 是否满足 $\overline{Q}Q^{-1}=D$。<br>
+  （iii）把对角版搬回一般版：自然猜测 $Q=U\overline EU^{-1}$。要算 $\overline Q$ 与 $Q^{-1}$，需要哪一步"交换"才能把它们都写成 $UEU^{-1}$？这步交换从哪个条件来？</p>
+  <details class="answer">
+    <summary>梯子参考答案</summary>
+    <p>（i）酉：$P^{*}P=I=PP^{*}$，正规定义直接满足。谱定理白送：存在酉 $U$ 使 $U^{-1}PU=D$ 对角；且 $P$ 的特征值（即 $D$ 的对角元 $\alpha_i$）全模 1。这就是官方解答的前 2 分。</p>
+    <p>（ii）$|\beta_i|^2=|\alpha_i|=1$，故 $\overline{\beta_i}=\beta_i^{-1}$，即 $\overline E=E^{-1}$。取 $Q=\overline E$：$\overline Q\,Q^{-1}=E\,(\overline E)^{-1}=E\cdot E=E^2=D$ ✓。对角版三行做完——全部难点都在"搬回去"。</p>
+    <p>（iii）$\overline Q=\overline U E\overline U^{-1}$，要它等于 $UEU^{-1}$，需要 $E$ 与 $U^{-1}\overline U$ 交换。这步交换正是"对称"条件的用场：$P^T=P$ 推出 $U^{-1}\overline U$ 与 $D$ 交换；而 $E=f(D)$ 是 $D$ 的多项式（Lagrange 插值），与 $D$ 交换的矩阵必与 $E$ 交换。对称条件没有浪费，共轭条件（酉）管特征值位置——各管各的。</p>
+  </details>
+  <details class="answer">
+    <summary>官方解答（转录自官方参考答案）</summary>
+    <p>设 $P$ 为 $n$ 阶矩阵。$P$ 为酉矩阵故为正规矩阵，存在酉矩阵 $U$ 使 $U^{-1}PU=D=\operatorname{diag}(\alpha_1,\dots,\alpha_n)$。<span class="step-score">（2 分）</span></p>
+    <p>取复数 $\beta_i$ 使 $\beta_i^2=\alpha_i$，令 $E=\operatorname{diag}(\beta_1,\dots,\beta_n)$；由 Lagrange 插值存在复系数多项式 $f(x)$ 使 $f(\alpha_i)=\beta_i$，从而 $E=f(D)$ 且 $E^2=D$。<span class="step-score">（10 分）</span></p>
+    <p>由 $D^T=D$、$P^T=P$、$U^T=\overline U^{-1}$ 推得 $D=\overline U^{-1}UDU^{-1}\overline U$，即 $U^{-1}\overline U$ 与 $D$ 可交换；又 $E=f(D)$ 是 $D$ 的多项式，故 $E$ 与 $U^{-1}\overline U$ 可交换，即 $UEU^{-1}=\overline UE\overline U^{-1}$。<span class="step-score">（15 分）</span></p>
+    <p>由 $P$ 为酉矩阵（$\overline P^{T}P=I$）得 $\overline DD=I$，故 $\overline{\alpha_i}\alpha_i=1$，$|\alpha_i|=1$，从而 $|\beta_i|=1$，$\overline{\beta_i}=\beta_i^{-1}$，即 $\overline E=E^{-1}$。</p>
+    <p>令 $Q=U\overline EU^{-1}$，则 $Q$ 可逆，$\overline Q=\overline UE\overline U^{-1}=UEU^{-1}$，$Q^{-1}=U\overline E^{-1}U^{-1}=UEU^{-1}$，于是
+    $$\overline QQ^{-1}=(UEU^{-1})^2=UE^2U^{-1}=UDU^{-1}=P.\ \square$$<span class="step-score">（20 分）</span></p>
+    <p><strong>复盘</strong>：开门 2 分就是本章动作二（酉 ⟹ 正规 ⟹ 酉对角化）；"$|\alpha_i|=1\Rightarrow\overline E=E^{-1}$"就是特征值画像（酉 ⟹ 模 1）的直接兑现。本题属于本章的分数，你会开门就能拿到；剩下的 18 分是 Lagrange 插值与交换性 bookkeeping——那是多项式与矩阵论的功夫。<em>（题目与解答转录自第 13 届官方 PDF，见 <a href="真题索引/第13届_2021.md">真题索引</a>。）</em></p>
+  </details>
+</div>
+
+<h2>§9.5 熟练度训练场</h2>
+
+<p>理解只是入场券，<strong>考场上拼的是基本动作的速度</strong>。两种训练，每天 10 分钟：</p>
+
+<h3>训练一 · 翻卡快测（目标：每卡 10 秒内出答案）</h3>
+<div class="quiz" data-quiz="ch18-drill"></div>
+
+<h3>训练二 · 计时默写（写在纸上，掐表）</h3>
+<div class="calc box" data-tag="默写清单">
+  <p>① <strong>60 秒</strong>：默写复内积三条公理 + 范数定义 + Cauchy–Schwarz 不等式（共轭位置一字不差）；</p>
+  <p>② <strong>90 秒</strong>：默写谱定理陈述（双向）+ 推论链四条（Hermite 实 / 酉模 1 / 反 Hermite 纯虚 / 正规 ⟹ 不同特征值特征向量正交）+ 引理"上三角正规 ⟹ 对角"的 $(1,1)$ 元比较；</p>
+  <p>③ <strong>2 分钟</strong>：默写例 1 的完整证明（链式等式五环，每环依据标出，含 $\overline\mu=\mu$ 的暗扣）。</p>
+  <p><strong>过关标准</strong>：连续两天全对才算过。做不到就回到对应小节重读，再默。</p>
+</div>
+
+<h2>§10 六方向自测卡</h2>
+
+<div class="selftest">
+  <h3>合上书，拿张白纸，默写以下六项</h3>
+  <div class="st-item">
+    <p class="st-q"><em>=（它是什么）</em>　默写：复内积三条公理；酉、Hermite、正规的定义；谱定理（双向陈述）。</p>
+    <details><summary>对照</summary><p>$\langle x,y\rangle=\sum x_k\overline{y_k}$：第一槽线性；共轭对称 $\langle x,y\rangle=\overline{\langle y,x\rangle}$；正定 $\langle x,x\rangle\ge0$ 且 $=0\iff x=0$。酉 $U^{*}U=I$；Hermite $A^{*}=A$；正规 $AA^{*}=A^{*}A$。谱定理：$A$ 正规 $\iff$ 存在酉 $U$ 使 $U^{*}AU$ 对角。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>←（它从哪来）</em>　共轭为什么必须在？"正规"为什么恰好是"可酉对角化"的边界？</p>
+    <details><summary>对照</summary><p>$\langle x,x\rangle$ 必须是非负实数才配叫长度平方——$\sum x_k^2$ 在复数里可以是负数甚至复数，只有 $\sum|x_k|^2$ 稳得住。边界：$\Longleftarrow$ 方向对角阵必正规（对角阵两两交换）；$\Longrightarrow$ 方向 Schur 把任意阵酉三角化，正规的上三角被 $(1,1)$ 元比较逐行清成对角。两个方向都不浪费：正规就是可酉对角化的精确刻画。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>→（它带来什么）</em>　谱定理给出哪四条子族画像？它在卷面上以什么形态换成分数？</p>
+    <details><summary>对照</summary><p>Hermite ⟺ 实特征值；酉 ⟺ 模 1；反 Hermite ⟺ 纯虚；正规 ⟹ 不同特征值特征向量正交。分数形态：开门引用（13 届题四 2 分点、12 届题三 7 分点、15 届题四 2 分点），之后在对角阵上办事；12 届题三更把画像用成 12 分主分点。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>∈（实例）</em>　各举一例：Hermite 但不对称；酉但不 Hermite；正规但既不 Hermite 也不酉。</p>
+    <details><summary>对照</summary><p>$\begin{pmatrix}0&i\\-i&0\end{pmatrix}$（$A^{*}=A$ 而 $A^{T}=-A$）；旋转 $90^\circ$ 矩阵 $\begin{pmatrix}0&-1\\1&0\end{pmatrix}$（正交 ⟹ 酉，特征值 $\pm i$）；$\operatorname{diag}(2,i)$（对角 ⟹ 正规，$|2|\ne1$ 故非酉，$i$ 非实故非 Hermite）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>≠（区分）</em>　对称（$A^T=A$）与 Hermite（$A^{*}=A$）何时相同、何时不同？第 13 届题四的"对称酉矩阵"用的是哪个？</p>
+    <details><summary>对照</summary><p>实矩阵时相同（共轭不起作用）；复矩阵差一道共轭：$\begin{pmatrix}0&i\\-i&0\end{pmatrix}$ Hermite 却反称。13 届题四的"对称"是 $P^T=P$（无共轭），与"酉 $P^{*}P=I$"（有共轭）是两个独立条件：官方第 3 步靠 $P^T=P$ 推 $U^{-1}\overline U$ 与 $D$ 交换——换成 Hermite 整题不成立。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>（为何要有它）</em>　只背"实对称可正交对角化"不够吗？为什么还要酉与正规？</p>
+    <details><summary>对照</summary><p>不够。① 正交矩阵在 $\mathbb R$ 上可能连特征值都没有（旋转 $90^\circ$），只有到 $\mathbb C$ 里才有谱可谈；② 真题里的矩阵多是复的（13 届题四），"对称"之外需要更大的家族兜底；③ 谱定理把"可对角化"判据从"数 $n$ 个无关特征向量"升级成"验一次乘法交换"——这是能拿进考场的效率差。</p></details>
+  </div>
+</div>
+
+<div class="net box" data-tag="间隔复习安排">
+  <p><strong>1 天后</strong>：重做六方向自测卡（不翻书）+ 翻卡快测第二轮；<strong>3 天后</strong>：重做模仿 1、变式 1 与真题节选的三个梯子问题 + 计时默写②③；<strong>1 周后</strong>：默写谱定理陈述与推论链，确认翻卡全部"会了"。</p>
+  <p>本章是<strong>第 9 章《二次型与正定性》</strong>的直接地基——正定性判定"特征值全正"就是 Hermite 谱定理的嫡系推论；Schur 归纳与"两边倒"也会在第 9、10 章反复返场。</p>
+</div>
+
+<div class="chapnav">
+  <span><a href="ch17.html">← 第 7 章 · Jordan 标准形</a></span>
+  <span><a href="index.html">首页</a></span>
+  <span><a href="ch19.html">第 9 章 · 二次型与正定性：Sylvester 判别 →</a></span>
+</div>
+
+</div>
+
+<script src="assets/quiz.js"></script>
+<script>
+/* §9.5 翻卡数据 */
+registerQuiz("ch18-drill", [
+  { q: "$\\mathbb C^n$ 的标准内积？共轭在哪个槽？", a: "$\\langle x,y\\rangle=\\sum_{k=1}^n x_k\\overline{y_k}=y^{*}x$。共轭钉在第二槽：第一槽线性，第二槽共轭线性（提数加共轭）。" },
+  { q: "忘了共轭，$\\langle x,x\\rangle=\\sum x_k^2$ 会出什么事？举一例。", a: "$x=(i,0)$ 得 $-1$（负长度）；$x=(1,i)$ 得 $0$（非零向量零长度）；$x=(1+i,1)$ 得 $1+2i$（复数长度）。补共轭后 $\\sum|x_k|^2=1,2,3$，永远非负实。" },
+  { q: "酉矩阵的等价刻画（至少三条）？特征值在哪？", a: "$U^{*}U=I\\iff\\langle Ux,Uy\\rangle=\\langle x,y\\rangle$（保内积）$\\iff$ 列（行）标准正交。特征值全在单位圆上（模 1）。" },
+  { q: "Hermite、反 Hermite、正规：定义与特征值画像？", a: "Hermite $A^{*}=A$：特征值实；反 Hermite $A^{*}=-A$：纯虚；正规 $AA^{*}=A^{*}A$：画像无限制，但可酉对角化。" },
+  { q: "谱定理（完整双向陈述）？", a: "$A$ 正规 $\\iff$ 存在酉矩阵 $U$ 使 $U^{*}AU$ 为对角阵。⟸ 方向：对角阵两两交换故必正规。" },
+  { q: "Schur 定理说什么？证明靠哪两个动作？", a: "任意复方阵酉相似于上三角。对阶数归纳：取单位特征向量，Gram–Schmidt 扩成标准正交基拼酉矩阵。" },
+  { q: "正规的上三角阵为什么必为对角阵？", a: "比较 $TT^{*}$ 与 $T^{*}T$ 的 $(1,1)$ 元：$|t_{11}|^2+\\|r\\|^2=|t_{11}|^2$，故第一行其余元全 0；对右下角归纳。" },
+  { q: "实对称矩阵的两件大事？各怎么来的？", a: "特征值全实（看作复 Hermite）；可正交对角化（实版 Schur + 对称的上三角必为对角）。" },
+  { q: "证「Hermite 不同特征值的特征向量正交」的链条？", a: "$\\lambda\\langle x,y\\rangle=\\langle Ax,y\\rangle=\\langle x,Ay\\rangle=\\overline\\mu\\langle x,y\\rangle=\\mu\\langle x,y\\rangle$，故 $(\\lambda-\\mu)\\langle x,y\\rangle=0$。" },
+  { q: "正规阵 $A$ 与 $A^{*}$ 的特征向量有什么关系？怎么证？", a: "$Ax=\\lambda x\\iff A^{*}x=\\overline\\lambda x$。对 $B=A-\\lambda I$（仍正规）用 $\\|Bx\\|=\\|B^{*}x\\|$，两端同时为零。" }
+]);
+</script>
+
+<script>
+/* §3.3 共轭刚需实验台 */
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  var svg = document.getElementById("cnjw-svg");
+  var out = document.getElementById("cnjw-out");
+  var sA1 = document.getElementById("cnj-a1"), sB1 = document.getElementById("cnj-b1");
+  var sA2 = document.getElementById("cnj-a2"), sB2 = document.getElementById("cnj-b2");
+  var CX = 180, CY = 150, SC = 9;
+  function X(re) { return CX + re * SC; }
+  function Y(im) { return CY - im * SC; }
+  function mk(tag, attrs) {
+    var el = document.createElementNS(NS, tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    svg.appendChild(el);
+    return el;
+  }
+  function mkText(x, y, str, attrs) {
+    var t = mk("text", attrs || {});
+    t.setAttribute("x", x); t.setAttribute("y", y);
+    t.textContent = str;
+    return t;
+  }
+  /* 左：复平面 */
+  mkText(CX, 18, "复平面：无共轭的「长度平方」S = x₁² + x₂²", { "font-size": 13, fill: "#2b2620", "text-anchor": "middle", "font-weight": "bold" });
+  mk("line", { x1: 20, y1: CY, x2: 340, y2: CY, stroke: "#1d4ed8", "stroke-width": 2.5 });
+  mk("polygon", { points: "348," + CY + " 338," + (CY - 5) + " 338," + (CY + 5), fill: "#1d4ed8" });
+  mk("line", { x1: CX, y1: 32, x2: CX, y2: 282, stroke: "#2b2620", "stroke-width": 1.5 });
+  mk("polygon", { points: CX + ",28 " + (CX - 5) + ",40 " + (CX + 5) + ",40", fill: "#2b2620" });
+  mkText(322, CY - 10, "实轴", { "font-size": 12, fill: "#1d4ed8" });
+  mkText(CX + 8, 46, "Im", { "font-size": 12, fill: "#2b2620" });
+  mkText(CX + 6, CY + 16, "0", { "font-size": 11, fill: "#5c554b" });
+  var l1 = mk("line", { stroke: "#8a8175", "stroke-width": 1, "stroke-dasharray": "3 3" });
+  var l2 = mk("line", { stroke: "#8a8175", "stroke-width": 1, "stroke-dasharray": "3 3" });
+  var d1 = mk("circle", { r: 4.5, fill: "#1d4ed8" });
+  var d2 = mk("circle", { r: 4.5, fill: "#b45309" });
+  var dS = mk("circle", { r: 7, fill: "#be123c" });
+  var tS = mkText(0, 0, "S", { "font-size": 13, fill: "#be123c", "font-weight": "bold" });
+  /* 右：实轴上的 N */
+  var NX0 = 430, NX1 = 700, NY = 150;
+  mkText(565, 60, "实轴：有共轭的 N = |x₁|² + |x₂|²", { "font-size": 13, fill: "#2b2620", "text-anchor": "middle", "font-weight": "bold" });
+  mk("rect", { x: 384, y: NY - 24, width: 42, height: 48, fill: "#f6dede" });
+  mkText(405, NY - 32, "负数区·禁区", { "font-size": 11, fill: "#be123c", "text-anchor": "middle" });
+  mk("line", { x1: 384, y1: NY, x2: 706, y2: NY, stroke: "#2b2620", "stroke-width": 2 });
+  mk("polygon", { points: "714," + NY + " 704," + (NY - 5) + " 704," + (NY + 5), fill: "#2b2620" });
+  [[NX0, "0"], [565, "8"], [NX1, "16"]].forEach(function (tk) {
+    mk("line", { x1: tk[0], y1: NY - 6, x2: tk[0], y2: NY + 6, stroke: "#2b2620", "stroke-width": 2 });
+    mkText(tk[0], NY + 24, tk[1], { "font-size": 12, fill: "#2b2620", "text-anchor": "middle" });
+  });
+  var dN = mk("circle", { cy: NY, r: 7, fill: "#15803d" });
+  var tN = mkText(0, NY - 16, "N", { "font-size": 13, fill: "#15803d", "font-weight": "bold" });
+  function fmt(v) { return (Math.abs(v) < 0.05 ? 0 : v).toFixed(1); }
+  function fmtC(re, im) {
+    return fmt(re) + (im >= 0 ? " + " : " − ") + fmt(Math.abs(im)) + "i";
+  }
+  function update() {
+    var a1 = parseFloat(sA1.value), b1 = parseFloat(sB1.value);
+    var a2 = parseFloat(sA2.value), b2 = parseFloat(sB2.value);
+    var sre = a1 * a1 - b1 * b1 + a2 * a2 - b2 * b2;
+    var sim = 2 * (a1 * b1 + a2 * b2);
+    var N = a1 * a1 + b1 * b1 + a2 * a2 + b2 * b2;
+    var x1re = a1 * a1 - b1 * b1, x1im = 2 * a1 * b1;
+    var x2re = a2 * a2 - b2 * b2, x2im = 2 * a2 * b2;
+    d1.setAttribute("cx", X(x1re)); d1.setAttribute("cy", Y(x1im));
+    d2.setAttribute("cx", X(x2re)); d2.setAttribute("cy", Y(x2im));
+    dS.setAttribute("cx", X(sre)); dS.setAttribute("cy", Y(sim));
+    l1.setAttribute("x1", CX); l1.setAttribute("y1", CY);
+    l1.setAttribute("x2", X(x1re)); l1.setAttribute("y2", Y(x1im));
+    l2.setAttribute("x1", X(x1re)); l2.setAttribute("y1", Y(x1im));
+    l2.setAttribute("x2", X(sre)); l2.setAttribute("y2", Y(sim));
+    tS.setAttribute("x", Math.min(X(sre) + 10, 330)); tS.setAttribute("y", Y(sim) - 8);
+    dN.setAttribute("cx", NX0 + N * (NX1 - NX0) / 16);
+    tN.setAttribute("x", Math.min(NX0 + N * (NX1 - NX0) / 16 + 10, 690));
+    var xZero = N < 1e-9;
+    var vS, cls;
+    if (Math.abs(sim) > 1e-9) {
+      vS = "✗ S 跑出实轴——「长度平方」连实数都不是，内积崩塌"; cls = "no";
+    } else if (sre < -1e-9) {
+      vS = "✗ S 是负数——「长度平方」为负，距离概念崩塌"; cls = "no";
+    } else if (Math.abs(sre) <= 1e-9 && !xZero) {
+      vS = "✗ S = 0 但 x ≠ 0——非零向量「长度」为零，正定性崩塌"; cls = "no";
+    } else if (xZero) {
+      vS = "✓ S = 0（x = 0，本次无事故）"; cls = "ok";
+    } else {
+      vS = "△ 本次 S 恰好落在正实轴上——只是这组数运气好，拖拖滑块就跑了"; cls = "ok";
+    }
+    var vN = xZero
+      ? "✓ N = 0 ⟺ x = 0，正定性保住"
+      : "✓ N = " + N.toFixed(2) + " ≥ 0，恒为非负实数";
+    out.innerHTML = "无共轭：S = " + fmtC(sre, sim) + "　→　<span class=\"" + cls + "\">" + vS + "</span><br>" +
+      "有共轭：N = " + N.toFixed(2) + "　→　<span class=\"ok\">" + vN + "</span><br>" +
+      "<strong>共轭不是装饰：它把「长度平方」钉回非负实轴。</strong>";
+  }
+  sA1.addEventListener("input", update); sB1.addEventListener("input", update);
+  sA2.addEventListener("input", update); sB2.addEventListener("input", update);
+  update();
+})();
+</script>
+
+</body>
+</html>

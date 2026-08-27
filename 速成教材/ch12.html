@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高代第 2 章 · 子空间、和与直和 ⊕ —— 数学A速成讲义</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+<div class="wrap">
+
+<div class="bookbar">
+  <span><a href="index.html">← 返回首页</a></span>
+  <span>卷二 · 高等代数 · 第 2 章</span>
+</div>
+
+<div class="chapter-kicker">CHAPTER 2 · 高等代数</div>
+<h1>子空间、和与直和 ⊕：无冗余分解的艺术</h1>
+
+<div class="exam box" data-tag="本章导览">
+  <p><strong>这一章在整张卷子上的位置</strong>：直和（$\oplus$）很少独立成题，但它是高代证明大题的<strong>开门动作</strong>——第 15 届题三（20 分）充分性的第一步就是根子空间直和分解 $V=V_{\lambda_1}\oplus\cdots\oplus V_{\lambda_s}$（官方 11 分点），第 17 届题四（15 分）第 (1) 问的起手式同样是准素分解 $V=V_1\oplus\cdots\oplus V_s$。它常以"步骤分"形态出现：把空间无冗余地拆开，逐块处理，再用"分解唯一"合拢——值 <strong>3–6 分的步骤分</strong>，而且后面第 3 章（核与像）、第 5 章（可对角化）、第 7 章（Jordan）全部站在它上面。</p>
+  <p><strong>学完你能</strong>：① 用"非空 + 双封闭"判定子空间，随手举出并集、仿射子集两个反例；② 默写维数公式并用基扩充说出证明骨架；③ 默写直和的三个等价刻画，会按"两件货"格式证 $V=U\oplus W$；④ 看到 $P^2=P$ 反射出 $V=\ker P\oplus\operatorname{Im}P$ 与分解式 $v=Pv+(v-Pv)$；⑤ 说出可对角化的直和判据，知道第 15 届题三 18 分点"由直和分解与不变性得 $p(\mathbf A)\alpha_i=0$"用的是哪一条。</p>
+  <p><strong>前置</strong>：卷二第 1 章<a href="ch11.html">《从矩阵到线性空间》</a>的线性空间、基与维数；用你线代课的同等内容即可——会判线性无关、会求生成子空间的维数（拼矩阵算秩）、知道基扩充定理的存在。</p>
+</div>
+
+<h2>§1 开场谜题：拆桌子，与付两次钱</h2>
+
+<div class="hook box" data-tag="开场谜题">
+  <p>把一张桌子拆成零件装箱：四条腿、一张桌面、两个抽屉。如果图纸画得好，每个零件各就各位，装回去严丝合缝。但如果图纸画<strong>重</strong>了——桌面的右半边同时被画进了"桌面"和"抽屉底板"两张零件图——你清点时就会把这个重叠部分<strong>数两遍</strong>，按图付钱时就得<strong>为它付两次钱</strong>。</p>
+  <p>向量空间的分解一模一样。$\mathbb{R}^2$ 里取两条子空间：$U=\{(t,0):t\in\mathbb R\}$（$x$ 轴）与 $W=\{(t,t):t\in\mathbb R\}$（对角线）。向量 $v=(3,5)$ 可以写成</p>
+  <p>$$v=\underbrace{(-2,0)}_{\in\,U}+\underbrace{(5,5)}_{\in\,W},$$</p>
+  <p>而且<strong>只有这一种写法</strong>——$y$ 分量 $5$ 逼出 $W$ 那件必须是 $(5,5)$，剩下的只能是 $(-2,0)$。每个向量一份确定的"零件清单"，清清爽爽。</p>
+  <p>现在换个糊涂图纸：取 $W$ 也是 $x$ 轴（$W=U$）。还是 $v=(3,0)$，它既能写成 $(1,0)+(2,0)$，也能写成 $(-5,0)+(8,0)$——<strong>无穷多种写法，没有确定的零件清单</strong>。原因就一个：$U$ 与 $W$ 有重叠（$U\cap W=U\ne\{0\}$），重叠部分在两边都算了一件货。维数也在报警：$\dim U+\dim W=1+1=2$，可 $\dim(U+W)=1$——账面两件货，实际只占一个方向，亏掉的那 $1$ 维正是重叠部分 $\dim(U\cap W)$。</p>
+  <p>数学家要的是<strong>无冗余的分解</strong>：每个向量拆法唯一，维数直接相加，一个子空间管一个方向，互不抢功。这就是本章主角——<strong>直和 $\oplus$</strong>。它的报酬立竿见影：$\dim(U\oplus W)=\dim U+\dim W$，干脆利落。</p>
+  <p>它不只是洁癖。第 15 届题三（20 分）证明"循环向量存在"的关键一步，正是把整个空间 $V$ 拆成根子空间的直和 $V=V_{\lambda_1}\oplus\cdots\oplus V_{\lambda_s}$——拆完才能逐块造零件 $\alpha_i$，再拼成 $\alpha=\alpha_1+\cdots+\alpha_s$；而官方解答 18 分点那句"由直和分解与不变性得 $p(\mathbf A)\alpha_i=0$"，靠的正是<strong>直和里 $0$ 的拆法唯一</strong>。本章末尾我们把这一段完整拆给你看。</p>
+</div>
+
+<h2>§2 先看见它：平行四边形与塌方</h2>
+
+<div class="vision box" data-tag="直觉与图像">
+  <p>分解 $v=u+w$ 是一个<strong>平行四边形</strong>：从原点出发，沿 $U$ 方向走到 $u$，再沿 $W$ 方向走完剩下的路到达 $v$。只要 $U$ 与 $W$ 不共线，从 $v$ 出发"沿 $W$ 的平行线回推"恰好砸中 $U$ 上一个点——砸中哪个点，$u$ 就是哪个，<strong>唯一</strong>。一旦 $U$ 与 $W$ 重合，回推的线与 $U$ 整条叠在一起，砸中的不再是一个点而是无数种可能——分解当场塌方。</p>
+</div>
+
+<figure>
+<svg viewBox="0 0 720 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="左：交为 0 时分解唯一（平行四边形）；右：U 与 W 重合时拆法无穷多">
+  <!-- 左图：正常分解 -->
+  <line x1="50" y1="180" x2="450" y2="180" stroke="#1d4ed8" stroke-width="3"/>
+  <line x1="91" y1="234" x2="344" y2="5" stroke="#b45309" stroke-width="3"/>
+  <text x="442" y="170" font-size="14" fill="#1d4ed8" font-weight="bold">U</text>
+  <text x="348" y="18" font-size="14" fill="#b45309" font-weight="bold">W</text>
+  <!-- 平行四边形 -->
+  <line x1="150" y1="180" x2="181" y2="180" stroke="#1d4ed8" stroke-width="5"/>
+  <line x1="181" y1="180" x2="270" y2="100" stroke="#1d4ed8" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <line x1="150" y1="180" x2="239" y2="100" stroke="#b45309" stroke-width="5"/>
+  <line x1="239" y1="100" x2="270" y2="100" stroke="#b45309" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <circle cx="150" cy="180" r="4" fill="#2b2620"/>
+  <circle cx="181" cy="180" r="5" fill="#1d4ed8"/>
+  <circle cx="239" cy="100" r="5" fill="#b45309"/>
+  <circle cx="270" cy="100" r="6" fill="#be123c"/>
+  <text x="181" y="202" font-size="12.5" fill="#1d4ed8" text-anchor="middle">u</text>
+  <text x="232" y="90" font-size="12.5" fill="#b45309" text-anchor="end">w</text>
+  <text x="280" y="96" font-size="13" fill="#be123c" font-weight="bold">v = u + w（唯一）</text>
+  <!-- 右图：U=W 塌方 -->
+  <line x1="470" y1="180" x2="700" y2="180" stroke="#1d4ed8" stroke-width="3"/>
+  <line x1="470" y1="180" x2="700" y2="180" stroke="#b45309" stroke-width="1.5" stroke-dasharray="7 5" opacity="0.8"/>
+  <text x="692" y="168" font-size="12.5" fill="#7a4a12" text-anchor="end">U = W（同一条线）</text>
+  <circle cx="560" cy="180" r="4" fill="#2b2620"/>
+  <circle cx="648" cy="180" r="6" fill="#be123c"/>
+  <text x="652" y="168" font-size="13" fill="#be123c" font-weight="bold">v</text>
+  <!-- 拆法一（线上方） -->
+  <line x1="560" y1="160" x2="616" y2="160" stroke="#1d4ed8" stroke-width="3"/>
+  <polygon points="616,160 608,156 608,164" fill="#1d4ed8"/>
+  <line x1="616" y1="160" x2="648" y2="160" stroke="#b45309" stroke-width="3"/>
+  <polygon points="648,160 640,156 640,164" fill="#b45309"/>
+  <text x="604" y="150" font-size="11.5" fill="#5c554b" text-anchor="middle">拆法一</text>
+  <!-- 拆法二（线下方） -->
+  <line x1="560" y1="200" x2="536" y2="200" stroke="#1d4ed8" stroke-width="3"/>
+  <polygon points="536,200 544,196 544,204" fill="#1d4ed8"/>
+  <line x1="536" y1="200" x2="648" y2="200" stroke="#b45309" stroke-width="3"/>
+  <polygon points="648,200 640,196 640,204" fill="#b45309"/>
+  <text x="592" y="222" font-size="11.5" fill="#5c554b" text-anchor="middle">拆法二（还有无穷多种）</text>
+</svg>
+<figcaption>左：$U\cap W=\{0\}$，回推只砸中一个点，$v=u+w$ 唯一。右：$U$ 与 $W$ 重叠，同一个 $v$ 随便拆——重叠部分付两次钱。</figcaption>
+</figure>
+
+<h2>§3 精确定义：从子空间到直和</h2>
+
+<h3>3.1 子空间：对线性组合封闭的子集</h3>
+
+<div class="def">
+  <p class="def-title">定义（子空间）</p>
+  <p>设 $V$ 是数域 $\mathbb K$ 上的线性空间，$W\subseteq V$。称 $W$ 为 $V$ 的<strong>子空间</strong>（记 $W\le V$），如果：</p>
+  <p>$$\text{（i）}\ W\ne\varnothing\ \text{（最省事的证据是 }0\in W\text{）};\qquad
+  \text{（ii）}\ \forall x,y\in W,\ x+y\in W;\qquad
+  \text{（iii）}\ \forall x\in W,\ \forall k\in\mathbb K,\ kx\in W.$$</p>
+  <p>（ii）（iii）合起来就是"对线性组合封闭"：$\forall x,y\in W,\ \forall a,b\in\mathbb K,\ ax+by\in W$。</p>
+</div>
+
+<p>两个必须认识的<strong>反例</strong>，考试常伪装成"显然"：</p>
+<ul>
+  <li><strong>并集一般不是子空间</strong>：$\mathbb R^2$ 中 $x$ 轴 $\cup$ $y$ 轴——$(1,0)$ 与 $(0,1)$ 都在并集里，但和 $(1,1)$ 不在。事实上 $U\cup W$ 是子空间当且仅当 $U\subseteq W$ 或 $W\subseteq U$（一方吞并另一方）。</li>
+  <li><strong>不过原点的仿射子集不是子空间</strong>：$\{x:Ax=b\}$（$b\ne0$）是一条"平移过的平面"，它连 $0$ 都不含，第一条就出局。它是"子空间的平移"，本身不是子空间。</li>
+</ul>
+
+<div class="def">
+  <p class="def-title">定义（交 与 和）</p>
+  <p>设 $U,W\le V$。</p>
+  <p>$$U\cap W=\{v:v\in U\ \text{且}\ v\in W\}\quad(\text{子空间});\qquad
+  U+W=\{u+w:u\in U,\ w\in W\}\quad(\text{子空间}).$$</p>
+  <p>和的最性：$U+W$ 是<strong>包含 $U$ 与 $W$ 的最小子空间</strong>——任何包含 $U\cup W$ 的子空间都必须含所有 $u+w$，故包含 $U+W$。记住：补"并集"这个漏洞的，是和，不是并。</p>
+</div>
+
+<h3>3.2 维数公式：重叠扣款单</h3>
+
+<div class="def">
+  <p class="def-title">定理（维数公式）</p>
+  <p>设 $U,W\le V$，$\dim U,\dim W$ 有限。则
+  $$\dim(U+W)=\dim U+\dim W-\dim(U\cap W).$$</p>
+</div>
+
+<div class="calc box" data-tag="证明骨架（基扩充，四步）">
+  <p><strong>第 1 步</strong>：取 $U\cap W$ 的一组基 $\alpha_1,\dots,\alpha_r$（交为 $\{0\}$ 时 $r=0$，从空集出发）。</p>
+  <p><strong>第 2 步</strong>：用基扩充定理，把它分别扩成 $U$ 的基 $\alpha_1,\dots,\alpha_r,\beta_1,\dots,\beta_p$ 与 $W$ 的基 $\alpha_1,\dots,\alpha_r,\gamma_1,\dots,\gamma_q$。</p>
+  <p><strong>第 3 步</strong>：证三组向量 $\{\alpha_i\}\cup\{\beta_j\}\cup\{\gamma_k\}$ 合起来是 $U+W$ 的基。张成是显然的；无关性是唯一的真功夫：设 $\sum a_i\alpha_i+\sum b_j\beta_j+\sum c_k\gamma_k=0$，把 $\gamma$ 部分挪到等号另一边——右边在 $U$ 里、左边在 $W$ 里，故 $\sum c_k\gamma_k\in U\cap W$，可由 $\alpha$ 组表示；但 $\{\alpha_i\}\cup\{\gamma_k\}$ 是 $W$ 的基，逼得 $c_k$ 全为 $0$；剩下 $\sum a_i\alpha_i+\sum b_j\beta_j=0$，由 $U$ 的基逼得 $a_i,b_j$ 全为 $0$。</p>
+  <p><strong>第 4 步（计数）</strong>：$\dim(U+W)=r+p+q=(r+p)+(r+q)-r=\dim U+\dim W-\dim(U\cap W)$。$\square$</p>
+  <p class="aside">这个"交的基双向扩充"是基扩充定理最标准的用法，和第 15 届题三必要性里"取循环基"是同一家族的动作：先在一小块里取基，再扩出去。</p>
+</div>
+
+<div class="symbol box" data-tag="逐符号朗读">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$U+W=\{u+w:u\in U,\ w\in W\}$</td><td>"所有'一件 $U$ 货加一件 $W$ 货'的向量全体"</td><td>定义和：只要求<strong>能</strong>拆开，不保证拆法只有一种</td></tr>
+    <tr><td>$U\cap W=\{0\}$</td><td>"$U$ 和 $W$ 的公共向量只有零向量"</td><td>宣布无重叠：重叠扣款项为 $0$ 维</td></tr>
+    <tr><td>$V=U\oplus W$</td><td>"$V$ 是 $U$ 与 $W$ 的直和"</td><td>两件货全齐：每个 $v$ <strong>拆得出</strong>（$U+W=V$）且<strong>拆法唯一</strong></td></tr>
+    <tr><td>$\dim(U+W)=\dim U+\dim W-\dim(U\cap W)$</td><td>"和的维数 = 维数之和 − 交的维数"</td><td>查账：交多大就亏多少；不亏的时候就是直和</td></tr>
+  </table>
+  <p>注意：$u+w$ 这个写法本身<strong>不承诺唯一</strong>。唯一性是额外的好性质，需要用 $U\cap W=\{0\}$ 去换——这正是下面三等价定理的内容。</p>
+</div>
+
+<div class="think">
+  <p>别急着往下翻。<strong>拿张纸，自己证两个小方向</strong>：① 若 $U\cap W=\{0\}$，则每个 $v\in U+W$ 的分解 $v=u+w$ 唯一（提示：假设有两种写法，把它们的差移项）；② 若分解总唯一，则 $U\cap W=\{0\}$（提示：给 $0$ 找两种写法）。写完再展开对照。</p>
+  <details class="answer">
+    <summary>对照：两个方向各两行</summary>
+    <p>① 设 $u_1+w_1=u_2+w_2$（$u_i\in U,\ w_i\in W$）。移项得 $u_1-u_2=w_2-w_1$：左边在 $U$ 里，右边在 $W$ 里，故它属于 $U\cap W=\{0\}$，即 $u_1=u_2,\ w_1=w_2$。$\square$</p>
+    <p>② 任取 $x\in U\cap W$。则 $0=x+(-x)$（一件 $U$ 货加一件 $W$ 货）与 $0=0+0$ 是 $0$ 的两种分解；由唯一性，$x=0$。$\square$</p>
+    <p>记忆锚点：<strong>"移项"把两种分解的差变成交里的向量</strong>——这是全部直和论证的万能第一步，例 2 和第 15 届题三用的都是它。</p>
+  </details>
+</div>
+
+<h3>3.3 亲手摸一摸分解的唯一与塌方（交互）</h3>
+
+<div class="widget" id="dsum-widget">
+  <p class="w-title">▶ 直和分解探索器：拖 v、拧角度，看分解何时唯一、何时爆炸</p>
+  <p class="w-row"><span style="color:#1d4ed8;font-weight:700">蓝线 U</span> = $x$ 轴（固定不动）；<span style="color:#b45309;font-weight:700">橙线 W</span>（用滑块拧角度 θ）；<span style="color:#be123c;font-weight:700">深红点 v</span>（直接拖）。蓝、橙粗线段就是分解出的两件货 $u$ 和 $w$。</p>
+  <div class="w-row"><label>θ（W 与 U 的夹角，单位：度；拖到 0° 看塌方）</label>
+  <input type="range" id="dsw-th" min="0" max="90" step="1" value="35"></div>
+  <svg id="dsw-svg" viewBox="0 0 720 360" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div class="w-verdict" id="dsw-out">加载中……（需要启用 JavaScript）</div>
+  <p class="w-row" style="font-size:0.88em;color:#5c554b">玩出这三个体验再往下走：<strong>①</strong> θ = 90° 时拖着 v 绕一圈——u、w 就是直角投影，温和且唯一；<strong>②</strong> 把 v 固定在 (2.5, 1.5) 附近，θ 从 40° 慢慢拖到 5° 以下，盯着 s、t 两个系数爆炸——"几乎重叠"的分解在数值上就是灾难；<strong>③</strong> θ = 0° 时，分别把 v 放在 x 轴上和轴外，读两句不同的塌方报告。</p>
+</div>
+
+<h3>3.4 直和：三个等价刻画（必须全对）</h3>
+
+<div class="def">
+  <p class="def-title">定义与定理（直和的三张脸）</p>
+  <p>设 $U,W\le V$。若 $U+W$ 中每个向量的分解唯一（等价于 $0$ 的分解唯一），称 $U+W$ 为<strong>直和</strong>，记 $U\oplus W$。以下三条互相等价：</p>
+  <p>$$\text{（i）}\ U\cap W=\{0\};\qquad
+  \text{（ii）}\ \text{每个}\ v=u+w\ \text{的分解唯一};\qquad
+  \text{（iii）}\ \dim(U+W)=\dim U+\dim W.$$</p>
+  <p>（i）⟺（ii）就是上面"先动手"证的两行；（i）⟺（iii）由维数公式立即得到：$\dim(U\cap W)=0\iff U\cap W=\{0\}$。</p>
+</div>
+
+<p>多个子空间时，定义照旧：$V=U_1\oplus\cdots\oplus U_m$ 指每个 $v$ 的分解 $v=u_1+\cdots+u_m$（$u_i\in U_i$）唯一，同样等价于 $0$ 的分解唯一。判定有两条路——<strong>交块判定</strong>与<strong>维数判定</strong>：</p>
+<p>$$V=U_1\oplus\cdots\oplus U_m
+\iff U_i\cap\Bigl(\sum_{j\ne i}U_j\Bigr)=\{0\}\ (\forall i)
+\iff \dim\Bigl(\sum_i U_i\Bigr)=\sum_i\dim U_i.$$</p>
+
+<div class="warn box" data-tag="头号陷阱：两两交为 0 ≠ 直和">
+  <p>三个以上子空间时，<strong>"两两之交为 $\{0\}$"推不出直和</strong>。反例：$\mathbb R^2$ 中三条不同的过原点直线 $U_1,U_2,U_3$——两两之交都是 $\{0\}$，但 $U_1+U_2+U_3=\mathbb R^2$，维数账 $2\ne1+1+1$，分解绝不唯一（$(1,1)$ 既能全算给 $U_3$，也能拆给 $U_1+U_2$）。</p>
+  <p>正确的交块判定要求每个 $U_i$ 与<strong>其余所有块之和</strong>交为 $\{0\}$——比"两两"强得多。偷懒写成"两两交 0"，整题归零。</p>
+</div>
+
+<h3>3.5 补空间：存在，但绝不唯一</h3>
+
+<div class="def">
+  <p class="def-title">定理（补空间存在）</p>
+  <p>设 $\dim V=n$，$U\le V$。则存在 $W\le V$ 使 $V=U\oplus W$（$W$ 称为 $U$ 的补空间）。</p>
+</div>
+<p>证明就是基扩充定理的直接兑现：取 $U$ 的基 $\alpha_1,\dots,\alpha_r$，扩成 $V$ 的基 $\alpha_1,\dots,\alpha_r,\beta_1,\dots,\beta_{n-r}$，令 $W=\operatorname{span}\{\beta_1,\dots,\beta_{n-r}\}$，则 $V=U\oplus W$（交为 $\{0\}$ 且维数相加为 $n$）。$\square$</p>
+<p>但补空间<strong>远不唯一</strong>：$\mathbb R^2$ 中 $x$ 轴的补空间有无穷多个——任何不躺在 $x$ 轴上的直线 $W_t=\operatorname{span}\{(t,1)\}$（$t\in\mathbb R$ 任取）都与它直和成 $\mathbb R^2$。扩充方式有无穷多种，补就有无穷多个。"补空间"是一个<strong>存在性</strong>概念，不是一个<strong>唯一性</strong>概念。</p>
+
+<h3>3.6 投影算子：幂等矩阵的几何身份</h3>
+
+<div class="def">
+  <p class="def-title">定理（投影 ⟺ 幂等）</p>
+  <p>设 $P$ 是 $V$ 上的线性变换，$P^2=P$（幂等）。则
+  $$V=\ker P\oplus\operatorname{Im}P,$$
+  且 $P$ 在 $\operatorname{Im}P$ 上是恒等（$x=Py\Rightarrow Px=x$）：$P$ 就是"沿 $\ker P$ 投影到 $\operatorname{Im}P$"的投影算子。反之，任给直和分解 $V=U\oplus W$，按 $v=u+w\mapsto u$ 定义的算子 $P$ 是线性变换，满足 $P^2=P$、$\ker P=W$、$\operatorname{Im}P=U$。</p>
+</div>
+<p>一句话：<strong>幂等矩阵 = 投影</strong>。给一张直和图纸 $V=U\oplus W$，就有一个幂等的 $P$；给一个幂等的 $P$，它自带直和图纸 $\ker P\oplus\operatorname{Im}P$。正向的完整证明就是本章例 2——高代证明题的常驻嘉宾。</p>
+
+<h3>3.7 出口预告：特征子空间与根子空间</h3>
+<p>直和最大的两个应用，先在账本上登记，第 5、7 章兑现：</p>
+<ul>
+  <li><strong>可对角化 ⟺ 特征子空间直和满 $V$</strong>：$\mathbf A$ 可对角化 $\iff V=V_{\lambda_1}\oplus\cdots\oplus V_{\lambda_s}$（$V_{\lambda_i}=\ker(\mathbf A-\lambda_i\mathbf I)$ 为特征子空间）$\iff$ 各特征值的几何重数之和 $=n$。不同特征值的特征向量线性无关，所以特征子空间的和<strong>自动是直和</strong>——问题只在于它们拼不拼得出整个 $V$（第 5 章主场）。</li>
+  <li><strong>根子空间分解</strong>：在 $\mathbb C$ 上，$\ker(\mathbf A-\lambda_i\mathbf I)$ 一般太小拼不满 $V$；把幂次抬高到代数重数 $d_i$，根子空间 $V_{\lambda_i}=\ker(\mathbf A-\lambda_i\mathbf I)^{d_i}$ 就总能拼满：$V=V_{\lambda_1}\oplus\cdots\oplus V_{\lambda_s}$。这就是第 15 届题三官方解答 11 分点写下的那行等式，也是第 7 章 Jordan 标准形的地基。</li>
+</ul>
+
+<h2>§4 翻译轨：三个标准动作 + 一间练功房</h2>
+
+<p>直和在卷面上只有三种用法：证它是直和、用维数账判它是直和、认出幂等矩阵背后的直和。练成反射，本章毕业。</p>
+
+<div class="trans box" data-tag="动作一：证 V = U ⊕ W（两件货，分开给分）">
+  <p><strong>题面</strong>："证明 $V=U\oplus W$" / "证明 $V$ 是 $U$ 与 $W$ 的直和"。</p>
+  <p><strong>翻译</strong>：必须分别交两件货，缺一件整题不成立：</p>
+  <p>第 ① 件（和 $=V$）：任取 $v\in V$，<strong>写出</strong> $v=u+w$ 使 $u\in U,\ w\in W$——写法通常由题面条件白送（如 $v=Pv+(v-Pv)$）。<br>
+  第 ② 件（交 $=\{0\}$）：任取 $x\in U\cap W$，证 $x=0$——标准起手是"$x\in U$ 且 $x\in W$ 各给一句话，合起来逼出 $x=0$"。</p>
+  <p><strong>值多少分</strong>：两件货通常是两个独立分点。第 15 届题三的 11 分点"$V=V_{\lambda_1}\oplus\cdots\oplus V_{\lambda_s}$"按的就是这个骨架：和靠 Hamilton–Cayley 型的分解给出，交为 $\{0\}$ 靠不同因子互素（§9 真题节选有完整拆解）。</p>
+</div>
+
+<div class="trans box" data-tag="动作二：维数判定（查账代替验货）">
+  <p><strong>题面</strong>：已知各块维数，判定和是否直和；或反过来求 $\dim(U\cap W)$。</p>
+  <p><strong>翻译</strong>：维数公式是一张四栏账：$\dim(U+W)$、$\dim U$、$\dim W$、$\dim(U\cap W)$，<strong>知三推一</strong>。判直和不必真的去验交集——算出 $\dim(U+W)=\dim U+\dim W$ 就由三等价的 (iii) 收工。例 1 用的正是这条路。</p>
+  <p>同一个动作的"大块头版本"：$\mathbf A$ 可对角化 $\iff \sum_i\dim V_{\lambda_i}=n$——每个几何重数是一栏，加起来等于 $n$ 就由维数判定得 $V=\bigoplus_i V_{\lambda_i}$。</p>
+</div>
+
+<div class="trans box" data-tag="动作三：真题原句长这样（第 15 届题三）">
+  <p><strong>原句</strong>："记 $V_{\lambda_i}=\operatorname{Ker}(\mathbf A-\lambda_i\mathbf I)^{d_i}$（$\mathbf A$-不变子空间），则 $V=V_{\lambda_1}\oplus\cdots\oplus V_{\lambda_s}$。"</p>
+  <p><strong>翻译</strong>：这一行 $\oplus$ 一口气给你三件武器：</p>
+  <p>① 每个 $\alpha\in V$ 能唯一拆成 $\alpha=\alpha_1+\cdots+\alpha_s$（$\alpha_i\in V_{\lambda_i}$）——<strong>逐块造件</strong>合法；<br>
+  ② 每个 $V_{\lambda_i}$ 是 $\mathbf A$-不变的，于是多项式 $p(\mathbf A)$ 把每块仍然映回本块——<strong>各块互不串味</strong>；<br>
+  ③ $0$ 的分解唯一：$\beta_1+\cdots+\beta_s=0$（$\beta_i\in V_{\lambda_i}$）$\Longrightarrow$ 每个 $\beta_i=0$。</p>
+  <p>官方解答 18 分点"由直和分解与不变性得 $p(\mathbf A)\alpha_i=0$"：$p(\mathbf A)\alpha=0$ 展开成 $\sum_i p(\mathbf A)\alpha_i=0$，由 ② 每项仍在本块里，由 ③ 每项为 $0$。看到 $\oplus$ 反射出③，这一步的分就到手了。</p>
+</div>
+
+<h3>4.4 翻译练功房：像学语言一样，大量互译</h3>
+
+<p>老规矩：<strong>先把 8 句全部写在纸上，再逐条展开对照</strong>。每条不超过 1 分钟。</p>
+
+<div class="trans box" data-tag="互译 8 句">
+  <p><strong>T1</strong>　自然→符号："$W$ 是 $V$ 的子空间。"</p>
+  <details class="answer"><summary>对照</summary><p>$W\subseteq V$，且 $0\in W$（非空的最省事证据），且 $\forall x,y\in W,\ \forall a,b\in\mathbb K:\ ax+by\in W$。<strong>易错</strong>：漏验非空——空集对封闭性"真空成立"，但它不是子空间。</p></details>
+  <p><strong>T2</strong>　符号→自然 + 追问："$V=U\oplus W$。"只证了"每个 $v$ 能拆成 $u+w$"够不够？</p>
+  <details class="answer"><summary>对照</summary><p>两件货：$U+W=V$（每个 $v$ 拆得出）且 $U\cap W=\{0\}$（拆法唯一）。只证第一件不够：$\mathbb R^2=x\text{ 轴}+x\text{ 轴}$ 也"每个 $v$ 能拆"，但拆法无穷多——和要的是<strong>不冗余</strong>。</p></details>
+  <p><strong>T3</strong>　判断（说理由）："$U\cup W$ 是子空间"对吗？</p>
+  <details class="answer"><summary>对照</summary><p>一般不对：$\mathbb R^2$ 两坐标轴的并集里，$(1,0)+(0,1)=(1,1)$ 跑出去了。事实上 $U\cup W$ 是子空间 $\iff U\subseteq W$ 或 $W\subseteq U$。<strong>易错</strong>：把"包含二者的最小子空间"记成并集——是 $U+W$，不是 $U\cup W$。</p></details>
+  <p><strong>T4</strong>　找坑："若 $U_1,U_2,U_3$ 两两之交为 $\{0\}$，则 $U_1+U_2+U_3$ 是直和。"</p>
+  <details class="answer"><summary>对照</summary><p>错。$\mathbb R^2$ 中三条不同的过原点直线：两两交 $\{0\}$，和的维数却是 $2\ne1+1+1$。正确判据：每个 $U_i\cap\bigl(\sum_{j\ne i}U_j\bigr)=\{0\}$，或维数相加。<strong>教训</strong>：多个块的直和，对手不是"每一块"，是"其余块的和"。</p></details>
+  <p><strong>T5</strong>　自然→符号："$\mathbb R^3$ 的两个二维子空间不可能只交于 $\{0\}$。"</p>
+  <details class="answer"><summary>对照</summary><p>设 $\dim U=\dim W=2$，$U,W\le\mathbb R^3$。则 $\dim(U\cap W)=\dim U+\dim W-\dim(U+W)\ge2+2-3=1$（因为 $U+W\le\mathbb R^3$）。故 $\dim(U\cap W)\ge1$，交里必有非零向量。<strong>关键一步</strong>：$U+W\subseteq\mathbb R^3\Rightarrow\dim(U+W)\le3$——和上界由大空间给出。</p></details>
+  <p><strong>T6</strong>　符号→自然 + 两个用法："$\dim(U+W)=\dim U+\dim W-\dim(U\cap W)$。"</p>
+  <details class="answer"><summary>对照</summary><p>"和的维数 = 维数和 − 重叠部分维数"。用法①：知三推一（例 1 反推 $\dim(U\cap W)$）；用法②：判直和——右端减项为 $0$（即 $\dim(U+W)=\dim U+\dim W$）$\iff$ 和是直和。</p></details>
+  <p><strong>T7</strong>　判断 + 追问："$P^2=P\Rightarrow V=\ker P\oplus\operatorname{Im}P$"的分解式是什么？$v-Pv$ 凭什么在 $\ker P$ 里？</p>
+  <details class="answer"><summary>对照</summary><p>$v=Pv+(v-Pv)$。$P(v-Pv)=Pv-P^2v=Pv-Pv=0$，故 $v-Pv\in\ker P$；$Pv\in\operatorname{Im}P$ 是定义白送。<strong>记忆</strong>：看到 $P^2=P$ 就写这个分解式，像看到 $\sup$ 就写两条件。</p></details>
+  <p><strong>T8</strong>　自然→符号（用本章语言）："$\mathbf A$ 可对角化。"小心一个经典误写。</p>
+  <details class="answer"><summary>对照</summary><p>$V=V_{\lambda_1}\oplus\cdots\oplus V_{\lambda_s}$（特征子空间直和满 $V$），即 $\sum_i\dim V_{\lambda_i}=n$。<strong>易错</strong>：写成"特征值两两不同"——那只是充分条件；可对角化允许重根，只要每个重根的几何重数足额（第 5 章细讲）。</p></details>
+</div>
+
+<h2>§5 类型识别：什么信号在召唤直和</h2>
+
+<div class="recog box" data-tag="识别反射表">
+  <table>
+    <tr><th>题面信号</th><th>反射</th></tr>
+    <tr><td>"分解唯一 / 每个 $v$ 只有一种写法"</td><td>直和：验 $U\cap W=\{0\}$ 或维数相加</td></tr>
+    <tr><td>"证明 $V=U\oplus W$"</td><td>两件货：和 $=V$ + 交 $=\{0\}$，分开证、分开给分</td></tr>
+    <tr><td>"$P^2=P$ / 幂等矩阵"</td><td>$V=\ker P\oplus\operatorname{Im}P$；立即写 $v=Pv+(v-Pv)$</td></tr>
+    <tr><td>"可对角化 / 有 $n$ 个无关特征向量"</td><td>$V=\bigoplus_i V_{\lambda_i}\iff$ 几何重数之和 $=n$（第 5 章）</td></tr>
+    <tr><td>"$\ker(\mathbf A-\lambda\mathbf I)^k$ / 根子空间"</td><td>不同 $\lambda$ 的块交为 $\{0\}$（互素手法）；$V=\bigoplus_i V_{\lambda_i}$（15 届题三）</td></tr>
+    <tr><td>"求 $\dim(U+W)$ 或 $\dim(U\cap W)$"</td><td>维数公式查账，知三推一</td></tr>
+    <tr><td>"补空间 / 扩充为 $V$ 的一组基"</td><td>基扩充定理：$U$ 的基补成 $V$ 的基，新向量张成 $W$</td></tr>
+    <tr><td>"$U\cup W$ 是子空间吗"</td><td>几乎从不是；想到"最小包含"就写 $U+W$</td></tr>
+  </table>
+</div>
+
+<h2>§6 考法定位：它藏在哪里、值多少分</h2>
+
+<div class="exam box" data-tag="考法定位">
+  <table>
+    <tr><th>出处</th><th>题号</th><th>直和扮演什么角色</th><th>分值权重</th></tr>
+    <tr><td>第 15 届（2023）</td><td>题三</td><td>充分性开门：$V=\bigoplus_i V_{\lambda_i}$（11 分点）；18 分点"由直和分解与不变性得 $p(\mathbf A)\alpha_i=0$"用 $0$ 的分解唯一</td><td>20 分大题的两个关键分点</td></tr>
+    <tr><td>第 17 届（2025）</td><td>题四(1)</td><td>准素分解 $V=V_1\oplus\cdots\oplus V_s$ 是第 (1) 问起手式；同一句"由直和得 $\mu(\mathcal A)\alpha_i=0$"复现</td><td>15 分大题，分解占 5 分点</td></tr>
+    <tr><td>第 11 届（2019）</td><td>题四</td><td>结论形如"全体 $f$ 构成一维实向量空间 $V=\{kf_1\}$"——子空间判定 + 一维刻画</td><td>20 分大题的收尾句</td></tr>
+    <tr><td>幂等 / 投影</td><td>—</td><td>近七届索引中无独立大题；但 $P^2=P\Rightarrow\ker\oplus\operatorname{Im}$ 是教材定理级工具、直和最常现身的形态，按"隐性步骤分"备考</td><td>步骤分（教材高频）</td></tr>
+  </table>
+  <p><strong>规律</strong>：直和在初赛几乎不单独成题，它是大题的<strong>开门钥匙与会师点</strong>：先把空间无冗余拆开（11 分点），逐块造件（14 分点），再用"$0$ 的分解唯一"合拢（18 分点）——第 15 届题三与第 17 届题四 (1) 共享同一副骨架，连合拢那句的措辞都几乎一样。学会"两件货"与"维数查账"这两个动作，你就握住了这副骨架的开门与关门。</p>
+</div>
+
+<h2>§7 关系网：一张图纸，从拆桌子到根子空间</h2>
+
+<p>本章的全部逻辑画在一张图上：<span style="color:#b45309">三角形</span>是来源动机，<span style="color:#1d4ed8">圆角矩形</span>是定义，<span style="color:#15803d">矩形</span>是定理，<span style="color:#7c3aed">六边形</span>是方法动作，<span style="color:#0f766e">椭圆</span>是应用出口。顺着箭头走一遍：重叠要付两次钱 → 逼出子空间与和 → 维数公式查账 → 直和三等价 → 两个手上动作 → 三个出口。</p>
+
+<figure>
+<svg viewBox="0 0 720 545" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="直和关系网地图">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+
+  <!-- 图例 -->
+  <polygon points="30,16 22,30 38,30" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5"/>
+  <text x="44" y="28" font-size="11.5" fill="#5c554b">来源·动机</text>
+  <rect x="116" y="17" width="22" height="13" rx="6.5" fill="#eef3fe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="144" y="28" font-size="11.5" fill="#5c554b">定义</text>
+  <rect x="192" y="17" width="22" height="13" fill="#ecf8f0" stroke="#15803d" stroke-width="1.5"/>
+  <text x="220" y="28" font-size="11.5" fill="#5c554b">定理</text>
+  <polygon points="268,23.5 274,16 288,16 294,23.5 288,31 274,31" fill="#f4effd" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="300" y="28" font-size="11.5" fill="#5c554b">方法·动作</text>
+  <ellipse cx="388" cy="23.5" rx="12" ry="7" fill="#ecf8f5" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="406" y="28" font-size="11.5" fill="#5c554b">应用·出口</text>
+
+  <!-- 来源三角 -->
+  <polygon points="110,58 52,128 168,128" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="110" y="98" font-size="12.5" fill="#7a4a12" text-anchor="middle" font-weight="bold">拆桌子</text>
+  <text x="110" y="114" font-size="10.5" fill="#7a4a12" text-anchor="middle">重叠付两次钱</text>
+
+  <!-- 三角 → 定义 -->
+  <line x1="172" y1="93" x2="258" y2="93" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="215" y="82" font-size="11" fill="#5c554b" text-anchor="middle">逼出来的要求</text>
+
+  <!-- 定义（圆角矩形） -->
+  <rect x="266" y="62" width="200" height="62" rx="31" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="366" y="88" font-size="14" fill="#1d4ed8" text-anchor="middle" font-weight="bold">子空间 · 和 U+W</text>
+  <text x="366" y="106" font-size="11" fill="#1d4ed8" text-anchor="middle">包含二者的最小子空间</text>
+
+  <!-- 定义 → 维数公式 -->
+  <line x1="366" y1="124" x2="366" y2="168" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="380" y="152" font-size="11" fill="#5c554b">基扩充证</text>
+
+  <!-- 定理1：维数公式 -->
+  <rect x="236" y="175" width="260" height="58" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="366" y="197" font-size="13.5" fill="#15803d" text-anchor="middle" font-weight="bold">维数公式</text>
+  <text x="366" y="216" font-size="11" fill="#4a7c59" text-anchor="middle">dim(U+W) = dimU + dimW − dim(U∩W)</text>
+
+  <!-- 维数公式 → 三等价 -->
+  <line x1="366" y1="233" x2="366" y2="272" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="378" y="258" font-size="11" fill="#5c554b">交 {0} ⟺ 维数 0</text>
+
+  <!-- 定理2：直和三等价 -->
+  <rect x="246" y="278" width="240" height="60" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="366" y="300" font-size="13.5" fill="#15803d" text-anchor="middle" font-weight="bold">直和三等价</text>
+  <text x="366" y="319" font-size="11" fill="#4a7c59" text-anchor="middle">交 {0} ⟺ 分解唯一 ⟺ 维数相加</text>
+
+  <!-- 三等价 → 两个动作 -->
+  <line x1="320" y1="338" x2="240" y2="370" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="248" y="352" font-size="11" fill="#5c554b" text-anchor="middle">第 (iii) 条</text>
+  <line x1="430" y1="338" x2="500" y2="370" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="500" y="352" font-size="11" fill="#5c554b" text-anchor="middle">幂等时套用</text>
+
+  <!-- 动作1（六边形） -->
+  <polygon points="125,404 152,372 288,372 315,404 288,436 152,436" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="220" y="400" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">维数公式反推</text>
+  <text x="220" y="417" font-size="10.5" fill="#6a55a3" text-anchor="middle">知三推一算 dim 交</text>
+
+  <!-- 动作2（六边形） -->
+  <polygon points="415,404 442,372 598,372 625,404 598,436 442,436" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="520" y="400" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">v = Pv + (v−Pv)</text>
+  <text x="520" y="417" font-size="10.5" fill="#6a55a3" text-anchor="middle">幂等分解式</text>
+
+  <!-- 动作 → 出口 -->
+  <polyline points="260,436 300,455 336,468" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="322" y="452" font-size="10.5" fill="#5c554b" text-anchor="middle">Σ几何重数=n</text>
+  <polyline points="460,436 460,450 190,450 142,468" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="300" y="443" font-size="10.5" fill="#5c554b" text-anchor="middle">P²=P 就给分解式</text>
+  <polyline points="300,338 300,462 620,462 620,468" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="466" y="456" font-size="10.5" fill="#5c554b" text-anchor="middle">逐块拆开</text>
+
+  <!-- 三出口（椭圆） -->
+  <ellipse cx="130" cy="498" rx="112" ry="28" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="130" y="494" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">投影算子 P²=P</text>
+  <text x="130" y="510" font-size="10" fill="#3d7a70" text-anchor="middle">V = ker P ⊕ Im P</text>
+  <ellipse cx="375" cy="498" rx="122" ry="28" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="375" y="494" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">可对角化 ⟺ ⊕特征子空间</text>
+  <text x="375" y="510" font-size="10" fill="#3d7a70" text-anchor="middle">第 5 章</text>
+  <ellipse cx="615" cy="498" rx="100" ry="28" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="615" y="494" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">根子空间 ⊕V_λᵢ</text>
+  <text x="615" y="510" font-size="10" fill="#3d7a70" text-anchor="middle">15 届题三 → 第 7 章</text>
+</svg>
+<figcaption>本章地图：一张"不付两次钱"的图纸，长出和与维数公式，炼成直和三等价，再分出两个动作、三个出口。</figcaption>
+</figure>
+
+<div class="net box" data-tag="画面感锚点（记这些，不记条文）">
+  <table>
+    <tr><th>角色</th><th>一句话画面</th><th>擅长场景</th></tr>
+    <tr><td>和 $U+W$</td><td>零件混装箱：能拆就行，拆法可能有好几种</td><td>生成更大子空间；维数公式查账</td></tr>
+    <tr><td>维数公式</td><td>重叠扣款单：交多大，账面亏多少</td><td>知三推一；判定是否直和</td></tr>
+    <tr><td>直和 $\oplus$</td><td>无重叠图纸：每个 $v$ 一份唯一零件清单</td><td>把空间拆开、逐块研究变换</td></tr>
+    <tr><td>补空间</td><td>图纸的另一半：一定有，但随便换（$\mathbb R^2$ 中 $x$ 轴的补有无穷多）</td><td>存在性论证（基扩充）</td></tr>
+    <tr><td>投影 $P^2=P$</td><td>沿 $\ker P$ 把 $v$ 拍到 $\operatorname{Im}P$ 上；幂等 = 投影</td><td>高代证明高频身份（例 2）</td></tr>
+    <tr><td>根子空间 $\bigoplus_i V_{\lambda_i}$</td><td>按特征值分仓库，各仓互不串味</td><td>15 届题三；Jordan 标准形（第 7 章）</td></tr>
+  </table>
+  <p><strong>和你已学知识的焊接点</strong>：① 维数公式的证明就是第 1 章"基扩充定理"的体操——交的基双向扩充；② 线性方程组 $Ax=0$ 的解空间是子空间，它就是第 3 章的主角 $\ker$；③ 你线代课背过的秩-零度定理 $\dim\ker P+\dim\operatorname{Im}P=n$，配上本章的 $\ker P\cap\operatorname{Im}P=\{0\}$（幂等时），恰好拼出 $V=\ker P\oplus\operatorname{Im}P$——第 3 章《线性映射、核与像》会把这张图补完。</p>
+</div>
+
+<h2>§8 计算示范：先看真人怎么想，再看卷面怎么写</h2>
+
+<p>两道例题各分两层：<strong>按总纲拆解</strong>（程序的运行痕迹）+ <strong>卷面书写</strong>（分步给分格式）。</p>
+
+<h3>例 1 · 维数计算与直和判定（约 8 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>两问：① 求 $\dim(U\cap W)$——<strong>数值型</strong>，不是证明型；查拆目标总表没有直接对应的骨架，但对"求某个维数"，标准动作是<strong>工具六 · 划归</strong>：回到维数公式这张四栏账，知三推一。② 判定 $U+W$ 是否直和——<strong>判定型</strong>，直和三等价给了三张脸，选哪张验货由库存决定：有维数账可查就用 (iii)，比逐点验交集省一半力气。</p>
+  <p><span class="stage">【盘点】</span>$U$ 由两个向量生成，$W$ 由一个向量生成。产出清单：① $\dim U\le2$，$\dim W\le1$——"$\le$"是因为生成元可能相关，<strong>必须先验无关才能取等</strong>；② $U+W$ 由三个向量共同生成，$\dim(U+W)=$ 这三个向量的秩，拼矩阵算行列式即可；③ 大空间是 $\mathbb R^3$，维数 $3$ 是所有和的天然上界。</p>
+  <p><span class="stage">【会师】</span>倒推链：要 $\dim(U\cap W)$ $\Longleftarrow$ 维数公式 $\Longleftarrow$ 需 $\dim U,\dim W,\dim(U+W)$ 三栏 $\Longleftarrow$ 库存①②。验货：$(1,0,1),(0,1,1)$ 不成比例故无关，$\dim U=2$；$\dim W=1$ 白送；三个生成元拼成 $3\times3$ 行列式，算出 $-2\ne0$，故 $\dim(U+W)=3$（顺带发现 $U+W=\mathbb R^3$）。于是 $\dim(U\cap W)=2+1-3=0$，即 $U\cap W=\{0\}$——第②问的答案同时落地：由三等价 (i)，和是直和。</p>
+  <p><span class="stage">【定型前 · 特殊化侦察】</span>直算验证交为 $\{0\}$：设 $c(1,1,0)=a(1,0,1)+b(0,1,1)$，比分量得 $a=c,\ b=c,\ a+b=0$，故 $2c=0$，$c=0$。✓ 与公式答案一致——<strong>工具三</strong>，十秒钟买个放心。</p>
+  <p><span class="stage">【定型】</span>卷面顺序：先算三个维数，再套公式，再下直和结论。侦察用的直算验证<strong>不写进卷面</strong>（它是检查，不是证明的一部分）。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 维数反推</strong>：要 $\dim(U\cap W)$，先算 $\dim(U+W)$（拼生成元求秩），再由维数公式倒减出来。判直和同理：能查账就别逐点验货——"$\dim$ 相加"和"交为 $\{0\}$"是三等价的两个窗口，走顺手的那个。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 1</strong>　在 $\mathbb R^3$ 中，设 $U=\operatorname{span}\{(1,0,1),(0,1,1)\}$，$W=\operatorname{span}\{(1,1,0)\}$。求 $\dim(U\cap W)$，并判定 $U+W$ 是否为直和。</p>
+  <hr>
+  <p class="proof-line"><strong>解</strong>　先算三个维数。</p>
+  <p class="proof-line"><strong>①</strong> $(1,0,1)$ 与 $(0,1,1)$ 不成比例，线性无关，故 $\dim U=2$；$(1,1,0)\ne0$，故 $\dim W=1$。<span class="step-score">（1 分）</span></p>
+  <p class="proof-line"><strong>②</strong> $U+W=\operatorname{span}\{(1,0,1),(0,1,1),(1,1,0)\}$。以三向量为列拼矩阵求秩：
+  $$\begin{vmatrix}1&0&1\\0&1&1\\1&1&0\end{vmatrix}=1\cdot(0-1)+1\cdot(0-1)=-2\ne0,$$
+  故三向量线性无关，$\dim(U+W)=3$，从而 $U+W=\mathbb R^3$。<span class="step-score">（4 分）</span></p>
+  <p class="proof-line"><strong>③</strong> 由维数公式，
+  $$\dim(U\cap W)=\dim U+\dim W-\dim(U+W)=2+1-3=0,$$
+  即 $U\cap W=\{0\}$。<span class="step-score">（6 分）</span></p>
+  <p class="proof-line"><strong>④</strong> 由直和的等价刻画（交为 $\{0\}$ ⟺ 直和），$U+W$ 是直和，即 $\mathbb R^3=U\oplus W$。<span class="step-score">（8 分）</span></p>
+  <p class="aside">书写点评：②是分点大户——"拼矩阵、算行列式、下秩的结论"三个动作一个不能跳；④必须点名用的是三等价中哪一条（交为 $\{0\}$），只写"所以是直和"不给结论分。注意①里"不成比例 ⟹ 无关"只对两个向量成立，三个以上要老老实实算秩。</p>
+</div>
+
+<h3>例 2 · 幂等 ⟹ 核与像的直和（约 8 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>结论是 $V=\ker P\oplus\operatorname{Im}P$——<strong>直和型</strong>，查拆目标总表"集合相等 + 直和"：骨架就是动作一的两件货——① 和等于 $V$；② 交为 $\{0\}$。这是 $P\land Q$ 型，两条都要，漏一条漏一半分。</p>
+  <p><span class="stage">【盘点】</span>唯一库存：$P^2=P$。它的产出清单有两行：① 对任意 $v$，$P(v-Pv)=Pv-P^2v=0$——即 $v-Pv\in\ker P$；② 若 $x\in\operatorname{Im}P$，$x=Py$，则 $Px=P^2y=Py=x$——<strong>$P$ 在自己的像上是恒等映射</strong>。两行产出分别对应两件货，第①行管"和"，第②行管"交"。</p>
+  <p><span class="stage">【会师】</span>第①件货倒推：要 $V=\ker P+\operatorname{Im}P$ $\Longleftarrow$ 每个 $v$ 写成"一项在 $\operatorname{Im}P$、一项在 $\ker P$" $\Longleftarrow$ 分解式 $v=Pv+(v-Pv)$——第一项在 $\operatorname{Im}P$ 是定义白送，第二项在 $\ker P$ 正是库存①。链条闭合。<br>
+  第②件货倒推：要 $\ker P\cap\operatorname{Im}P=\{0\}$ $\Longleftarrow$ 任取 $x$ 同时属两边，证 $x=0$。$x\in\operatorname{Im}P$ 给 $x=Py$；$x\in\ker P$ 给 $Px=0$。会师点：$x=Py=P^2y=P(Py)=Px=0$——中间那步 $Py=P^2y$ 用的正是 $P^2=P$（库存②的同一件事）。<strong>唯一的条件在两件货里各用一次</strong>，一个不多一个不少，程序跑通的体感。</p>
+  <p><span class="stage">【定型】</span>卷面两件货分两段写，每段标注依据；交为 $\{0\}$ 那段，"$x=Py\Rightarrow Px=P^2y=Py$"这步必须写出来——它是 $P^2=P$ 的落点，跳掉这步直接 $x=0$，理由链断裂。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 幂等分解式</strong>：看到 $P^2=P$，立即写 $v=Pv+(v-Pv)$，并验两件货：$Pv\in\operatorname{Im}P$（白送）、$v-Pv\in\ker P$（靠 $P^2=P$）。这是直和版的"看到 $\sup$ 就写两条件"——高代卷面上一切幂等论证的起手式。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 2</strong>　设 $P$ 是线性空间 $V$ 上的线性变换，满足 $P^2=P$。证明：$V=\ker P\oplus\operatorname{Im}P$。</p>
+  <hr>
+  <p class="proof-line"><strong>证明</strong>　按直和定义，分别证"和等于 $V$"与"交为 $\{0\}$"。</p>
+  <p class="proof-line"><strong>第一步（$V=\ker P+\operatorname{Im}P$）</strong>：任取 $v\in V$，写
+  $$v=Pv+(v-Pv).$$
+  其中 $Pv\in\operatorname{Im}P$；又由 $P^2=P$，
+  $$P(v-Pv)=Pv-P^2v=Pv-Pv=0,$$
+  故 $v-Pv\in\ker P$。于是 $v\in\operatorname{Im}P+\ker P$，即 $V=\ker P+\operatorname{Im}P$。<span class="step-score">（4 分）</span></p>
+  <p class="proof-line"><strong>第二步（$\ker P\cap\operatorname{Im}P=\{0\}$）</strong>：任取 $x\in\ker P\cap\operatorname{Im}P$。由 $x\in\operatorname{Im}P$，存在 $y\in V$ 使 $x=Py$；由 $x\in\ker P$，$Px=0$。于是由 $P^2=P$，
+  $$x=Py=P^2y=P(Py)=Px=0.$$
+  故 $\ker P\cap\operatorname{Im}P=\{0\}$。<span class="step-score">（7 分）</span></p>
+  <p class="proof-line"><strong>第三步（合拢）</strong>：两步合起来，由直和的定义（和为 $V$ 且交为 $\{0\}$），$V=\ker P\oplus\operatorname{Im}P$。$\square$<span class="step-score">（8 分）</span></p>
+  <p class="aside">书写点评：第二步的四连等 $x=Py=P^2y=Px=0$ 是核心分点——"$Py=P^2y$"必须亮出 $P^2=P$ 的名义，直接写 $x=Px=0$ 会被追问"凭什么 $Px=x$"。第一步的分解式不是天上掉下来的：它就是"要证和等于 $V$"倒推出来的标准写法，草稿纸上先有的它，卷面上才有的证明。</p>
+</div>
+
+<h2>§9 配套题目</h2>
+
+<p>铁律：<strong>先写在纸上，写到写不动再展开答案</strong>。模仿题照例 1、例 2 的卷面格式写；变式题没有模板，先问自己"查账还是验货"。</p>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 1</span>在 $\mathbb R^3$ 中，设 $U=\operatorname{span}\{(1,0,1),(0,1,1)\}$，$W=\operatorname{span}\{(1,1,2)\}$。求 $\dim(U\cap W)$，并判定 $U+W$ 是否为直和。</p>
+  <details class="answer">
+    <summary>参考答案（约 6 分书写量）</summary>
+    <p>① $(1,0,1),(0,1,1)$ 不成比例，$\dim U=2$；$\dim W=1$（1 分）。</p>
+    <p>② 注意 $(1,1,2)=(1,0,1)+(0,1,1)\in U$，故 $W\subseteq U$，$U+W=U$，$\dim(U+W)=2$（3 分）。</p>
+    <p>③ 维数公式：$\dim(U\cap W)=2+1-2=1$（5 分）。</p>
+    <p>④ 因 $\dim(U\cap W)=1\ne0$（事实上 $U\cap W=W$），$U+W$ <strong>不是</strong>直和（6 分）。</p>
+    <p><strong>易错点</strong>：以为"生成元长得不一样，交就是 $\{0\}$"——$W$ 的生成元整个躺在 $U$ 的肚子里。判直和第一步永远是<strong>先查账</strong>：生成元之间有没有隐藏的线性关系。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 2</span>设 $V=U\oplus W$。定义 $P:V\to V$ 为 $P(v)=u$，其中 $v=u+w$（$u\in U,\ w\in W$）。证明：$P$ 是线性变换，$P^2=P$，$\ker P=W$，$\operatorname{Im}P=U$。</p>
+  <details class="answer">
+    <summary>参考答案（约 8 分书写量）</summary>
+    <p>① <strong>良定义</strong>：直和保证每个 $v$ 的分解 $v=u+w$ 唯一，故 $P(v)=u$ 确定无歧义（1 分）。</p>
+    <p>② <strong>线性</strong>：设 $v_1=u_1+w_1,\ v_2=u_2+w_2$。则 $v_1+v_2=(u_1+u_2)+(w_1+w_2)$ 已是"一件 $U$ 货加一件 $W$ 货"的分解，由分解唯一，$P(v_1+v_2)=u_1+u_2=P(v_1)+P(v_2)$；同理 $P(kv)=kP(v)$（4 分）。</p>
+    <p>③ <strong>幂等</strong>：对 $v=u+w$，$P(v)=u$，而 $u=u+0$ 是 $u$ 的分解，故 $P^2(v)=P(u)=u=P(v)$，即 $P^2=P$（6 分）。</p>
+    <p>④ <strong>核与像</strong>：$P(v)=0\iff u=0\iff v=w\in W$，故 $\ker P=W$；$P(u)=u$（$u\in U$）给出 $U\subseteq\operatorname{Im}P$，定义给出 $\operatorname{Im}P\subseteq U$，故 $\operatorname{Im}P=U$（8 分）。</p>
+    <p><strong>易错点</strong>：②③两处都靠"分解唯一"——这就是直和的报酬：没有 $\oplus$，$P$ 连定义都写不出来。本题与例 2 合起来就是"投影 ⟺ 幂等"的完整往返。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 1</span>设 $U,W\le V$，$\dim U+\dim W&gt;\dim V$。证明：$U\cap W\ne\{0\}$（即 $U+W$ 不可能是直和）。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：否定句，但不用反证——维数公式直接挤出 $\dim(U\cap W)$ 的下界。关键观察：$U+W\subseteq V$，故 $\dim(U+W)\le\dim V$（和的上界由大空间给出，T5 的同款动作）。</p>
+    <p><strong>证明</strong>：由维数公式与 $U+W\le V$，
+    $$\dim(U\cap W)=\dim U+\dim W-\dim(U+W)\ge\dim U+\dim W-\dim V&gt;0,$$
+    维数是非负整数，故 $\dim(U\cap W)\ge1$，即 $U\cap W$ 含非零向量。$\square$</p>
+    <p><strong>点评</strong>：这是"鸽笼"的线性代数版——两个子空间维数之和超过大空间，必然撞车。推论：$\mathbb R^3$ 中任何两个二维子空间必交于至少一条直线（$2+2-3=1$），T5 就是这么算的。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 2</span>设 $P,Q$ 是 $V$ 上的线性变换，$P^2=P$，$Q^2=Q$，且 $P+Q=I$（恒等变换）。证明：$V=\operatorname{Im}P\oplus\operatorname{Im}Q$。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：两件货。和是白送的：$v=Iv=Pv+Qv$。交为 $\{0\}$ 需要让两个幂等条件会师——对 $x$ 同时属于两个像，用 $P$ 作用一次，左边用 $P^2=P$ 保持 $x$，右边用 $Q=I-P$ 绞杀。</p>
+    <p><strong>证明</strong>：<strong>①（和）</strong> 任取 $v\in V$，$v=Iv=Pv+Qv\in\operatorname{Im}P+\operatorname{Im}Q$，故 $V=\operatorname{Im}P+\operatorname{Im}Q$。</p>
+    <p><strong>②（交为 $\{0\}$）</strong> 任取 $x\in\operatorname{Im}P\cap\operatorname{Im}Q$，写 $x=Pa=Qb$。一方面，由 $P^2=P$：$Px=P^2a=Pa=x$；另一方面，由 $Q=I-P$ 与 $P^2=P$：
+    $$Px=PQb=P(I-P)b=Pb-P^2b=Pb-Pb=0.$$
+    两式合并得 $x=0$。故 $\operatorname{Im}P\cap\operatorname{Im}Q=\{0\}$。$\square$</p>
+    <p><strong>点评</strong>：例 2 是"一个幂等拆出 ker 与 Im"，本题是"两个互补的幂等拆出两个 Im"——同一副骨架，会师点都是"$x=P^2a=Pa$ 与 $Px=0$ 两头夹"。由 $P+Q=I$ 还能推出 $PQ=QP=0$（$P=P(P+Q)=P+PQ$），幂等世界里"互补"与"正交"是一回事。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv3">真题节选</span><strong>（第 15 届题三 · 充分性部分，节选，原题 20 分）</strong>设 $V$ 是复数域 $\mathbb C$ 上的 $n$ 维线性空间，$\mathbf A$ 是 $V$ 上的线性变换。证明（充分性方向）：若 $\mathbf A$ 的每个特征值 $\lambda$ 的几何重数都为 $1$，则存在 $\alpha\in V$ 使 $\{\alpha,\mathbf A\alpha,\dots,\mathbf A^{n-1}\alpha\}$ 成为 $V$ 的一组基。</p>
+  <p>整题的必要性方向（友矩阵）属于第 5、7 章，这里只节选充分性中<strong>直和分解登场的那一段</strong>。先回答三个梯子问题（写在纸上）：</p>
+  <p>（i）为什么<strong>不同</strong>特征值的根子空间之交为 $\{0\}$？（提示：$(x-\lambda)^k$ 与 $(x-\mu)^l$ 在 $\lambda\ne\mu$ 时互素，存在多项式 $a(x),b(x)$ 使 $a(x)(x-\lambda)^k+b(x)(x-\mu)^l=1$；把 $\mathbf A$ 代入，两边作用在交里的向量 $v$ 上。）<br>
+  （ii）令 $\alpha=\alpha_1+\cdots+\alpha_s$ 之后，由 $p(\mathbf A)\alpha=0$ 推出每个 $p(\mathbf A)\alpha_i=0$——"$\alpha$ 的分解唯一性"究竟在哪一步被用掉？若 $V$ 只是根子空间的<strong>普通和</strong>而非直和，这一步会出什么事？<br>
+  （iii）为什么需要 $V_{\lambda_i}$ 是 $\mathbf A$-不变子空间，第 18 分点的论证才合法？</p>
+  <details class="answer">
+    <summary>梯子参考答案</summary>
+    <p>（i）设 $v\in V_{\lambda}\cap V_{\mu}$（$\lambda\ne\mu$），即 $(\mathbf A-\lambda\mathbf I)^kv=0$ 且 $(\mathbf A-\mu\mathbf I)^lv=0$。由互素，存在 $a(x),b(x)$ 使 $a(x)(x-\lambda)^k+b(x)(x-\mu)^l=1$。代入 $\mathbf A$ 并作用于 $v$：
+    $$v=a(\mathbf A)(\mathbf A-\lambda\mathbf I)^kv+b(\mathbf A)(\mathbf A-\mu\mathbf I)^lv=0+0=0.$$
+    （"每个块与其余块之和交为 $\{0\}$"用同法：取 $q(x)=\prod_{j\ne i}(x-\lambda_j)^{d_j}$，它与 $(x-\lambda_i)^{d_i}$ 互素，且 $q(\mathbf A)$ 杀死其余各块。）</p>
+    <p>（ii）用在展开那一步：$0=p(\mathbf A)\alpha=\sum_i p(\mathbf A)\alpha_i$，右端每一项 $p(\mathbf A)\alpha_i\in V_{\lambda_i}$（不变性），而直和中 <strong>$0$ 的分解唯一</strong>（$0=0+\cdots+0$ 已是分解），故每项 $p(\mathbf A)\alpha_i=0$。若只是普通和，各项可能互相抵消，推不出每项为 $0$——整条例证链当场断掉。这就是"不付两次钱"的现金价值。</p>
+    <p>（iii）$p(\mathbf A)\alpha_i$ 必须仍落在 $V_{\lambda_i}$ 里，"分解唯一"才适用。$V_{\lambda_i}=\ker(\mathbf A-\lambda_i\mathbf I)^{d_i}$ 是 $\mathbf A$-不变的（$\mathbf A$ 与 $(\mathbf A-\lambda_i\mathbf I)^{d_i}$ 可交换），从而也是 $p(\mathbf A)$-不变的——分量不串味，拆开的账才能逐块清算。</p>
+  </details>
+  <details class="answer">
+    <summary>官方解答骨架（充分性部分，转录自官方参考答案）</summary>
+    <p>设互不相同的特征值 $\lambda_1,\dots,\lambda_s$，代数重数 $d_1,\dots,d_s$（$\sum d_i=n$），特征多项式 $f(x)=\prod(x-\lambda_i)^{d_i}$。</p>
+    <p>记 $V_{\lambda_i}=\operatorname{Ker}(\mathbf A-\lambda_i\mathbf I)^{d_i}$（$\mathbf A$-不变子空间），则 $V=V_{\lambda_1}\oplus\cdots\oplus V_{\lambda_s}$。<span class="step-score">（11 分点）</span></p>
+    <p>$\lambda_i$ 几何重数为 $1$ ⟹ $\mathbf A|_{V_{\lambda_i}}$ 的 Jordan 标准型是单个 $d_i$ 阶 Jordan 块，故存在 $\alpha_i\in V_{\lambda_i}$ 使 $(\mathbf A-\lambda_i\mathbf I)^{d_i-1}\alpha_i\ne0$。<span class="step-score">（14 分点）</span></p>
+    <p>令 $\alpha=\alpha_1+\cdots+\alpha_s$。若 $\alpha,\mathbf A\alpha,\dots,\mathbf A^{n-1}\alpha$ 线性相关，则有非零 $p(x)\in\mathbb C[x]$（$\deg\le n-1$）使 $p(\mathbf A)\alpha=0$；由直和分解与不变性得 $p(\mathbf A)\alpha_i=0$，而 $(x-\lambda_i)^{d_i}$ 是零化 $\alpha_i$ 的最低次多项式，故 $(x-\lambda_i)^{d_i}\mid p(x)$<span class="step-score">（18 分点）</span>；各因子两两互素 ⟹ $f(x)\mid p(x)$，与 $\deg p&lt;\deg f$ 且 $p\ne0$ 矛盾。<span class="step-score">（20 分点）</span></p>
+    <p><strong>复盘</strong>：本题 20 分里，本章直接供出两个分点：11 分点的<strong>根子空间直和分解</strong>（动作一的两件货：和靠特征多项式分解给出，交为 $\{0\}$ 靠互素——梯子 (i)）与 18 分点的<strong>"由直和分解与不变性"</strong>（$0$ 的分解唯一——梯子 (ii)）。中间的 Jordan 块与最低次零化多项式是第 5、6、7 章的货；但开门与合拢，都是直和。<em>（题目与解答骨架转录自第 15 届官方 PDF，见 <a href="真题索引/第15届_2023.md">真题索引</a>；本节为充分性节选，必要性方向见第 5、7 章。）</em></p>
+  </details>
+</div>
+
+<h2>§9.5 熟练度训练场</h2>
+
+<p>理解只是入场券，<strong>考场上拼的是基本动作的速度</strong>。两种训练，每天 10 分钟：</p>
+
+<h3>训练一 · 翻卡快测（目标：每卡 10 秒内出答案）</h3>
+<div class="quiz" data-quiz="ch12-drill"></div>
+
+<h3>训练二 · 计时默写（写在纸上，掐表）</h3>
+<div class="calc box" data-tag="默写清单">
+  <p>① <strong>45 秒</strong>：默写直和的三个等价刻画，外加多个子空间时的交块判定（$U_i\cap\sum_{j\ne i}U_j=\{0\}$）；</p>
+  <p>② <strong>60 秒</strong>：默写维数公式 + 基扩充证明骨架（四步：取交的基 → 双向扩充 → 合并证是 $U+W$ 的基 → 计数）；</p>
+  <p>③ <strong>2 分钟</strong>：默写例 2 证明骨架（分解式 $v=Pv+(v-Pv)$、两项各就各位、交为 $\{0\}$ 的四连等 $x=Py=P^2y=Px=0$）。</p>
+  <p><strong>过关标准</strong>：连续两天全对才算过。做不到就回到对应小节重读，再默。</p>
+</div>
+
+<h2>§10 六方向自测卡</h2>
+
+<div class="selftest">
+  <h3>合上书，拿张白纸，默写以下六项</h3>
+  <div class="st-item">
+    <p class="st-q"><em>=（它是什么）</em>　写出子空间的定义（三条）与直和的定义（两件货），并各配一句大白话。</p>
+    <details><summary>对照</summary><p>子空间：非空 + 加法封闭 + 数乘封闭（"对线性组合封闭的子集"）。直和 $V=U\oplus W$：$U+W=V$（每个 $v$ 拆得出）且 $U\cap W=\{0\}$（拆法唯一）——"无重叠的分解"。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>←（什么带来它）</em>　普通的和 $U+W$ 哪里不好？直和是怎么被逼出来的？</p>
+    <details><summary>对照</summary><p>$U\cap W\ne\{0\}$ 时分解不唯一（$0=x+(-x)$ 是另一种分解），信息冗余；维数公式里要扣掉 $\dim(U\cap W)$ 的重叠款。要"每个 $v$ 一份唯一零件清单、维数直接相加"，就必须要求交为 $\{0\}$——直和由此而来。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>→（它带来什么）</em>　直和的三条直接出口。</p>
+    <details><summary>对照</summary><p>① 投影算子：$P^2=P\Rightarrow V=\ker P\oplus\operatorname{Im}P$（幂等 = 投影）；② 可对角化 ⟺ $V=\bigoplus_i V_{\lambda_i}$（特征子空间直和，第 5 章）；③ 根子空间分解 $V=\bigoplus_i\ker(\mathbf A-\lambda_i\mathbf I)^{d_i}$（15 届题三，第 7 章 Jordan 的地基）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>∈（实例）</em>　默写三个直和分解的实例。</p>
+    <details><summary>对照</summary><p>$\mathbb R^3=x\text{ 轴}\oplus y\text{ 轴}\oplus z\text{ 轴}$；$V=\ker P\oplus\operatorname{Im}P$（$P^2=P$）；$\mathbb C^n$ 上 $\mathbf A$ 可对角化时 $V=V_{\lambda_1}\oplus\cdots\oplus V_{\lambda_s}$。（例 1 的 $\mathbb R^3=U\oplus W$ 亦可。）</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>≠（区分）</em>　最易混的一对："两两交为 $\{0\}$"与"每个 $U_i$ 与其余之和交为 $\{0\}$"。</p>
+    <details><summary>对照</summary><p>前者弱、后者强。$\mathbb R^2$ 中三条不同直线两两交 $\{0\}$，但和不直（$2\ne1+1+1$）；多个子空间的直和判定必须用后者（或维数相加）。（另一对常混：$U\cup W$ 一般不是子空间，包含二者的最小子空间是 $U+W$。）</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>（为何要有它）</em>　没有直和，哪条重要的研究路线走不通？</p>
+    <details><summary>对照</summary><p>分解唯一，"分量"才有定义，投影算子才写得出来（模仿 2：没有唯一性 $P(v)=u$ 连定义都不成立）；于是"把线性变换逐块研究"的路线——可对角化刻画、根子空间分解、Jordan 标准形——全部以直和为地基。15 届题三 18 分点那句"由直和分解与不变性"就是现金兑现。</p></details>
+  </div>
+</div>
+
+<div class="net box" data-tag="间隔复习安排">
+  <p><strong>1 天后</strong>：重做六方向自测卡（不翻书）+ 翻卡快测第二轮；<strong>3 天后</strong>：重做变式 2 与真题节选的三个梯子问题 + 计时默写②③；<strong>1 周后</strong>：默写直和三等价与维数公式，确认翻卡全部"会了"。</p>
+  <p>本章是<strong>高代第 3 章</strong>（线性映射、核与像：$\ker$、$\operatorname{Im}$ 的正式登场，秩-零度定理与本章例 2 在那里会师）和<strong>第 5 章</strong>（特征子空间直和 = 可对角化）、<strong>第 7 章</strong>（根子空间上逐块看 Jordan）的直接地基。</p>
+</div>
+
+<div class="chapnav">
+  <span><a href="ch11.html">← 第 1 章 · 从矩阵到线性空间</a></span>
+  <span><a href="index.html">首页</a></span>
+  <span><a href="ch13.html">第 3 章 · 线性映射、核与像：秩-零度定理 →</a></span>
+</div>
+
+</div>
+
+<script src="assets/quiz.js"></script>
+<script>
+/* §9.5 翻卡数据 */
+registerQuiz("ch12-drill", [
+  { q: "子空间的判定三条件？", a: "非空（最省事：验 $0\\in W$）＋加法封闭＋数乘封闭。等价：对任意线性组合封闭。" },
+  { q: "$U\\cup W$ 是子空间吗？", a: "几乎从不是。$U\\cup W$ 是子空间 $\\iff U\\subseteq W$ 或 $W\\subseteq U$。包含二者的最小子空间是 $U+W$。" },
+  { q: "维数公式？证明骨架？", a: "$\\dim(U+W)=\\dim U+\\dim W-\\dim(U\\cap W)$。骨架：交的基双向扩充成 $U$、$W$ 的基，合并证是 $U+W$ 的基，计数。" },
+  { q: "直和的三个等价刻画？", a: "$U\\cap W=\\{0\\}$ ⟺ 每个 $v=u+w$ 分解唯一 ⟺ $\\dim(U+W)=\\dim U+\\dim W$。" },
+  { q: "证「$V=U\\oplus W$」的卷面两件货？", a: "① 任取 $v$ 写出 $v=u+w$（和 $=V$）；② 任取 $x\\in U\\cap W$ 证 $x=0$（交为 $\\{0\\}$）。分开证、分开给分。" },
+  { q: "三个以上子空间，「两两交为 $\\{0\\}$」够吗？", a: "不够！$\\mathbb R^2$ 中三条不同直线两两交 $\\{0\\}$，和却是 $\\mathbb R^2$（$2\\ne3$）。正确判据：每个 $U_i\\cap\\sum_{j\\ne i}U_j=\\{0\\}$，或维数相加。" },
+  { q: "补空间存在吗？唯一吗？", a: "存在（基扩充：$U$ 的基补成 $V$ 的基，新向量张成 $W$）；绝不唯一：$\\mathbb R^2$ 中 $x$ 轴的补有 $\\operatorname{span}\\{(t,1)\\}$ 无穷多个。" },
+  { q: "$P^2=P$ 时 $V$ 怎么拆？分解式？", a: "$V=\\ker P\\oplus\\operatorname{Im}P$；$v=Pv+(v-Pv)$。交为 $\\{0\\}$：$x=Py$ 且 $Px=0$ ⟹ $x=P^2y=Px=0$。" },
+  { q: "可对角化 ⟺（本章语言）？", a: "$V=V_{\\lambda_1}\\oplus\\cdots\\oplus V_{\\lambda_s}$（特征子空间直和满 $V$）⟺ 各几何重数之和 $=n$。" },
+  { q: "$U=\\operatorname{span}\\{(1,0,1),(0,1,1)\\}$，$W=\\operatorname{span}\\{(1,1,0)\\}$（$\\mathbb R^3$）：$\\dim(U\\cap W)=$？直和吗？", a: "$0$；是，$\\mathbb R^3=U\\oplus W$。（三生成元行列式 $-2\\ne0$，$\\dim(U+W)=3$，维数公式 $2+1-3=0$。）" }
+]);
+</script>
+
+<script>
+/* §3.3 直和分解探索器 */
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  var svg = document.getElementById("dsw-svg");
+  var out = document.getElementById("dsw-out");
+  var thSlider = document.getElementById("dsw-th");
+  var OX = 360, OY = 195, SC = 42;
+  var v = { x: 2.5, y: 1.5 };
+  function X(mx) { return OX + SC * mx; }
+  function Y(my) { return OY - SC * my; }
+  function mk(tag, attrs) {
+    var el = document.createElementNS(NS, tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    svg.appendChild(el);
+    return el;
+  }
+  function mkText(str, attrs) {
+    var t = mk("text", attrs || {});
+    t.textContent = str;
+    return t;
+  }
+  /* 网格与边框 */
+  var gx, gy;
+  for (gx = -7; gx <= 7; gx++) mk("line", { x1: X(gx), y1: Y(-4.2), x2: X(gx), y2: Y(4.2), stroke: "#eee7d8", "stroke-width": 1 });
+  for (gy = -4; gy <= 4; gy++) mk("line", { x1: X(-7.2), y1: Y(gy), x2: X(7.2), y2: Y(gy), stroke: "#eee7d8", "stroke-width": 1 });
+  mk("rect", { x: X(-7.2), y: Y(4.2), width: 14.4 * SC, height: 8.4 * SC, fill: "none", stroke: "#d6cbb8", "stroke-width": 1 });
+  /* U = x 轴（蓝，固定） */
+  mk("line", { x1: X(-7.2), y1: Y(0), x2: X(7.2), y2: Y(0), stroke: "#1d4ed8", "stroke-width": 3 });
+  mkText("U（x 轴）", { x: X(6.15), y: Y(0) - 10, "font-size": 13, fill: "#1d4ed8", "font-weight": "bold" });
+  /* W（橙，角度可调） */
+  var wline = mk("line", { stroke: "#b45309", "stroke-width": 3 });
+  var wlabel = mkText("W", { "font-size": 13, fill: "#b45309", "font-weight": "bold" });
+  /* 原点 */
+  mk("circle", { cx: OX, cy: OY, r: 4, fill: "#2b2620" });
+  mkText("O", { x: OX - 16, y: OY + 18, "font-size": 12, fill: "#2b2620" });
+  /* 分解组（可整体隐藏） */
+  var grp = mk("g", {});
+  function gmk(tag, attrs) {
+    var el = document.createElementNS(NS, tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    grp.appendChild(el);
+    return el;
+  }
+  var uSeg = gmk("line", { stroke: "#1d4ed8", "stroke-width": 5 });
+  var uDash = gmk("line", { stroke: "#1d4ed8", "stroke-width": 1.5, "stroke-dasharray": "5 4" });
+  var wSeg = gmk("line", { stroke: "#b45309", "stroke-width": 5 });
+  var wDash = gmk("line", { stroke: "#b45309", "stroke-width": 1.5, "stroke-dasharray": "5 4" });
+  var uPt = gmk("circle", { r: 5, fill: "#1d4ed8" });
+  var wPt = gmk("circle", { r: 5, fill: "#b45309" });
+  var uLabel = gmk("text", { "font-size": 12.5, fill: "#1d4ed8", "text-anchor": "middle" });
+  uLabel.textContent = "u";
+  var wLabel = gmk("text", { "font-size": 12.5, fill: "#b45309" });
+  wLabel.textContent = "w";
+  /* v：原点到 v 的细线 + 可拖手柄 */
+  var vline = mk("line", { stroke: "#be123c", "stroke-width": 1.5 });
+  var vHandle = mk("circle", { r: 16, fill: "rgba(190,18,60,0)", cursor: "pointer" });
+  var vDot = mk("circle", { r: 7, fill: "#be123c", cursor: "pointer", "pointer-events": "none" });
+  var vLabel = mkText("v（可拖）", { "font-size": 12.5, fill: "#be123c", "font-weight": "bold" });
+  function setLine(el, a, b, c, d) {
+    el.setAttribute("x1", a); el.setAttribute("y1", b);
+    el.setAttribute("x2", c); el.setAttribute("y2", d);
+  }
+  function update() {
+    var deg = parseFloat(thSlider.value);
+    var th = deg * Math.PI / 180;
+    var dx = Math.cos(th), dy = Math.sin(th);
+    var L = 9;
+    setLine(wline, X(-L * dx), Y(-L * dy), X(L * dx), Y(L * dy));
+    wlabel.setAttribute("x", X(6.3 * dx) + 8);
+    wlabel.setAttribute("y", Y(6.3 * dy) - 8);
+    var collapsed = deg < 2;
+    setLine(vline, OX, OY, X(v.x), Y(v.y));
+    vHandle.setAttribute("cx", X(v.x)); vHandle.setAttribute("cy", Y(v.y));
+    vDot.setAttribute("cx", X(v.x)); vDot.setAttribute("cy", Y(v.y));
+    vLabel.setAttribute("x", Math.min(X(v.x) + 12, 620));
+    vLabel.setAttribute("y", Y(v.y) - 10);
+    if (!collapsed) {
+      grp.style.display = "";
+      var t = v.y / dy;
+      var s = v.x - v.y * dx / dy;
+      setLine(uSeg, OX, OY, X(s), Y(0));
+      setLine(uDash, X(s), Y(0), X(v.x), Y(v.y));
+      setLine(wSeg, OX, OY, X(t * dx), Y(t * dy));
+      setLine(wDash, X(t * dx), Y(t * dy), X(v.x), Y(v.y));
+      uPt.setAttribute("cx", X(s)); uPt.setAttribute("cy", Y(0));
+      wPt.setAttribute("cx", X(t * dx)); wPt.setAttribute("cy", Y(t * dy));
+      uLabel.setAttribute("x", X(s)); uLabel.setAttribute("y", Y(0) + 20);
+      wLabel.setAttribute("x", X(t * dx) + 12); wLabel.setAttribute("y", Y(t * dy));
+      var cost = Math.abs(s) + Math.abs(t);
+      var msg;
+      if (deg < 12) {
+        msg = '<br><span class="no">⚠ θ 已经小于 12°：U 与 W 几乎重合，系数 |s|+|t| 暴涨——「几乎不直」的和，数值上就是灾难。</span>';
+      } else {
+        msg = '<br><span class="ok">✓ U∩W = {0}：每个 v 的分解 v = u + w 都唯一，这就是直和。</span>';
+      }
+      out.innerHTML = 'v ≈ (' + v.x.toFixed(2) + ', ' + v.y.toFixed(2) + ')，θ = ' + deg +
+        '°。分解唯一：u ≈ (' + s.toFixed(2) + ', 0)，w ≈ ' + t.toFixed(2) +
+        '·(cosθ, sinθ)，零件计数 |s|+|t| ≈ ' + cost.toFixed(1) + '。' + msg;
+    } else {
+      grp.style.display = "none";
+      if (Math.abs(v.y) < 0.1) {
+        out.innerHTML = '<span class="no">✗ 塌方：U∩W = U ≠ {0}</span>。v 躺在重合的线上——拆法有无穷多：v = (c, 0) + (' +
+          v.x.toFixed(2) + ' − c, 0)，c 随便取。重叠的零件，每种拆法都「付两次钱」。';
+      } else {
+        out.innerHTML = '<span class="no">✗ 塌方：U∩W = U ≠ {0}</span>。此刻 U+W 只剩 x 轴，v ≈ (' +
+          v.x.toFixed(2) + ', ' + v.y.toFixed(2) + ') 连拆都拆不出来——先收回「每个 v 能拆」，再谈「拆法唯一」。';
+      }
+    }
+  }
+  var dragging = false;
+  vHandle.addEventListener("pointerdown", function (e) {
+    dragging = true;
+    vHandle.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  });
+  vHandle.addEventListener("pointermove", function (e) {
+    if (!dragging) return;
+    var r = svg.getBoundingClientRect();
+    var px = (e.clientX - r.left) * (720 / r.width);
+    var py = (e.clientY - r.top) * (360 / r.height);
+    v.x = Math.max(-6.6, Math.min(6.6, (px - OX) / SC));
+    v.y = Math.max(-3.7, Math.min(3.7, (OY - py) / SC));
+    update();
+  });
+  vHandle.addEventListener("pointerup", function () { dragging = false; });
+  vHandle.addEventListener("pointercancel", function () { dragging = false; });
+  thSlider.addEventListener("input", update);
+  update();
+})();
+</script>
+
+</body>
+</html>

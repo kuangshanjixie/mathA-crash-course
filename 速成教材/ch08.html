@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数分第 8 章 · 反常积分与含参变量积分：一致收敛登场 —— 数学A速成讲义</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+<div class="wrap">
+
+<div class="bookbar">
+  <span><a href="index.html">← 返回首页</a></span>
+  <span>卷一 · 数学分析 · 第 8 章</span>
+</div>
+
+<div class="chapter-kicker">CHAPTER 8 · 数学分析</div>
+<h1>反常积分与含参变量积分：一致收敛登场</h1>
+
+<div class="exam box" data-tag="本章导览">
+  <p><strong>这一章在整张卷子上的位置</strong>：本章是近年真题的<strong>整题主场</strong>——第 16 届题二（15 分）：含参反常积分 $\varphi(s)=\int_0^{+\infty}\frac{\ln(1+sx^2)}{x(1+x^2)}dx$，从一致收敛论证到积分号下求导再到 $\frac{\pi^2}{12}$，官方给分点里明晃晃写着"内闭一致收敛（2 分）""故可积分号下求导（4 分）"；第 13 届题五（15 分）：先证积分换序（Weierstrass 判别），再算 Fresnel 型积分 $\frac{\pi}{9}$；第 14 届题六（20 分）的估值合法性也踩在瑕积分 $\int_0 t^\alpha dt$（$\alpha\in(-1,0)$）的收敛性上。主场 <strong>15 分整</strong>，工具形态再值若干步骤分。</p>
+  <p><strong>学完你能</strong>：① 默写两类反常积分的极限形式定义和两把方向相反的 p 尺，并逐符号朗读；② 用"找病灶 → 找参照尺 → 比阶"三步判决一个积分的敛散；③ 默写 Weierstrass M 判别，会用它写"关于 $s$ 一致收敛"的合法性段落；④ 完整走"引入参数 → 验一致收敛 → 求导 → 算 → 定常数"五步流程，独立算出 $\int_0^{+\infty}e^{-ax}\frac{\sin x}{x}dx$，并看懂 $\frac{\pi^2}{12}$ 是怎么被这台机器生产出来的。</p>
+  <p><strong>前置</strong>：第 2 章量词顺序通则与一致连续（"统一门槛、不依赖点"那个灵魂）；第 7 章定积分与积分单调性（优函数靠它搬进积分号）；一点幂级数的感性认识（$\ln(1-s)$ 的展开，合法性第 9 章补齐）。</p>
+</div>
+
+<h2>§1 开场谜题：同样瘦下去，凭什么一个有限一个无限</h2>
+
+<div class="hook box" data-tag="开场谜题">
+  <p>两条曲线，都从 $x=1$ 出发向右无限延伸，都越来越贴近 $x$ 轴——都"瘦下去"了：</p>
+  <p>$$y=\frac1{x^2}\qquad\text{和}\qquad y=\frac1x.$$</p>
+  <p>各自与 $x$ 轴围出一块向右无限延伸的"长尾巴"。问：尾巴的面积是多少？</p>
+  <p>第一个有答案：$\displaystyle\int_1^{+\infty}\frac{dx}{x^2}=\lim_{A\to+\infty}\left(1-\frac1A\right)=1$。第二个没有：$\displaystyle\int_1^{+\infty}\frac{dx}{x}=\lim_{A\to+\infty}\ln A=+\infty$。</p>
+  <p>同样趋向 $0$，一个面积有限、一个面积无限。<strong>分界线 $p=1$ 凭什么存在？它到底卡在哪？</strong>更麻烦的是：$\frac1x$ 瘦得不慢啊——$x=10^{100}$ 处它已经瘦到 $10^{-100}$ 了，面积怎么还能是无限？（§2 的图会给你看见答案：问题出在"每翻倍一段，添上的那一块不减"。）</p>
+  <p>这是第一重谜题。第二重更实用：如果积分里<strong>含一个参数</strong>，
+  $$\varphi(s)=\int_0^{+\infty}f(x,s)\,dx,$$
+  那积分的结果就是一个<strong>关于 $s$ 的新函数</strong>。既然是函数，就想对它求导、取极限、再积分——能不能让 $\frac{d}{ds}$ 直接<strong>穿过积分号</strong>？
+  $$\varphi'(s)\ \stackrel{?}{=}\ \int_0^{+\infty}\frac{\partial f}{\partial s}(x,s)\,dx.$$</p>
+  <p>能穿过去，就是竞赛里的核武器：第 16 届题二那个看似无解的积分，就是靠"对参数求一导"算出 $\frac{\pi^2}{12}$ 的。但武器有保险——<strong>穿过去的合法条件叫"一致收敛"</strong>，它就是本章的主角，也是第 2 章那条量词顺序通则的积分化身。先解第一重谜题，再拆核武器的保险。</p>
+</div>
+
+<h2>§2 先看见它：倍程实验——每翻倍一次，添多少</h2>
+
+<div class="vision box" data-tag="直觉与图像">
+  <p>判一条无限尾巴的面积，别盯着"函数瘦多快"，盯着<strong>每翻倍一段添上多少面积</strong>：把区间按 $[1,2],[2,4],[4,8],[8,16],\dots$ 切成"倍程"，算每一段下的面积。</p>
+  <ul>
+    <li>$y=\frac1x$：$\displaystyle\int_1^2\frac{dx}{x}=\ln2$，$\displaystyle\int_2^4\frac{dx}{x}=\ln4-\ln2=\ln2$，$\displaystyle\int_4^8\frac{dx}{x}=\ln2$……<strong>每一段面积一模一样</strong>。无限段 $\ln2$ 相加，当然是 $+\infty$。函数在瘦，但区间也在成倍变长——$\frac1{2x}\times 2x$，瘦的速度和区间膨胀的速度<strong>恰好打平</strong>。</li>
+    <li>$y=\frac1{x^2}$：$\displaystyle\int_1^2\frac{dx}{x^2}=\frac12$，$\displaystyle\int_2^4=\frac14$，$\displaystyle\int_4^8=\frac18$……每段<strong>减半</strong>。几何级数 $\frac12+\frac14+\frac18+\cdots=1$，有限。</li>
+  </ul>
+  <p>所以 $p=1$ 是分界线不是巧合：$p=1$ 时"变瘦"与"变长"精确抵消；$p&gt;1$ 时瘦得赢，$p&lt;1$ 时变长赢。所有判别法都只是把一般函数<strong>和这把尺比一比</strong>。</p>
+</div>
+
+<figure>
+<svg viewBox="0 0 720 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="倍程实验：1/x 每段添 ln2，1/x² 每段减半">
+  <!-- 左图 y=1/x -->
+  <polygon points="70,220 70,50 78.1,84 86.3,107 94.4,123 102.5,135 102.5,220" fill="#be123c" opacity="0.18"/>
+  <polygon points="102.5,220 102.5,135 118.8,152 135,163 151.3,171 167.5,178 167.5,220" fill="#b45309" opacity="0.22"/>
+  <polygon points="167.5,220 167.5,178 200,186 232.5,192 265,196 297.5,199 297.5,220" fill="#1d4ed8" opacity="0.20"/>
+  <polyline points="70,50 78.1,84 86.3,107 94.4,123 102.5,135 118.8,152 135,163 151.3,171 167.5,178 200,186 232.5,192 265,196 297.5,199 330,201"
+    fill="none" stroke="#2b2620" stroke-width="2.2"/>
+  <line x1="60" y1="220" x2="336" y2="220" stroke="#2b2620" stroke-width="1.8"/>
+  <line x1="70" y1="214" x2="70" y2="226" stroke="#2b2620" stroke-width="1.6"/>
+  <text x="70" y="238" font-size="12" fill="#2b2620" text-anchor="middle">1</text>
+  <line x1="102.5" y1="214" x2="102.5" y2="226" stroke="#2b2620" stroke-width="1.6"/>
+  <text x="102.5" y="238" font-size="12" fill="#2b2620" text-anchor="middle">2</text>
+  <line x1="167.5" y1="214" x2="167.5" y2="226" stroke="#2b2620" stroke-width="1.6"/>
+  <text x="167.5" y="238" font-size="12" fill="#2b2620" text-anchor="middle">4</text>
+  <line x1="297.5" y1="214" x2="297.5" y2="226" stroke="#2b2620" stroke-width="1.6"/>
+  <text x="297.5" y="238" font-size="12" fill="#2b2620" text-anchor="middle">8</text>
+  <text x="86" y="190" font-size="12.5" fill="#be123c" text-anchor="middle" font-weight="bold">ln 2</text>
+  <text x="135" y="207" font-size="12.5" fill="#b45309" text-anchor="middle" font-weight="bold">ln 2</text>
+  <text x="232" y="211" font-size="12.5" fill="#1d4ed8" text-anchor="middle" font-weight="bold">ln 2</text>
+  <text x="198" y="30" font-size="13.5" fill="#2b2620" text-anchor="middle" font-weight="bold">y = 1/x：每段都添 ln 2</text>
+  <text x="198" y="268" font-size="12.5" fill="#5c554b" text-anchor="middle">ln2 + ln2 + ln2 + … = +∞（打平，添不停）</text>
+
+  <!-- 右图 y=1/x² -->
+  <polygon points="400,220 400,50 407.2,111 414.4,144 421.6,165 430,178 430,220" fill="#be123c" opacity="0.18"/>
+  <polygon points="430,220 430,178 443.1,193 457.5,201 471.9,206 486.3,209 486.3,220" fill="#b45309" opacity="0.22"/>
+  <polygon points="486.3,220 486.3,209 515,213 543.8,215 572.5,217 601.3,217 601.3,220" fill="#1d4ed8" opacity="0.20"/>
+  <polyline points="400,50 407.2,111 414.4,144 421.6,165 430,178 443.1,193 457.5,201 471.9,206 486.3,209 515,213 543.8,215 572.5,217 601.3,217 630,218"
+    fill="none" stroke="#2b2620" stroke-width="2.2"/>
+  <line x1="392" y1="220" x2="636" y2="220" stroke="#2b2620" stroke-width="1.8"/>
+  <line x1="400" y1="214" x2="400" y2="226" stroke="#2b2620" stroke-width="1.6"/>
+  <text x="400" y="238" font-size="12" fill="#2b2620" text-anchor="middle">1</text>
+  <line x1="430" y1="214" x2="430" y2="226" stroke="#2b2620" stroke-width="1.6"/>
+  <text x="430" y="238" font-size="12" fill="#2b2620" text-anchor="middle">2</text>
+  <line x1="486.3" y1="214" x2="486.3" y2="226" stroke="#2b2620" stroke-width="1.6"/>
+  <text x="486.3" y="238" font-size="12" fill="#2b2620" text-anchor="middle">4</text>
+  <line x1="601.3" y1="214" x2="601.3" y2="226" stroke="#2b2620" stroke-width="1.6"/>
+  <text x="601.3" y="238" font-size="12" fill="#2b2620" text-anchor="middle">8</text>
+  <text x="415" y="200" font-size="12.5" fill="#be123c" text-anchor="middle" font-weight="bold">1/2</text>
+  <text x="458" y="215" font-size="12.5" fill="#b45309" text-anchor="middle" font-weight="bold">1/4</text>
+  <text x="544" y="216" font-size="12.5" fill="#1d4ed8" text-anchor="middle" font-weight="bold">1/8</text>
+  <text x="516" y="30" font-size="13.5" fill="#2b2620" text-anchor="middle" font-weight="bold">y = 1/x²：每段减半</text>
+  <text x="516" y="268" font-size="12.5" fill="#5c554b" text-anchor="middle">1/2 + 1/4 + 1/8 + … = 1（几何级数，封顶）</text>
+</svg>
+<figcaption>倍程实验：$p=1$ 时"函数变瘦"与"区间变长"恰好打平，每段添相同的面积，累加发散；$p=2$ 时每段几何衰减，累加封顶。</figcaption>
+</figure>
+
+<p>现在把"用极限把无限收口"这件事写成符号。反常积分不是一种新的积分，它是<strong>普通定积分再加一个极限</strong>——两样你已经会的东西。</p>
+
+<h2>§3 精确定义：逐符号朗读</h2>
+
+<h3>3.1 两类反常积分：极限形式</h3>
+
+<div class="def">
+  <p class="def-title">定义一（无穷限反常积分）</p>
+  <p>设 $f$ 在每个有限区间 $[a,A]$ 上（Riemann）可积。若极限
+  $$\lim_{A\to+\infty}\int_a^A f(x)\,dx$$
+  存在且有限，称<strong>无穷限积分 $\displaystyle\int_a^{+\infty}f(x)\,dx$ 收敛</strong>，其值就定义为这个极限；否则称<strong>发散</strong>。（$-\infty$ 端同理。）</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定义二（瑕积分：无界函数）</p>
+  <p>设 $f$ 在 $(a,b]$ 的每个闭子区间上可积，但在 $a$ 附近<strong>无界</strong>（$a$ 叫<strong>瑕点</strong>）。若极限
+  $$\lim_{\varepsilon\to0^+}\int_{a+\varepsilon}^b f(x)\,dx$$
+  存在且有限，称<strong>瑕积分 $\displaystyle\int_a^b f(x)\,dx$ 收敛</strong>；否则发散。瑕点在 $b$ 时用 $\lim\limits_{\varepsilon\to0^+}\int_a^{b-\varepsilon}$；瑕点 $c$ 在内部则拆成 $\int_a^c+\int_c^b$，<strong>两个都收敛才算收敛</strong>。</p>
+</div>
+
+<div class="symbol box" data-tag="逐符号朗读">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$\int_a^A f(x)\,dx$（先砍在 $A$）</td><td>"先把无限上头砍在 $A$，算一个普通定积分"</td><td>反常积分不重新定义面积——它复用第 7 章的定积分</td></tr>
+    <tr><td>$\lim\limits_{A\to+\infty}$</td><td>"再让 $A$ 上天，看结果趋向哪里"</td><td>极限存在（有限）＝收敛；不存在或无穷＝发散。<strong>"收敛到 $+\infty$"不是收敛，是发散</strong></td></tr>
+    <tr><td>$\lim\limits_{\varepsilon\to0^+}\int_{a+\varepsilon}^b$</td><td>"把瑕点挖掉一小条 $\varepsilon$，算完再让 $\varepsilon$ 缩回 $0$"</td><td>同一个动作的瑕点版：先切除病灶，再逼近病灶</td></tr>
+    <tr><td>瑕点在内部：$\int_a^c+\int_c^b$</td><td>"拆两段，两段都收敛才算数"</td><td>防坑：$\int_{-1}^1\frac{dx}{x}$ 两段各自发散，"正负抵消"是非法操作（那不是主值，这题发散）</td></tr>
+  </table>
+  <p>两类病灶可以同框：$\int_0^{+\infty}\frac{dx}{x^p}$ 在 $0$ 端有瑕点、在 $\infty$ 端无限——必须拆成 $\int_0^1+\int_1^{+\infty}$ 分别判决。§9 变式 1 就是这类两面作战。</p>
+</div>
+
+<h3>3.2 p 积分尺：两把方向相反的尺</h3>
+
+<div class="def">
+  <p class="def-title">定理（p 积分尺——默写级结论）</p>
+  <p><strong>∞ 端</strong>（$a&gt;0$ 任意）：$\displaystyle\int_a^{+\infty}\frac{dx}{x^p}$ $\begin{cases}\text{收敛},& p&gt;1,\ \text{值}=\dfrac{a^{1-p}}{p-1}\\[2pt]\text{发散},& p\le1\end{cases}$</p>
+  <p><strong>0 端</strong>（瑕点 $0$）：$\displaystyle\int_0^1\frac{dx}{x^p}$ $\begin{cases}\text{收敛},& p&lt;1,\ \text{值}=\dfrac{1}{1-p}\\[2pt]\text{发散},& p\ge1\end{cases}$</p>
+  <p><strong>一行推导</strong>：$p\ne1$ 时 $\int x^{-p}dx=\frac{x^{1-p}}{1-p}$。∞ 端：$A^{1-p}$ 在 $A\to+\infty$ 时有没有极限，看 $1-p$ 的正负——$p&gt;1$ 时 $A^{1-p}\to0$（收敛）；0 端：$\varepsilon^{1-p}$ 在 $\varepsilon\to0^+$ 时有没有极限，同样看 $1-p$ 的正负——但角色<strong>反过来</strong>：$p&lt;1$ 时 $\varepsilon^{1-p}\to0$（收敛）。$p=1$ 两端都是 $\ln$，都发散。</p>
+</div>
+
+<div class="warn box" data-tag="头号陷阱：两把尺方向相反">
+  <p>$\int_1^{+\infty}\frac{dx}{x^p}$ 要 $p&gt;1$ 收敛；$\int_0^1\frac{dx}{x^p}$ 要 $p&lt;1$ 收敛。<strong>方向相反，记混全错。</strong></p>
+  <p>画面记忆：<strong>∞ 端要"瘦得快"</strong>（$p$ 越大瘦得越快，$p&gt;1$ 才压得住变长的区间）；<strong>0 端要"炸得慢"</strong>（$x\to0^+$ 时 $x^{-p}$ 炸向无穷，$p$ 越小炸得越慢，$p&lt;1$ 才围得住面积）。</p>
+  <p>机械记忆：换元 $x=\frac1t$ 把两端互换（下面"先动手"就推它）——所以两把尺其实是<strong>同一把尺的两个方向</strong>。</p>
+</div>
+
+<div class="think">
+  <p>别急着往下翻。<strong>自己用换元 $x=\frac1t$ 把 0 端的尺划归到 ∞ 端的尺</strong>：把 $\int_0^1 x^{-p}dx$ 变成某个 $\int_1^{+\infty}(\cdots)\,dt$，读出 $p$ 的条件。写完再展开对照。</p>
+  <details class="answer">
+    <summary>对照：换元划归（工具六）</summary>
+    <p>令 $x=\frac1t$，$dx=-\frac{dt}{t^2}$，$x:0^+\to1$ 对应 $t:+\infty\to1$：
+    $$\int_0^1 x^{-p}\,dx=\int_{+\infty}^{1}t^{p}\cdot\left(-\frac{dt}{t^2}\right)=\int_1^{+\infty}t^{p-2}\,dt=\int_1^{+\infty}\frac{dt}{t^{2-p}}.$$</p>
+    <p>用 ∞ 端的尺：收敛 $\iff 2-p&gt;1 \iff p&lt;1$。✓ 和定义二直接算完全一致——0 端的尺不用另记，换元即得。</p>
+  </details>
+</div>
+
+<h3>3.3 亲手摸一摸分界线（交互）</h3>
+
+<div class="widget" id="pr-widget">
+  <p class="w-title">▶ p 尺探索器：拖 p 和 X，亲眼看 $p=1$ 这条线</p>
+  <p class="w-row">左图：$y=\frac1{x^p}$（黑线）与 $[1,X]$ 上的阴影面积；右图：累计面积 $A(X)=\int_1^X\frac{dx}{x^p}$ 随上限 $X$ 增大的走向（蓝线）。$p&gt;1$ 时会出现一条<strong style="color:#b45309">橙色虚线天花板</strong> $\frac1{p-1}$——面积永远撞不破它；$p\le1$ 时蓝线缓慢但坚定地上天。</p>
+  <div class="w-row"><label>指数 p（0.2–3，慢慢拖过 1，盯住蓝线从"上天"变"贴顶"的瞬间）</label>
+  <input type="range" id="pr-p" min="0.2" max="3" step="0.01" value="1.5"></div>
+  <div class="w-row"><label>上限 X（1.5–50，看面积累计到什么程度）</label>
+  <input type="range" id="pr-x" min="1.5" max="50" step="0.5" value="12"></div>
+  <svg id="pr-svg" viewBox="0 0 720 300" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div class="w-verdict" id="pr-out">加载中……（需要启用 JavaScript）</div>
+  <p class="w-row" style="font-size:0.88em;color:#5c554b">玩出这三个体验再往下走：<strong>①</strong> 固定 $X=50$，把 $p$ 从 $0.2$ 拖到 $3$，找到蓝线"贴顶/上天"切换的临界位置 $p=1$；<strong>②</strong> 固定 $p=1.5$，把 $X$ 从 $1.5$ 拖到 $50$，看百分比读数逼近 $100\%$ 却永不到达——天花板 $\frac1{p-1}=2$ 就是 $\int_1^{+\infty}$ 的值；<strong>③</strong> 停在 $p=1$：$A(X)=\ln X$，$X=50$ 时才 $\approx3.9$——分界线上的面积增长慢到极点，但它是<strong>无界</strong>的慢，不是封顶的慢。</p>
+</div>
+
+<h3>3.4 收敛判别法四件套</h3>
+
+<p>p 尺只判 $\frac1{x^p}$ 自己。判别一般函数，全部策略是一句话：<strong>拿它和尺比</strong>。</p>
+
+<div class="def">
+  <p class="def-title">① 比较判别法（不等式版 + 极限形式）</p>
+  <p><strong>不等式版</strong>（∞ 端，瑕端同理）：设 $0\le f(x)\le g(x)$（$x$ 充分大时）。则
+  $$\int_a^{+\infty}g\ \text{收敛}\ \Longrightarrow\ \int_a^{+\infty}f\ \text{收敛}；\qquad \int_a^{+\infty}f\ \text{发散}\ \Longrightarrow\ \int_a^{+\infty}g\ \text{发散}.$$</p>
+  <p><strong>极限形式（比阶）</strong>：$f,g&gt;0$，$\lim\limits_{x\to+\infty}\frac{f(x)}{g(x)}=L$。若 $0&lt;L&lt;+\infty$，则 $\int f$ 与 $\int g$ <strong>同敛散</strong>（$L=0$ 时只有单向：$\int g$ 收敛 $\Rightarrow\int f$ 收敛；$L=+\infty$ 时 $\int g$ 发散 $\Rightarrow\int f$ 发散）。</p>
+  <p><strong>用法</strong>：$g$ 永远取尺 $x^{-p}$。"比阶"就是问：$f$ 长得像哪个 $x^{-p}$？</p>
+</div>
+
+<div class="def">
+  <p class="def-title">② 绝对收敛 ⟹ 收敛（附 Cauchy 准则一句话）</p>
+  <p><strong>Cauchy 准则</strong>：$\int_a^{+\infty}f$ 收敛 $\iff$ $\forall\varepsilon>0,\ \exists A_0,\ \forall A_2&gt;A_1&gt;A_0:\ \left|\int_{A_1}^{A_2}f\right|&lt;\varepsilon$——<strong>足够远的尾巴上围不出面积</strong>。</p>
+  <p><strong>推论</strong>：若 $\int_a^{+\infty}|f|$ 收敛（称 $f$ <strong>绝对收敛</strong>），则 $\int_a^{+\infty}f$ 收敛。一行证：$\left|\int_{A_1}^{A_2}f\right|\le\int_{A_1}^{A_2}|f|&lt;\varepsilon$，套 Cauchy 准则。$\square$</p>
+  <p>反向不成立——条件收敛存在，头牌在 ③ 下面。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">③ Dirichlet 判别法（记名称与结论即可）</p>
+  <p>若（i）$\left|\int_a^A g(x)\,dx\right|$ 关于 $A$ <strong>有界</strong>（振荡但围不出面积），（ii）$h(x)$ <strong>单调</strong>且 $h(x)\to0$（$x\to+\infty$），则 $\displaystyle\int_a^{+\infty}g(x)h(x)\,dx$ 收敛。</p>
+  <p><strong>头牌例子</strong>：$\displaystyle\int_1^{+\infty}\frac{\sin x}{x}\,dx$ 收敛——$\int_1^A\sin x\,dx=\cos1-\cos A$ 有界，$\frac1x$ 单调趋零。但它<strong>不绝对收敛</strong>（§9 变式 2 证）：这是"条件收敛"的标准公民，也是"反向不成立"的反例。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">④ 换元与分部积分（计算侧的两只手）</p>
+  <p>反常积分照常允许换元与分部积分——只要在截断区间 $[a,A]$ 上做，再取极限。3.2 的"先动手"（$x=\frac1t$）和例 1（ii）（$\int\ln x\,dx=x\ln x-x$）就是各用一次。</p>
+</div>
+
+<h3>3.5 含参变量积分：一致收敛登场</h3>
+
+<p>现在升级：被积函数里住进一个参数 $s$，
+$$\varphi(s)=\int_a^{+\infty}f(x,s)\,dx.$$
+每个 $s$ 给出一个数——$\varphi$ 是<strong>积分造出来的新函数</strong>。要研究它的连续、可微、可积，都要把"关于 $s$ 的极限过程"和"关于 $A\to+\infty$ 的极限过程"<strong>交换顺序</strong>。两个极限能不能换，裁判是：</p>
+
+<div class="def">
+  <p class="def-title">定义（含参反常积分的一致收敛）</p>
+  <p>称 $\displaystyle\int_a^{+\infty}f(x,s)\,dx$ <strong>关于 $s\in I$ 一致收敛</strong>，如果
+  $$\forall\varepsilon>0,\ \exists A_0\ (\text{只依赖 }\varepsilon\text{，不依赖 }s),\ \forall A&gt;A_0,\ \forall s\in I:\ \left|\int_A^{+\infty}f(x,s)\,dx\right|&lt;\varepsilon.$$</p>
+  <p>对比"逐点收敛"（每个 $s$ 各自收敛）：那里的 $A_0$ <strong>允许依赖 $s$</strong>。一致收敛 $=$ <strong>存在一个不依赖 $s$ 的统一门槛 $A_0$</strong>——所有参数的尾巴同时变细。这就是第 0.5 章量词顺序通则（"$\exists A_0\ \forall s$"对"$\forall s\ \exists A_0$"）和第 2 章一致连续的同一个灵魂，第三次登场。</p>
+</div>
+
+<div class="symbol box" data-tag="逐符号朗读">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$\left|\int_A^{+\infty}f(x,s)\,dx\right|$</td><td>"参数 $s$ 那条积分、从 $A$ 往右的尾巴"</td><td>一致收敛要管的就是这条尾巴——它必须<strong>一致地</strong>细</td></tr>
+    <tr><td>$\exists A_0$（只依赖 $\varepsilon$）</td><td>"存在一个门槛 $A_0$，它不认识 $s$"</td><td>全体参数共用同一道门槛；$A_0$ 若随 $s$ 变，就只是逐点收敛</td></tr>
+    <tr><td>$\forall s\in I$</td><td>"对参数范围里每一个 $s$ 同时成立"</td><td>全称放在 $A_0$ 之后：先定门槛，再统辖所有参数</td></tr>
+  </table>
+  <p><strong>内闭一致收敛</strong>：对 $I$ 的每个闭子区间 $[\alpha,\beta]\subset I$ 一致收敛（闭包在 $I$ 内），就叫在 $I$ 上内闭一致收敛。逐点性质（连续性、可微性）只需要它——要研究 $\varphi$ 在某个 $s_0$ 的行为，取一条包住 $s_0$ 的小闭区间即可。第 16 届题二官方解答写的就是这个词。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">Weierstrass M 判别法（竞赛最常用，默写级）</p>
+  <p>若存在与 $s$ 无关的 $M(x)$ 使
+  $$|f(x,s)|\le M(x)\quad(\forall s\in I,\ x\ge a),\qquad\text{且}\ \int_a^{+\infty}M(x)\,dx\ \text{收敛},$$
+  则 $\displaystyle\int_a^{+\infty}f(x,s)\,dx$ 关于 $s\in I$ <strong>一致收敛</strong>（且绝对收敛）。</p>
+  <p><strong>一行证</strong>：$\left|\int_A^{+\infty}f(x,s)\,dx\right|\le\int_A^{+\infty}M(x)\,dx$，右端与 $s$ 无关且 $\to0$（$A\to+\infty$），统一门槛到手。$\square$</p>
+  <p><strong>画面</strong>：$M(x)$ 是一件与参数无关的"雨衣"，把所有参数的函数一起罩住；雨衣自己的尾巴围得住面积，里面的人就全体安全。$M$ 就是优函数/控制函数。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">三大运算定理（每个的充分条件都指向一致收敛）</p>
+  <p>设以下积分均为无穷限反常积分，$f,f_s$ 连续：</p>
+  <p><strong>① 连续（积分号下取极限）</strong>：$\int_a^{+\infty}f(x,s)dx$ 关于 $s\in I$ 一致收敛 ⟹ $\varphi(s)$ 在 $I$ 上连续，即
+  $$\lim_{s\to s_0}\int_a^{+\infty}f(x,s)\,dx=\int_a^{+\infty}f(x,s_0)\,dx=\int_a^{+\infty}\lim_{s\to s_0}f(x,s)\,dx.$$</p>
+  <p><strong>② 可微（Leibniz 积分号下求导）</strong>：$\int_a^{+\infty}f(x,s)dx$ 对每个 $s\in I$ 收敛，且 $\int_a^{+\infty}f_s(x,s)dx$ 关于 $s\in I$ <strong>内闭</strong>一致收敛 ⟹
+  $$\varphi'(s)=\int_a^{+\infty}\frac{\partial f}{\partial s}(x,s)\,dx.$$</p>
+  <p><strong>③ 可积（换序）</strong>：$\int_a^{+\infty}f(x,s)dx$ 关于 $s\in[c,d]$ 一致收敛 ⟹
+  $$\int_c^d\!\left(\int_a^{+\infty}f(x,s)\,dx\right)ds=\int_a^{+\infty}\!\left(\int_c^d f(x,s)\,ds\right)dx.$$</p>
+  <p>三个定理的本质是同一件事：<strong>交换两个极限过程</strong>（$\lim_{s\to s_0}$ 与 $\lim_{A\to+\infty}$、$\frac{d}{ds}$ 与 $\int$、$\int ds$ 与 $\int dx$）。交换之所以需要一致收敛，直观一句话：<strong>只有"收敛速度不依赖 $x$（不依赖 $s$）"，两个极限过程才互不干扰</strong>。（双重无穷的换序——第 13 届题五——需要更强的绝对收敛或控制收敛条件，知道门槛更高即可。）</p>
+</div>
+
+<h3>3.6 核武器工作流程：积分号下求导法五步</h3>
+
+<div class="net box" data-tag="五步流程（背下来，§8 例 2 与第 16 届题二都是它的一次运行）">
+  <p><strong>第 ① 步 · 引入参数</strong>：算不出来的定积分，把它看成某族积分 $\varphi(s)=\int f(x,s)dx$ 的一个特殊值（参数常在指数里：$e^{-sx}$，或在对数里：$\ln(1+sg(x))$）。<strong>动机检查</strong>：对 $s$ 求导必须能"打掉障碍"——$\frac{\partial}{\partial s}e^{-sx}=-xe^{-sx}$ 能约掉分母的 $x$；$\frac{\partial}{\partial s}\ln(1+sg)=\frac{g}{1+sg}$ 能把对数变成有理式。</p>
+  <p><strong>第 ② 步 · 验证一致收敛</strong>：对形式求导后的积分 $\int f_s(x,s)dx$，用 M 判别造与 $s$ 无关的优函数 $M(x)$（允许先限制 $s$ 在某闭区间，即内闭一致收敛）。<strong>这一步是阅卷人盯的分点，省略必扣分。</strong></p>
+  <p><strong>第 ③ 步 · 求导</strong>：$\varphi'(s)=\int f_s(x,s)dx$（②给合法性）。</p>
+  <p><strong>第 ④ 步 · 算新积分</strong>：新积分必须比原积分好算——不好算说明参数引错了，回第 ① 步。</p>
+  <p><strong>第 ⑤ 步 · 回积定常数</strong>：$\varphi(s)=\int\varphi'(s)ds+C$，用<strong>白送的特殊值</strong>定 $C$（$s\to+\infty$ 时 $\varphi\to0$，或 $s=0$ 时 $\varphi(0)=0$）。</p>
+</div>
+
+<h2>§4 翻译轨：三个标准动作 + 一间练功房</h2>
+
+<div class="trans box" data-tag="动作一：判敛散（找病灶 → 找尺 → 比阶）">
+  <p><strong>题面</strong>："讨论/判别 $\int(\cdots)$ 的收敛性"。</p>
+  <p><strong>翻译</strong>：固定三拍——</p>
+  <p>第 ① 拍<strong>找病灶</strong>：∞ 端？瑕点？在哪一端？（内部瑕点要拆开，两面都要判。）</p>
+  <p>第 ② 拍<strong>找参照尺</strong>：在每个病灶端，问被积函数"长得像哪个 $x^{-p}$"：多项式比幂；$\ln$ 慢于任何幂（$|\ln x|\le C_\delta x^{-\delta}$）；$\sin,\cos$ 有界白送一个 $\le1$。</p>
+  <p>第 ③ 拍<strong>比一比</strong>：能造逐点不等式用比较判别法；造不出干净的用极限形式（比出 $L\in(0,+\infty)$ 最省事）；绝对值压不住再想起 Dirichlet。</p>
+  <p><strong>值多少分</strong>：判决 + 判别法名称 + 参照尺，三件套齐全才给满；只写"收敛"没有理由，0 分起步。</p>
+</div>
+
+<div class="trans box" data-tag="动作二：验一致收敛（M 判别，合法化段落）">
+  <p><strong>题面</strong>："证明 $\varphi(s)$ 连续 / 可以积分号下求导 / 可以换序"，或含参积分作为大题的一步。</p>
+  <p><strong>翻译</strong>：统一写成一段<strong>合法性段落</strong>，三句话：</p>
+  <p>① 限制参数范围：取 $s\in[\alpha,\beta]$（内闭——要研究哪一点，就取包住它的小闭区间）；<br>
+  ② 造优函数：$|f(x,s)|\le M(x)$（或 $|f_s(x,s)|\le M(x)$），$M$ 与 $s$ 无关——常用原料：$e^{-sx}\le e^{-\alpha x}$、$1+sx^2\ge2\sqrt{\alpha}\,x$（AM-GM）、$\ln(1+u)\le C\sqrt u$；<br>
+  ③ 报结论：$\int M(x)dx$ 收敛，由 Weierstrass M 判别，原积分关于 $s\in[\alpha,\beta]$ 一致收敛，故（连续 / 可求导 / 可换序）。</p>
+  <p><strong>值多少分</strong>：第 16 届题二，这段话值 2 分（连续性）+ 4 分（求导合法化）——比后面算积分本身还金贵。</p>
+</div>
+
+<div class="trans box" data-tag="动作三：真题原句长这样（第 16 届题二）">
+  <p><strong>官方解答第二步原句</strong>："形式求导所得积分 $\int_0^{+\infty}\frac{x}{(1+x^2)(1+sx^2)}dx$ 关于 $s\in(0,+\infty)$ 内闭一致收敛（用 $\frac{x}{(1+x^2)(1+sx^2)}\le\frac{1}{2\sqrt s\,(1+x^2)}$），故可积分号下求导（4 分）。"</p>
+  <p><strong>翻译</strong>：这一句话就是动作二的完整一次呼吸——</p>
+  <p>① "内闭"：对任意 $[\alpha,\beta]\subset(0,+\infty)$ 而言；<br>
+  ② 括号里的不等式就是优函数：AM-GM 给出 $1+sx^2\ge2\sqrt s\,x$，于是 $\frac{x}{1+sx^2}\le\frac1{2\sqrt s}\le\frac1{2\sqrt\alpha}$，$M(x)=\frac{1}{2\sqrt\alpha(1+x^2)}$ 与 $s$ 无关且 $\int_0^{+\infty}M$ 收敛；<br>
+  ③ "故可积分号下求导"：M 判别 ⟹ 一致收敛 ⟹ 三大运算定理 ②。</p>
+  <p>看到没有：<strong>4 分买的就是这三句话</strong>。竞赛不考你会不会"想到"求导，考你会不会给求导上保险。</p>
+</div>
+
+<h3>4.4 翻译练功房：像学语言一样，大量互译</h3>
+
+<p>老规矩：<strong>先全部写在纸上，再逐条展开对照</strong>。每条不超过 1 分钟。</p>
+
+<div class="trans box" data-tag="互译 8 句">
+  <p><strong>T1</strong>　自然→符号："$f$ 的无穷限积分 $\int_a^{+\infty}f(x)dx$ 收敛于 $I$。"</p>
+  <details class="answer"><summary>对照</summary><p>$\forall\varepsilon>0,\ \exists A_0,\ \forall A&gt;A_0:\ \left|\int_a^A f(x)dx-I\right|&lt;\varepsilon$——就是 $\lim\limits_{A\to+\infty}\int_a^A f=I$ 的 ε 展开。<strong>易错</strong>：写成"$\int_a^{+\infty}$ 存在"这种废话——必须把极限过程写明白。</p></details>
+  <p><strong>T2</strong>　正误判断（说理由）："$\int_1^{+\infty}\frac{dx}{x^p}$ 当 $p&lt;1$ 时收敛。"</p>
+  <details class="answer"><summary>对照</summary><p><strong>错</strong>。∞ 端的尺要 $p&gt;1$ 才收敛（瘦得要快）；$p&lt;1$ 时 $A^{1-p}\to+\infty$。和 0 端那把尺方向相反——记混是最常见失分。</p></details>
+  <p><strong>T3</strong>　正误判断（说理由）："$\int_0^1\frac{dx}{\sqrt x}$ 发散，因为 $\frac1{\sqrt x}$ 在 $0$ 附近无界。"</p>
+  <details class="answer"><summary>对照</summary><p><strong>错</strong>。无界 ≠ 发散——瑕积分看的是面积围不围得住。$p=\frac12&lt;1$，收敛，值 $=2$（$\int_\varepsilon^1 x^{-1/2}dx=2-2\sqrt\varepsilon\to2$）。炸得慢就围得住。</p></details>
+  <p><strong>T4</strong>　符号→自然 + 用在哪："$|f(x,s)|\le M(x)$（$\forall s\in I$），且 $\int_a^{+\infty}M(x)dx$ 收敛。"</p>
+  <details class="answer"><summary>对照</summary><p>"一件与参数无关的雨衣罩住所有 $s$ 的被积函数，且雨衣自己的积分收敛"——Weierstrass M 判别的两个前提。结论：$\int f(x,s)dx$ 关于 $s\in I$ 一致收敛。用在三大运算（连续/求导/换序）的合法化段落里。</p></details>
+  <p><strong>T5</strong>　自然→符号："$\int_a^{+\infty}f(x,s)dx$ 关于 $s\in I$ 一致收敛。"</p>
+  <details class="answer"><summary>对照</summary><p>$\forall\varepsilon>0,\ \exists A_0$（只依赖 $\varepsilon$），$\forall A&gt;A_0,\ \forall s\in I:\ \left|\int_A^{+\infty}f(x,s)dx\right|&lt;\varepsilon$。<strong>命门</strong>：$A_0$ 不许依赖 $s$——写完后自查量词顺序：$\exists A_0$ 在 $\forall s$ 前面。</p></details>
+  <p><strong>T6</strong>　快答："积分号下求导 $\varphi'(s)=\int f_s\,dx$ 需要什么条件？"</p>
+  <details class="answer"><summary>对照</summary><p>① $f,f_s$ 连续；② $\int f(x,s)dx$ 对每个 $s$ 收敛；③ $\int f_s(x,s)dx$ 关于 $s$ 一致收敛（内闭一致收敛即可）。③ 是灵魂——它保证求导后的新积分"尾巴一致细"，差商才能穿过积分号取极限。</p></details>
+  <p><strong>T7</strong>　找坑：对 $F(a)=\int_0^{+\infty}\frac{\sin(ax)}{x}dx$ 形式求导得 $F'(a)=\int_0^{+\infty}\cos(ax)\,dx$。哪里违法？</p>
+  <details class="answer"><summary>对照</summary><p>$\int_0^{+\infty}\cos(ax)\,dx$ <strong>根本不存在</strong>（$\cos$ 在 ∞ 端振荡不出极限）——求导后的积分发散，T6 的条件②③全军覆没，"形式求导"是非法操作。教训：先验一致收敛，再写 $\varphi'(s)$；顺序反了答案可能是错的。</p></details>
+  <p><strong>T8</strong>　正误判断（说理由）："若 $\int_a^{+\infty}|f|$ 发散，则 $\int_a^{+\infty}f$ 发散。"</p>
+  <details class="answer"><summary>对照</summary><p><strong>错</strong>。绝对收敛 ⟹ 收敛，但反之不然：$\int_1^{+\infty}\frac{\sin x}{x}dx$ 收敛（Dirichlet）而 $\int_1^{+\infty}\frac{|\sin x|}{x}dx$ 发散——条件收敛。正确的逆否是：收敛 ⟹ 绝对值可积性<em>无法保证</em>，要单独判。</p></details>
+</div>
+
+<h2>§5 类型识别：什么信号在召唤本章</h2>
+
+<div class="recog box" data-tag="识别反射表">
+  <table>
+    <tr><th>题面信号</th><th>反射</th></tr>
+    <tr><td>"讨论/判别积分的收敛性"（上限 ∞ 或有瑕点）</td><td>动作一三拍：找病灶 → 找参照尺 $x^{-p}$ → 比较或极限形式比阶</td></tr>
+    <tr><td>∞ 端含 $\sin,\cos$，绝对值压不住（如 $\frac{\sin x}{x^p}$，$0&lt;p\le1$）</td><td>Dirichlet：振荡积分有界 + 单调趋零；条件收敛候选</td></tr>
+    <tr><td>瑕点端含 $\ln$（$\ln x$、$\ln(1-x)$）</td><td>$\ln$ 慢于任何幂：$|\ln x|\le C_\delta x^{-\delta}$，配 $p=\delta&lt;1$ 的 0 端尺</td></tr>
+    <tr><td>"算不出来的定积分"（$\frac{\sin x}{x}$、$\frac{1-e^{-ax}}{x}$、含 $\ln$ 的分子）</td><td>含参求导法五步流程：引入参数 → M 判别 → 求导 → 算 → 定常数</td></tr>
+    <tr><td>"对 $s$ 求导 / $s\to s_0$ 取极限穿过积分号"</td><td>先验 $\int f_s$（或 $\int f$）一致收敛——M 判别，内闭即可（动作二）</td></tr>
+    <tr><td>"$\int\!\!\int$ 交换积分次序"</td><td>一重无穷：一致收敛；双重无穷：绝对收敛/控制收敛——第 13 届题五口音</td></tr>
+    <tr><td>被积函数含参数 + 能造与参数无关的优函数 $M(x)$</td><td>Weierstrass M 判别：雨衣一罩，一致收敛到手</td></tr>
+    <tr><td>"$\ln(1+x)\le C\sqrt x$"、"$1+sx^2\ge2\sqrt s\,x$" 型逐点估计</td><td>这是造优函数的原料车间——第 16 届题二第一步（AM-GM / 阶的比较）</td></tr>
+  </table>
+</div>
+
+<h2>§6 考法定位：它藏在哪里、值多少分</h2>
+
+<div class="exam box" data-tag="考法定位">
+  <table>
+    <tr><th>出处</th><th>题号</th><th>本章内容扮演什么角色</th><th>分值权重</th></tr>
+    <tr><td>第 16 届（2024）</td><td>题二</td><td><strong>整题主场</strong>：内闭一致收敛 ⟹ $\varphi$ 连续（2 分）；形式求导积分内闭一致收敛 ⟹ 积分号下求导（4 分）；部分分式算 $\varphi'(s)$（8 分）；$\ln(1-s)$ 展开逐项积分得 $\frac{\pi^2}{12}$、$\frac{\pi^2}{8}$（12/15 分）</td><td>15 分（直接）</td></tr>
+    <tr><td>第 13 届（2021）</td><td>题五</td><td><strong>换序合法性</strong>：Weierstrass 判别给内层积分一致收敛 + 首尾两段控制，证得 $\int\!\!\int=\int\!\!\int$（4 分 + 8 分处）；再算 Fresnel 型积分乘积 $\frac{\pi}{9}$</td><td>15 分中约 8 分（直接）</td></tr>
+    <tr><td>第 14 届（2022）</td><td>题六(1)</td><td><strong>估值地基</strong>：$\alpha\in(-1,0)$ 时 $\int_0^\delta t^\alpha dt=\frac{\delta^{1+\alpha}}{1+\alpha}$ 收敛（0 端尺：$-\alpha&lt;1$），撑起 Hölder 型估计 $|F(y)-F(x)|\le\frac{4M}{1+\alpha}|y-x|^{1+\alpha}$</td><td>20 分中步骤分</td></tr>
+  </table>
+  <p><strong>规律</strong>：本章内容的上场方式高度程序化：<strong>"合法化"本身就是分点</strong>。官方给分点直接标注"内闭一致收敛（2 分）""故可积分号下求导（4 分）"——裁判不关心你算不算得出 $\frac{\pi^2}{12}$，先关心你敢求导的底气（M 判别）写没写出来。三步肌肉记忆：引参数、验一致收敛、求导回积——第 16 届题二是它最标准的一次运行。</p>
+</div>
+
+<h2>§7 关系网：从量词顺序到 π²/12</h2>
+
+<p>本章的逻辑链只有一句：定积分有两道紧箍咒（区间有限、函数有界），松开它们得到反常积分；想对含参积分做微积分，交换极限需要统一门槛——一致收敛；M 判别是验证门槛最常用的手。顺着箭头走：<span style="color:#b45309">三角形</span>是来源与动机，<span style="color:#1d4ed8">圆角矩形</span>是定义，<span style="color:#15803d">矩形</span>是定理，<span style="color:#7c3aed">六边形</span>是方法动作，<span style="color:#0f766e">椭圆</span>是应用出口。</p>
+
+<figure>
+<svg viewBox="0 0 720 590" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="反常积分与含参积分关系网地图">
+  <defs>
+    <marker id="arr8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+
+  <!-- 图例 -->
+  <polygon points="30,16 22,30 38,30" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5"/>
+  <text x="44" y="28" font-size="11.5" fill="#5c554b">来源·动机</text>
+  <rect x="116" y="17" width="22" height="13" rx="6.5" fill="#eef3fe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="144" y="28" font-size="11.5" fill="#5c554b">定义</text>
+  <rect x="196" y="17" width="22" height="13" fill="#ecf8f0" stroke="#15803d" stroke-width="1.5"/>
+  <text x="224" y="28" font-size="11.5" fill="#5c554b">定理</text>
+  <polygon points="274,23.5 280,16 294,16 300,23.5 294,31 280,31" fill="#f4effd" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="306" y="28" font-size="11.5" fill="#5c554b">方法·动作</text>
+  <ellipse cx="394" cy="23.5" rx="12" ry="7" fill="#ecf8f5" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="412" y="28" font-size="11.5" fill="#5c554b">应用·出口</text>
+
+  <!-- 来源 A：量词顺序（三角） -->
+  <polygon points="120,58 62,128 178,128" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="120" y="98" font-size="12" fill="#7a4a12" text-anchor="middle" font-weight="bold">第 2 章</text>
+  <text x="120" y="114" font-size="10.5" fill="#7a4a12" text-anchor="middle">量词顺序通则</text>
+
+  <!-- 来源 B：定积分紧箍（三角） -->
+  <polygon points="590,58 528,128 652,128" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="590" y="92" font-size="12" fill="#7a4a12" text-anchor="middle" font-weight="bold">第 7 章定积分</text>
+  <text x="590" y="108" font-size="10.5" fill="#7a4a12" text-anchor="middle">两道紧箍：</text>
+  <text x="590" y="122" font-size="10.5" fill="#7a4a12" text-anchor="middle">区间有限·函数有界</text>
+
+  <!-- 三角B → 两类反常积分 -->
+  <line x1="540" y1="125" x2="420" y2="168" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr8)"/>
+  <text x="500" y="140" font-size="11" fill="#5c554b" text-anchor="middle">松开紧箍</text>
+
+  <!-- 定义一：两类反常积分（圆角矩形） -->
+  <rect x="180" y="160" width="230" height="58" rx="29" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="295" y="184" font-size="14" fill="#1d4ed8" text-anchor="middle" font-weight="bold">两类反常积分</text>
+  <text x="295" y="203" font-size="11" fill="#1d4ed8" text-anchor="middle">无穷限 · 瑕点（极限形式定义）</text>
+
+  <!-- 定义二：一致收敛（圆角矩形） -->
+  <rect x="440" y="160" width="250" height="58" rx="29" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="565" y="184" font-size="14" fill="#1d4ed8" text-anchor="middle" font-weight="bold">含参积分的一致收敛</text>
+  <text x="565" y="203" font-size="11" fill="#1d4ed8" text-anchor="middle">∃A₀ 只依赖 ε，统辖所有 s</text>
+
+  <!-- 三角A → 一致收敛 -->
+  <line x1="150" y1="130" x2="480" y2="162" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr8)"/>
+  <text x="300" y="140" font-size="11" fill="#5c554b" text-anchor="middle">"统一门槛、不依赖点"第三次登场</text>
+
+  <!-- 反常积分 → 一致收敛 -->
+  <line x1="410" y1="189" x2="438" y2="189" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr8)"/>
+  <text x="424" y="178" font-size="10.5" fill="#5c554b" text-anchor="middle">含参升级</text>
+
+  <!-- 反常积分 → p 尺/比较 -->
+  <line x1="230" y1="218" x2="180" y2="262" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr8)"/>
+  <text x="185" y="243" font-size="11" fill="#5c554b" text-anchor="middle">判敛工具</text>
+
+  <!-- 一致收敛 → M 判别 -->
+  <line x1="540" y1="218" x2="500" y2="262" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr8)"/>
+  <text x="500" y="243" font-size="11" fill="#5c554b" text-anchor="middle">最常用的验证器</text>
+
+  <!-- 定理一：p 尺 + 比较（矩形） -->
+  <rect x="40" y="270" width="220" height="58" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="150" y="292" font-size="13" fill="#15803d" text-anchor="middle" font-weight="bold">p 积分尺 ×2（方向相反）</text>
+  <text x="150" y="310" font-size="10.5" fill="#4a7c59" text-anchor="middle">+ 比较 / 极限形式 / Dirichlet（名称）</text>
+
+  <!-- 定理二：M 判别（矩形） -->
+  <rect x="420" y="270" width="220" height="58" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="530" y="292" font-size="13" fill="#15803d" text-anchor="middle" font-weight="bold">Weierstrass M 判别</text>
+  <text x="530" y="310" font-size="10.5" fill="#4a7c59" text-anchor="middle">|f(x,s)|≤M(x)，∫M 收敛 ⟹ 一致收敛</text>
+
+  <!-- p 尺 → 找尺比阶（六边形） -->
+  <line x1="150" y1="328" x2="150" y2="372" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr8)"/>
+  <!-- M 判别 → 三大运算（六边形） -->
+  <line x1="530" y1="328" x2="470" y2="372" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr8)"/>
+  <text x="520" y="353" font-size="11" fill="#5c554b" text-anchor="middle">合法化</text>
+
+  <!-- 六边形一：找尺比阶 -->
+  <polygon points="70,412 95,382 205,382 230,412 205,442 95,442" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="150" y="408" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">找参照尺比阶</text>
+  <text x="150" y="425" font-size="10.5" fill="#6a55a3" text-anchor="middle">判敛三拍（动作一）</text>
+
+  <!-- 六边形二：三大运算 -->
+  <polygon points="330,412 355,382 500,382 525,412 500,442 355,442" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="427" y="402" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">含参三大运算</text>
+  <text x="427" y="418" font-size="10.5" fill="#6a55a3" text-anchor="middle">连续 · 求导 · 换序</text>
+  <text x="427" y="433" font-size="10.5" fill="#6a55a3" text-anchor="middle">门票都是一致收敛</text>
+
+  <!-- 三大运算 → 五步流程 -->
+  <line x1="427" y1="442" x2="427" y2="478" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr8)"/>
+  <text x="437" y="464" font-size="11" fill="#5c554b">组装成流程</text>
+
+  <!-- 椭圆一：五步流程/π²/12 -->
+  <ellipse cx="150" cy="530" rx="128" ry="34" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="150" y="524" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">积分号下求导法五步</text>
+  <text x="150" y="541" font-size="10.5" fill="#3d7a70" text-anchor="middle">π²/12（第 16 届题二 15 分）</text>
+
+  <!-- 椭圆二：换序 Fresnel -->
+  <ellipse cx="427" cy="512" rx="118" ry="30" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="427" y="507" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">换序算 Fresnel 型积分</text>
+  <text x="427" y="523" font-size="10.5" fill="#3d7a70" text-anchor="middle">π/9（第 13 届题五 15 分）</text>
+
+  <!-- 椭圆三：第 9 章接口 -->
+  <ellipse cx="640" cy="530" rx="76" ry="32" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="640" y="524" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">第 9 章</text>
+  <text x="640" y="540" font-size="10.5" fill="#3d7a70" text-anchor="middle">级数逐项积分</text>
+
+  <!-- 三大运算 → 椭圆 -->
+  <polyline points="427,442 150,442 150,494" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr8)"/>
+  <polyline points="525,412 640,412 640,496" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr8)"/>
+  <text x="300" y="455" font-size="11" fill="#5c554b">求导穿过积分号</text>
+</svg>
+<figcaption>本章地图：量词顺序通则给出"统一门槛"，紧箍咒松开给出两类反常积分；M 判别验证门槛，三大运算消费门槛，五步流程把它变成算积分的核武器。</figcaption>
+</figure>
+
+<div class="net box" data-tag="画面感锚点（记这些，不记条文）">
+  <table>
+    <tr><th>节点</th><th>一句话画面</th><th>擅长场景</th></tr>
+    <tr><td>两类反常积分</td><td>定积分松开两道紧箍：区间拉到 ∞，或函数在瑕点炸开——都用"先切除、再逼近"的极限收口</td><td>一切"无限"积分的定义起点</td></tr>
+    <tr><td>p 积分尺</td><td>两把方向相反的尺：∞ 端要瘦得快（$p&gt;1$），0 端要炸得慢（$p&lt;1$）；换元 $x=1/t$ 互转</td><td>一切比阶的参照物</td></tr>
+    <tr><td>比较 / 极限形式</td><td>给被积函数找个参照物：逐点压住用不等式，压不住就比值取极限</td><td>判敛三拍的第 ③ 拍</td></tr>
+    <tr><td>Dirichlet</td><td>振荡围不出面积（$\int\sin$ 有界）+ 单调趋零的衰减因子 ⟹ 收敛，但可能只是条件收敛</td><td>$\frac{\sin x}{x^p}$（$0&lt;p\le1$）家族</td></tr>
+    <tr><td>一致收敛</td><td>收敛速度不许依赖参数——所有 $s$ 的尾巴共用一道门槛 $A_0$</td><td>交换两个极限过程的合法性门票</td></tr>
+    <tr><td>M 判别</td><td>一件与 $s$ 无关的雨衣 $M(x)$ 罩住所有参数，雨衣尾巴围得住 ⟹ 全体安全</td><td>合法化段落的标准写法（2–4 分）</td></tr>
+    <tr><td>三大运算</td><td>连续、求导、换序：三种"交换两个极限"，门票都是一致收敛</td><td>研究积分造出的新函数 $\varphi(s)$</td></tr>
+    <tr><td>五步流程</td><td>引入参数 → M 判别 → 求导 → 算 → 定常数；定常数永远靠白送的特殊值</td><td>算不出来的定积分，$\frac{\pi^2}{12}$ 生产线</td></tr>
+  </table>
+  <p><strong>和你已学知识的焊接点</strong>：① 一致收敛的"统一门槛"与第 2 章一致连续、第 0.5 章量词顺序通则是同一个灵魂（$\exists$ 提到 $\forall$ 前面）；② M 判别里"优函数搬进积分号"用的正是第 7 章的积分单调性；③ 第 16 届题二的最后一步（$\ln(1-s)$ 展开逐项积分）预告第 9 章——级数与积分交换次序，和本章是同一出戏的离散版。</p>
+</div>
+
+<h2>§8 计算示范：先看真人怎么想，再看卷面怎么写</h2>
+
+<h3>例 1 · 判敛散组合（找参照尺的决策，约 8 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>三道小题都是<strong>判决型</strong>问题——输出不是等式，是一个判决：收敛还是发散。判决程序固定三拍（动作一）：①找病灶（∞ 端还是瑕点，在哪）；②找参照尺（它长得像哪个 $x^{-p}$）；③比一比（比较判别法或极限形式）。骨架不需要灵感。</p>
+  <p><span class="stage">【盘点】</span>（i）$\sin x$ 白送一个有界：$|\sin x|\le1$——优函数原料；（ii）$\ln x$ 在 $0$ 端炸开，但它有初等原函数 $x\ln x-x$（能直接算就别绕弯），备用情报：$\ln$ 慢于任何幂；（iii）$x^2+\sqrt x$ 当 $x\to+\infty$ 时 $\sim x^2$（低阶项被吞掉）。</p>
+  <p><span class="stage">【会师】</span>（i）倒推链：要判收敛 $\Longleftarrow$ 只需绝对收敛 $\Longleftarrow$ $\left|\frac{\sin x}{x^2}\right|\le\frac1{x^2}$（库存第一条）$\Longleftarrow$ ∞ 端尺 $p=2&gt;1$ 收敛（<strong>工具六 · 划归</strong>到 p 尺）。（ii）有原函数就直接执行定义：$\int_\varepsilon^1\ln x\,dx=[x\ln x-x]_\varepsilon^1$，极限 $\varepsilon\ln\varepsilon\to0$ 收尾；备用尺 $|\ln x|\le x^{-1/2}$ 配 $p=\frac12&lt;1$ 殊途同归。（iii）造不出干净的逐点不等式就换极限形式：$\frac{1}{x^2+\sqrt x}\Big/\frac1{x^2}\to1$，$L=1\in(0,+\infty)$，同敛散（<strong>划归</strong>）。</p>
+  <p><span class="stage">【定型】</span>判决书写三件套：<strong>病灶 + 参照尺 + 判别法名称</strong>。每小题两行以内，不要写成长篇。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 找参照尺</strong>：判敛散的全部技术就是回答"它长得像哪个 $x^{-p}$"。∞ 端要 $p&gt;1$ 才收敛，0 端要 $p&lt;1$ 才收敛——方向别记反。多项式看最高次、$\ln$ 慢于一切幂、$\sin/\cos$ 白送有界，这三条情报覆盖竞赛九成判敛题。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 1</strong>　判别下列积分的收敛性：（i）$\displaystyle\int_1^{+\infty}\frac{\sin x}{x^2}\,dx$；（ii）$\displaystyle\int_0^1\ln x\,dx$；（iii）$\displaystyle\int_1^{+\infty}\frac{dx}{x^2+\sqrt x}$。</p>
+  <hr>
+  <p class="proof-line"><strong>（i）</strong> 病灶在 ∞ 端。由 $\left|\dfrac{\sin x}{x^2}\right|\le\dfrac1{x^2}$（$x\ge1$），而 $\displaystyle\int_1^{+\infty}\frac{dx}{x^2}$ 收敛（p 尺，$p=2&gt;1$），由比较判别法，原积分<strong>绝对收敛，从而收敛</strong>。<span class="step-score">（2 分）</span></p>
+  <p class="proof-line"><strong>（ii）</strong> 瑕点 $x=0$。对 $\varepsilon\in(0,1)$，
+  $$\int_\varepsilon^1\ln x\,dx=\Bigl[x\ln x-x\Bigr]_\varepsilon^1=(-1)-(\varepsilon\ln\varepsilon-\varepsilon).$$
+  由 $\varepsilon\ln\varepsilon\to0$（$\varepsilon\to0^+$），极限存在且 $=-1$，故瑕积分<strong>收敛，值为 $-1$</strong>。<span class="step-score">（5 分）</span></p>
+  <p class="proof-line"><strong>（iii）</strong> 病灶在 ∞ 端。取参照尺 $g(x)=\frac1{x^2}$：
+  $$\lim_{x\to+\infty}\frac{1}{x^2+\sqrt x}\Big/\frac1{x^2}=\lim_{x\to+\infty}\frac1{1+x^{-3/2}}=1\in(0,+\infty),$$
+  由极限形式的比较判别法，与 $\displaystyle\int_1^{+\infty}\frac{dx}{x^2}$ 同敛散，故<strong>收敛</strong>。<span class="step-score">（8 分）</span></p>
+  <p class="aside">书写点评：三小题各两行，但病灶、参照尺、判别法名称一个不少——（i）漏写"绝对收敛"直接判收敛也算对但少了逻辑环节；（ii）这题能算就按定义算，若改用尺：$|\ln x|\le x^{-1/2}$（因 $\sqrt x\ln x$ 在 $(0,1]$ 有界），$\int_0^1 x^{-1/2}dx$ 收敛（0 端尺 $p=\frac12&lt;1$），同样两行；（iii）"$\to1$"必须写出来，只写"显然与 $\frac1{x^2}$ 同阶"不给过程分。</p>
+</div>
+
+<h3>例 2 · 积分号下求导法：$F(a)=\displaystyle\int_0^{+\infty}e^{-ax}\frac{\sin x}{x}\,dx$（约 10 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span><strong>计算型</strong>：求 $F(a)$（$a&gt;0$）的显式表达式。$\frac{\sin x}{x}$ 没有初等原函数，硬算无望——查识别表："算不出来的定积分" → <strong>含参求导法五步流程</strong>（动作三）。</p>
+  <p><span class="stage">【盘点】</span>参数 $a$ 已经在场（蹲在 $e^{-ax}$ 里）。关键观察：$\frac{\partial}{\partial a}e^{-ax}=-xe^{-ax}$——<strong>求导把分母的 $x$ 恰好打掉</strong>！新积分 $\int e^{-ax}\sin x\,dx$ 是初等可算的（指数×三角）。动机检查通过，参数引对了。</p>
+  <p><span class="stage">【会师】</span>五步逐环闭合：① $F(a)$ 对每个 $a&gt;0$ 收敛：$|e^{-ax}\frac{\sin x}{x}|\le e^{-ax}$（用 $|\sin x|\le x$），比 e 尺；② 合法化：要对 $\int(\partial/\partial a)$ 验一致收敛——限制 $a\ge a_0&gt;0$，优函数 $e^{-a_0x}$（与 $a$ 无关），M 判别闭合；③ 求导：$F'(a)=-\int_0^{+\infty}e^{-ax}\sin x\,dx$；④ 算新积分：原函数 $\frac{e^{-ax}(-a\sin x-\cos x)}{a^2+1}$，代入上下限得 $\frac1{a^2+1}$；⑤ 定常数：$F(a)=-\arctan a+C$，需要 $F$ 的一个特殊值——<strong>工具三 · 特殊化侦察</strong>：$a=0$ 处 $F(0)=\int\frac{\sin x}{x}$ 本身未知（那是 Dirichlet 积分，不是白送的）；$a\to+\infty$ 处 $|F(a)|\le\int_0^{+\infty}e^{-ax}dx=\frac1a\to0$——这个白送，用它。每环都取自库存。</p>
+  <p><span class="stage">【定型】</span>卷面五步，第 ② 步（一致收敛）是阅卷人盯的分点——省略它，后面算得再对也要被扣合法性的分。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 引入参数求导</strong>：被积函数出现"$x$ 在分母、指数（或对数）在分子"的结构时，对参数求一导常能把障碍打掉——$\frac{\partial}{\partial a}e^{-ax}=-xe^{-ax}$ 约掉分母 $x$；$\frac{\partial}{\partial s}\ln(1+sg)=\frac{g}{1+sg}$ 把对数变有理式。定常数永远靠"白送"的特殊值：$a\to+\infty$ 或 $a=0$，哪个好算用哪个。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 2</strong>　设 $a&gt;0$，计算 $F(a)=\displaystyle\int_0^{+\infty}e^{-ax}\frac{\sin x}{x}\,dx$。</p>
+  <hr>
+  <p class="proof-line"><strong>第一步（$F(a)$ 有定义）</strong>：$x=0$ 处 $e^{-ax}\frac{\sin x}{x}\to1$（可去间断，不是瑕点）；$x\ge1$ 处 $\left|e^{-ax}\frac{\sin x}{x}\right|\le e^{-ax}$，而 $\int_1^{+\infty}e^{-ax}dx=\frac{e^{-a}}{a}$ 收敛。故 $F(a)$ 对每个 $a&gt;0$ 收敛。<span class="step-score">（2 分）</span></p>
+  <p class="proof-line"><strong>第二步（一致收敛合法化）</strong>：形式求导得 $-\displaystyle\int_0^{+\infty}e^{-ax}\sin x\,dx$。任取 $a_0&gt;0$，当 $a\ge a_0$ 时
+  $$|e^{-ax}\sin x|\le e^{-a_0x},\qquad \int_0^{+\infty}e^{-a_0x}\,dx=\frac1{a_0}&lt;+\infty,$$
+  优函数与 $a$ 无关，由 Weierstrass M 判别，该积分关于 $a\in[a_0,+\infty)$ 一致收敛（内闭一致收敛）。<span class="step-score">（5 分）</span></p>
+  <p class="proof-line"><strong>第三步（积分号下求导）</strong>：由第二步及 Leibniz 法则，
+  $$F'(a)=-\int_0^{+\infty}e^{-ax}\sin x\,dx\qquad(a&gt;0).$$<span class="step-score">（6 分）</span></p>
+  <p class="proof-line"><strong>第四步（算新积分）</strong>：由 $\int e^{-ax}\sin x\,dx=\dfrac{e^{-ax}(-a\sin x-\cos x)}{a^2+1}+C$，
+  $$F'(a)=-\left[\frac{e^{-ax}(-a\sin x-\cos x)}{a^2+1}\right]_0^{+\infty}=-\frac{1}{a^2+1}.$$<span class="step-score">（8 分）</span></p>
+  <p class="proof-line"><strong>第五步（回积定常数）</strong>：$F(a)=-\arctan a+C$。又 $|F(a)|\le\displaystyle\int_0^{+\infty}e^{-ax}\,dx=\frac1a\to0$（$a\to+\infty$，用了 $|\sin x|\le x$），故 $0=-\dfrac{\pi}{2}+C$，$C=\dfrac{\pi}{2}$。综上
+  $$F(a)=\frac{\pi}{2}-\arctan a\qquad(a&gt;0).\ \square$$<span class="step-score">（10 分）</span></p>
+  <p class="aside">书写点评：第二步是分点中的分点——"关于 $a\in[a_0,+\infty)$ 一致收敛（M 判别）"必须出现，直接写 $F'(a)=-\int\cdots$ 属于跳步，合法性 3 分归零。定常数选 $a\to+\infty$ 不选 $a=0$：$F(0)=\int_0^{+\infty}\frac{\sin x}{x}dx$ 本身待求（它正是 Dirichlet 积分 $\frac{\pi}{2}$——本题令 $a\to0^+$ 还能反把它算出来），特殊值永远挑白送的那个。</p>
+</div>
+
+<h2>§9 配套题目</h2>
+
+<p>铁律：<strong>先写在纸上，写到写不动再展开答案</strong>。模仿题照例 1、例 2 的卷面格式写；变式题没有模板，先问自己"病灶在哪、尺在哪、参数怎么进"。</p>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 1</span>判别下列积分的收敛性：（i）$\displaystyle\int_1^{+\infty}\frac{\arctan x}{x^2}\,dx$；（ii）$\displaystyle\int_0^1\frac{dx}{\sqrt{1-x}}$。</p>
+  <details class="answer">
+    <summary>参考答案（约 6 分书写量）</summary>
+    <p><strong>（i）</strong> 病灶在 ∞ 端。$0\le\dfrac{\arctan x}{x^2}\le\dfrac{\pi/2}{x^2}$（$\arctan$ 有界，白送），$\displaystyle\int_1^{+\infty}\frac{dx}{x^2}$ 收敛（$p=2&gt;1$），由比较判别法原积分收敛（2 分）。</p>
+    <p><strong>（ii）</strong> 瑕点在<strong>右端点</strong> $x=1$（先把病灶找准）。$\dfrac1{\sqrt{1-x}}=(1-x)^{-1/2}$，即关于瑕点的 0 端尺 $p=\frac12&lt;1$，收敛（4 分）。直接算：$\displaystyle\int_0^{1-\varepsilon}(1-x)^{-1/2}dx=\Bigl[-2\sqrt{1-x}\Bigr]_0^{1-\varepsilon}=2-2\sqrt\varepsilon\to2$，收敛，值 $=2$（6 分）。</p>
+    <p><strong>易错点</strong>：（ii）的瑕点在 $1$ 不在 $0$——三拍的第一拍"找病灶"走错，后面全错。参照尺要写成 $(1-x)^{-p}$ 的样子再读 $p$。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 2</span>设 $a&gt;-1$，用积分号下求导法计算 $G(a)=\displaystyle\int_0^{+\infty}\frac{1-e^{-ax}}{x}\,e^{-x}\,dx$。</p>
+  <details class="answer">
+    <summary>参考答案（约 10 分书写量）</summary>
+    <p><strong>第一步（有定义）</strong>：$x=0$ 处 $\frac{1-e^{-ax}}{x}\to a$（可去）；$\infty$ 处被积函数 $\le e^{-x}+e^{-(a+1)x}$，$a+1&gt;0$ 保证收敛（2 分）。</p>
+    <p><strong>第二步（合法化）</strong>：形式求导得 $\displaystyle\int_0^{+\infty}e^{-ax}e^{-x}\,dx=\int_0^{+\infty}e^{-(a+1)x}dx$。任取 $a_0&gt;-1$，$a\ge a_0$ 时 $e^{-(a+1)x}\le e^{-(a_0+1)x}$，右端积分收敛且优函数与 $a$ 无关——M 判别，一致收敛（5 分）。</p>
+    <p><strong>第三、四步</strong>：$G'(a)=\displaystyle\int_0^{+\infty}e^{-(a+1)x}dx=\frac1{a+1}$（8 分）。</p>
+    <p><strong>第五步（定常数）</strong>：$G(0)=0$（白送的特殊值），故 $G(a)=\ln(1+a)$（$a&gt;-1$）（10 分）。</p>
+    <p><strong>易错点</strong>：定义域 $a&gt;-1$ 正是"∞ 端收敛"逼出来的；常数用 $G(0)=0$ 比用 $a\to+\infty$ 更省事——两个都是白送的，任选。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 1</span>讨论 $I(p)=\displaystyle\int_0^{+\infty}\frac{dx}{x^p(1+x)}$ 的收敛性（依实数 $p$ 分类）。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：两类病灶同框——$0$ 端（瑕点）和 ∞ 端各判一次，两把方向相反的尺同时上场。拆 $I(p)=\int_0^1+\int_1^{+\infty}$，<strong>两段都收敛才算收敛</strong>。</p>
+    <p><strong>0 端</strong>：$\dfrac1{x^p(1+x)}\sim\dfrac1{x^p}$（$x\to0^+$，因 $1+x\to1$）——极限形式与 $\int_0^1\frac{dx}{x^p}$ 同敛散：收敛 $\iff p&lt;1$。</p>
+    <p><strong>∞ 端</strong>：$\dfrac1{x^p(1+x)}\sim\dfrac1{x^{p+1}}$（$x\to+\infty$）——与 $\int_1^{+\infty}\frac{dx}{x^{p+1}}$ 同敛散：收敛 $\iff p+1&gt;1\iff p&gt;0$。</p>
+    <p><strong>合拢</strong>：$I(p)$ 收敛 $\iff 0&lt;p&lt;1$。$\square$</p>
+    <p><strong>点评</strong>：$p\le0$ 死在 ∞ 端，$p\ge1$ 死在 0 端——两头都是悬崖，只有中间一段活着。画一条 $p$ 数轴标出两段各自的存活区间再取交，是这类"双病灶"题的标准动作。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 2</span>证明：$\displaystyle\int_1^{+\infty}\frac{\sin x}{x}\,dx$ 收敛，但不绝对收敛（即条件收敛）。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：收敛用 Dirichlet（绝对值压不住，比较判别失灵，换振荡+衰减）；不绝对收敛用 $\sin^2$ 配方把 $|\sin|$ 拆成"常值 − 振荡"，发散的那半用尺，收敛的那半再用 Dirichlet。</p>
+    <p><strong>① 收敛</strong>：$\left|\int_1^A\sin x\,dx\right|=|\cos1-\cos A|\le2$ 有界，$\frac1x$ 单调且 $\to0$，由 Dirichlet 判别法，$\displaystyle\int_1^{+\infty}\frac{\sin x}{x}dx$ 收敛。</p>
+    <p><strong>② 不绝对收敛</strong>：$\dfrac{|\sin x|}{x}\ge\dfrac{\sin^2x}{x}=\dfrac1{2x}-\dfrac{\cos2x}{2x}$。其中 $\displaystyle\int_1^{+\infty}\frac{dx}{2x}$ 发散（p 尺 $p=1$）；而 $\displaystyle\int_1^{+\infty}\frac{\cos2x}{2x}dx$ 由 Dirichlet 收敛（$\int_1^A\cos2x\,dx$ 有界，$\frac1{2x}\to0$ 单调）。若 $\int\frac{|\sin x|}{x}$ 收敛，则由比较判别法 $\int\left(\frac1{2x}-\frac{\cos2x}{2x}\right)$ 收敛，进而 $\int\frac1{2x}=\int\left(\frac1{2x}-\frac{\cos2x}{2x}\right)+\int\frac{\cos2x}{2x}$ 收敛——矛盾。故 $\displaystyle\int_1^{+\infty}\frac{|\sin x|}{x}dx$ 发散。$\square$</p>
+    <p><strong>点评</strong>：① 是"振荡有界 + 单调趋零"的模板；② 的核心动作是 $\sin^2$ 降幂——把 $|\sin|$ 换成一个"正的发散项 + 可判的振荡项"。这套组合在级数判敛（第 9 章）会原样重演。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv3">真题节选</span><strong>（第 16 届题二，15 分）</strong>设 $s\ge0$，
+  $$\varphi(s)=\int_0^{+\infty}\frac{\ln(1+sx^2)}{x(1+x^2)}\,dx.$$
+  求 $\varphi(1)$ 和 $\varphi(2)$。</p>
+  <p>这是本章五步流程在真题里的标准一次运行。先回答三个梯子问题（写在纸上）：</p>
+  <p>（i）<strong>参数怎么进</strong>：$\varphi(s)$ 对 $s$ 形式求导后，被积函数变成什么？为什么说对数"被打掉了"？<br>
+  （ii）<strong>求导合法化靠什么</strong>：形式求导所得积分要在哪个范围、用什么判别法验一致收敛？优函数怎么造（提示：$1+sx^2\ge2\sqrt s\,x$）？<br>
+  （iii）<strong>$\frac{\pi^2}{12}$ 的最后一步</strong>：$\varphi(1)=\int_0^1\varphi'(s)\,ds$ 怎么变成一个幂级数逐项积分的问题？$\sum\frac1{n^2}=\frac{\pi^2}{6}$ 在哪一步进场？</p>
+  <details class="answer">
+    <summary>梯子参考答案</summary>
+    <p>（i）$\frac{\partial}{\partial s}\frac{\ln(1+sx^2)}{x(1+x^2)}=\frac{x^2}{x(1+x^2)(1+sx^2)}=\frac{x}{(1+x^2)(1+sx^2)}$——对数消失，剩下有理函数，部分分式可积。这就是引入参数的全部动机。</p>
+    <p>（ii）在 $s\in[\alpha,\beta]\subset(0,+\infty)$（内闭）上验。AM-GM：$1+sx^2\ge2\sqrt s\,x\ge2\sqrt\alpha\,x$，故 $\frac{x}{(1+x^2)(1+sx^2)}\le\frac{1}{2\sqrt\alpha(1+x^2)}=:M(x)$，$M$ 与 $s$ 无关且 $\int_0^{+\infty}M$ 收敛——Weierstrass M 判别，一致收敛，故可积分号下求导。</p>
+    <p>（iii）算得 $\varphi'(s)=-\frac{\ln s}{2(1-s)}$（$s=1$ 处理解为极限）。由 $\varphi(0)=0$：$\varphi(1)=\int_0^1\varphi'(s)ds=-\int_0^1\frac{\ln s}{2(1-s)}ds\ \stackrel{t=1-s}{=}\ -\int_0^1\frac{\ln(1-t)}{2t}dt$。展开 $-\ln(1-t)=\sum_{n\ge1}\frac{t^n}{n}$，逐项积分：$\varphi(1)=\frac12\sum_{n\ge1}\frac1{n^2}=\frac12\cdot\frac{\pi^2}{6}=\frac{\pi^2}{12}$。$\zeta(2)$ 在最后一步进场（其求和属第 9 章领地，此处引用结论）。</p>
+  </details>
+  <details class="answer">
+    <summary>官方解答骨架（转录自官方参考答案）</summary>
+    <p><strong>第一步</strong>：由 $\lim\limits_{x\to0^+}\frac{\ln(1+x)}{\sqrt x}=\lim\limits_{x\to+\infty}\frac{\ln(1+x)}{\sqrt x}=0$ 得 $\ln(1+x)\le C\sqrt x$，从而被积函数 $\le\frac{C\sqrt s}{1+x^2}$，广义积分关于 $s\in[0,+\infty)$ 内闭一致收敛，$\varphi$ 在 $[0,+\infty)$ 连续。<span class="step-score">（2 分）</span></p>
+    <p><strong>第二步</strong>：形式求导所得积分 $\displaystyle\int_0^{+\infty}\frac{x}{(1+x^2)(1+sx^2)}dx$ 关于 $s\in(0,+\infty)$ 内闭一致收敛（用 $\frac{x}{(1+x^2)(1+sx^2)}\le\frac{1}{2\sqrt s\,(1+x^2)}$），故可积分号下求导。<span class="step-score">（4 分）</span></p>
+    <p><strong>第三步</strong>：部分分式：
+    $$\varphi'(s)=\frac1{1-s}\int_0^{+\infty}\!\left(\frac{x}{1+x^2}-\frac{sx}{1+sx^2}\right)dx=\frac1{2(1-s)}\ln\frac{1+x^2}{1+sx^2}\Big|_0^{+\infty}=-\frac{\ln s}{2(1-s)}$$
+    （$s=1$ 处理解为极限）。<span class="step-score">（8 分）</span></p>
+    <p><strong>第四步</strong>：结合 $\varphi(0)=0$：$\varphi(1)=-\displaystyle\int_0^1\frac{\ln s}{2(1-s)}ds=-\int_0^1\frac{\ln(1-s)}{2s}ds$（换元），展开 $-\ln(1-s)=\sum\frac{s^n}{n}$ 逐项积分取极限得 $\varphi(1)=\sum\limits_{n=1}^{+\infty}\frac1{2n^2}=\frac{\pi^2}{12}$。<span class="step-score">（12 分）</span></p>
+    <p><strong>第五步</strong>：同理 $\varphi(2)=-\displaystyle\int_{-1}^1\frac{\ln(1-s)}{2s}ds=\sum_{n=0}^{+\infty}\frac1{(2n+1)^2}=\frac{\pi^2}{8}$。<span class="step-score">（15 分）</span></p>
+    <p><strong>复盘</strong>：15 分里，前两步（连续性 2 分 + 求导合法化 4 分）全是本章动作二的合法性段落——M 判别各用一次（优函数 $\frac{C\sqrt s}{1+x^2}$ 与 $\frac{1}{2\sqrt s(1+x^2)}$）；第三步部分分式是计算功夫；第四、五步是幂级数逐项积分（第 9 章的接口）。注意第四步 $\varphi(2)$ 那一步：$\sum_n\frac1{2n}\!\left(\frac1n-\frac{(-1)^n}{n}\right)$ 只留下奇数项，$\sum\frac1{(2n+1)^2}=\frac{\pi^2}{6}-\frac{\pi^2}{24}=\frac{\pi^2}{8}$。<em>（题目与解答转录自第 16 届官方 PDF，见 <a href="真题索引/第16届_2024.md">真题索引</a>。）</em></p>
+  </details>
+</div>
+
+<h2>§9.5 熟练度训练场</h2>
+
+<p>理解只是入场券，<strong>考场上拼的是基本动作的速度</strong>。两种训练，每天 10 分钟：</p>
+
+<h3>训练一 · 翻卡快测（目标：每卡 10 秒内出答案）</h3>
+<div class="quiz" data-quiz="ch08-drill"></div>
+
+<h3>训练二 · 计时默写（写在纸上，掐表）</h3>
+<div class="calc box" data-tag="默写清单">
+  <p>① <strong>45 秒</strong>：默写两把 p 尺（∞ 端与 0 端的收敛范围、收敛时的值、$p=1$ 各是什么下场）；</p>
+  <p>② <strong>60 秒</strong>：默写 Weierstrass M 判别的完整陈述（两个前提 + 结论，含"一致收敛"的量词定义）；</p>
+  <p>③ <strong>90 秒</strong>：默写积分号下求导法五步流程（每步名称 + 干什么），并写出例 2 的答案 $F(a)=\frac{\pi}{2}-\arctan a$ 与 $F'(a)=-\frac1{1+a^2}$。</p>
+  <p><strong>过关标准</strong>：连续两天全对才算过。做不到就回到对应小节重读，再默。</p>
+</div>
+
+<h2>§10 六方向自测卡</h2>
+
+<div class="selftest">
+  <h3>合上书，拿张白纸，默写以下六项</h3>
+  <div class="st-item">
+    <p class="st-q"><em>=（它是什么）</em>　写出两类反常积分的定义（极限形式），并默写两把 p 尺的收敛范围。</p>
+    <details><summary>对照</summary><p>$\int_a^{+\infty}f:=\lim_{A\to+\infty}\int_a^A f$；瑕点 $a$：$\int_a^b f:=\lim_{\varepsilon\to0^+}\int_{a+\varepsilon}^b f$。∞ 端尺：$p&gt;1$ 收敛（值 $\frac{a^{1-p}}{p-1}$）；0 端尺：$p&lt;1$ 收敛（值 $\frac1{1-p}$）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>←（什么带来它）</em>　"一致收敛"这个概念是被什么需求逼出来的？它和第 2 章哪条通则同源？</p>
+    <details><summary>对照</summary><p>被"交换两个极限过程"的需求逼出：$\lim_{s\to s_0}$、$\frac{d}{ds}$、$\int ds$ 想穿过 $\int_a^{+\infty}$（即 $\lim_{A\to+\infty}$），需要尾巴 $\int_A^{+\infty}f(x,s)dx$ 一致细。与第 0.5 章量词顺序通则、第 2 章一致连续同源：$\exists A_0$ 提到 $\forall s$ 前面——统一门槛不依赖点。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>→（它带来什么）</em>　一致收敛解锁的三大运算 + 它喂出来的两个真题结论。</p>
+    <details><summary>对照</summary><p>运算：积分号下取极限（连续）、Leibniz 求导 $\varphi'(s)=\int f_sdx$、换序。战利品：$\int_0^{+\infty}e^{-ax}\frac{\sin x}{x}dx=\frac{\pi}{2}-\arctan a$；第 16 届题二 $\varphi(1)=\frac{\pi^2}{12}$、$\varphi(2)=\frac{\pi^2}{8}$；第 13 届题五换序得 $\frac{\pi}{9}$。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>∈（实例）</em>　默写三个判决：一个 ∞ 端收敛、一个 ∞ 端发散、一个瑕点收敛，各给理由。</p>
+    <details><summary>对照</summary><p>$\int_1^{+\infty}\frac{dx}{x^2}=1$（$p=2&gt;1$）；$\int_1^{+\infty}\frac{dx}{x}=+\infty$（$p=1$ 分界线）；$\int_0^1\ln x\,dx=-1$（原函数直算，或 $|\ln x|\le x^{-1/2}$ 配 $p=\frac12&lt;1$）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>≠（区分）</em>　最易混的两对：两把 p 尺的方向；逐点收敛 vs 一致收敛。</p>
+    <details><summary>对照</summary><p>尺：∞ 端 $p&gt;1$（瘦得快），0 端 $p&lt;1$（炸得慢）——换元 $x=1/t$ 互转。收敛：逐点收敛的门槛 $A_0$ 允许依赖 $s$；一致收敛要求存在不依赖 $s$ 的统一 $A_0$——差一个量词顺序，三大运算的合法性全系在这上面。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>（为何要有它）</em>　为什么"逐点收敛"不够用？没有一致收敛，哪件武器报废？</p>
+    <details><summary>对照</summary><p>逐点收敛时，不同参数的尾巴变细速度可以天差地别，交换极限会出错（如形式求导 $\int\frac{\sin(ax)}{x}$ 得出发散的 $\int\cos(ax)dx$）。没有一致收敛，积分号下求导法报废——$\frac{\pi^2}{12}$ 这类积分就只能干瞪眼；M 判别是给它上保险的最顺手工具。</p></details>
+  </div>
+</div>
+
+<div class="net box" data-tag="间隔复习安排">
+  <p><strong>1 天后</strong>：重做六方向自测卡（不翻书）+ 翻卡快测第二轮；<strong>3 天后</strong>：重做变式 1、变式 2 与真题节选的梯子问题 + 计时默写②③；<strong>1 周后</strong>：把 §3.6 五步流程默写一遍，独立重算例 2，确认翻卡全部"会了"。</p>
+  <p>本章是<strong>数分第 9 章</strong>（级数判敛与幂级数逐项积分——同一出"交换极限"大戏的离散版，$\sum\frac1{n^2}=\frac{\pi^2}{6}$ 的求和也在那里）的直接地基。</p>
+</div>
+
+<div class="chapnav">
+  <span><a href="ch07.html">← 第 7 章 · Riemann 可积性</a></span>
+  <span><a href="index.html">首页</a></span>
+  <span><a href="ch09.html">第 9 章 · 级数：判敛、一致收敛与幂级数 →</a></span>
+</div>
+
+</div>
+
+<script src="assets/quiz.js"></script>
+<script>
+/* §9.5 翻卡数据 */
+registerQuiz("ch08-drill", [
+  { q: "$\\int_1^{+\\infty}\\dfrac{dx}{x^p}$ 何时收敛？值是多少？", a: "$p>1$ 时收敛，值 $\\dfrac{1}{p-1}$（下限为 $1$ 时）；$p\\le1$ 时发散（$p=1$ 是 $\\ln X\\to+\\infty$）。" },
+  { q: "$\\int_0^1\\dfrac{dx}{x^p}$（瑕点 $0$）何时收敛？值是多少？", a: "$p&lt;1$ 时收敛，值 $\\dfrac{1}{1-p}$；$p\\ge1$ 时发散。方向与 ∞ 端那把尺相反！" },
+  { q: "两把 p 尺方向为什么相反？一句话。", a: "换元 $x=\\frac1t$ 把两端互换：$\\int_0^1 x^{-p}dx=\\int_1^{+\\infty}t^{p-2}dt$。∞ 端要瘦得快（$p$ 大），0 端要炸得慢（$p$ 小）。" },
+  { q: "「绝对收敛 ⟹ 收敛」对反常积分成立吗？反过来呢？", a: "成立（Cauchy 准则 + $\\left|\\int_{A_1}^{A_2}f\\right|\\le\\int_{A_1}^{A_2}|f|$）。反向不成立：$\\int_1^{+\\infty}\\frac{\\sin x}{x}dx$ 收敛但不绝对收敛（条件收敛）。" },
+  { q: "默写 Weierstrass M 判别（含参反常积分版）。", a: "$|f(x,s)|\\le M(x)$（$\\forall s\\in I$）且 $\\int_a^{+\\infty}M(x)dx$ 收敛 ⟹ $\\int_a^{+\\infty}f(x,s)dx$ 关于 $s\\in I$ 一致收敛（且绝对收敛）。" },
+  { q: "$\\int_a^{+\\infty}f(x,s)dx$ 关于 $s\\in I$ 一致收敛的定义？", a: "$\\forall\\varepsilon>0,\\ \\exists A_0$（只依赖 $\\varepsilon$），$\\forall A>A_0,\\ \\forall s\\in I:\\ \\left|\\int_A^{+\\infty}f(x,s)dx\\right|&lt;\\varepsilon$。命门：$A_0$ 不依赖 $s$。" },
+  { q: "积分号下求导 $\\varphi'(s)=\\int f_s\\,dx$ 需要什么条件？", a: "① $f,f_s$ 连续；② $\\int f(x,s)dx$ 对每个 $s$ 收敛；③ $\\int f_s(x,s)dx$ 关于 $s$ 一致收敛（内闭即可）。③ 是灵魂，省略必扣分。" },
+  { q: "含参求导法算积分的五步流程？", a: "引入参数 → 验证一致收敛（M 判别）→ 求导穿过积分号 → 算出新积分 → 回积并用白送的特殊值定常数。" },
+  { q: "$\\varphi(s)$ 连续（积分号下取极限）的条件？", a: "$f(x,s)$ 连续 + $\\int f(x,s)dx$ 关于 $s$ 一致收敛。直观：交换两个极限，需要「收敛速度不依赖参数」。" },
+  { q: "$\\int_0^{+\\infty}e^{-ax}\\sin x\\,dx$（$a>0$）= ？", a: "$\\dfrac{1}{a^2+1}$——例 2 求导后算出的那个新积分；再回积定常数得 $\\int_0^{+\\infty}e^{-ax}\\frac{\\sin x}{x}dx=\\frac{\\pi}{2}-\\arctan a$。" }
+]);
+</script>
+
+<script>
+/* §3.3 p 尺探索器 */
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  var svg = document.getElementById("pr-svg");
+  var out = document.getElementById("pr-out");
+  var pS = document.getElementById("pr-p");
+  var xS = document.getElementById("pr-x");
+
+  function mk(tag, attrs) {
+    var el = document.createElementNS(NS, tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    svg.appendChild(el);
+    return el;
+  }
+  function txt(x, y, s, attrs) {
+    var t = mk("text", attrs || {});
+    t.setAttribute("x", x); t.setAttribute("y", y);
+    t.textContent = s;
+    return t;
+  }
+  /* 左图几何：x∈[1,50] → px [60,380]；y∈[0,1] → py [255,45] */
+  function LX(v) { return 60 + (v - 1) / 49 * 320; }
+  function LY(y) { return 255 - y * 210; }
+  /* 右图几何：X∈[1,50] → px [430,700] */
+  function RX(v) { return 430 + (v - 1) / 49 * 270; }
+  function area(X, p) {
+    if (Math.abs(p - 1) < 1e-9) return Math.log(X);
+    return (Math.pow(X, 1 - p) - 1) / (1 - p);
+  }
+
+  /* 静态坐标轴与标注 */
+  mk("line", { x1: 60, y1: 255, x2: 384, y2: 255, stroke: "#2b2620", "stroke-width": 1.8 });
+  mk("line", { x1: 60, y1: 255, x2: 60, y2: 42, stroke: "#2b2620", "stroke-width": 1.8 });
+  txt(60, 272, "1", { "font-size": 12, "text-anchor": "middle", fill: "#2b2620" });
+  txt(380, 272, "50", { "font-size": 12, "text-anchor": "middle", fill: "#2b2620" });
+  txt(46, 48, "1", { "font-size": 12, "text-anchor": "end", fill: "#2b2620" });
+  txt(220, 292, "左：y = 1/x^p 与 [1, X] 上的阴影面积", { "font-size": 12, "text-anchor": "middle", fill: "#5c554b" });
+  mk("line", { x1: 430, y1: 255, x2: 704, y2: 255, stroke: "#2b2620", "stroke-width": 1.8 });
+  mk("line", { x1: 430, y1: 255, x2: 430, y2: 42, stroke: "#2b2620", "stroke-width": 1.8 });
+  txt(430, 272, "1", { "font-size": 12, "text-anchor": "middle", fill: "#2b2620" });
+  txt(700, 272, "50", { "font-size": 12, "text-anchor": "middle", fill: "#2b2620" });
+  txt(565, 292, "右：累计面积 A(X) = ∫₁^X dx/x^p 的走向", { "font-size": 12, "text-anchor": "middle", fill: "#5c554b" });
+
+  var curve = mk("path", { fill: "none", stroke: "#2b2620", "stroke-width": 2.2 });
+  var shade = mk("path", { fill: "#0f766e", opacity: 0.22, stroke: "none" });
+  var vline1 = mk("line", { stroke: "#be123c", "stroke-width": 1.6, "stroke-dasharray": "5 4" });
+  var dot1 = mk("circle", { r: 4.5, fill: "#be123c" });
+  var acurve = mk("path", { fill: "none", stroke: "#1d4ed8", "stroke-width": 2.2 });
+  var vline2 = mk("line", { stroke: "#be123c", "stroke-width": 1.6, "stroke-dasharray": "5 4" });
+  var dot2 = mk("circle", { r: 4.5, fill: "#1d4ed8" });
+  var ceil = mk("line", { stroke: "#b45309", "stroke-width": 1.8, "stroke-dasharray": "7 5" });
+  var ceilLab = txt(436, 0, "", { "font-size": 12, fill: "#b45309", "font-weight": "bold" });
+  var aMax = txt(424, 48, "", { "font-size": 11, "text-anchor": "end", fill: "#5c554b" });
+
+  function update() {
+    var p = parseFloat(pS.value), X = parseFloat(xS.value);
+    var i, v, y;
+    /* 左图：函数曲线 */
+    var d = "";
+    for (i = 0; i <= 160; i++) {
+      v = 1 + i / 160 * 49;
+      y = Math.pow(v, -p);
+      d += (i === 0 ? "M" : "L") + LX(v).toFixed(1) + "," + LY(y).toFixed(1) + " ";
+    }
+    curve.setAttribute("d", d);
+    /* 左图：[1, X] 阴影 */
+    var sd = "M" + LX(1).toFixed(1) + ",255 L" + LX(1).toFixed(1) + "," + LY(1).toFixed(1) + " ";
+    for (i = 1; i <= 120; i++) {
+      v = 1 + i / 120 * (X - 1);
+      y = Math.pow(v, -p);
+      sd += "L" + LX(v).toFixed(1) + "," + LY(y).toFixed(1) + " ";
+    }
+    sd += "L" + LX(X).toFixed(1) + ",255 Z";
+    shade.setAttribute("d", sd);
+    vline1.setAttribute("x1", LX(X)); vline1.setAttribute("x2", LX(X));
+    vline1.setAttribute("y1", 45); vline1.setAttribute("y2", 255);
+    dot1.setAttribute("cx", LX(X)); dot1.setAttribute("cy", LY(Math.pow(X, -p)));
+
+    /* 右图：累计面积曲线（动态纵轴刻度） */
+    var A = area(X, p);
+    var ceilV = p > 1 ? 1 / (p - 1) : Infinity;
+    var maxY = Math.max(area(50, p), p > 1 ? ceilV : 0, 1) * 1.08;
+    function RY(a) { return 255 - a / maxY * 210; }
+    var ad = "";
+    for (i = 0; i <= 160; i++) {
+      v = 1 + i / 160 * 49;
+      ad += (i === 0 ? "M" : "L") + RX(v).toFixed(1) + "," + RY(area(v, p)).toFixed(1) + " ";
+    }
+    acurve.setAttribute("d", ad);
+    vline2.setAttribute("x1", RX(X)); vline2.setAttribute("x2", RX(X));
+    vline2.setAttribute("y1", 45); vline2.setAttribute("y2", 255);
+    dot2.setAttribute("cx", RX(X)); dot2.setAttribute("cy", RY(A));
+    aMax.textContent = maxY.toFixed(1);
+    if (p > 1) {
+      ceil.setAttribute("x1", 430); ceil.setAttribute("x2", 700);
+      ceil.setAttribute("y1", RY(ceilV)); ceil.setAttribute("y2", RY(ceilV));
+      ceil.style.display = "";
+      ceilLab.setAttribute("y", Math.max(RY(ceilV) - 6, 14));
+      ceilLab.textContent = "天花板 1/(p−1) = " + ceilV.toFixed(3);
+    } else {
+      ceil.style.display = "none";
+      ceilLab.textContent = "";
+    }
+
+    /* 判决文本 */
+    var cls, msg;
+    if (p > 1) {
+      cls = "ok";
+      msg = "p > 1：瘦得够快，A(X) 正奔向天花板 1/(p−1)，目前已装满 " + (100 * A / ceilV).toFixed(1) + "%——把 X 拖到底也撞不破它。";
+    } else if (Math.abs(p - 1) < 0.005) {
+      cls = "no";
+      msg = "p = 1：分界线本人。A(X) = ln X = " + A.toFixed(2) + "——慢得让人着急（X=50 才 ≈3.9），但它无界，永不到头。";
+    } else {
+      cls = "no";
+      msg = "p < 1：瘦得不够快，A(X) ≈ X^(1−p)/(1−p) 持续上天——没有天花板，面积无界。";
+    }
+    out.innerHTML = "当前：p = <strong>" + p.toFixed(2) + "</strong>，X = <strong>" + X.toFixed(1) + "</strong>，A(X) = ∫₁^X dx/x^p = <strong>" + A.toFixed(3) + "</strong><br><span class=\"" + cls + "\">" + msg + "</span>";
+  }
+  pS.addEventListener("input", update);
+  xS.addEventListener("input", update);
+  update();
+})();
+</script>
+
+</body>
+</html>

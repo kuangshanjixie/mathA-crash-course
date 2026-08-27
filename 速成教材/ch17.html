@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高代第 7 章 · Jordan 标准形：不可对角化的真相 —— 数学A速成讲义</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+<div class="wrap">
+
+<div class="bookbar">
+  <span><a href="index.html">← 返回首页</a></span>
+  <span>卷二 · 高等代数 · 第 7 章</span>
+</div>
+
+<div class="chapter-kicker">CHAPTER 7 · 高等代数</div>
+<h1>Jordan 标准形：不可对角化的真相</h1>
+
+<div class="exam box" data-tag="本章导览">
+  <p><strong>这一章在整张卷子上的位置</strong>：Jordan 标准形是"相似"这条主线的终点站。它正面出场过一次——<strong>第 15 届题三（20 分）</strong>，官方解答 14 分点写的就是"几何重数为 1 ⟹ Jordan 标准形是单个 Jordan 块"；<strong>第 17 届题四（15 分）</strong>第 (1) 问的链顶构造 $p_i(\mathcal A)^{m_i-1}\alpha_i\ne0$ 与它是<strong>同一个动作</strong>在一般数域上的重播。更多年份它以"可对角化 ⟺ 最小多项式无重根"的低配形态藏在高代题里（第 15 届题四）。约值 <strong>5–10 分的步骤分</strong>，而且是把循环向量、$\mathrm{gm}=1$、$\mu=\chi$ 这类证明题说到点子上的<strong>官方语言</strong>。</p>
+  <p><strong>学完你能</strong>：① 默写 $J_k(\lambda)$ 与 Jordan 定理，连同三条接口（am = 阶数和、gm = 块个数、最小多项式指数 = 最大块阶数）；② 用 $\chi_A$ 与 $\operatorname{rank}(A-\lambda I)$ 三分钟定出 $n\le4$ 矩阵的 Jordan 形，并亲手造出一条 Jordan 链验证；③ 用二项式公式算 $J^n$、完整证明 $\rho(A)&lt;1\iff A^n\to O$；④ 背出"$\mathrm{gm}=1\iff$ 单块 $\iff$ 循环向量 $\iff m_A=\chi_A$"的完整回环（第 15 届题三的整张图景）；⑤ 一句话说清 $e^A$ 为什么永远收敛、在 Jordan 块上为什么只剩有限项。</p>
+  <p><strong>前置</strong>：卷二第 5 章（特征值、代数重数 am 与几何重数 gm）、第 6 章（Cayley–Hamilton 与最小多项式）、第 2 章（直和分解）；数分第 2 章的极限语言（尤其"$n^j q^n\to0\ (|q|&lt;1)$"那一句）。</p>
+</div>
+
+<h2>§1 开场谜题：那块不肯对角化的矩阵，最像对角阵的样子是什么</h2>
+
+<div class="hook box" data-tag="开场谜题">
+  <p>第 5 章我们撞见过一块石头：$A=\begin{pmatrix}2&amp;1\\0&amp;2\end{pmatrix}$。它不肯对角化。回忆一下死因：特征多项式 $\chi_A(\lambda)=(\lambda-2)^2$，代数重数 $\mathrm{am}=2$；但
+  $$A-2I=\begin{pmatrix}0&amp;1\\0&amp;0\end{pmatrix},\qquad \ker(A-2I)=\operatorname{span}\{e_1\},$$
+  特征子空间只有 <strong>1 维</strong>——几何重数 $\mathrm{gm}=1&lt;\mathrm{am}=2$。对角化需要两个无关特征向量，它只交得出 $e_1$ 一个。<strong>对角化，卒。</strong></p>
+  <p>但等等。看看 $A$ 对另一个标准基向量 $e_2$ 干了什么：
+  $$Ae_2=\begin{pmatrix}1\\2\end{pmatrix}=e_1+2e_2,\qquad\text{即}\quad(A-2I)e_2=e_1,\quad(A-2I)^2e_2=0.$$
+  $e_2$ 不是特征向量，但它<strong>只偏离一步</strong>：被 $A-2I$ 打一下，正好落进特征子空间；再打一拳，归零。换句话说，$e_2$ 是一条长度为 2 的"链"的链顶：$e_2\mapsto e_1\mapsto0$。</p>
+  <p>现在把基换成这条链 $\{e_1,e_2\}$（本来就是标准基），问 $A$ 在这组基下的矩阵是什么——<strong>是它自己</strong>：$\begin{pmatrix}2&amp;1\\0&amp;2\end{pmatrix}$。那超对角线上的 $1$ 不是缺陷，是这条链的<strong>签名</strong>：它精确记录着"$e_2$ 被 $A-\lambda I$ 倒进 $e_1$"这件事。</p>
+  <p>于是开场问题的答案有点反直觉：<strong>$(\begin{smallmatrix}2&amp;1\\0&amp;2\end{smallmatrix})$ "最像对角阵的样子"就是它自己</strong>——它就是一个 Jordan 块。而真正惊人的是后面这句：<strong>任何</strong>复方阵都相似于若干 Jordan 块拼成的准对角阵。超对角线上那一排 $1$，就是"抵抗对角化"的全部内容——不多不少。不能对角化不是 chaos，是另一种严格的秩序：缺失的每个特征向量，都由一条不漏水的链顶上。</p>
+</div>
+
+<h2>§2 先看见它：链、条纹与秩序</h2>
+
+<div class="vision box" data-tag="直觉与图像">
+  <p>特征向量是"只被拉伸的方向"；<strong>广义特征向量</strong>是"被拉伸的同时往下一层漏的方向"——$(A-\lambda I)$ 每作用一次，它就往下倒一层，倒到最底是特征向量，再倒一次归零。一条长度为 $k$ 的链，对应一块 $k$ 阶 Jordan 块；而那条超对角线上的 $1$，随着 $N$ 的幂<strong>逐格上移</strong>，走出矩阵的边缘时链也就倒到了头。</p>
+</div>
+
+<figure>
+<svg viewBox="0 0 720 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="广义特征向量链与 N 的条纹上移">
+  <defs>
+    <marker id="arrJ" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+  <!-- 链 -->
+  <text x="70" y="30" font-size="13.5" fill="#2b2620" font-weight="bold">一条长度为 3 的链（对应一块 J₃(λ)）</text>
+  <circle cx="90" cy="80" r="17" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="90" y="85" font-size="13" fill="#1d4ed8" text-anchor="middle">α</text>
+  <text x="90" y="55" font-size="11.5" fill="#5c554b" text-anchor="middle">链顶：(A−λI)²α≠0</text>
+  <line x1="112" y1="80" x2="168" y2="80" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arrJ)"/>
+  <text x="140" y="70" font-size="11.5" fill="#7a4a12" text-anchor="middle">A−λI</text>
+  <circle cx="195" cy="80" r="17" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="195" y="80" font-size="10.5" fill="#1d4ed8" text-anchor="middle">(A−λI)α</text>
+  <line x1="217" y1="80" x2="273" y2="80" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arrJ)"/>
+  <text x="245" y="70" font-size="11.5" fill="#7a4a12" text-anchor="middle">A−λI</text>
+  <circle cx="322" cy="80" r="19" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="322" y="80" font-size="10" fill="#b45309" text-anchor="middle">(A−λI)²α</text>
+  <text x="322" y="55" font-size="11.5" fill="#5c554b" text-anchor="middle">链底 = 特征向量</text>
+  <line x1="346" y1="80" x2="398" y2="80" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arrJ)"/>
+  <text x="372" y="70" font-size="11.5" fill="#7a4a12" text-anchor="middle">A−λI</text>
+  <circle cx="418" cy="80" r="12" fill="#faf8f4" stroke="#be123c" stroke-width="2"/>
+  <text x="418" y="84" font-size="13" fill="#be123c" text-anchor="middle">0</text>
+  <text x="240" y="125" font-size="12" fill="#5c554b" text-anchor="middle">每倒一次降一层；倒 3 次走出链条归零 —— 这就是「幂零指数 3」</text>
+
+  <!-- N 的条纹 -->
+  <text x="70" y="160" font-size="13.5" fill="#2b2620" font-weight="bold">同一件事在矩阵里：N、N²、N³（k=4）的 1 逐条上移</text>
+  <!-- 三个 4x4 小网格 -->
+  <g font-size="9" fill="#5c554b">
+    <text x="92" y="182" text-anchor="middle">N</text>
+    <text x="162" y="182" text-anchor="middle">N²</text>
+    <text x="232" y="182" text-anchor="middle">N³</text>
+  </g>
+  <!-- N -->
+  <g>
+    <rect x="66" y="188" width="52" height="13" fill="none" stroke="#c9c2b6" stroke-width="0.6"/>
+    <rect x="66" y="201" width="52" height="13" fill="none" stroke="#c9c2b6" stroke-width="0.6"/>
+    <rect x="66" y="214" width="39" height="13" fill="none" stroke="#c9c2b6" stroke-width="0.6"/>
+    <rect x="79" y="188" width="13" height="13" fill="#1d4ed8" opacity="0.85"/>
+    <rect x="92" y="201" width="13" height="13" fill="#1d4ed8" opacity="0.85"/>
+    <rect x="105" y="214" width="13" height="13" fill="#1d4ed8" opacity="0.85"/>
+  </g>
+  <!-- N² -->
+  <g>
+    <rect x="136" y="188" width="52" height="26" fill="none" stroke="#c9c2b6" stroke-width="0.6"/>
+    <rect x="136" y="188" width="39" height="13" fill="none" stroke="#c9c2b6" stroke-width="0.6"/>
+    <rect x="162" y="188" width="13" height="13" fill="#b45309" opacity="0.85"/>
+    <rect x="175" y="201" width="13" height="13" fill="#b45309" opacity="0.85"/>
+  </g>
+  <!-- N³ -->
+  <g>
+    <rect x="206" y="188" width="52" height="13" fill="none" stroke="#c9c2b6" stroke-width="0.6"/>
+    <rect x="245" y="188" width="13" height="13" fill="#be123c" opacity="0.85"/>
+  </g>
+  <text x="290" y="200" font-size="12" fill="#5c554b">N⁴ = O：条纹走出矩阵，链倒到底</text>
+  <text x="290" y="218" font-size="12" fill="#5c554b">条纹上移一格 ⇔ 沿链往下倒一层</text>
+  <!-- 右栏：秩序 -->
+  <rect x="470" y="140" width="230" height="80" rx="8" fill="#ecf8f5" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="585" y="163" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">不可对角化 = 另一种秩序</text>
+  <text x="585" y="182" font-size="11.5" fill="#3d7a70" text-anchor="middle">缺几个特征向量，就补几条链；</text>
+  <text x="585" y="199" font-size="11.5" fill="#3d7a70" text-anchor="middle">链各占一块，块与块直和拼接</text>
+</svg>
+<figcaption>Jordan 块 = 一条链的档案：链顶逐级下漏、漏 $k$ 次归零；超对角线的 $1$ 随幂次上移，就是这件事的矩阵写法。</figcaption>
+</figure>
+
+<h2>§3 精确定义：块、定理、链</h2>
+
+<h3>3.1 Jordan 块与 $N$ 的条纹（含 $J^n$ 的二项式公式）</h3>
+
+<div class="def">
+  <p class="def-title">定义（Jordan 块）</p>
+  <p>$k$ 阶 <strong>Jordan 块</strong>：
+  $$J_k(\lambda)=\lambda I_k+N_k=\begin{pmatrix}\lambda&amp;1&amp;&amp;\\&amp;\lambda&amp;\ddots&amp;\\&amp;&amp;\ddots&amp;1\\&amp;&amp;&amp;\lambda\end{pmatrix}_{k\times k},$$
+  其中 $N_k$ 是超对角线全为 $1$、其余全为 $0$ 的矩阵（<strong>幂零</strong>）。$1$ 阶块 $J_1(\lambda)=(\lambda)$ 就是普通对角元。</p>
+</div>
+
+<div class="symbol box" data-tag="逐符号朗读">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$J_k(\lambda)$</td><td>"以 $\lambda$ 为特征值的 $k$ 阶 Jordan 块"</td><td>不可对角化的<strong>最小砖块</strong>；$k=1$ 时退化成一个对角元</td></tr>
+    <tr><td>$\lambda I_k$</td><td>"$\lambda$ 倍的单位阵"</td><td>块里"可对角化"的那部分——拉伸</td></tr>
+    <tr><td>$N_k$</td><td>"超对角线上一排 1 的幂零阵"</td><td>块里"抵抗"的那部分——把每个基向量往下一个倒</td></tr>
+    <tr><td>$\lambda I_k+N_k$</td><td>"拉伸加下漏"</td><td>两部分<strong>可交换</strong>（$\lambda I$ 与谁都交换），这是下面二项式公式的命门</td></tr>
+  </table>
+</div>
+
+<p>先亲手把 $N$ 的幂算出来（$k=3$ 演示，规律一眼看穿）：
+$$N=\begin{pmatrix}0&amp;1&amp;0\\0&amp;0&amp;1\\0&amp;0&amp;0\end{pmatrix},\qquad
+N^2=\begin{pmatrix}0&amp;0&amp;1\\0&amp;0&amp;0\\0&amp;0&amp;0\end{pmatrix},\qquad
+N^3=O.$$
+每乘一次 $N$，那排 $1$ <strong>向上移一条对角线</strong>：$N^j$ 的第 $j$ 条超对角线为 $1$（$j&lt;k$），$N^{k-1}=E_{1k}$（只剩右上角一格），$N^k=O$。所以 $N$ 是幂零阵，<strong>幂零指数恰好是块阶数 $k$</strong>。</p>
+
+<p>于是 $J_k(\lambda)^n$ 可以硬算。因为 $\lambda I$ 与 $N$ <strong>可交换</strong>，二项式定理照用：</p>
+
+<div class="calc box" data-tag="关键公式：J 的 n 次幂">
+  <p>$$J_k(\lambda)^n=(\lambda I+N)^n=\sum_{j=0}^{n}\binom{n}{j}\lambda^{n-j}N^j
+  =\boxed{\ \sum_{j=0}^{k-1}\binom{n}{j}\lambda^{n-j}N^j\ }$$
+  （$j\ge k$ 时 $N^j=O$，无穷和自动截断成 <strong>$k$ 项</strong>。）写出来：
+  $$J_3(\lambda)^n=\begin{pmatrix}\lambda^n&amp;n\lambda^{n-1}&amp;\binom{n}{2}\lambda^{n-2}\\0&amp;\lambda^n&amp;n\lambda^{n-1}\\0&amp;0&amp;\lambda^n\end{pmatrix}.$$</p>
+  <p>读法：对角线上是 $\lambda^n$（指数增长/衰减），第 $j$ 条超对角线上是 $\binom{n}{j}\lambda^{n-j}$（<strong>多项式 × 指数</strong>）。这个"多项式 × 指数"的形态，就是 §3.4 极限判据的全部素材。</p>
+</div>
+
+<div class="think">
+  <p>先动手，别翻答案。<strong>自己验证 $J_2(\lambda)^n=\begin{pmatrix}\lambda^n&amp;n\lambda^{n-1}\\0&amp;\lambda^n\end{pmatrix}$</strong>：用二项式公式算一遍，再用数学归纳法验 $n=2,3$。然后回答：$\binom{n}{j}$ 在 $j&gt;n$ 时按约定为 $0$，所以"$n&lt;k-1$ 时公式对吗"？</p>
+  <details class="answer">
+    <summary>对照</summary>
+    <p>$J_2(\lambda)^n=\lambda^nI+n\lambda^{n-1}N+\binom{n}{2}\lambda^{n-2}N^2+\cdots$，而 $N^2=O$，故只剩两项：$\lambda^nI+n\lambda^{n-1}N=\begin{pmatrix}\lambda^n&amp;n\lambda^{n-1}\\0&amp;\lambda^n\end{pmatrix}$。归纳法：$n=1$ 显然；设成立，则 $J^{n+1}=J^nJ=\begin{pmatrix}\lambda^{n+1}&amp;\lambda^n+n\lambda^n\\0&amp;\lambda^{n+1}\end{pmatrix}$，$n+1$ 恰为归纳要求的系数。$n&lt;k-1$ 时公式依然对：和式里 $j&gt;n$ 的项 $\binom{n}{j}=0$ 自动消失，写"$k-1$ 项截断"只是为了省纸。</p>
+  </details>
+</div>
+
+<h3>3.2 亲手摸一摸条纹上移与 $J^n$ 的三种命运（交互）</h3>
+
+<div class="widget" id="jordan-widget">
+  <p class="w-title">▶ Jordan 条纹探索器：拖 k、λ、n，亲眼看条纹上移、鼓包与三种极限命运</p>
+  <p class="w-row">左图：$J_k(\lambda)^n$ 的<strong>矩阵热力图</strong>（蓝格深浅 = 元素绝对值的相对大小，空格为 0）——注意 $n$ 增大时条纹逐条"点亮"再整体褪色或爆掉。右图：$\max|J^m$ 的元素$|$ 随 $m$ 的走势（对数刻度，红点 = 当前 $n$）。</p>
+  <div class="w-row"><label>块阶数 k（2–5，块越大条纹越多）</label>
+  <input type="range" id="jw-k" min="2" max="5" step="1" value="3"></div>
+  <div class="w-row"><label>λ（−1.2 到 1.2；|λ| 与 1 的大小决定命运）</label>
+  <input type="range" id="jw-l" min="-1.2" max="1.2" step="0.05" value="0.85"></div>
+  <div class="w-row"><label>幂次 n（1–30，慢慢拖，盯着鼓包）</label>
+  <input type="range" id="jw-n" min="1" max="30" step="1" value="4"></div>
+  <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start">
+    <svg id="jw-svgL" viewBox="0 0 330 320" xmlns="http://www.w3.org/2000/svg" style="max-width:330px"></svg>
+    <svg id="jw-svgR" viewBox="0 0 370 320" xmlns="http://www.w3.org/2000/svg" style="max-width:370px"></svg>
+  </div>
+  <div class="w-verdict" id="jw-out">加载中……（需要启用 JavaScript）</div>
+  <p class="w-row" style="font-size:0.88em;color:#5c554b">玩出这三个体验再往下走：<strong>①</strong> $k=3,\ \lambda=0.85$，把 $n$ 从 1 拖到 30：先看条纹逐条点亮（$n\ge2$ 才有 $\binom{n}{2}$），再看右上角 $\binom{n}{2}\lambda^{n-2}$ <strong>先涨后落</strong>拱出一个鼓包——多项式开局占优、指数后来居上，这就是"$n^j|\lambda|^n\to0$"的现场；<strong>②</strong> $\lambda$ 拖到 $1.00$：对角线永远是 $1$，超对角线上 $n,\binom{n}{2}$ 一路多项式增长——$|\lambda|=1$ 的块<strong>徘徊</strong>，$k\ge2$ 时无界，绝不 $\to O$；<strong>③</strong> $\lambda=1.15$ 与 $\lambda=-1.15$ 各试一次：都爆炸，但负 λ 时元素正负交错——判极限只问 $|\lambda|$，这就是谱半径用模长定义的原因。</p>
+</div>
+
+<h3>3.3 Jordan 标准形定理：存在、唯一、三条接口</h3>
+
+<div class="def">
+  <p class="def-title">定理（Jordan 标准形）</p>
+  <p>设 $A\in M_n(\mathbb{C})$（或 $\mathcal A$ 是复线性空间 $V$ 上的线性变换）。则存在可逆 $P$ 使
+  $$P^{-1}AP=J=\operatorname{diag}\bigl(J_{k_1}(\lambda_1),\,J_{k_2}(\lambda_2),\,\dots,\,J_{k_s}(\lambda_s)\bigr),$$
+  称为 $A$ 的 <strong>Jordan 标准形</strong>。<strong>存在性</strong>：总可以；<strong>唯一性</strong>：全体 Jordan 块（作为多重集合）由 $A$ 唯一决定，<strong>不计块的排列次序</strong>。$J$ 中各 $\lambda_i$ 可以有重复（同一个特征值可以占好几块）。</p>
+</div>
+
+<p>定理由两句话提供全部信息量——记住它们，考场上 Jordan 形就是读数游戏：</p>
+
+<div class="net box" data-tag="三条接口（与第 5、6 章全部对上）">
+  <p>对每个特征值 $\lambda$：</p>
+  <p>$$\underbrace{\mathrm{am}(\lambda)}_{\chi_A\text{ 中 }(x-\lambda)\text{ 的指数}}=\ \lambda\text{ 各块阶数之和};\qquad
+  \underbrace{\mathrm{gm}(\lambda)}_{\dim\ker(A-\lambda I)\,=\,n-\operatorname{rank}(A-\lambda I)}=\ \lambda\text{ 的块个数};$$</p>
+  <p>$$m_A(x)=\prod_{\lambda}(x-\lambda)^{d_\lambda},\qquad d_\lambda=\lambda\text{ 的}\textbf{最大块阶数}.$$</p>
+  <p>推论（第 5 章回环）：$A$ 可对角化 $\iff$ 每个块都是 $1$ 阶 $\iff$ 每个 $\lambda$ 都有 $\mathrm{gm}=\mathrm{am}$ $\iff m_A$ 无重根。接口两头说的是同一件事：块全 $1$ 阶时 $J$ 本身就是对角阵。</p>
+</div>
+
+<p>为什么 gm 恰好数出块数？看单块就够：$J_k(\lambda)-\lambda I=N_k$，$\ker N_k=\operatorname{span}\{e_1\}$ 恰为 <strong>1 维</strong>——每个块向特征子空间<strong>只贡献一个</strong>特征向量（链底）。块与块直和，特征子空间维数 = 块数。而 am 数出阶数和，是因为 $\chi_A=\chi_J=\prod(x-\lambda_i)^{k_i}$。最小多项式那边：$(J_k(\lambda)-\lambda I)^{k-1}=N^{k-1}\ne O$ 而 $N^k=O$，故单块的最小多项式是 $(x-\lambda)^k$；多块取 lcm，指数落在<strong>最大块</strong>上。</p>
+
+<div class="warn box" data-tag="唯一性的口径：不计次序，但块本身一个不能差">
+  <p>"唯一"是说<strong>块的多重集合</strong>唯一：$\operatorname{diag}(J_2(2),J_1(3))$ 与 $\operatorname{diag}(J_1(3),J_2(2))$ 是同一份 Jordan 形（块换个次序而已，相似于同一个 $A$）；但 $\operatorname{diag}(J_3(2),J_1(2))$ 与 $\operatorname{diag}(J_2(2),J_2(2))$ <strong>不是</strong>同一份——虽然它们有相同的特征多项式 $(x-2)^4$、相同的 $\mathrm{gm}=2$。区分它们要再看一眼 $\dim\ker(A-\lambda I)^2$ 或最小多项式（§9 变式 2 就是这道坎）。</p>
+</div>
+
+<h3>3.4 广义特征向量与链：$P$ 从哪儿来</h3>
+
+<div class="def">
+  <p class="def-title">定义（广义特征向量 · 根子空间 · Jordan 链）</p>
+  <p>设 $\lambda$ 是 $A$ 的特征值。若 $\alpha\ne0$ 且存在 $k\ge1$ 使 $(A-\lambda I)^k\alpha=0$，称 $\alpha$ 为属于 $\lambda$ 的<strong>广义特征向量</strong>；最小的那个 $k$ 叫它的<strong>级</strong>。全体广义特征向量（含 $0$）组成<strong>根子空间</strong>
+  $$V_\lambda=\ker(A-\lambda I)^{\mathrm{am}(\lambda)}=\ker(A-\lambda I)^{n}.$$</p>
+  <p>若 $\alpha$ 是 $k$ 级的（即 $(A-\lambda I)^k\alpha=0$ 而 $(A-\lambda I)^{k-1}\alpha\ne0$），则
+  $$\alpha,\ (A-\lambda I)\alpha,\ \dots,\ (A-\lambda I)^{k-1}\alpha$$
+  线性无关，称为一条 <strong>Jordan 链</strong>；链底 $(A-\lambda I)^{k-1}\alpha$ 是真正的特征向量。按<strong>链底在前</strong>的顺序取基 $\{\,(A-\lambda I)^{k-1}\alpha,\ \dots,\ (A-\lambda I)\alpha,\ \alpha\,\}$，$A$ 在它们张成的不变子空间上的矩阵恰为 $J_k(\lambda)$。</p>
+</div>
+
+<p>链为什么线性无关？一行推演：设 $\sum_{j=0}^{k-1}c_j(A-\lambda I)^j\alpha=0$，两边作用 $(A-\lambda I)^{k-1}$，只剩 $c_0(A-\lambda I)^{k-1}\alpha=0$，得 $c_0=0$；再作用 $(A-\lambda I)^{k-2}$ 得 $c_1=0$……逐级剥光。<strong>"逐级作用剥系数"是处理链的标准手法</strong>，第 15 届题三 18 分点背后就是它。</p>
+
+<p>整个空间怎么被链拼满？靠维数递增链 $\ker(A-\lambda I)\subseteq\ker(A-\lambda I)^2\subseteq\cdots$。记
+$$d_j=\dim\ker(A-\lambda I)^j\quad(j=0,1,2,\dots),\qquad d_0=0.$$
+从块上直接数（每块 $J_t(\lambda)$ 贡献 $\min(j,t)$）：</p>
+
+<div class="net box" data-tag="维数链定块（实战的遥控器）">
+  <p>$$d_j-d_{j-1}=\#\{\text{阶数}\ge j\text{ 的块}\},\qquad
+  \#\{\text{阶数恰为 }j\text{ 的块}\}=2d_j-d_{j-1}-d_{j+1}.$$</p>
+  <p>两条重要性质：① 增量 $d_j-d_{j-1}$ 随 $j$ <strong>单调不增</strong>（块数只会越数越少）——所以"$d_1=1,d_2=3$"这种数据<strong>不可能</strong>出现；② 链在 $j=d_\lambda$（最大块阶数）处封顶，$d_{d_\lambda}=\mathrm{am}(\lambda)$。</p>
+</div>
+
+<div class="calc box" data-tag="实战流程：n ≤ 4 的 Jordan 形，两支读数就够（偶尔三支）">
+  <p><strong>第 1 步</strong>：算 $\chi_A(x)=\prod(x-\lambda_i)^{a_i}$ → 每个 $\lambda_i$ 的 $\mathrm{am}=a_i$（阶数和已知）。</p>
+  <p><strong>第 2 步</strong>：对每个 $\lambda_i$ 算 $\operatorname{rank}(A-\lambda_iI)$ → $\mathrm{gm}=n-\operatorname{rank}$（块个数已知）。</p>
+  <p><strong>第 3 步</strong>：用"阶数和 = am、块数 = gm"凑块。$\mathrm{am}\le3$ 时必唯一：</p>
+  <table>
+    <tr><th>am</th><th>gm</th><th>块结构</th></tr>
+    <tr><td>1</td><td>1</td><td>$(1)$</td></tr>
+    <tr><td>2</td><td>2 / 1</td><td>$(1,1)$ / $(2)$</td></tr>
+    <tr><td>3</td><td>3 / 2 / 1</td><td>$(1,1,1)$ / $(2,1)$ / $(3)$</td></tr>
+    <tr><td>4</td><td>4 / 3 / 2 / 1</td><td>$(1,1,1,1)$ / $(2,1,1)$ / <strong>$(3,1)$ 或 $(2,2)$</strong> / $(4)$</td></tr>
+  </table>
+  <p><strong>第 4 步（仅 am = 4、gm = 2 时需要）</strong>：再算一支 $d_2=\dim\ker(A-\lambda I)^2$：$d_2=3$ 是 $(3,1)$，$d_2=4$ 是 $(2,2)$（等价地，看 $m_A$ 中 $(x-\lambda)$ 的指数：$3$ 对 $(3,1)$，$2$ 对 $(2,2)$）。</p>
+</div>
+
+<h3>3.5 应用一：$A^n$ 与矩阵极限——谱半径判据</h3>
+
+<div class="def">
+  <p class="def-title">定义（谱半径）</p>
+  <p>$\rho(A)=\max\{|\lambda|:\lambda\text{ 是 }A\text{ 的特征值}\}$——特征值模长的最大值，即复平面上特征值离原点最远的距离。</p>
+</div>
+
+<div class="def">
+  <p class="def-title">定理（幂收敛判据）</p>
+  <p>$$A^n\to O\ (n\to\infty)\iff \rho(A)&lt;1.$$</p>
+  <p>（$A^n\to O$ 指每个元素都趋于 $0$，等价于任一种矩阵范数趋于 $0$。）</p>
+</div>
+
+<p>直觉一眼看穿：$A^n=PJ^nP^{-1}$，问题化到每个块上；块 $J_k(\lambda)^n$ 的元素是 $\binom{n}{j}\lambda^{n-j}$——<strong>多项式 $\binom{n}{j}\sim n^j/j!$ 与指数 $\lambda^{n-j}$ 赛跑，指数永远赢</strong>（$|\lambda|&lt;1$ 时 $n^j|\lambda|^n\to0$）。$|\lambda|=1$ 对角线上不衰减、$|\lambda|&gt;1$ 直接爆炸。完整证明就是 §8 例 2——它是本章两件武器（Jordan 化归 + 二项式公式）的第一次联合作战。</p>
+
+<h3>3.6 应用二：$e^A$ 与矩阵函数（一句话版）</h3>
+
+<p>定义 $e^A=\sum_{n=0}^{\infty}\frac{A^n}{n!}$。它<strong>永远收敛</strong>：逐个元素看，被 $\sum\frac{\|A\|^n}{n!}=e^{\|A\|}$ 压住，绝对收敛。在 Jordan 块上，$\lambda I$ 与 $N$ 可交换，故
+$$e^{J_k(\lambda)}=e^{\lambda I}\,e^{N}=e^{\lambda}\Bigl(I+N+\frac{N^2}{2!}+\cdots+\frac{N^{k-1}}{(k-1)!}\Bigr),$$
+$N$ 幂零，级数<strong>只剩有限项</strong>。更一般地，任何解析函数 $f$ 都按同一图案定义在块上：对角线 $f(\lambda)$、第一超对角线 $f'(\lambda)$、第二超对角线 $f''(\lambda)/2!$……——所谓"$\arctan A$ 有意义"这类黑话，底层就是这张条纹表。<strong>初赛只要记住：$e^A$ 永远收敛，块上有限项；决赛（常微分方程组 $\dot x=Ax$）才深入。</strong></p>
+
+<h3>3.7 循环向量回环：第 15 届题三的整张图景</h3>
+
+<div class="net box" data-tag="一个定理，四张脸（第 15 届题三收网）">
+  <p>对 $A\in M_n(\mathbb{C})$，以下四条互相等价：</p>
+  <p>① 存在<strong>循环向量</strong> $\alpha$：$\{\alpha,A\alpha,\dots,A^{n-1}\alpha\}$ 是 $\mathbb{C}^n$ 的一组基；<br>
+  ② 每个特征值 $\lambda$ 的 $\mathrm{gm}(\lambda)=1$（特征子空间全是一维）；<br>
+  ③ $A$ 的 Jordan 形中<strong>每个特征值恰好只占一个块</strong>；<br>
+  ④ $m_A(x)=\chi_A(x)$（最小多项式达到满次数 $n$）。</p>
+  <p>证明环路：② ⟺ ③ 是接口"gm = 块个数"的直接翻译；③ ⟺ ④ 是"最大块阶数 = 该 $\lambda$ 全部阶数 ⟺ 只有一块"；① ⟹ ② 用友矩阵（$\operatorname{rank}(cI-A)\ge n-1$，第 15 章）；③ ⟹ ① 在每个根子空间上取链顶 $\alpha_i$（$(A-\lambda_iI)^{d_i-1}\alpha_i\ne0$），令 $\alpha=\sum\alpha_i$——这就是第 15 届题三充分性的官方路线，§9 真题节选完整转录。</p>
+</div>
+
+<p>最后登记一个名字：Jordan 形要求特征值全在域内，所以在 $\mathbb{R}$、$\mathbb{Q}$ 上它可能不存在。但有一个<strong>任何数域上都有效</strong>的替代品——<strong>有理标准形（Frobenius 标准形）</strong>：$A$ 相似于若干友矩阵的直和，由不变因子唯一决定。第 15 届题三必要性里那个友矩阵，就是"每个特征值一块"时的单块形态。知道名字即可，初赛不会要求你算它。</p>
+
+<h2>§4 翻译轨：三个标准动作 + 一间练功房</h2>
+
+<p>Jordan 语言在卷面上只有三种用法：把 am/gm/秩的条件翻译成块结构；走流程求小阶 Jordan 形；用 Jordan 形算幂、判极限。练成反射，本章毕业。</p>
+
+<div class="trans box" data-tag="动作一：am / gm / 秩 ↔ 块结构（互译是本体）">
+  <p><strong>题面</strong>："$\lambda$ 的几何重数为 $k$" / "$(A-\lambda I)X=0$ 的解空间是 $k$ 维" / "$\operatorname{rank}(A-\lambda I)=n-k$"。</p>
+  <p><strong>翻译</strong>：三句话是<strong>同一件事</strong>：$\mathrm{gm}(\lambda)=k$，即 $\lambda$ 在 Jordan 形里<strong>恰好占 $k$ 个块</strong>。特别地 $\operatorname{rank}(A-\lambda I)=n-1\iff$ 单块。</p>
+  <p><strong>用在哪一步</strong>：第 15 届题三 14 分点"几何重数为 $1$ ⟹ Jordan 标准形是单个 $d_i$ 阶 Jordan 块"——官方一句话，背后是这条翻译。反过来也常用：题面给了块结构（如"存在 $\alpha$ 使 $(A-\lambda I)^{k-1}\alpha\ne0$ 而 $(A-\lambda I)^k\alpha=0$"），立刻读出"有一个 $k$ 阶块"。</p>
+</div>
+
+<div class="trans box" data-tag="动作二：求小阶 Jordan 形（三支读数的流程）">
+  <p><strong>题面</strong>："求 $A$ 的 Jordan 标准形"（$n\le4$）。</p>
+  <p><strong>翻译</strong>：§3.4 末尾的流程——$\chi_A$ 出 am（第一支读数），$\operatorname{rank}(A-\lambda I)$ 出 gm（第二支读数），凑块；只有 am = 4、gm = 2 时才需要第三支读数 $d_2$。<strong>值多少分</strong>：这类题通常 $\chi$ 与 am 占 2 分、秩与 gm 占 2 分、定块与结论占 2 分；若要 $P$，Jordan 链再造 2–4 分。</p>
+</div>
+
+<div class="trans box" data-tag="动作三：用 Jordan 形算 Aⁿ、判极限">
+  <p><strong>题面</strong>："计算 $A^n$" / "讨论 $n\to\infty$ 时 $A^n$ 的极限" / "迭代 $x_{k+1}=Ax_k$ 是否收敛到 $0$"。</p>
+  <p><strong>翻译</strong>：$A=PJP^{-1}$ ⟹ $A^n=PJ^nP^{-1}$，$J^n$ 逐块用二项式公式；判极限先算特征值模长，$\rho(A)&lt;1$ 即 $A^n\to O$。注意迭代 $x_k=A^kx_0$ 对<strong>任意</strong>初值都 $\to0$ 当且仅当 $A^n\to O$——谱半径判据直接接管。</p>
+</div>
+
+<h3>4.4 翻译练功房：像学语言一样，大量互译</h3>
+
+<p>下面 8 句，先全部写在纸上，再逐条展开对照。每条不超过 1 分钟。</p>
+
+<div class="trans box" data-tag="互译 8 句">
+  <p><strong>T1</strong>　自然→符号："$\lambda=3$ 是 $A$ 的二重特征值，但 $A$ 不能对角化。"</p>
+  <details class="answer"><summary>对照</summary><p>$\mathrm{am}(3)=2$（$\chi_A$ 含因子 $(x-3)^2$）且 $\mathrm{gm}(3)=1$（$\dim\ker(A-3I)=1$）——块结构只能是 $J_2(3)$ 一块。<strong>关键</strong>："二重但不能对角化"自动把块钉死，连秩都不用算。</p></details>
+  <p><strong>T2</strong>　找坑："某 $5$ 阶矩阵满足 $\dim\ker(A-2I)=1$，$\dim\ker(A-2I)^2=3$。"这组数据可能吗？</p>
+  <details class="answer"><summary>对照</summary><p><strong>不可能</strong>。增量 $d_j-d_{j-1}$ = 阶数 $\ge j$ 的块数，必须随 $j$ <strong>单调不增</strong>；这里 $d_1-d_0=1$ 而 $d_2-d_1=2&gt;1$，矛盾。直观：链一旦倒到底就不会再冒出新链。</p></details>
+  <p><strong>T3</strong>　符号→自然："$\chi_A(x)=(x-1)^3(x+2)$，$m_A(x)=(x-1)^2(x+2)$。"读出完整 Jordan 形。</p>
+  <details class="answer"><summary>对照</summary><p>$\lambda=1$：am $=3$（阶数和 3），最大块 $2$ 阶 ⟹ 块结构 $(2,1)$；$\lambda=-2$：am $=1$ ⟹ $(1)$。故 $J=\operatorname{diag}(J_2(1),\,1,\,-2)$。<strong>易错</strong>：把 $m_A$ 的指数当成"唯一块的阶数"——它只是<strong>最大</strong>块的阶数，剩下的阶数差由小块补齐。</p></details>
+  <p><strong>T4</strong>　自然→符号："$\lambda$ 在 $A$ 的 Jordan 形里恰好占一个块。"（写出两种等价符号）</p>
+  <details class="answer"><summary>对照</summary><p>$\mathrm{gm}(\lambda)=1$，即 $\dim\ker(A-\lambda I)=1$，即 $\operatorname{rank}(A-\lambda I)=n-1$；等价地 $m_A$ 中 $(x-\lambda)$ 的指数 $=\chi_A$ 中的指数（$=\mathrm{am}(\lambda)$）。第 15 届题三的"几何重数为 1"就是第一种说法。</p></details>
+  <p><strong>T5</strong>　判断（说理由）："$A^n\to O$ 当且仅当 $A$ 的特征值都小于 $1$。"</p>
+  <details class="answer"><summary>对照</summary><p><strong>错</strong>。正确判据是 $\rho(A)&lt;1$——模长小于 $1$。反例：$A=(-2)$，特征值 $-2&lt;1$，但 $A^n=(-2)^n$ 爆炸。复特征值更没有"小于"可言。看见幂的极限，先取模。</p></details>
+  <p><strong>T6</strong>　自然→符号："存在 $\alpha$ 使 $(A-\lambda I)^2\alpha=0$ 但 $(A-\lambda I)\alpha\ne0$。"这句话在 Jordan 形里买了什么？</p>
+  <details class="answer"><summary>对照</summary><p>买到<strong>至少一个阶数 $\ge2$ 的 $\lambda$-块</strong>：链 $\{(A-\lambda I)\alpha,\ \alpha\}$ 长成一块 $J_t(\lambda)$（$t\ge2$）。若又知 am $=2$，则恰好就是 $J_2(\lambda)$ 一块。链顶存在 ⟺ 大块存在，这就是第 15 届题三 14 分点"故存在 $\alpha_i$ 使 $(\mathbf A-\lambda_i\mathbf I)^{d_i-1}\alpha_i\ne0$"的读法。</p></details>
+  <p><strong>T7</strong>　计算：$J_3(2)^n$ 的 $(1,3)$ 元是多少？$n=3$ 时验证一次。</p>
+  <details class="answer"><summary>对照</summary><p>$(1,3)$ 元 $=\binom{n}{2}2^{\,n-2}$。$n=3$：$\binom{3}{2}\cdot2=6$；直接算 $(2I+N)^3=8I+12N+6N^2$，$(1,3)$ 元即 $N^2$ 的系数 $6$ ✓。<strong>易错</strong>：写成 $n(n-1)2^{n-2}$——$\binom{n}{2}=\frac{n(n-1)}{2}$，别把分母丢了。</p></details>
+  <p><strong>T8</strong>　符号→自然 + 追问："$\rho(A)=1$ 且所有模为 $1$ 的特征值都是单根（am = gm）。"$A^n$ 有界吗？$\to O$ 吗？</p>
+  <details class="answer"><summary>对照</summary><p>有界但不 $\to O$：模 $&lt;1$ 的块幂趋于 $O$；模 $=1$ 的特征值 am = gm 意味着对应块全为 $1$ 阶，$|\lambda^n|=1$ 有界不衰减。$\to O$ 失败正是因为对角线上 $\lambda^n$ 死不掉。这是例 2 判据的"临界版本"（§9 变式 1 完整证明）。</p></details>
+</div>
+
+<h2>§5 类型识别：什么信号在召唤 Jordan</h2>
+
+<div class="recog box" data-tag="识别反射表">
+  <table>
+    <tr><th>题面信号</th><th>反射</th></tr>
+    <tr><td>"不可对角化 / 不能对角化 / 没有足够多特征向量"</td><td>Jordan 形接班：缺的特征向量用链顶补，块替代对角元</td></tr>
+    <tr><td>"$A^n$ 的极限 / 有界 / 迭代 $x_{k+1}=Ax_k$ 趋于 $0$"</td><td>谱半径 $\rho(A)$：先算 $|\lambda|_{\max}$ 与 $1$ 比大小</td></tr>
+    <tr><td>"循环向量 / $\{\alpha,A\alpha,\dots\}$ 成基 / $m_A=\chi_A$"</td><td>每个特征值一个块（$\mathrm{gm}=1$）——第 15 届题三图景</td></tr>
+    <tr><td>"$\operatorname{rank}(A-\lambda I)$ / $(A-\lambda I)X=0$ 解空间维数"</td><td>$n-\operatorname{rank}=\mathrm{gm}=$ 块个数；秩 $=n-1$ 即单块</td></tr>
+    <tr><td>"最小多项式中 $(x-\lambda)$ 的指数"</td><td>$\lambda$ 的最大块阶数；am 与指数之差由小块补齐</td></tr>
+    <tr><td>"存在 $\alpha$：$(A-\lambda I)^{k-1}\alpha\ne0$，$(A-\lambda I)^k\alpha=0$"</td><td>一条长 $k$ 的链 → 一个 $\ge k$ 阶的块；逐级作用剥系数</td></tr>
+    <tr><td>"$\dim\ker(A-\lambda I)^j$ 给了一串数"</td><td>维数链定块：$d_j-d_{j-1}=$ 阶数 $\ge j$ 的块数（增量不增，防坑）</td></tr>
+    <tr><td>"$e^A$ / $f(A)$ / 矩阵幂级数"</td><td>化到块上：对角线 $f(\lambda)$，条纹 $f'(\lambda),f''(\lambda)/2!,\dots$；$e^A$ 永远收敛</td></tr>
+  </table>
+</div>
+
+<h2>§6 考法定位：它藏在哪里、值多少分</h2>
+
+<div class="exam box" data-tag="考法定位">
+  <table>
+    <tr><th>出处</th><th>题号</th><th>Jordan 扮演什么角色</th><th>分值权重</th></tr>
+    <tr><td>第 15 届（2023）</td><td>题三</td><td>正面主场：11 分点根子空间直和分解、<strong>14 分点"gm $=1$ ⟹ 单个 Jordan 块 ⟹ 链顶 $(\mathbf A-\lambda_i\mathbf I)^{d_i-1}\alpha_i\ne0$"</strong>、18 分点链顶的最小零化多项式</td><td>20 分大题，充分性主干全在本章</td></tr>
+    <tr><td>第 17 届（2025）</td><td>题四(1)</td><td>同一动作的一般数域版：准素分解后取 $p_i(\mathcal A)^{m_i-1}\alpha_i\ne0$ 的链顶，造 $\mu_{\mathcal A,\alpha}=\mu_{\mathcal A}$（即"单块/循环"条件 $\mu=\chi$ 的实现）</td><td>15 分大题的 5 分分点</td></tr>
+    <tr><td>第 15 届（2023）</td><td>题四</td><td>低配形态：由 $A^3=\frac{n^2}{4}A$ 得零化多项式无重根 ⟹ 可对角化（"块全 1 阶"的判别）</td><td>15 分大题的 10 分分点</td></tr>
+    <tr><td>教材级常规</td><td>—</td><td>"求 Jordan 标准形 / 求 $A^n$ / 判 $A^n\to O$"：近七届初赛未单独成题，但 $\rho(A)&lt;1\iff A^n\to O$ 是迭代收敛类论证的标准台词，按隐性步骤分备考</td><td>步骤分</td></tr>
+  </table>
+  <p><strong>规律</strong>：Jordan 标准形在初赛正面出场目前只有第 15 届题三，但它的两件随身武器——"$\mathrm{gm}=$ 块个数""最大块 $=m_A$ 指数"——披着循环向量、$\mu=\chi$、可对角化判别的外衣反复出现（15 届题三、题四，17 届题四）。证明题里 Jordan 的正确用法是<strong>当翻译工具</strong>：把 gm、秩、最小多项式的话互译成块结构，说完就走——而不是真的把 $J$ 和 $P$ 算出来摆在那里。</p>
+</div>
+
+<h2>§7 关系网：一块不肯对角化的矩阵，如何长成一套完整理论</h2>
+
+<p>本章地图：<span style="color:#b45309">三角形</span>是来源与动机，<span style="color:#1d4ed8">圆角矩形</span>是定义，<span style="color:#15803d">矩形</span>是定理，<span style="color:#7c3aed">六边形</span>是方法动作，<span style="color:#0f766e">椭圆</span>是应用出口。从左上角那块 $(\begin{smallmatrix}2&amp;1\\0&amp;2\end{smallmatrix})$ 出发，顺着箭头走一遍，就是本章的全部逻辑。</p>
+
+<figure>
+<svg viewBox="0 0 720 540" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Jordan 标准形关系网地图">
+  <defs>
+    <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+
+  <!-- 图例 -->
+  <polygon points="30,16 22,30 38,30" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5"/>
+  <text x="44" y="28" font-size="11.5" fill="#5c554b">来源·动机</text>
+  <rect x="116" y="17" width="22" height="13" rx="6.5" fill="#eef3fe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="144" y="28" font-size="11.5" fill="#5c554b">定义</text>
+  <rect x="196" y="17" width="22" height="13" fill="#ecf8f0" stroke="#15803d" stroke-width="1.5"/>
+  <text x="224" y="28" font-size="11.5" fill="#5c554b">定理</text>
+  <polygon points="272,23.5 278,16 292,16 298,23.5 292,31 278,31" fill="#f4effd" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="304" y="28" font-size="11.5" fill="#5c554b">方法·动作</text>
+  <ellipse cx="392" cy="23.5" rx="12" ry="7" fill="#ecf8f5" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="410" y="28" font-size="11.5" fill="#5c554b">应用·出口</text>
+
+  <!-- 来源三角 -->
+  <polygon points="110,58 58,124 162,124" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="110" y="90" font-size="12.5" fill="#7a4a12" text-anchor="middle" font-weight="bold">J₂(2) 不肯对角化</text>
+  <text x="110" y="107" font-size="11" fill="#7a4a12" text-anchor="middle">gm=1 小于 am=2</text>
+
+  <!-- 来源 → 链 -->
+  <line x1="168" y1="92" x2="234" y2="92" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="201" y="82" font-size="11" fill="#5c554b" text-anchor="middle">缺的特征向量</text>
+  <text x="201" y="108" font-size="11" fill="#5c554b" text-anchor="middle">拿什么补？</text>
+
+  <!-- 定义 1：链/根子空间 -->
+  <rect x="242" y="63" width="212" height="58" rx="29" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="348" y="88" font-size="13.5" fill="#1d4ed8" text-anchor="middle" font-weight="bold">广义特征向量链</text>
+  <text x="348" y="106" font-size="11" fill="#1d4ed8" text-anchor="middle">根子空间 ker(A−λI)ᵏ，逐级下漏</text>
+
+  <!-- 链 → Jordan 块 -->
+  <line x1="462" y1="92" x2="496" y2="92" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="479" y="82" font-size="11" fill="#5c554b" text-anchor="middle">链作基</text>
+
+  <!-- 定义 2：Jordan 块 -->
+  <rect x="504" y="63" width="190" height="58" rx="29" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="599" y="88" font-size="13.5" fill="#1d4ed8" text-anchor="middle" font-weight="bold">Jordan 块</text>
+  <text x="599" y="106" font-size="11" fill="#1d4ed8" text-anchor="middle">J_k(λ) = λI + N（幂零条纹）</text>
+
+  <!-- 定理 -->
+  <rect x="212" y="164" width="310" height="66" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="367" y="188" font-size="14" fill="#15803d" text-anchor="middle" font-weight="bold">Jordan 标准形定理</text>
+  <text x="367" y="205" font-size="11" fill="#4a7c59" text-anchor="middle">存在，且块唯一（不计次序）</text>
+  <text x="367" y="220" font-size="11" fill="#4a7c59" text-anchor="middle">am=阶数和 · gm=块个数 · m_A 指数=最大块</text>
+
+  <!-- 定义 → 定理 -->
+  <polyline points="300,121 300,142 262,142 262,164" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="216" y="140" font-size="11" fill="#5c554b" text-anchor="middle">根子空间直和 ⊕</text>
+  <polyline points="590,121 590,142 470,142 470,164" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="586" y="140" font-size="11" fill="#5c554b" text-anchor="middle">逐块拼装</text>
+
+  <!-- 定理 → 三方法 -->
+  <line x1="290" y1="230" x2="165" y2="278" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="180" y="252" font-size="11" fill="#5c554b">块怎么定</text>
+  <line x1="367" y1="230" x2="367" y2="278" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="377" y="258" font-size="11" fill="#5c554b">块上怎么算</text>
+  <line x1="450" y1="230" x2="565" y2="278" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="540" y="252" font-size="11" fill="#5c554b">幂往哪走</text>
+
+  <!-- 三方法（六边形） -->
+  <polygon points="75,305 100,277 200,277 225,305 200,333 100,333" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="150" y="301" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">维数链定块</text>
+  <text x="150" y="317" font-size="10" fill="#6a55a3" text-anchor="middle">dⱼ−dⱼ₋₁ = ≥j 阶块数</text>
+  <polygon points="292,305 317,277 417,277 442,305 417,333 317,333" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="367" y="301" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">二项式算幂</text>
+  <text x="367" y="317" font-size="10" fill="#6a55a3" text-anchor="middle">λI 与 N 可交换</text>
+  <polygon points="509,305 534,277 634,277 659,305 634,333 534,333" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="584" y="301" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">谱半径判极限</text>
+  <text x="584" y="317" font-size="10" fill="#6a55a3" text-anchor="middle">nʲ|λ|ⁿ→0（指数赢）</text>
+
+  <!-- 方法 → 出口 -->
+  <line x1="150" y1="333" x2="255" y2="406" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="150" y="375" font-size="11" fill="#5c554b">gm=1 ⟺ 单块</text>
+  <line x1="340" y1="333" x2="180" y2="410" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="262" y="392" font-size="11" fill="#5c554b" text-anchor="middle">逐块求 eᴶ</text>
+  <line x1="396" y1="333" x2="540" y2="406" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="486" y="362" font-size="11" fill="#5c554b">Jⁿ 公式代入</text>
+  <line x1="584" y1="333" x2="584" y2="404" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="594" y="372" font-size="11" fill="#5c554b">阈值 ρ=1</text>
+
+  <!-- 三出口（椭圆） -->
+  <ellipse cx="115" cy="440" rx="105" ry="32" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="115" y="436" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">eᴬ 永远收敛</text>
+  <text x="115" y="452" font-size="10.5" fill="#3d7a70" text-anchor="middle">矩阵函数入口（f(A) 条纹表）</text>
+  <ellipse cx="352" cy="440" rx="140" ry="32" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="352" y="436" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">循环向量收网</text>
+  <text x="352" y="452" font-size="10.5" fill="#3d7a70" text-anchor="middle">gm=1 ⟺ 单块 ⟺ m_A=χ_A（15 届题三）</text>
+  <ellipse cx="590" cy="440" rx="115" ry="32" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="590" y="436" font-size="12.5" fill="#0f766e" text-anchor="middle" font-weight="bold">Aⁿ→O ⟺ ρ(A)&lt;1</text>
+  <text x="590" y="452" font-size="10.5" fill="#3d7a70" text-anchor="middle">矩阵幂与迭代的收敛判据</text>
+</svg>
+<figcaption>一块 $(\begin{smallmatrix}2&amp;1\\0&amp;2\end{smallmatrix})$ 的抵抗 → 链与块 → 定理与三条接口 → 三件手上武器 → 三个出口。第 15 届题三就是"维数链定块 → 循环向量收网"这条边。</figcaption>
+</figure>
+
+<div class="net box" data-tag="画面感锚点（记这些，不记条文）">
+  <table>
+    <tr><th>节点</th><th>一句话画面</th><th>擅长场景</th></tr>
+    <tr><td>Jordan 块 $J_k(\lambda)$</td><td>对角线拉伸、超对角线把每个基向量往下一个倒</td><td>不可对角化的最小砖块</td></tr>
+    <tr><td>链与根子空间</td><td>水桶接力：链顶逐级下漏，链底是特征向量，再漏归零</td><td>造 $P$、证循环向量（15 届题三）</td></tr>
+    <tr><td>Jordan 定理</td><td>任何复方阵 = 若干块直和拼接，块表唯一</td><td>相似问题的终极化归</td></tr>
+    <tr><td>维数链 $d_j$</td><td>逐层加水，每层的新进人数 = 还没到底的链数</td><td>am/gm 不够时定块（$(3,1)$ vs $(2,2)$）</td></tr>
+    <tr><td>二项式算幂</td><td>条纹上写"多项式 × 指数"</td><td>$A^n$、$e^A$、极限判据</td></tr>
+    <tr><td>谱半径 $\rho(A)$</td><td>特征值离原点最远的那根半径，与 $1$ 比大小</td><td>$A^n\to O$、迭代收敛</td></tr>
+  </table>
+  <p><strong>和已学知识的焊接点</strong>：根子空间分解 $V=\bigoplus_i V_{\lambda_i}$ 就是第 2 章直和 + 第 6 章 Cayley–Hamilton 的产物；am/gm 两条接口直通第 5 章的对角化判据（块全 1 阶 ⟺ gm = am）；最小多项式指数 = 最大块，把第 6 章的"无重根 ⟺ 可对角化"升级为完整的块档案；"$n^j|\lambda|^n\to0$"与"级数 $\sum A^n/n!$ 收敛"则是数分第 2、9 章的旧相识。</p>
+</div>
+
+<h2>§8 例题：先看真人怎么想，再看卷面怎么写</h2>
+
+<h3>例 1 · 求 3 阶矩阵的 Jordan 标准形（约 8 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>"求 Jordan 标准形"不是 $\forall/\exists$ 型证明，是<strong>读数定型</strong>问题：存在性与唯一性由 Jordan 定理白送，任务只是确定那份有限的块表 $\{J_{k_i}(\lambda_i)\}$。骨架由结论形态直接给出：<strong>把每条接口的读数取齐，凑出唯一解</strong>。</p>
+  <p><span class="stage">【盘点】</span>库存三条：$\chi_A$（产出：各 $\lambda$ 的 am = 阶数和）；$\operatorname{rank}(A-\lambda I)$（产出：gm = 块个数）；§3.3 接口表（把两支读数翻译成块结构的字典）。需要 $P$ 时再加一条：Jordan 链（链顶 $\alpha$ 使 $(A-\lambda I)^{k-1}\alpha\ne0$）。</p>
+  <p><span class="stage">【会师】</span>倒推链：要定块 $\Longleftarrow$ 只需每个 $\lambda$ 的（阶数和， 块个数）$\Longleftarrow$ am 从 $\chi_A$ 读（<strong>工具六 · 划归</strong>：相似不变量 $\chi_A=\chi_J$），gm 从秩读（接口二）。am $\le3$ 时这两元方程组解唯一；am $=4$、gm $=2$ 时加读 $d_2$（§9 变式 2 的处境）。求 $P$ 的倒推：要 $P^{-1}AP=J$ $\Longleftarrow$ $P$ 的列按块排成链 $\Longleftarrow$ 每块取一个链顶 $\alpha$。</p>
+  <p><span class="stage">【定型】</span>卷面三步：$\chi$ 与 am → 秩与 gm → 定块句"故 $J=\cdots$"。求 $P$ 时逐列验证 $AP=PJ$——这不是冗余，是<strong>把卷面从"报答案"升级成"给证明"</strong>的 2 分。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 接口读数法</strong>：求 Jordan 形<strong>不要</strong>去凑相似变换——先把 $\chi_A$ 与 $\operatorname{rank}(A-\lambda I)$ 两支读数取齐，"am 定阶数和，gm 定块数"，块表就是唯一解。$P$ 只在题目点名要时才造，造法永远是链。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 1</strong>　求下列矩阵的 Jordan 标准形 $J$；并对（2）求可逆矩阵 $P$ 使 $P^{-1}AP=J$。
+  $$\text{（1）}\ A_1=\begin{pmatrix}2&amp;1&amp;0\\0&amp;2&amp;1\\0&amp;0&amp;2\end{pmatrix};\qquad
+  \text{（2）}\ A_2=\begin{pmatrix}2&amp;1&amp;0\\0&amp;2&amp;0\\1&amp;-1&amp;3\end{pmatrix}.$$</p>
+  <hr>
+  <p class="proof-line"><strong>解（1）</strong>　$\chi_{A_1}(\lambda)=(\lambda-2)^3$，唯一特征值 $2$，$\mathrm{am}(2)=3$。$A_1-2I=N_3$，$\operatorname{rank}(A_1-2I)=2$，故 $\mathrm{gm}(2)=3-2=1$。块数 1、阶数和 3，唯一可能：
+  $$J=J_3(2)=A_1\text{ 本身。}\ \square$$<span class="step-score">（2 分）</span></p>
+  <p class="proof-line"><strong>解（2）</strong>　按第三列展开：$\chi_{A_2}(\lambda)=(\lambda-3)(\lambda-2)^2$，故 $\mathrm{am}(2)=2$，$\mathrm{am}(3)=1$。<span class="step-score">（4 分）</span></p>
+  <p class="proof-line">$A_2-2I=\begin{pmatrix}0&amp;1&amp;0\\0&amp;0&amp;0\\1&amp;-1&amp;1\end{pmatrix}$，第 1、3 行无关，$\operatorname{rank}=2$，$\mathrm{gm}(2)=3-2=1$；$\mathrm{am}(3)=1$ 自动 $\mathrm{gm}(3)=1$。故 $\lambda=2$ 占一块 $J_2(2)$，$\lambda=3$ 占一块 $(3)$：
+  $$J=\begin{pmatrix}2&amp;1&amp;0\\0&amp;2&amp;0\\0&amp;0&amp;3\end{pmatrix}.$$<span class="step-score">（6 分）</span></p>
+  <p class="proof-line"><strong>造 $P$（链）</strong>：$(A_2-2I)^2=\begin{pmatrix}0&amp;0&amp;0\\0&amp;0&amp;0\\1&amp;0&amp;1\end{pmatrix}$，取 $\alpha=(0,1,0)^T$，则 $(A_2-2I)\alpha=(1,0,-1)^T=:\alpha_1\ne0$ 且 $(A_2-2I)^2\alpha=0$——$\{\alpha_1,\alpha\}$ 是一条长 2 的链。又 $(A_2-3I)X=0$ 给出 $\beta=(0,0,1)^T$。令 $P=(\alpha_1,\alpha,\beta)=\begin{pmatrix}1&amp;0&amp;0\\0&amp;1&amp;0\\-1&amp;0&amp;1\end{pmatrix}$，$\det P=1\ne0$。逐列验证：$A_2\alpha_1=2\alpha_1$，$A_2\alpha=\alpha_1+2\alpha$，$A_2\beta=3\beta$，即 $A_2P=PJ$，故 $P^{-1}A_2P=J$。$\square$<span class="step-score">（8 分）</span></p>
+  <p class="aside">书写点评：两支读数各占一个分点（$\chi$ 的 am、秩的 gm），缺一不可——只写 $J$ 不写依据按跳步扣过程分；求 $P$ 时不验证 $AP=PJ$ 是最常见的丢分，验证本身通常值 2 分。注意 $\alpha_1$ 必须写在 $P$ 的<strong>第一</strong>列（链底在前），顺序写反，$P^{-1}AP$ 就变成超对角线朝下的转置版。</p>
+</div>
+
+<h3>例 2 · $\rho(A)&lt;1\iff A^n\to O$（约 10 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>$\iff$ 型——查拆目标总表：拆两个方向，各证一半。$\Longleftarrow$ 方向是"任意 $A$"的极限命题（$\forall$ 型）；$\Longrightarrow$ 方向是"任意特征值"的模长估计（$\forall$ 型）。</p>
+  <p><span class="stage">【盘点】</span>库存四条：① Jordan 定理 $A=PJP^{-1}$（化归到块）；② 二项式公式 $J_k(\lambda)^n=\sum_{j=0}^{k-1}\binom{n}{j}\lambda^{n-j}N^j$（<strong>有限</strong>和，$k$ 固定）；③ 数分旧账：$n^jq^n\to0\ (|q|&lt;1)$（指数比多项式快）；④ 特征向量定义 $Ax=\lambda x$ 蕴含 $A^nx=\lambda^nx$。</p>
+  <p><span class="stage">【会师 · $\Longleftarrow$】</span>倒推：$A^n\to O$ $\Longleftarrow$ $J^n\to O$（$P,P^{-1}$ 固定，乘法保极限）$\Longleftarrow$ 每块 $J_k(\lambda)^n\to O$ $\Longleftarrow$ 每条条纹 $\binom{n}{j}\lambda^{n-j}\to0$ $\Longleftarrow$ $\bigl|\binom{n}{j}\lambda^{n-j}\bigr|\le n^j|\lambda|^{n-j}=n^j|\lambda|^n\cdot|\lambda|^{-j}\to0$（库存③）。链条上两个"<strong>有限</strong>"是命门：块数有限、每块条纹数（$=k$）有限，有限个趋于 $0$ 的量之和仍趋于 $0$——少了"块上有限项"，估计就收不拢。</p>
+  <p><span class="stage">【会师 · $\Longrightarrow$】</span>倒推：$\rho(A)&lt;1$ $\Longleftarrow$ 每个特征值 $|\lambda|&lt;1$ $\Longleftarrow$ $\lambda^n\to0$ $\Longleftarrow$ $A^nx=\lambda^nx$ 且 $A^n\to O$。<strong>工具三 · 特殊化</strong>：把矩阵序列的极限作用到一个特殊向量（特征向量）上，矩阵难题立刻降为复数列 $\lambda^n$ 的难题。</p>
+  <p><span class="stage">【定型】</span>两方向分开写、分开给分；$\Longleftarrow$ 的"化归"与"条纹估计"各占分点，估计里必须出现 $n^j|\lambda|^n\to0$ 的理由（一句"指数比多项式快"足够，这是数分已证结论）。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 化归 + 条纹估计</strong>：矩阵幂的渐近问题 = Jordan 块上"多项式 × 指数"的逐项估计。凡遇 $A^n$ 的极限/有界/收敛，第一反应永远是：先算 $\rho(A)$，再看临界带上的块阶数（§9 变式 1）。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 2</strong>　设 $A\in M_n(\mathbb{C})$。证明：$A^n\to O\ (n\to\infty)$ 当且仅当 $\rho(A)&lt;1$。</p>
+  <hr>
+  <p class="proof-line"><strong>证明（$\Longleftarrow$）</strong>　设 $\rho(A)&lt;1$。由 Jordan 标准形定理，存在可逆 $P$ 使 $A=PJP^{-1}$，$J=\operatorname{diag}(J_{k_1}(\lambda_1),\dots,J_{k_s}(\lambda_s))$，从而 $A^n=PJ^nP^{-1}$；只需证每块 $J_k(\lambda)^n\to O$（块数有限）。<span class="step-score">（2 分）</span></p>
+  <p class="proof-line">对单块 $J_k(\lambda)$（$|\lambda|\le\rho(A)&lt;1$）：$\lambda I$ 与 $N$ 可交换，由二项式公式及 $N^k=O$，
+  $$J_k(\lambda)^n=\sum_{j=0}^{k-1}\binom{n}{j}\lambda^{n-j}N^j\qquad(n\ge k-1).$$
+  和式仅 $k$ 项（$k$ 为固定常数），每项满足
+  $$\Bigl|\binom{n}{j}\lambda^{n-j}\Bigr|\le n^j\,|\lambda|^{n-j}=n^j|\lambda|^n\cdot|\lambda|^{-j}\ \longrightarrow\ 0\quad(n\to\infty),$$
+  因为 $|\lambda|&lt;1$ 时 $n^j|\lambda|^n\to0$（指数衰减快于任何多项式增长）。有限个趋于 $0$ 的项之和仍趋于 $0$，故 $J_k(\lambda)^n\to O$，进而 $A^n=PJ^nP^{-1}\to O$。<span class="step-score">（6 分）</span></p>
+  <p class="proof-line"><strong>（$\Longrightarrow$）</strong>　设 $A^n\to O$。任取 $A$ 的特征值 $\lambda$ 及属于它的特征向量 $x\ne0$。则 $A^nx=\lambda^nx\to0$；而 $x\ne0$，故 $\lambda^n\to0$，即 $|\lambda|&lt;1$。由 $\lambda$ 的任意性，$\rho(A)=\max|\lambda|&lt;1$。$\square$<span class="step-score">（10 分）</span></p>
+  <p class="aside">书写点评：$\Longleftarrow$ 方向两个分点——"由 Jordan 定理化归到块"与"块上的条纹估计"。只写"因为 $|\lambda|&lt;1$ 所以 $J^n\to O$"属于跳步：结论对，但 4 分估计分拿不到。$\Longrightarrow$ 方向的"作用到特征向量"是标准降维手法，一句话值 3 分。</p>
+</div>
+
+<h2>§9 配套题目</h2>
+
+<p>铁律：<strong>先写在纸上，写到写不动再展开答案</strong>。模仿题照例 1、例 2 的卷面格式写；变式题开始没有模板，先问自己"拆目标后库存里有哪条还没用"。</p>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 1</span>设 $A=\begin{pmatrix}\frac12&amp;1\\0&amp;\frac12\end{pmatrix}$。（i）计算 $A^{10}$；（ii）求 $\lim\limits_{n\to\infty}A^n$。</p>
+  <details class="answer">
+    <summary>参考答案（约 6 分书写量）</summary>
+    <p>（i）$A=\frac12I+N$，$\frac12I$ 与 $N$ 可交换，$N^2=O$，由二项式公式
+    $$A^{10}=\Bigl(\tfrac12\Bigr)^{10}I+10\Bigl(\tfrac12\Bigr)^{9}N
+    =\begin{pmatrix}\frac1{1024}&amp;\frac{10}{512}\\[2pt]0&amp;\frac1{1024}\end{pmatrix}
+    =\begin{pmatrix}\frac1{1024}&amp;\frac5{512}\\[2pt]0&amp;\frac1{1024}\end{pmatrix}.$$（4 分）</p>
+    <p>（ii）$\rho(A)=\frac12&lt;1$，由例 2 判据 $A^n\to O$。或直接估计：$A^n=\begin{pmatrix}2^{-n}&amp;n\,2^{-(n-1)}\\0&amp;2^{-n}\end{pmatrix}$，$n\,2^{-(n-1)}\to0$。（6 分）</p>
+    <p><strong>易错点</strong>：二项式展开多写 $\binom{n}{2}\lambda^{n-2}N^2$ 项——$N^2=O$，该项为 $0$，写了不算错但暴露不熟；另一条是忘记"可交换"这个前提，二项式定理对一般矩阵和不成立。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 2</span>求 $A=\begin{pmatrix}3&amp;1&amp;0\\0&amp;3&amp;0\\0&amp;1&amp;3\end{pmatrix}$ 的 Jordan 标准形。</p>
+  <details class="answer">
+    <summary>参考答案（约 6 分书写量）</summary>
+    <p>$\chi_A(\lambda)=(\lambda-3)^3$（上三角，对角线之积），$\mathrm{am}(3)=3$。（2 分）</p>
+    <p>$A-3I=\begin{pmatrix}0&amp;1&amp;0\\0&amp;0&amp;0\\0&amp;1&amp;0\end{pmatrix}$，$\operatorname{rank}=1$，故 $\mathrm{gm}(3)=3-1=2$。（4 分）</p>
+    <p>块数 2、阶数和 3，唯一凑法 $(2,1)$：
+    $$J=\operatorname{diag}\bigl(J_2(3),\,3\bigr)=\begin{pmatrix}3&amp;1&amp;0\\0&amp;3&amp;0\\0&amp;0&amp;3\end{pmatrix}.\ \square$$（6 分）</p>
+    <p><strong>易错点</strong>：把 $\operatorname{rank}=1$ 读成"一个块"——$\mathrm{gm}=n-\operatorname{rank}=2$ 是<strong>两</strong>块。自检：$\ker(A-3I)=\{x_2=0\}=\operatorname{span}\{e_1,e_3\}$，确实 2 维。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 1</span>证明：矩阵幂序列 $\{A^n\}$ 有界（即 $\sup_n\|A^n\|&lt;\infty$）当且仅当 $\rho(A)\le1$，<strong>且</strong>每个满足 $|\lambda|=1$ 的特征值所对应的 Jordan 块全为 $1$ 阶。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：化归到块（同例 2），逐块问"什么时候有界"——临界带 $|\lambda|=1$ 上，块阶数决定生死。</p>
+    <p><strong>证明</strong>：$A=PJP^{-1}$ 且 $P$ 固定，故 $\{A^n\}$ 有界 $\iff\{J^n\}$ 有界 $\iff$ 每块 $\{J_k(\lambda)^n\}$ 有界。对单块，$J_k(\lambda)^n$ 的元素为 $\binom{n}{j}\lambda^{n-j}$（$j=0,\dots,k-1$）：</p>
+    <p>· $|\lambda|&lt;1$：由例 2，$J_k(\lambda)^n\to O$，当然有界；<br>
+    · $|\lambda|&gt;1$：对角元 $|\lambda^n|=|\lambda|^n$ 无界；<br>
+    · $|\lambda|=1$，$k=1$：唯一元素 $\lambda^n$ 满足 $|\lambda^n|=1$，有界；<br>
+    · $|\lambda|=1$，$k\ge2$：第一超对角元 $n\lambda^{n-1}$ 的模 $=n$，无界。</p>
+    <p>四种情形合起来正是结论。$\square$</p>
+    <p><strong>点评</strong>：$\rho=1$ 是临界带——带上全 $1$ 阶块则幂有界（如正交矩阵、置换矩阵），带上有 $\ge2$ 阶块则多项式泄漏、幂无界。widget 的体验②就是把这条定理演给你看。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 2</span>设
+  $$A=\begin{pmatrix}2&amp;1&amp;0&amp;0\\0&amp;2&amp;1&amp;0\\0&amp;0&amp;2&amp;0\\0&amp;0&amp;0&amp;2\end{pmatrix},\qquad
+  B=\begin{pmatrix}2&amp;1&amp;0&amp;0\\0&amp;2&amp;0&amp;0\\0&amp;0&amp;2&amp;1\\0&amp;0&amp;0&amp;2\end{pmatrix}.$$
+  证明：$\chi_A=\chi_B$，$\mathrm{gm}_A(2)=\mathrm{gm}_B(2)$，但 $A$ 与 $B$ <strong>不相似</strong>。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：am/gm 两支读数撞车（am $=4$、gm $=2$ 的盲区），请第三支读数 $d_2=\dim\ker(\cdot-2I)^2$ 裁决——这是 §3.4 流程第 4 步的活标本。</p>
+    <p><strong>证明</strong>：两者均上三角，$\chi_A=\chi_B=(\lambda-2)^4$；$A-2I$ 与 $B-2I$ 的秩都是 $2$，故 $\mathrm{gm}_A(2)=\mathrm{gm}_B(2)=4-2=2$。</p>
+    <p>但
+    $$(A-2I)^2=\begin{pmatrix}0&amp;0&amp;1&amp;0\\0&amp;0&amp;0&amp;0\\0&amp;0&amp;0&amp;0\\0&amp;0&amp;0&amp;0\end{pmatrix},\ \operatorname{rank}=1\ \Rightarrow\ \dim\ker(A-2I)^2=3;\qquad
+    (B-2I)^2=O\ \Rightarrow\ \dim\ker(B-2I)^2=4.$$
+    相似保持 $\dim\ker(\cdot-\lambda I)^j$（$P^{-1}(A-2I)^2P=(P^{-1}AP-2I)^2$），二者不同，故 $A\nsim B$。$\square$</p>
+    <p>等价读法：$m_A=(x-2)^3$（$A$ 含 $3$ 阶块，块结构 $(3,1)$），$m_B=(x-2)^2$（块结构 $(2,2)$）。<strong>点评</strong>：$d_2=3$ 对 $(3,1)$、$d_2=4$ 对 $(2,2)$——维数链定块公式的直接兑现。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv3">真题节选</span><strong>（第 15 届题三，20 分——本章取充分性段）</strong>设 $V$ 是复数域 $\mathbb{C}$ 上的 $n$ 维线性空间，$\mathbf{A}$ 是 $V$ 上的一个线性变换。证明：存在 $\alpha\in V$ 使得 $\left\{\alpha,\mathbf{A}\alpha,\cdots,\mathbf{A}^{n-1}\alpha\right\}$ 成为 $V$ 的一组基，当且仅当对于 $\mathbf{A}$ 的任一特征值 $\lambda$，$\lambda$ 的几何重数为 $1$。</p>
+  <p>本题与第 15 章（卷二第 5 章）共享：<strong>第 15 章重 gm 的计算与必要性</strong>（友矩阵 $A$ 使 $\operatorname{rank}(cI-A)\ge n-1$ 那段）；<strong>本章重充分性</strong>——"Jordan 块刻画 + 根子空间分解"如何把 gm $=1$ 变成链顶、把链顶拼成循环向量。两章互补，合起来才是完整的 20 分。先回答三个梯子问题（写在纸上）：</p>
+  <p>（i）"$\lambda_i$ 的几何重数为 $1$"为什么当且仅当"$\mathbf{A}|_{V_{\lambda_i}}$ 的 Jordan 形是单个 $d_i$ 阶块"？（用本章哪条接口？）<br>
+  （ii）在单个 $d$ 阶 Jordan 块 $J_d(\lambda)$ 上，哪个向量 $\alpha$ 满足 $(J_d(\lambda)-\lambda I)^{d-1}\alpha\ne0$？（算 $N^{d-1}$ 试一试。）<br>
+  （iii）由 $p(\mathbf A)\alpha=0$（$\alpha=\sum\alpha_i$）怎么推出每个 $p(\mathbf A)\alpha_i=0$？（哪个第 2 章工具？）</p>
+  <details class="answer">
+    <summary>梯子参考答案</summary>
+    <p>（i）接口"gm = 块个数"：gm $=1$ ⟺ 只有一块；而 am $=d_i$ 是阶数和，全归这一块，故该块为 $J_{d_i}(\lambda_i)$。</p>
+    <p>（ii）$(J_d(\lambda)-\lambda I)^{d-1}=N^{d-1}=E_{1d}\ne O$，取链顶 $\alpha=e_d$（第 $d$ 个标准基向量）即可：$N^{d-1}e_d=e_1\ne0$。这给出官方 14 分点"故存在 $\alpha_i$ 使 $(\mathbf A-\lambda_i\mathbf I)^{d_i-1}\alpha_i\ne0$"的存在性来源。</p>
+    <p>（iii）$V=V_{\lambda_1}\oplus\cdots\oplus V_{\lambda_s}$ 是直和，且每个 $V_{\lambda_i}$ 是 $\mathbf A$-不变的，从而也是 $p(\mathbf A)$-不变的（$p(\mathbf A)$ 是 $\mathbf A$ 的多项式）。于是 $p(\mathbf A)\alpha=\sum_i p(\mathbf A)\alpha_i$ 是按直和分解的分量式；和为 $0$ 当且仅当每个分量为 $0$。</p>
+  </details>
+  <details class="answer">
+    <summary>官方解答骨架（充分性段，转录自官方参考答案）</summary>
+    <p>设互不相同的特征值 $\lambda_1,\dots,\lambda_s$，代数重数 $d_1,\dots,d_s$（$\sum d_i=n$），特征多项式 $f(x)=\prod(x-\lambda_i)^{d_i}$。</p>
+    <p>记 $V_{\lambda_i}=\operatorname{Ker}(\mathbf{A}-\lambda_i\mathbf{I})^{d_i}$（$\mathbf{A}$-不变子空间），则 $V=V_{\lambda_1}\oplus\cdots\oplus V_{\lambda_s}$。<span class="step-score">（11 分点）</span></p>
+    <p>$\lambda_i$ 几何重数为 $1$ ⟹ $\mathbf{A}|_{V_{\lambda_i}}$ 的 Jordan 标准型是单个 $d_i$ 阶 Jordan 块，故存在 $\alpha_i\in V_{\lambda_i}$ 使 $(\mathbf{A}-\lambda_i\mathbf{I})^{d_i-1}\alpha_i\ne0$。<span class="step-score">（14 分点）</span></p>
+    <p>令 $\alpha=\alpha_1+\cdots+\alpha_s$。若 $\alpha,\mathbf{A}\alpha,\dots,\mathbf{A}^{n-1}\alpha$ 线性相关，则有非零 $p(x)\in\mathbb{C}[x]$（$\deg\le n-1$）使 $p(\mathbf{A})\alpha=0$；由直和分解与不变性得 $p(\mathbf{A})\alpha_i=0$，而 $(x-\lambda_i)^{d_i}$ 是零化 $\alpha_i$ 的最低次多项式，故 $(x-\lambda_i)^{d_i}\mid p(x)$<span class="step-score">（18 分点）</span>；各因子两两互素 ⟹ $f(x)\mid p(x)$，与 $\deg p&lt;\deg f$ 且 $p\ne0$ 矛盾。$\square$<span class="step-score">（20 分点）</span></p>
+    <p><strong>复盘</strong>：充分性 = 本章三个动作的接力——动作一（gm $=1$ 翻译成单块，14 分点）、链顶取 $\alpha_i$（$N^{d_i-1}\ne O$ 的存在性）、再交给第 2 章直和与多项式互素整除收网（18–20 分点）。注意官方并不真的求出 $J$ 或 $P$——<strong>Jordan 在这里是翻译工具，不是计算对象</strong>。<em>（题目与解答骨架转录自第 15 届官方 PDF，见 <a href="真题索引/第15届_2023.md">真题索引</a>；必要性段见第 15 章。）</em></p>
+  </details>
+</div>
+
+<h2>§9.5 熟练度训练场</h2>
+
+<p>理解只是入场券，<strong>考场上拼的是基本动作的速度</strong>。两种训练，每天 10 分钟：</p>
+
+<h3>训练一 · 翻卡快测（目标：每卡 10 秒内出答案）</h3>
+<div class="quiz" data-quiz="ch17-drill"></div>
+
+<h3>训练二 · 计时默写（写在纸上，掐表）</h3>
+<div class="calc box" data-tag="默写清单">
+  <p>① <strong>90 秒</strong>：默写三条接口对照表（am = 块阶数和；gm = 块个数 $=n-\operatorname{rank}(A-\lambda I)$；$m_A$ 中 $(x-\lambda)$ 指数 = 最大块阶数）+ 可对角化的四个等价说法（全 $1$ 阶块 / gm = am / $m_A$ 无重根 / $J$ 为对角阵）；</p>
+  <p>② <strong>60 秒</strong>：默写 $J_3(\lambda)^n$ 全矩阵（二项式公式），并各用一句话说清"为什么能用二项式定理"（$\lambda I$ 与 $N$ 可交换）与"为什么只有有限项"（$N^3=O$）；</p>
+  <p>③ <strong>3 分钟</strong>：默写 $\rho(A)&lt;1\iff A^n\to O$ 的证明骨架（$\Longleftarrow$：Jordan 化归 + 条纹估计 $n^j|\lambda|^n\to0$；$\Longrightarrow$：作用于特征向量）+ 循环向量四等价（$\exists$ 循环向量 / gm $=1$ / 每特征值单块 / $m_A=\chi_A$）。</p>
+  <p><strong>过关标准</strong>：连续两天全对才算过。做不到就回到对应小节重读，再默。</p>
+</div>
+
+<h2>§10 六方向自测卡</h2>
+
+<div class="selftest">
+  <h3>合上书，拿张白纸，默写以下六项</h3>
+  <div class="st-item">
+    <p class="st-q"><em>=（它是什么）</em>　写出 $J_k(\lambda)$ 的定义、Jordan 标准形定理（存在 + 唯一 + 三条接口），并写出 $J_3(\lambda)^n$。</p>
+    <details><summary>对照</summary><p>$J_k(\lambda)=\lambda I+N$，$N$ 超对角线全 $1$；任何 $A\in M_n(\mathbb C)$ 相似于 Jordan 块的准对角阵，块的多重集合唯一（不计次序）。接口：am = 阶数和；gm = 块个数 $=n-\operatorname{rank}(A-\lambda I)$；$m_A$ 中 $(x-\lambda)$ 指数 = 最大块阶数。$J_3(\lambda)^n=\bigl(\begin{smallmatrix}\lambda^n&amp;n\lambda^{n-1}&amp;\binom{n}{2}\lambda^{n-2}\\&amp;\lambda^n&amp;n\lambda^{n-1}\\&amp;&amp;\lambda^n\end{smallmatrix}\bigr)$。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>←（什么带来它）</em>　为什么 $(\begin{smallmatrix}2&amp;1\\0&amp;2\end{smallmatrix})$ 不能对角化？缺的特征向量由什么顶上？$N$ 的幂呈现什么规律？</p>
+    <details><summary>对照</summary><p>gm $=1&lt;$ am $=2$，特征向量只有 $e_1$ 一个；由链 $e_2\mapsto e_1\mapsto0$ 的链顶 $e_2$ 顶上，超对角线的 $1$ 记录这次"下漏"。$N^j$ 的 $1$ 上移到第 $j$ 条超对角线，$N^{k-1}=E_{1k}$，$N^k=O$。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>→（它带来什么）</em>　说出 Jordan 标准形的三个直接应用出口。</p>
+    <details><summary>对照</summary><p>① $A^n$ 与极限：$\rho(A)&lt;1\iff A^n\to O$（二项式 + 条纹估计）；② $e^A$ 永远收敛，块上 $e^\lambda(I+N+\cdots+N^{k-1}/(k-1)!)$ 有限项，矩阵函数 $f(A)$ 的条纹表；③ 循环向量四等价收网第 15 届题三（gm $=1$ ⟺ 单块 ⟺ $m_A=\chi_A$）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>∈（实例）</em>　默写三组（am, gm）对应的块结构：$(2,1)$、$(3,2)$、$(4,2)$，并说明最后一组为什么要加读 $d_2$。</p>
+    <details><summary>对照</summary><p>$(2,1)\Rightarrow J_2(\lambda)$；$(3,2)\Rightarrow J_2(\lambda)\oplus J_1(\lambda)$；$(4,2)$ 有两种：$(3,1)$ 与 $(2,2)$，由 $d_2=\dim\ker(A-\lambda I)^2$ 区分（$3$ 对 $(3,1)$，$4$ 对 $(2,2)$），因为阶数和与块数两组读数在这一档不唯一。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>≠（区分）</em>　am 与 gm 的区别（定义、算出来的方法、在 Jordan 形里各自的角色），各举一个 $\operatorname{diag}(J_2(2),\,2)$ 的读数。</p>
+    <details><summary>对照</summary><p>am：特征多项式里 $(x-\lambda)$ 的指数（算 $\chi_A$）= 块阶数<strong>之和</strong>；gm：特征子空间维数 $=n-\operatorname{rank}(A-\lambda I)$（算秩）= 块的<strong>个数</strong>。例：$\operatorname{diag}(J_2(2),2)$ 的 $\lambda=2$：am $=3$（$2+1$），gm $=2$（两块）。gm $\le$ am 恒成立，等号对所有 $\lambda$ 成立 ⟺ 可对角化。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>（为何要有它）</em>　对角化判据已经能告诉我们"能不能对角化"，为什么还需要 Jordan 标准形？</p>
+    <details><summary>对照</summary><p>判据只给 verdict，Jordan 给档案：不能对角化时它给出唯一的"次优形"，使相似分类在 $\mathbb C$ 上彻底完成（两矩阵相似 ⟺ 块表相同）；并且把 $A^n$、$e^A$、$f(A)$ 的全部计算化到块上的"多项式 × 指数"。没有它，$\rho(A)$ 判据、循环向量刻画都无从证起。</p></details>
+  </div>
+</div>
+
+<div class="net box" data-tag="间隔复习安排">
+  <p><strong>1 天后</strong>：重做六方向自测卡（不翻书）+ 翻卡快测第二轮；<strong>3 天后</strong>：重算例 1(2)（含造链与 $AP=PJ$ 验证）+ 默写①②，重做变式 2 与真题节选的梯子问题；<strong>1 周后</strong>：默写③（$\rho(A)&lt;1\iff A^n\to O$ 骨架 + 循环向量四等价），确认翻卡全部"会了"。</p>
+  <p>本章是<strong>高代第 8 章</strong>（内积空间：酉、Hermite、正规与谱定理——那里"正规矩阵酉对角化"是 Jordan 故事的精装修版）与决赛常微分方程 $\dot x=Ax$（$e^{tA}$）的直接地基。</p>
+</div>
+
+<div class="chapnav">
+  <span><a href="ch16.html">← 第 6 章 · Cayley-Hamilton 与最小多项式</a></span>
+  <span><a href="index.html">首页</a></span>
+  <span><a href="ch18.html">第 8 章 · 内积空间：酉、Hermite、正规与谱定理 →</a></span>
+</div>
+
+</div>
+
+<script src="assets/quiz.js"></script>
+<script>
+/* §9.5 翻卡数据 */
+registerQuiz("ch17-drill", [
+  { q: "$J_k(\\lambda)$ 长什么样？", a: "对角线全 $\\lambda$，超对角线全 $1$，其余 $0$。$k=1$ 时退化为对角元 $(\\lambda)$。" },
+  { q: "$N_k$ 的幂零指数？$N_k^j$ 长什么样？", a: "指数 $=k$：$N^{k-1}=E_{1k}\\ne O$，$N^k=O$。$N^j$ 的第 $j$ 条超对角线为 $1$——条纹每乘一次 $N$ 上移一条。" },
+  { q: "$J_3(\\lambda)^n$ = ？", a: "$\\begin{pmatrix}\\lambda^n&n\\lambda^{n-1}&\\binom{n}{2}\\lambda^{n-2}\\\\0&\\lambda^n&n\\lambda^{n-1}\\\\0&0&\\lambda^n\\end{pmatrix}$——条纹上是「多项式 × 指数」。" },
+  { q: "为什么 $(\\lambda I+N)^n$ 能用二项式定理？", a: "$\\lambda I$ 与 $N$ 可交换。$AB=BA$ 是二项式定理对矩阵成立的全部前提。" },
+  { q: "$\\lambda$ 的 Jordan 块个数 = ？", a: "$\\mathrm{gm}(\\lambda)=\\dim\\ker(A-\\lambda I)=n-\\operatorname{rank}(A-\\lambda I)$。秩 $=n-1$ ⟺ 单块。" },
+  { q: "$\\lambda$ 各块阶数之和、最大块阶数分别在哪里读到？", a: "和在 $\\chi_A$ 中 $(x-\\lambda)$ 的指数（am）；最大块在 $m_A$ 中 $(x-\\lambda)$ 的指数。" },
+  { q: "$A^n\\to O$ 的充要条件？", a: "$\\rho(A)&lt;1$——所有特征值的「模长」小于 $1$。坑：不是 $\\lambda&lt;1$（如 $\\lambda=-2$）。" },
+  { q: "$|\\lambda|=1$ 的 Jordan 块 $J_k(\\lambda)$（$k\\ge2$）的幂如何？", a: "不收敛、无界：对角元 $\\lambda^n$ 模恒 $1$，超对角元 $n\\lambda^{n-1}$ 模 $=n$——临界带上块阶数决定生死。" },
+  { q: "$\\mathrm{am}(\\lambda)=3,\\ \\mathrm{gm}(\\lambda)=2$ 的块结构？", a: "$2+1$：一块 $J_2(\\lambda)$ 加一块 $J_1(\\lambda)$。阶数和 3、块数 2 的唯一凑法。" },
+  { q: "第 15 届题三：存在循环向量（$\\{\\alpha,A\\alpha,\\dots\\}$ 成基）⟺ ？", a: "每个特征值 $\\mathrm{gm}=1$ ⟺ 每个特征值只占一个 Jordan 块 ⟺ $m_A=\\chi_A$。" }
+]);
+</script>
+
+<script>
+/* §3.2 Jordan 条纹探索器 */
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  var svgL = document.getElementById("jw-svgL");
+  var svgR = document.getElementById("jw-svgR");
+  var out = document.getElementById("jw-out");
+  var kS = document.getElementById("jw-k");
+  var lS = document.getElementById("jw-l");
+  var nS = document.getElementById("jw-n");
+
+  function C(n, j) {
+    if (j < 0 || j > n) return 0;
+    var r = 1;
+    for (var i = 1; i <= j; i++) r = r * (n - j + i) / i;
+    return r;
+  }
+  /* J^n 第 j 条超对角线上的值（j=0 为对角线）；j>n 时 C(n,j)=0 */
+  function supVal(lam, n, j) {
+    if (j > n) return 0;
+    return C(n, j) * Math.pow(lam, n - j);
+  }
+  function maxAbs(k, lam, n) {
+    var m = 0;
+    for (var j = 0; j < k; j++) {
+      var v = Math.abs(supVal(lam, n, j));
+      if (v > m) m = v;
+    }
+    return m;
+  }
+  function fmt(v, zeroStr) {
+    if (Math.abs(v) < 1e-11) return zeroStr;
+    var av = Math.abs(v);
+    if (av >= 1e5 || av < 1e-3) return v.toExponential(1);
+    return String(parseFloat(v.toPrecision(3)));
+  }
+  var SUP = { "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴", "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹", "-": "⁻" };
+  function supNum(e) {
+    var s = String(e), r = "";
+    for (var i = 0; i < s.length; i++) r += SUP[s.charAt(i)];
+    return r;
+  }
+  function mk(svg, tag, attrs) {
+    var el = document.createElementNS(NS, tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    svg.appendChild(el);
+    return el;
+  }
+  function mkText(svg, x, y, str, attrs) {
+    var t = mk(svg, "text", attrs || {});
+    t.setAttribute("x", x); t.setAttribute("y", y);
+    t.textContent = str;
+    return t;
+  }
+
+  function drawLeft(k, lam, n) {
+    svgL.innerHTML = "";
+    var cs = Math.min(56, Math.floor(264 / k));
+    var ox = 22, oy = 46;
+    mkText(svgL, ox, 24, "J^" + n + " 的矩阵热力图（k=" + k + ", λ=" + lam.toFixed(2) + "）", { "font-size": 12.5, fill: "#2b2620", "font-weight": "bold" });
+    var mv = maxAbs(k, lam, n) || 1;
+    for (var i = 0; i < k; i++) {
+      for (var j = 0; j < k; j++) {
+        var x = ox + j * cs, y = oy + i * cs;
+        var v = (j >= i) ? supVal(lam, n, j - i) : 0;
+        var a = Math.abs(v) / mv;
+        var fill = (j < i || Math.abs(v) < 1e-11) ? "none" : "rgba(29,78,216," + (0.10 + 0.80 * a).toFixed(3) + ")";
+        mk(svgL, "rect", { x: x, y: y, width: cs - 2, height: cs - 2, rx: 3, fill: fill, stroke: "#c9c2b6", "stroke-width": 0.7 });
+        var s = fmt(v, (j < i) ? "0" : "");
+        if (s) mkText(svgL, x + (cs - 2) / 2, y + (cs - 2) / 2 + 3.5, s, { "font-size": s.length > 6 ? 8 : 10.5, fill: a > 0.55 ? "#ffffff" : "#2b2620", "text-anchor": "middle" });
+      }
+    }
+    mkText(svgL, ox, oy + k * cs + 18, "蓝深 = 该元绝对值占本矩阵最大值的比例；下三角恒 0", { "font-size": 10.5, fill: "#5c554b" });
+  }
+
+  function drawRight(k, lam, n) {
+    svgR.innerHTML = "";
+    var x0 = 44, x1 = 356, y0 = 26, y1 = 276;
+    var vals = [], lo = Infinity, hi = -Infinity;
+    for (var m = 1; m <= 30; m++) {
+      var lg = Math.log(Math.max(maxAbs(k, lam, m), 1e-12)) / Math.LN10;
+      vals.push(lg);
+      if (lg < lo) lo = lg;
+      if (lg > hi) hi = lg;
+    }
+    if (hi - lo < 1) { var mid = (hi + lo) / 2; lo = mid - 0.5; hi = mid + 0.5; }
+    function X(m) { return x0 + (m - 1) / 29 * (x1 - x0); }
+    function Y(lg) { return y1 - (lg - lo) / (hi - lo) * (y1 - y0); }
+    mkText(svgR, x0, 16, "max |J^m 的元素| 随 m 的走势（log₁₀ 刻度）", { "font-size": 12.5, fill: "#2b2620", "font-weight": "bold" });
+    /* 整数幂网格线 */
+    for (var e = Math.ceil(lo); e <= Math.floor(hi); e++) {
+      var yy = Y(e);
+      mk(svgR, "line", { x1: x0, y1: yy, x2: x1, y2: yy, stroke: "#e3ddd2", "stroke-width": 1 });
+      mkText(svgR, x0 - 6, yy + 3.5, "10" + supNum(e), { "font-size": 10, fill: "#8a8175", "text-anchor": "end" });
+    }
+    /* x 轴刻度 */
+    [1, 10, 20, 30].forEach(function (m) {
+      mkText(svgR, X(m), y1 + 16, "m=" + m, { "font-size": 10, fill: "#8a8175", "text-anchor": "middle" });
+    });
+    /* 折线 */
+    var pts = [];
+    for (var mm = 1; mm <= 30; mm++) pts.push(X(mm).toFixed(1) + "," + Y(vals[mm - 1]).toFixed(1));
+    mk(svgR, "polyline", { points: pts.join(" "), fill: "none", stroke: "#1d4ed8", "stroke-width": 2 });
+    /* 当前 n 标记 */
+    var cx = X(n), cy = Y(vals[n - 1]);
+    mk(svgR, "line", { x1: cx, y1: y0, x2: cx, y2: y1, stroke: "#be123c", "stroke-width": 1, "stroke-dasharray": "4 4" });
+    mk(svgR, "circle", { cx: cx, cy: cy, r: 5, fill: "#be123c" });
+    mkText(svgR, Math.min(cx + 8, x1 - 46), Math.max(cy - 8, y0 + 10), "n=" + n, { "font-size": 11.5, fill: "#be123c", "font-weight": "bold" });
+  }
+
+  function update() {
+    var k = parseInt(kS.value, 10), lam = parseFloat(lS.value), n = parseInt(nS.value, 10);
+    drawLeft(k, lam, n);
+    drawRight(k, lam, n);
+    /* 第一行读数 */
+    var row = [];
+    for (var j = 0; j < k; j++) row.push(fmt(supVal(lam, n, j), "0"));
+    var al = Math.abs(lam);
+    var verdict, cls;
+    if (al < 0.999) {
+      var pk = 1, pkv = maxAbs(k, lam, 1);
+      for (var m = 2; m <= 200; m++) { var v = maxAbs(k, lam, m); if (v > pkv) { pkv = v; pk = m; } }
+      verdict = "「|λ| = " + al.toFixed(2) + " < 1」多项式 nʲ 先挣扎、指数 λⁿ 后收割：鼓包顶点约在 m = " + pk + "（峰值 ≈ " + fmt(pkv, "0") + "），此后 Jⁿ→O。";
+      cls = "ok";
+    } else if (al <= 1.001) {
+      verdict = "「|λ| = 1」对角线 λⁿ 死不衰减，条纹 C(n,j) 多项式增长：Jⁿ 徘徊" + (k >= 2 ? "且无界（k ≥ 2 的泄漏）" : "") + "，绝不趋于 O。";
+      cls = "no";
+    } else {
+      verdict = "「|λ| = " + al.toFixed(2) + " > 1」指数爆炸，多项式再添一把火：Jⁿ 无界。";
+      cls = "no";
+    }
+    out.innerHTML = "Jⁿ 第一行 = [ " + row.join(", ") + " ]<br><span class=\"" + cls + "\">" + verdict + "</span>";
+  }
+  kS.addEventListener("input", update);
+  lS.addEventListener("input", update);
+  nS.addEventListener("input", update);
+  update();
+})();
+</script>
+
+</body>
+</html>

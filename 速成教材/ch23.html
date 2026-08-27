@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>解几第 2 章 · 二次曲面：标准形、分类与主轴化 —— 数学A速成讲义</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+<div class="wrap">
+
+<div class="bookbar">
+  <span><a href="index.html">← 返回首页</a></span>
+  <span>卷三 · 解析几何 · 第 2 章</span>
+</div>
+
+<div class="chapter-kicker">CHAPTER 2 · 解析几何</div>
+<h1>二次曲面：标准形、分类与主轴化</h1>
+
+<div class="exam box" data-tag="本章导览">
+  <p><strong>这一章在整张卷子上的位置</strong>：解几稳定 1 道大题 15 分，而近年题一几乎年年站在二次曲面上——第 13 届题一（旋转面求方程后判型：单叶双曲面）、第 14 届题一（单叶双曲面的直母线）、第 15 届题一（轨迹是抛物柱面）、第 16 届题一（双叶双曲面的切锥面）。判型很少独占 15 分，但<strong>每道题的第一步都从"这是什么曲面"开始</strong>；判错型，后面 15 分整体跑偏。</p>
+  <p><strong>学完你能</strong>：① 默写九类二次曲面的标准方程并各配一句话特征；② 用截痕法（坐标平面 + 平行截面）读出一个方程的曲面形状；③ 走通"主轴化"全流程：二次型正交对角化 → 一次项配方 → 标准形 → 判型，并说出它和二次型定理是同一个定理的两张面孔；④ 用"特征值符号 + 右端常数符号"两秒判型；⑤ 说出秩与符号差在退化分类里管什么。</p>
+  <p><strong>前置</strong>：解几第 1 章（向量与坐标）；高代第 9 章（二次型与特征值——本章是它的几何面孔，没学完也能读，用到时现场补）。</p>
+</div>
+
+<h2>§1 开场谜题：一个符号，两种命运</h2>
+
+<div class="hook box" data-tag="开场谜题">
+  <p>看两个方程，它们只在右端差一个符号：</p>
+  <p>$$S_1:\ x^2+y^2-z^2=1 \qquad\qquad S_2:\ x^2+y^2-z^2=-1$$</p>
+  <p>一个符号能有多大区别？——天大的区别。</p>
+  <p><strong>$S_1$ 连成一片</strong>：它是完整的一张曲面（单叶双曲面），腰身最细处有一个半径 1 的"喉圆"。而且它有一个匪夷所思的性质：<strong>整张曲面可以用直钢丝焊出来</strong>——尽管它浑身是弯的，它上面铺满了直线（两族直母线，第 14 届题一就考它）。</p>
+  <p><strong>$S_2$ 裂成两半</strong>：代入看看——$z^2=x^2+y^2+1\ge1$，所以 $|z|\ge1$，带 $-1&lt;z&lt;1$ 里<strong>一个点都没有</strong>。曲面分成上下两碗（双叶双曲面），中间是一道宽为 2 的空档。上面没有一条直线，两碗永远够不着对方。</p>
+  <p>左端一模一样，命运截然相反。这个符号凭什么有这么大的权力？</p>
+  <p>再往深问一层：如果方程不是这么干干净净的 $x^2+y^2-z^2$，而是像 $3x^2+2xy+3y^2+6z^2+4x+4y-12z=6$ 这样的"杂烩"，你凭什么知道它画出来是什么？——答案是：<strong>任何二次方程都能通过旋转坐标轴（正交变换）加平移，摆成九种标准形之一</strong>；而摆好之后，$S_1$ 与 $S_2$ 的区别、椭球与马鞍的区别，<strong>全部写在二次型特征值的符号里</strong>。</p>
+  <p>你在高代第 9 章学的二次型，从来不只是代数——它就是二次曲面的分类定理本身。这一章，我们给它装上几何的脸。</p>
+</div>
+
+<figure>
+<svg viewBox="0 0 720 265" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="单叶双曲面与双叶双曲面对比">
+  <!-- 左：单叶 x²+y²-z²=1 -->
+  <text x="180" y="24" font-size="14" fill="#1d4ed8" text-anchor="middle" font-weight="bold">x²+y²−z² = 1　单叶：连成一片</text>
+  <!-- 轮廓双曲线（左右两支，喉在 z=0） -->
+  <path d="M 252,62 C 232,88 222,108 220,130 C 222,152 232,172 252,198" fill="none" stroke="#1d4ed8" stroke-width="2.5"/>
+  <path d="M 108,62 C 128,88 138,108 140,130 C 138,152 128,172 108,198" fill="none" stroke="#1d4ed8" stroke-width="2.5"/>
+  <!-- 喉圆 -->
+  <ellipse cx="180" cy="130" rx="40" ry="11" fill="none" stroke="#be123c" stroke-width="2"/>
+  <text x="180" y="127" font-size="11" fill="#be123c" text-anchor="middle">喉圆 r=1</text>
+  <!-- 顶底口虚椭圆 -->
+  <ellipse cx="180" cy="62" rx="72" ry="13" fill="none" stroke="#1d4ed8" stroke-width="1" stroke-dasharray="4 4" opacity="0.55"/>
+  <ellipse cx="180" cy="198" rx="72" ry="13" fill="none" stroke="#1d4ed8" stroke-width="1" stroke-dasharray="4 4" opacity="0.55"/>
+  <!-- 一条直母线示意 -->
+  <line x1="128" y1="70" x2="238" y2="192" stroke="#b45309" stroke-width="1.8"/>
+  <line x1="232" y1="70" x2="122" y2="192" stroke="#b45309" stroke-width="1.8"/>
+  <text x="180" y="238" font-size="11.5" fill="#b45309" text-anchor="middle">两族直母线：整张曲面能用直钢丝焊出来</text>
+  <!-- 分隔 -->
+  <line x1="360" y1="30" x2="360" y2="230" stroke="#d6cfc4" stroke-width="1.5"/>
+  <!-- 右：双叶 x²+y²-z²=-1 -->
+  <text x="540" y="24" font-size="14" fill="#7c3aed" text-anchor="middle" font-weight="bold">x²+y²−z² = −1　双叶：裂成两半</text>
+  <!-- 上碗 -->
+  <path d="M 468,88 C 500,62 522,52 540,50 C 558,52 580,62 612,88" fill="none" stroke="#7c3aed" stroke-width="2.5"/>
+  <ellipse cx="540" cy="88" rx="72" ry="13" fill="none" stroke="#7c3aed" stroke-width="1" stroke-dasharray="4 4" opacity="0.55"/>
+  <path d="M 468,88 A 72 13 0 0 0 612,88" fill="none" stroke="#7c3aed" stroke-width="1.6"/>
+  <!-- 下碗 -->
+  <path d="M 468,172 C 500,198 522,208 540,210 C 558,208 580,198 612,172" fill="none" stroke="#7c3aed" stroke-width="2.5"/>
+  <ellipse cx="540" cy="172" rx="72" ry="13" fill="none" stroke="#7c3aed" stroke-width="1" stroke-dasharray="4 4" opacity="0.55"/>
+  <path d="M 468,172 A 72 13 0 0 1 612,172" fill="none" stroke="#7c3aed" stroke-width="1.6"/>
+  <!-- 空档标注 -->
+  <line x1="640" y1="96" x2="640" y2="164" stroke="#be123c" stroke-width="2"/>
+  <polygon points="640,90 636,100 644,100" fill="#be123c"/>
+  <polygon points="640,170 636,160 644,160" fill="#be123c"/>
+  <text x="648" y="133" font-size="11.5" fill="#be123c">空档 −1&lt;z&lt;1：一个点都没有</text>
+  <text x="540" y="238" font-size="11.5" fill="#7c3aed" text-anchor="middle">两碗之间隔着 2 宽的空带，上面一条直线都没有</text>
+</svg>
+<figcaption>同一个左端，右端 $+1$ 连成一片（还有直母线），右端 $-1$ 裂成两半。家族秘密写在符号里。</figcaption>
+</figure>
+
+<h2>§2 先看见它：九类标准形全家福</h2>
+
+<div class="vision box" data-tag="直觉与图像">
+  <p>二次曲面（三元二次方程 $F(x,y,z)=0$ 的轨迹）经过旋转与平移坐标轴之后，<strong>只有九种非平凡的长相</strong>。先混个脸熟——盯着每张小图读出它的"一句话特征"，下一节再把方程钉上去。判型的终极目标就是：随便给你一个杂烩方程，你能说出它是这九张脸里的哪一张。</p>
+</div>
+
+<figure>
+<svg viewBox="0 0 720 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="九类二次曲面全家福">
+  <!-- ========== 第一行 ========== -->
+  <!-- 1 椭球面 -->
+  <g>
+    <ellipse cx="120" cy="72" rx="58" ry="38" fill="none" stroke="#1d4ed8" stroke-width="2.2"/>
+    <path d="M 62,72 A 58 14 0 0 0 178,72" fill="none" stroke="#1d4ed8" stroke-width="1.4" stroke-dasharray="4 3" opacity="0.6"/>
+    <path d="M 62,72 A 58 14 0 0 1 178,72" fill="none" stroke="#1d4ed8" stroke-width="1.6"/>
+    <text x="120" y="128" font-size="11.5" fill="#2b2620" text-anchor="middle" font-weight="bold">① 椭球面</text>
+    <text x="120" y="143" font-size="10.5" fill="#5c554b" text-anchor="middle">x²/a²+y²/b²+z²/c²=1</text>
+    <text x="120" y="157" font-size="10.5" fill="#1d4ed8" text-anchor="middle">连成一片的封闭蛋：有界</text>
+  </g>
+  <!-- 2 单叶双曲面 -->
+  <g>
+    <path d="M 322,42 C 340,58 346,64 347,72 C 346,80 340,86 322,102" fill="none" stroke="#1d4ed8" stroke-width="2.2"/>
+    <path d="M 418,42 C 400,58 394,64 393,72 C 394,80 400,86 418,102" fill="none" stroke="#1d4ed8" stroke-width="2.2"/>
+    <ellipse cx="370" cy="72" rx="23" ry="6" fill="none" stroke="#be123c" stroke-width="1.6"/>
+    <ellipse cx="370" cy="42" rx="48" ry="8" fill="none" stroke="#1d4ed8" stroke-width="1" stroke-dasharray="3 3" opacity="0.5"/>
+    <ellipse cx="370" cy="102" rx="48" ry="8" fill="none" stroke="#1d4ed8" stroke-width="1" stroke-dasharray="3 3" opacity="0.5"/>
+    <line x1="334" y1="46" x2="408" y2="99" stroke="#b45309" stroke-width="1.2"/>
+    <text x="370" y="128" font-size="11.5" fill="#2b2620" text-anchor="middle" font-weight="bold">② 单叶双曲面</text>
+    <text x="370" y="143" font-size="10.5" fill="#5c554b" text-anchor="middle">x²/a²+y²/b²−z²/c²=1</text>
+    <text x="370" y="157" font-size="10.5" fill="#1d4ed8" text-anchor="middle">连一片·有喉·两族直母线</text>
+  </g>
+  <!-- 3 双叶双曲面 -->
+  <g>
+    <path d="M 566,58 C 588,44 604,38 620,37 C 636,38 652,44 674,58" fill="none" stroke="#7c3aed" stroke-width="2.2"/>
+    <ellipse cx="620" cy="58" rx="54" ry="8" fill="none" stroke="#7c3aed" stroke-width="1" stroke-dasharray="3 3" opacity="0.5"/>
+    <path d="M 566,86 C 588,100 604,106 620,107 C 636,106 652,100 674,86" fill="none" stroke="#7c3aed" stroke-width="2.2"/>
+    <ellipse cx="620" cy="86" rx="54" ry="8" fill="none" stroke="#7c3aed" stroke-width="1" stroke-dasharray="3 3" opacity="0.5"/>
+    <text x="620" y="128" font-size="11.5" fill="#2b2620" text-anchor="middle" font-weight="bold">③ 双叶双曲面</text>
+    <text x="620" y="143" font-size="10.5" fill="#5c554b" text-anchor="middle">x²/a²+y²/b²−z²/c²=−1</text>
+    <text x="620" y="157" font-size="10.5" fill="#7c3aed" text-anchor="middle">裂成两半·中间是空的</text>
+  </g>
+  <!-- ========== 第二行 ========== -->
+  <!-- 4 椭圆抛物面 -->
+  <g>
+    <path d="M 66,214 C 84,244 104,252 120,252 C 136,252 156,244 174,214" fill="none" stroke="#15803d" stroke-width="2.2"/>
+    <ellipse cx="120" cy="214" rx="54" ry="9" fill="none" stroke="#15803d" stroke-width="1.4"/>
+    <text x="120" y="298" font-size="11.5" fill="#2b2620" text-anchor="middle" font-weight="bold">④ 椭圆抛物面</text>
+    <text x="120" y="313" font-size="10.5" fill="#5c554b" text-anchor="middle">z = x²/a²+y²/b²</text>
+    <text x="120" y="327" font-size="10.5" fill="#15803d" text-anchor="middle">一只碗：无心·朝一个方向开口</text>
+  </g>
+  <!-- 5 双曲抛物面（马鞍） -->
+  <g>
+    <path d="M 316,246 C 336,214 356,206 370,206 C 384,206 404,214 424,246" fill="none" stroke="#15803d" stroke-width="2.2"/>
+    <path d="M 330,206 C 342,232 352,240 370,240 C 388,240 398,232 410,206" fill="none" stroke="#b45309" stroke-width="2.2"/>
+    <line x1="326" y1="212" x2="414" y2="244" stroke="#8a8175" stroke-width="1"/>
+    <line x1="414" y1="212" x2="326" y2="244" stroke="#8a8175" stroke-width="1"/>
+    <text x="370" y="298" font-size="11.5" fill="#2b2620" text-anchor="middle" font-weight="bold">⑤ 双曲抛物面（马鞍）</text>
+    <text x="370" y="313" font-size="10.5" fill="#5c554b" text-anchor="middle">z = x²/a²−y²/b²</text>
+    <text x="370" y="327" font-size="10.5" fill="#15803d" text-anchor="middle">有鞍点·两族直母线</text>
+  </g>
+  <!-- 6 二次锥面 -->
+  <g>
+    <line x1="572" y1="200" x2="668" y2="250" stroke="#7c3aed" stroke-width="2.2"/>
+    <line x1="668" y1="200" x2="572" y2="250" stroke="#7c3aed" stroke-width="2.2"/>
+    <ellipse cx="620" cy="200" rx="48" ry="8" fill="none" stroke="#7c3aed" stroke-width="1" stroke-dasharray="3 3" opacity="0.5"/>
+    <ellipse cx="620" cy="250" rx="48" ry="8" fill="none" stroke="#7c3aed" stroke-width="1" stroke-dasharray="3 3" opacity="0.5"/>
+    <circle cx="620" cy="225" r="2.5" fill="#be123c"/>
+    <text x="620" y="298" font-size="11.5" fill="#2b2620" text-anchor="middle" font-weight="bold">⑥ 二次锥面</text>
+    <text x="620" y="313" font-size="10.5" fill="#5c554b" text-anchor="middle">x²/a²+y²/b²−z²/c²=0</text>
+    <text x="620" y="327" font-size="10.5" fill="#7c3aed" text-anchor="middle">单叶与双叶之间的分界墙</text>
+  </g>
+  <!-- ========== 第三行 ========== -->
+  <!-- 7 椭圆柱面 -->
+  <g>
+    <line x1="86" y1="368" x2="86" y2="430" stroke="#0f766e" stroke-width="2.2"/>
+    <line x1="154" y1="368" x2="154" y2="430" stroke="#0f766e" stroke-width="2.2"/>
+    <ellipse cx="120" cy="368" rx="34" ry="9" fill="none" stroke="#0f766e" stroke-width="1.6"/>
+    <ellipse cx="120" cy="430" rx="34" ry="9" fill="none" stroke="#0f766e" stroke-width="1.2" stroke-dasharray="3 3" opacity="0.6"/>
+    <text x="120" y="468" font-size="11.5" fill="#2b2620" text-anchor="middle" font-weight="bold">⑦ 椭圆柱面</text>
+    <text x="120" y="483" font-size="10.5" fill="#5c554b" text-anchor="middle">x²/a²+y²/b²=1</text>
+    <text x="120" y="497" font-size="10.5" fill="#0f766e" text-anchor="middle">椭圆沿 z 轴平移扫出</text>
+  </g>
+  <!-- 8 双曲柱面 -->
+  <g>
+    <path d="M 330,368 C 344,384 344,414 330,430" fill="none" stroke="#0f766e" stroke-width="2.2"/>
+    <path d="M 356,368 C 370,384 370,414 356,430" fill="none" stroke="#0f766e" stroke-width="2.2" opacity="0.5"/>
+    <path d="M 410,368 C 396,384 396,414 410,430" fill="none" stroke="#0f766e" stroke-width="2.2"/>
+    <path d="M 384,368 C 370,384 370,414 384,430" fill="none" stroke="#0f766e" stroke-width="2.2" opacity="0.5"/>
+    <text x="370" y="468" font-size="11.5" fill="#2b2620" text-anchor="middle" font-weight="bold">⑧ 双曲柱面</text>
+    <text x="370" y="483" font-size="10.5" fill="#5c554b" text-anchor="middle">x²/a²−y²/b²=1</text>
+    <text x="370" y="497" font-size="10.5" fill="#0f766e" text-anchor="middle">双曲线沿 z 轴平移扫出</text>
+  </g>
+  <!-- 9 抛物柱面 -->
+  <g>
+    <path d="M 566,378 C 590,428 650,428 674,378" fill="none" stroke="#0f766e" stroke-width="2.2"/>
+    <path d="M 580,368 C 600,408 640,408 660,368" fill="none" stroke="#0f766e" stroke-width="1.4" stroke-dasharray="3 3" opacity="0.6"/>
+    <line x1="566" y1="378" x2="580" y2="368" stroke="#0f766e" stroke-width="1.2"/>
+    <line x1="674" y1="378" x2="660" y2="368" stroke="#0f766e" stroke-width="1.2"/>
+    <text x="620" y="468" font-size="11.5" fill="#2b2620" text-anchor="middle" font-weight="bold">⑨ 抛物柱面</text>
+    <text x="620" y="483" font-size="10.5" fill="#5c554b" text-anchor="middle">y²=2px（缺 z）</text>
+    <text x="620" y="497" font-size="10.5" fill="#0f766e" text-anchor="middle">抛物线沿 z 轴平移扫出</text>
+  </g>
+</svg>
+<figcaption>九类标准形全家福。记忆分三排：第一排"有心三兄弟"（椭球 / 单叶 / 双叶），第二排"无心抛物面 + 分界墙"（椭圆抛物面 / 马鞍 / 锥），第三排"柱面三兄弟"（平面曲线沿轴平移）。</figcaption>
+</figure>
+
+<p>三个一眼就够用一辈子的观察：</p>
+<ul>
+  <li><strong>前四个（椭球、单叶、双叶、锥）是同一个方程族的四个右端</strong>：$x^2+y^2-z^2=d$ 当 $d&gt;0$ 单叶、$d=0$ 锥、$d&lt;0$ 双叶——开场谜题只是这个家族的一次亮相。锥面是"墙"：单叶收腰收到 $d=0$ 的瞬间两叶刚好碰上，再过去就裂开了。</li>
+  <li><strong>抛物面没有中心</strong>：方程里有一个一次项配不掉（$z=\cdots$），它把曲面"撑开"成一个方向无限延伸的碗或马鞍。</li>
+  <li><strong>柱面 = 缺一个变量</strong>：方程里不出现 $z$，曲面就是底面曲线沿 $z$ 轴平移扫出的"墙板"——第 15 届题一的抛物柱面 $z=\frac{1}{2a}(x^2+a^2)$ 就是这么认出来的（方程里没有 $y$，沿 $y$ 方向平移不变）。</li>
+</ul>
+
+<h2>§3 精确定义：一般方程与九类标准形</h2>
+
+<div class="def">
+  <p class="def-title">定义（二次曲面与标准形）</p>
+  <p>三元二次方程
+  $$F(x,y,z)=x^{\mathsf T}Ax+2b^{\mathsf T}x+c=0$$
+  （$A$ 为三阶<strong>实对称</strong>矩阵，$A\ne O$；$x=(x,y,z)^{\mathsf T}$）的轨迹称为<strong>二次曲面</strong>。经过适当的<strong>正交变换</strong>（旋转坐标轴，$x=Qx'$）与<strong>平移</strong>，它必化为以下九类标准形之一（或退化情形：一点、一直线、一平面、两平面、无轨迹）：</p>
+  <table>
+    <tr><th>名称</th><th>标准方程</th><th>一句话特征</th></tr>
+    <tr><td>椭球面</td><td>$\dfrac{x^2}{a^2}+\dfrac{y^2}{b^2}+\dfrac{z^2}{c^2}=1$</td><td>连成一片的封闭蛋，有界</td></tr>
+    <tr><td>单叶双曲面</td><td>$\dfrac{x^2}{a^2}+\dfrac{y^2}{b^2}-\dfrac{z^2}{c^2}=1$</td><td>连成一片，有喉圆，两族直母线</td></tr>
+    <tr><td>双叶双曲面</td><td>$\dfrac{x^2}{a^2}+\dfrac{y^2}{b^2}-\dfrac{z^2}{c^2}=-1$</td><td>裂成两半，$|z|\ge c$ 之外才有点</td></tr>
+    <tr><td>椭圆抛物面</td><td>$z=\dfrac{x^2}{a^2}+\dfrac{y^2}{b^2}$</td><td>一只碗，无心，单向开口</td></tr>
+    <tr><td>双曲抛物面</td><td>$z=\dfrac{x^2}{a^2}-\dfrac{y^2}{b^2}$</td><td>马鞍面，有鞍点，两族直母线</td></tr>
+    <tr><td>二次锥面</td><td>$\dfrac{x^2}{a^2}+\dfrac{y^2}{b^2}-\dfrac{z^2}{c^2}=0$</td><td>过顶点的直线织成，单叶双叶的分界</td></tr>
+    <tr><td>椭圆柱面</td><td>$\dfrac{x^2}{a^2}+\dfrac{y^2}{b^2}=1$</td><td>椭圆沿 $z$ 轴平移扫出</td></tr>
+    <tr><td>双曲柱面</td><td>$\dfrac{x^2}{a^2}-\dfrac{y^2}{b^2}=1$</td><td>双曲线沿 $z$ 轴平移扫出</td></tr>
+    <tr><td>抛物柱面</td><td>$y^2=2px$（缺 $z$）</td><td>抛物线沿 $z$ 轴平移扫出</td></tr>
+  </table>
+  <p>三类柱面、锥面与两种直纹面（单叶、马鞍）都是<strong>直纹面</strong>——整张曲面由直线铺成；其中单叶双曲面与双曲抛物面各有<strong>两族</strong>直母线。</p>
+</div>
+
+<div class="symbol box" data-tag="逐符号朗读">
+  <table>
+    <tr><th>符号片段</th><th>出声读</th><th>它在干什么</th></tr>
+    <tr><td>$x^{\mathsf T}Ax$</td><td>"全部二次项打包：$a_{11}x^2+a_{22}y^2+a_{33}z^2+2a_{12}xy+2a_{13}xz+2a_{23}yz$"</td><td>曲面的"骨架"；<strong>交叉项系数劈半</strong>放进 $A$ 的 $(1,2)$ 与 $(2,1)$ 位置</td></tr>
+    <tr><td>$A=A^{\mathsf T}$</td><td>"$A$ 是实对称矩阵"</td><td>谱定理（高代第 9 章）保证：<strong>必可正交对角化</strong>——这是主轴化合法的全部依据</td></tr>
+    <tr><td>$2b^{\mathsf T}x$</td><td>"全部一次项"</td><td>曲面偏离原心的部分；配方后变成平移量（中心/顶点坐标）</td></tr>
+    <tr><td>$x=Qx'$，$Q$ 正交</td><td>"把坐标轴<strong>旋转</strong>到 $A$ 的特征向量方向上"</td><td>正交变换保长度、保角度——曲面形状不变，只是"摆正"；交叉项由此被消灭</td></tr>
+    <tr><td>$\lambda_1X^2+\lambda_2Y^2+\lambda_3Z^2=d$</td><td>"摆正再平移之后只剩平方项和一个常数"</td><td>标准形毛坯；$\lambda_i$ 的符号与 $d$ 的符号合起来唯一决定曲面类型</td></tr>
+  </table>
+  <p>一句话：<strong>$A$ 管形状（特征值符号），$b$ 管位置（平移），$d$ 管"是实的、退化的还是虚的"</strong>。判型就是读这两组符号，不需要真的把曲面画出来。</p>
+</div>
+
+<div class="think">
+  <p>别急着往下翻。<strong>拿张纸，把 $2xy+2yz+2zx$ 的矩阵 $A$ 排出来</strong>（对角线是什么？交叉项系数 2 劈半放哪里？），然后口算它的特征值（提示：$A$ 的每行和都是 2，说明 $(1,1,1)^{\mathsf T}$ 是一个特征向量；再注意 $A=J-I$，$J$ 是全 1 矩阵）。根据符号猜猜 $2xy+2yz+2zx=-1$ 是哪类曲面。写完再展开对照。</p>
+  <details class="answer">
+    <summary>对照：矩阵、特征值与判型</summary>
+    <p>$$A=\begin{pmatrix}0&1&1\\1&0&1\\1&1&0\end{pmatrix},\qquad \det(A-\lambda I)=-\lambda^3+3\lambda+2=-(\lambda-2)(\lambda+1)^2,$$
+    特征值 $2,-1,-1$（一正两负）。方程 $2xy+2yz+2zx=-1$ 主轴化后是 $2X^2-Y^2-Z^2=-1$，即
+    $$Y^2+Z^2-X^2=1$$
+    ——两个正项一个负项、右端为正：<strong>单叶双曲面</strong>，连成一片，对称轴是特征值 2 的方向 $(1,1,1)$。一个没有任何平方项的方程，竟然是单叶双曲面——这就是"轴歪了"的含义。</p>
+  </details>
+</div>
+
+<h3>3.1 主轴化工作流程：四步摆正任何杂烩方程</h3>
+
+<div class="net box" data-tag="主轴化四步（固定程序，无灵感成分）">
+  <p><strong>第 1 步 · 排矩阵</strong>：把二次项打包成实对称矩阵 $A$（平方项系数进对角线，<strong>交叉项系数劈半</strong>进对称位置），一次项收成 $2b^{\mathsf T}x$。</p>
+  <p><strong>第 2 步 · 正交对角化</strong>：求 $A$ 的特征值 $\lambda_1,\lambda_2,\lambda_3$（特征多项式 $\det(A-\lambda I)=0$）。<strong>判型到这一步其实已经够了</strong>（见 3.2 符号规则）；只有题目要求"写出标准方程/坐标变换"时，才需要求特征向量、写出正交变换 $x=Qx'$。</p>
+  <p><strong>第 3 步 · 配方平移</strong>：在新坐标下对每个含一次项的变量配方 $\lambda_iX^2+\alpha_iX=\lambda_i\bigl(X+\tfrac{\alpha_i}{2\lambda_i}\bigr)^2-\tfrac{\alpha_i^2}{4\lambda_i}$，平移定出<strong>中心</strong>（有心曲面）或<strong>顶点</strong>（抛物面）。哪个 $\lambda_i=0$ 而对应一次项 $\ne0$，这个一次项就"配不掉"——它正是抛物面开口的方向。</p>
+  <p><strong>第 4 步 · 读符号判型</strong>：把方程整理成 $\lambda_1\widetilde X^2+\lambda_2\widetilde Y^2+\lambda_3\widetilde Z^2=d$，查 3.2 的表，报名字。</p>
+</div>
+
+<p>这套流程和高代第 9 章"二次型化标准形"是<strong>同一个定理的两张面孔</strong>：代数那边说"实对称矩阵可正交对角化"，几何这边说"二次曲面可摆正成九类之一"。特征值就是桥梁——所以它既是高代的考点，也是解几判型的命门。竞赛题里第 2 步的特征值往往设计成整数（出题人知道你要手算），见到 $\det(A-\lambda I)$ 先试 $\pm1,\pm2,\pm3$。</p>
+
+<h3>3.2 符号规则：两个符号读完，曲面报名字</h3>
+
+<div class="recog box" data-tag="判型总表（背这张）">
+  <p>设摆正平移后方程为 $\lambda_1X^2+\lambda_2Y^2+\lambda_3Z^2=d$（$\lambda_1\ge\lambda_2\ge\lambda_3$）。</p>
+  <table>
+    <tr><th>特征值符号型</th><th>$d&gt;0$</th><th>$d=0$</th><th>$d&lt;0$</th></tr>
+    <tr><td>$(+,+,+)$ 三正</td><td><strong>椭球面</strong></td><td>一个点（退化）</td><td>无轨迹（虚椭球）</td></tr>
+    <tr><td>$(+,+,-)$ 两正一负</td><td><strong>单叶双曲面</strong>（连一片）</td><td><strong>二次锥面</strong></td><td><strong>双叶双曲面</strong>（裂两半）</td></tr>
+    <tr><td>$(+,-,-)$ 一正两负</td><td><strong>双叶双曲面</strong>（裂两半，轴沿 $\lambda_1$ 方向）</td><td><strong>二次锥面</strong></td><td><strong>单叶双曲面</strong>（连一片）</td></tr>
+    <tr><td>有零特征值</td><td colspan="3">一次项配不掉 $\Rightarrow$ <strong>抛物面</strong>（另两特征值同号=椭圆抛物面，异号=双曲抛物面）；一次项也消失 $\Rightarrow$ <strong>柱面或退化</strong>（椭圆柱 / 双曲柱 / 两平面 / 无轨迹）</td></tr>
+  </table>
+  <p><strong>口诀</strong>：右端 $d$ 跟<strong>多数派</strong>（特征值里占多数的符号）同号 $\Rightarrow$ <strong>连成一片</strong>；异号 $\Rightarrow$ <strong>裂成两半</strong>；$d=0$ $\Rightarrow$ <strong>锥面（退化）</strong>。三正永远一片（有界即成椭球）。裂口方向 = 少数派特征值对应的轴。开场谜题里 $S_1,S_2$ 正是 $(+,+,-)$ 这一行的 $d&gt;0$ 与 $d&lt;0$ 两格。</p>
+</div>
+
+<div class="warn box" data-tag="退化与不变量：一句话版">
+  <p>正交变换不改 $A$ 的特征值，所以<strong>秩 $r(A)$（非零特征值个数）与符号差（正特征值个数减负特征值个数）是曲面的指纹</strong>：$r=3$ 是有心曲面（椭球/单叶/双叶/锥/点/虚），$r=2$ 是抛物面或柱面类，$r=1$ 只剩抛物柱面或平面类。平移则只管右端 $d$——配方每推进一步，$d$ 都在变，$d=0$ 那一刻就是退化瞬间（锥面、点、两平面）。教材里的"不变量 $I_1,I_2,I_3$ 分类法"无非是把"特征值符号 + $d$ 符号"包装成几个行列式，会算特征值就不必另背一套。</p>
+</div>
+
+<h3>3.3 截痕法：用平面切一刀，读出曲面形状</h3>
+
+<p>手里没有矩阵工具（或方程是 $z=f(x,y)$ 这种解出形式）时，还有一把纯几何的刀：<strong>截痕法</strong>——用坐标平面和平行平面去切曲面，看切口的形状与变化。三组截面各有分工：</p>
+<ul>
+  <li><strong>水平截面 $z=h$</strong>：读"等高线"。椭圆不消失=连一片；中间一段空=裂两半；双曲线换开口方向=马鞍；</li>
+  <li><strong>竖直截面 $x=h$、$y=h$</strong>：读"剖面"。抛物线开口方向一致=碗（椭圆抛物面），相反=马鞍；直线=柱面或锥面信号。</li>
+</ul>
+
+<div class="calc box" data-tag="六张脸的 z=h 截线对照">
+  <table>
+    <tr><th>曲面（$z=h$ 去切）</th><th>截线随 $h$ 的变化</th><th>读出的信息</th></tr>
+    <tr><td>椭球面</td><td>$|h|&lt;c$ 椭圆，$|h|=c$ 缩成点，$|h|&gt;c$ 空</td><td>有界封闭，上下封顶</td></tr>
+    <tr><td>单叶双曲面</td><td>一切 $h$ 都是椭圆，$h=0$ 最小（喉圆）</td><td>连成一片，腰细但不断</td></tr>
+    <tr><td>双叶双曲面</td><td>$|h|&gt;c$ 椭圆，$|h|=c$ 点，$|h|&lt;c$ <strong>空集</strong></td><td>裂成两半，中间空 $2c$</td></tr>
+    <tr><td>二次锥面</td><td>$h\ne0$ 椭圆，$h=0$ 缩成顶点</td><td>两叶在锥尖相碰</td></tr>
+    <tr><td>椭圆抛物面</td><td>$h&gt;0$ 椭圆，$h=0$ 点，$h&lt;0$ 空</td><td>一只碗</td></tr>
+    <tr><td>双曲抛物面</td><td>$h\ne0$ 双曲线（$h$ 变号 $\Rightarrow$ 开口方向互换），$h=0$ <strong>两条直线</strong></td><td>马鞍签名：换向 + 过一对直线</td></tr>
+  </table>
+  <p class="aside">柱面更简单：$z=h$ 切谁都一样（底面曲线的复制品）——"沿一方向平移不变"就是柱面的定义性特征，第 15 届题一的 $z=\frac1{2a}(x^2+a^2)$ 里根本没有 $y$，往 $y$ 方向怎么平移都一样，所以是抛物柱面。</p>
+</div>
+
+<h3>3.4 亲手摸一摸：截痕法探索器（交互）</h3>
+
+<div class="widget" id="sec-widget">
+  <p class="w-title">▶ 截痕法探索器：拖 d 看"一个符号两种命运"，拖 h 看截线</p>
+  <p class="w-row">左边是曲面的竖直剖面（含对称轴方向），<strong style="color:#b45309">橙色虚线</strong>是你下刀的水平截面 $z=h$；右边是切下来的截线<strong>真实形状</strong>。选「单叶家族」时拖动 <strong>d</strong>：$x^2+y^2-z^2=d$ 会从单叶（$d&gt;0$）收腰成锥面（$d=0$）再裂成双叶（$d&lt;0$）——开场谜题现场直播。</p>
+  <div class="w-row">
+    <label><input type="radio" name="secw-surf" value="family" checked> 单叶家族 x²+y²−z²=d</label>
+    <label><input type="radio" name="secw-surf" value="ellipsoid"> 椭球 x²/4+y²+z²=1</label>
+    <label><input type="radio" name="secw-surf" value="saddle"> 马鞍 z=x²−y²</label>
+    <label><input type="radio" name="secw-surf" value="cone"> 锥面 x²+y²−z²=0</label>
+  </div>
+  <div class="w-row" id="secw-d-row"><label>右端常数 d（单叶家族专用：从 1 拖到 −1，看腰收细、碰上、裂开）</label>
+  <input type="range" id="secw-d" min="-1" max="1" step="0.05" value="1"></div>
+  <div class="w-row"><label>截面高度 h（下刀位置）</label>
+  <input type="range" id="secw-h" min="-2" max="2" step="0.05" value="0.5"></div>
+  <div class="w-row">
+    <svg id="secw-left" viewBox="0 0 320 270" xmlns="http://www.w3.org/2000/svg" style="width:49%;vertical-align:top"></svg>
+    <svg id="secw-right" viewBox="0 0 320 270" xmlns="http://www.w3.org/2000/svg" style="width:49%;vertical-align:top"></svg>
+  </div>
+  <div class="w-verdict" id="secw-out">加载中……（需要启用 JavaScript）</div>
+  <p class="w-row" style="font-size:0.88em;color:#5c554b">玩出这三个体验再往下走：<strong>①</strong> 单叶家族里把 d 从 1 慢慢拖到 −1：腰先收细（喉圆缩小），d=0 时两叶在锥尖碰上，再拖就裂开——截线随之从"任何高度都有"变成"中间一段空集"；<strong>②</strong> d=−1 时把 h 从 0 拖到 ±1 附近：空集 → 一个点 → 圆，那就是双叶的"碗底"诞生的瞬间；<strong>③</strong> 选马鞍面，把 h 从 1 拖到 −1：双曲线在 h=0 瞬间变成两条直线并调换开口方向——马鞍签名。</p>
+</div>
+
+<h2>§4 翻译轨：三个标准动作 + 一间练功房</h2>
+
+<p>二次曲面在卷面上只有三种出场方式。练成反射，这一章就毕业了。</p>
+
+<div class="trans box" data-tag="动作一：给一般方程 → 主轴化判型">
+  <p><strong>题面</strong>："判断曲面 $F(x,y,z)=0$ 的类型 / 是什么曲面 / 化为标准方程"。</p>
+  <p><strong>翻译</strong>：走 §3.1 四步流程——排矩阵 $A$（交叉项劈半）→ 求特征值 → （要标准方程才求特征向量）→ 配方定中心 → 读符号判型。</p>
+  <p><strong>用在哪一步、值多少分</strong>：这是第 13 届题一的收尾动作（配出 $\frac{A}{AC-B^2}(x^2+y^2)-\frac{A^2}{AC-B^2}(z+\frac BA)^2=1$ 报名字拿最后 2 分），也是一切解几大题的读题第一步。<strong>只判型不求标准方程时，特征值求出来就可以报名字，特征向量一个字都不用算。</strong></p>
+</div>
+
+<div class="trans box" data-tag="动作二：给标准形（或平移的标准形）→ 符号规则秒判 + 截痕验证">
+  <p><strong>题面</strong>："曲面 $x^2+y^2-z^2=-2$"（第 16 届题一）、"曲面 $z=\frac1{2a}(x^2+a^2)$"（第 15 届题一结论）。</p>
+  <p><strong>翻译</strong>：直接读符号——两正一负、右端负 $\Rightarrow$ 双叶双曲面（裂两半，$|z|\ge\sqrt2$）；缺 $y$、$z$ 是 $x$ 的二次式 $\Rightarrow$ 抛物柱面（沿 $y$ 平移）。<strong>顺手用 $z=h$ 截一下验证</strong>：双叶的截线在 $|h|&lt;\sqrt2$ 处是空集，这就是"上半叶 $S^+=\{z\ge\sqrt2\}$"这个记号的来历。</p>
+  <p><strong>用在哪一步、值多少分</strong>：第 15 届题一"构成何种曲面"五个字值 5 分——结论分就是判型分，过程分是求方程。判错型，这 5 分归零。</p>
+</div>
+
+<div class="trans box" data-tag="动作三：直纹信号 → 想到单叶与马鞍">
+  <p><strong>题面</strong>："求曲面上过点 $P$ 的直线 / 直母线"（第 14 届题一：单叶双曲面 $x^2+y^2-z^2=1$ 上过 $(1,1,1)$ 的两条直线）。</p>
+  <p><strong>翻译</strong>：整张曲面铺满直线，九类里只有单叶双曲面与双曲抛物面有<strong>两族</strong>直母线（锥面、柱面只有一族）。方法：设过 $P$ 的方向 $(a,b,c)$，参数方程代入曲面方程，要求<strong>对一切 $t$ 恒成立</strong> $\Rightarrow$ $t$ 的各次系数全为零 $\Rightarrow$ 解出方向。</p>
+  <p><strong>用在哪一步、值多少分</strong>：14 届题一 15 分全在这个动作上；详细打法属于第 4 章（旋转面与直纹面），本章负责"看到直纹信号知道该想起谁"。</p>
+</div>
+
+<h3>4.4 翻译练功房：像学语言一样，大量互译</h3>
+
+<p>下面 8 句，先全部写在纸上，再逐条展开对照。每条不超过 1 分钟——判型题在考场上就应该这么快。</p>
+
+<div class="trans box" data-tag="互译 8 句">
+  <p><strong>T1</strong>　快判：$\dfrac{x^2}{4}+\dfrac{y^2}{9}-z^2=-1$ 是什么曲面？截平面 $z=h$ 什么时候截不到点？</p>
+  <details class="answer"><summary>对照</summary><p>双叶双曲面（两正一负、右端负，口诀"异号裂两半"）。$z^2=1+\frac{x^2}{4}+\frac{y^2}{9}\ge1$，故 $|h|&lt;1$ 时截线为空集——中间空带宽 2。<strong>易错</strong>：只背"负号多=双叶"，不看右端符号；$=+1$ 就是单叶了。</p></details>
+  <p><strong>T2</strong>　快判：$z=x^2-y^2$ 是什么曲面？$z=h$ 截线在 $h$ 变号时发生什么？</p>
+  <details class="answer"><summary>对照</summary><p>双曲抛物面（马鞍面）。$h&gt;0$ 双曲线开口沿 $x$ 轴，$h&lt;0$ 开口沿 $y$ 轴，$h=0$ 是两条直线 $y=\pm x$——换向 + 过一对直线，马鞍签名。</p></details>
+  <p><strong>T3</strong>　自然→符号：把"曲面连成一片还是裂成两半"翻译成代数语言。</p>
+  <details class="answer"><summary>对照</summary><p>摆正后 $\lambda_1X^2+\lambda_2Y^2+\lambda_3Z^2=d$：$d$ 与多数派特征值同号 $\Rightarrow$ 连一片；异号 $\Rightarrow$ 裂两半；$d=0$ $\Rightarrow$ 锥面（两叶相碰的临界）。全正则恒一片（椭球）。</p></details>
+  <p><strong>T4</strong>　判型（考交叉项劈半）：$x^2+y^2+z^2+4xy+4xz+4yz=1$。</p>
+  <details class="answer"><summary>对照</summary><p>$A=\begin{pmatrix}1&2&2\\2&1&2\\2&2&1\end{pmatrix}$（系数 4 劈半成 2！）。$A=2J-I$，特征值 $5,-1,-1$（$J$ 的特征值 $3,0,0$ 乘 2 减 1）。一正两负、$d=1&gt;0$ $\Rightarrow$ <strong>双叶双曲面</strong>。<strong>易错</strong>：把 4 直接放进矩阵（那样特征值全错）；或看到 $x^2+y^2+z^2$ 就喊球面——交叉项能把球面掰成双叶。</p></details>
+  <p><strong>T5</strong>　找坑：$x^2+2xy+y^2+z^2=1$ 是椭球面吗？</p>
+  <details class="answer"><summary>对照</summary><p>不是。$x^2+2xy+y^2=(x+y)^2$，方程即 $(x+y)^2+z^2=1$：特征值 $2,1,0$（秩 2），沿 $(1,-1,0)$ 方向不受约束——<strong>椭圆柱面</strong>（轴线方向 $(1,-1,0)$）。<strong>教训</strong>：有零特征值先想抛物面/柱面，别被三个字母都在场骗了。</p></details>
+  <p><strong>T6</strong>　符号规则口答：某二次曲面摆正后是 $2X^2+3Y^2-Z^2=d$。$d=5,0,-7$ 各是什么曲面？裂口（若有）沿哪个轴？</p>
+  <details class="answer"><summary>对照</summary><p>两正一负：$d=5$ 单叶双曲面（连一片，绕 $Z$ 轴有喉）；$d=0$ 二次锥面（顶点在原心）；$d=-7$ 双叶双曲面（裂两半，空档沿 $Z$ 轴，$|Z|\ge\sqrt7$）。少数派是 $Z$ 方向，裂口就开在那。</p></details>
+  <p><strong>T7</strong>　截痕读图：某曲面被 $z=h$ 截，$|h|&lt;2$ 时是椭圆且 $|h|$ 越小椭圆越小，$h=0$ 时最小但不消失。它是椭球还是单叶双曲面？再加什么信息能区分？</p>
+  <details class="answer"><summary>对照</summary><p>单叶双曲面（$h=0$ 是喉圆，不消失 $\Rightarrow$ 连一片；椭球在 $|h|$ 接近半轴时截线消失而这里说"不封顶"……注意题干说 $|h|&lt;2$ 内不消失，若 $h\to\pm\infty$ 椭圆无限变大，则定名单叶）。<strong>区分信息</strong>：$|h|$ 大时截线是否存在——椭球有封顶（$|h|&gt;c$ 空），单叶永远有截线且越发越大。截痕法的关键动作就是"把 $h$ 推向极端"。</p></details>
+  <p><strong>T8</strong>　真题原句翻译（第 15 届题一）：官方解答最后一步由 $x^2+y^2+(z-a)^2=z^2+y^2$ 得 $z=\frac1{2a}(x^2+a^2)$，随即宣布"为抛物柱面"。凭什么？</p>
+  <details class="answer"><summary>对照</summary><p>方程里<strong>不出现 $y$</strong> $\Rightarrow$ 曲面沿 $y$ 轴方向平移不变 $\Rightarrow$ 是柱面，母线平行 $y$ 轴；$zOx$ 平面上的底曲线 $z=\frac1{2a}(x^2+a^2)$ 是抛物线 $\Rightarrow$ 抛物柱面。两句话：缺变量 $\Rightarrow$ 柱面；底曲线是谁 $\Rightarrow$ 叫什么柱面。</p></details>
+</div>
+
+<h2>§5 类型识别：什么信号在召唤二次曲面</h2>
+
+<div class="recog box" data-tag="识别反射表">
+  <table>
+    <tr><th>题面信号</th><th>反射</th></tr>
+    <tr><td>"判断曲面 $F(x,y,z)=0$ 的类型 / 是何种曲面"</td><td>主轴化流程：排 $A$ → 特征值 → 配方 → 读符号（动作一）</td></tr>
+    <tr><td>方程无交叉项、只有平方项与一次项</td><td>直接配方，别浪费时间求特征值——轴本来就是正的</td></tr>
+    <tr><td>有交叉项 $xy,xz,yz$</td><td>系数劈半进矩阵；特征多项式先试 $\pm1,\pm2,\pm3$</td></tr>
+    <tr><td>方程缺一个变量</td><td>柱面！母线平行所缺变量的轴；底曲线定名字（15 届题一）</td></tr>
+    <tr><td>"绕某轴旋转所得的曲面"</td><td>第 4 章纬圆法则求方程；判型收尾回本章（13 届题一）</td></tr>
+    <tr><td>"曲面上过点 $P$ 的直线 / 直母线"</td><td>直纹信号：单叶或马鞍（两族）；参数代入"恒成立 ⟹ 系数全零"（14 届题一）</td></tr>
+    <tr><td>"切平面 / 切锥面 / 截面"</td><td>第 3 章工具上场；但先花 10 秒判型——16 届题一的"上半叶 $z\ge\sqrt2$"就是双叶判型的直接产物</td></tr>
+    <tr><td>"轨迹构成何种曲面"</td><td>先求轨迹方程，再判型；最后必须<strong>把曲面的名字写出来</strong>，光给方程丢结论分</td></tr>
+  </table>
+</div>
+
+<h2>§6 考法定位：它藏在哪里、值多少分</h2>
+
+<div class="exam box" data-tag="考法定位">
+  <table>
+    <tr><th>出处</th><th>题号</th><th>二次曲面判型扮演什么角色</th><th>分值权重</th></tr>
+    <tr><td>第 13 届（2021）</td><td>题一</td><td>直线绕 $z$ 轴旋转，求出方程后<strong>判型收尾</strong>：配方得单叶双曲面；共面情形认出圆柱面、圆锥面、退化平面</td><td>15 分（判型约值 2–4 分结论分）</td></tr>
+    <tr><td>第 14 届（2022）</td><td>题一</td><td>直接给单叶双曲面 $x^2+y^2-z^2=1$，考两族直母线——"连一片 + 直纹"是读题起点</td><td>15 分（判型是入场券）</td></tr>
+    <tr><td>第 15 届（2023）</td><td>题一</td><td>轨迹方程判型：缺 $y$ ⟹ 抛物柱面；"构成何种曲面" 5 分结论分</td><td>15 分（结论 5 分全靠判型）</td></tr>
+    <tr><td>第 16 届（2024）</td><td>题一</td><td>双叶双曲面 $x^2+y^2-z^2=-2$ 的切锥面；"上半叶 $S^+=\{z\ge\sqrt2\}$"正是"裂两半"的代数说法</td><td>15 分（判型决定题意理解）</td></tr>
+  </table>
+  <p><strong>规律</strong>：解几在初赛稳定 1 题 15 分，且近几届题一（13–16 届）<strong>清一色站在二次曲面上</strong>。判型很少单独成题，它是每道题的第一句话：判对型，后面 15 分的工具（直母线、切锥面、纬圆法）才选得对；判错型，满盘皆输。这也是把判型练成"两秒反射"的全部理由。</p>
+</div>
+
+<h2>§7 关系网：一个符号背后的整条生产线</h2>
+
+<p>本章所有角色画在一张图上：<span style="color:#b45309">三角形</span>是来源与动机，<span style="color:#1d4ed8">圆角矩形</span>是定义与桥梁定理，<span style="color:#15803d">矩形</span>是九类标准形家族，<span style="color:#7c3aed">六边形</span>是方法动作，<span style="color:#0f766e">椭圆</span>是应用出口。顺着箭头走一遍，就是"一个符号两种命运"被彻底解释的全过程。</p>
+
+<figure>
+<svg viewBox="0 0 720 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="二次曲面关系网地图">
+  <defs>
+    <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#8a8175"/>
+    </marker>
+  </defs>
+
+  <!-- 图例 -->
+  <polygon points="30,16 22,30 38,30" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5"/>
+  <text x="44" y="28" font-size="11.5" fill="#5c554b">来源·动机</text>
+  <rect x="116" y="17" width="22" height="13" rx="6.5" fill="#eef3fe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="144" y="28" font-size="11.5" fill="#5c554b">定义·桥梁</text>
+  <rect x="222" y="17" width="22" height="13" fill="#ecf8f0" stroke="#15803d" stroke-width="1.5"/>
+  <text x="250" y="28" font-size="11.5" fill="#5c554b">标准形家族</text>
+  <polygon points="340,23.5 346,16 360,16 366,23.5 360,31 346,31" fill="#f4effd" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="372" y="28" font-size="11.5" fill="#5c554b">方法·动作</text>
+  <ellipse cx="470" cy="23.5" rx="12" ry="7" fill="#ecf8f5" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="488" y="28" font-size="11.5" fill="#5c554b">应用·出口</text>
+
+  <!-- 来源三角：一个符号两种命运 -->
+  <polygon points="120,52 56,130 184,130" fill="#fdf3e3" stroke="#b45309" stroke-width="2"/>
+  <text x="120" y="92" font-size="12" fill="#7a4a12" text-anchor="middle" font-weight="bold">一个符号</text>
+  <text x="120" y="107" font-size="12" fill="#7a4a12" text-anchor="middle" font-weight="bold">两种命运</text>
+  <text x="120" y="121" font-size="10" fill="#7a4a12" text-anchor="middle">x²+y²−z²=±1</text>
+
+  <!-- 来源 → 桥梁 -->
+  <line x1="190" y1="95" x2="262" y2="95" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="226" y="84" font-size="11" fill="#5c554b" text-anchor="middle">秘密写在</text>
+
+  <!-- 桥梁：二次型与特征值（圆角矩形） -->
+  <rect x="268" y="60" width="200" height="70" rx="16" fill="#eef3fe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="368" y="85" font-size="14" fill="#1d4ed8" text-anchor="middle" font-weight="bold">二次型 ⟷ 特征值</text>
+  <text x="368" y="103" font-size="11" fill="#1d4ed8" text-anchor="middle">高代第 9 章 · 谱定理</text>
+  <text x="368" y="119" font-size="10.5" fill="#1d4ed8" text-anchor="middle">实对称矩阵可正交对角化</text>
+
+  <!-- 桥梁 → 家族 -->
+  <line x1="468" y1="95" x2="530" y2="95" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="499" y="84" font-size="11" fill="#5c554b" text-anchor="middle">摆正后</text>
+
+  <!-- 九类标准形家族（矩形，内分三小格） -->
+  <rect x="536" y="44" width="168" height="104" rx="6" fill="#ecf8f0" stroke="#15803d" stroke-width="2"/>
+  <text x="620" y="63" font-size="13" fill="#15803d" text-anchor="middle" font-weight="bold">九类标准形</text>
+  <rect x="546" y="72" width="148" height="20" fill="#faf8f4" stroke="#15803d" stroke-width="0.8"/>
+  <text x="620" y="86" font-size="10" fill="#4a7c59" text-anchor="middle">有心：椭球·单叶·双叶·锥</text>
+  <rect x="546" y="96" width="148" height="20" fill="#faf8f4" stroke="#15803d" stroke-width="0.8"/>
+  <text x="620" y="110" font-size="10" fill="#4a7c59" text-anchor="middle">无心：椭圆抛物面·马鞍</text>
+  <rect x="546" y="120" width="148" height="20" fill="#faf8f4" stroke="#15803d" stroke-width="0.8"/>
+  <text x="620" y="134" font-size="10" fill="#4a7c59" text-anchor="middle">柱面：椭圆·双曲·抛物</text>
+
+  <!-- 家族 → 三方法 -->
+  <polyline points="620,148 620,168 200,168 200,196" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <polyline points="620,148 620,180 400,180 400,196" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <polyline points="620,148 620,196" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="628" y="172" font-size="11" fill="#5c554b">读出与识别</text>
+
+  <!-- 三方法（六边形） -->
+  <polygon points="110,232 138,200 262,200 290,232 262,264 138,264" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="200" y="226" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">主轴化流程</text>
+  <text x="200" y="243" font-size="10.5" fill="#6a55a3" text-anchor="middle">排A→特征值→配方→判型</text>
+  <polygon points="310,232 338,200 462,200 490,232 462,264 338,264" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="400" y="226" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">截痕法</text>
+  <text x="400" y="243" font-size="10.5" fill="#6a55a3" text-anchor="middle">z=h 切一刀读等高线</text>
+  <polygon points="510,232 538,200 662,200 690,232 662,264 538,264" fill="#f4effd" stroke="#7c3aed" stroke-width="2"/>
+  <text x="600" y="226" font-size="12.5" fill="#7c3aed" text-anchor="middle" font-weight="bold">符号规则</text>
+  <text x="600" y="243" font-size="10.5" fill="#6a55a3" text-anchor="middle">特征值符号+d符号秒判</text>
+
+  <!-- 桥梁 → 符号规则（直接供弹药） -->
+  <polyline points="420,130 420,152 560,152 560,196" fill="none" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="426" y="146" font-size="11" fill="#5c554b">供弹药</text>
+
+  <!-- 三方法 → 三出口 -->
+  <line x1="200" y1="264" x2="160" y2="352" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="150" y="315" font-size="11" fill="#5c554b">判型题</text>
+  <line x1="400" y1="264" x2="395" y2="352" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="364" y="315" font-size="11" fill="#5c554b">下一步</text>
+  <line x1="600" y1="264" x2="618" y2="352" stroke="#8a8175" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="626" y="315" font-size="11" fill="#5c554b">直纹面</text>
+
+  <!-- 三出口（椭圆） -->
+  <ellipse cx="150" cy="398" rx="138" ry="42" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="150" y="390" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">判型题与轨迹题</text>
+  <text x="150" y="406" font-size="10.5" fill="#3d7a70" text-anchor="middle">13 届题一（旋转面判型）</text>
+  <text x="150" y="421" font-size="10.5" fill="#3d7a70" text-anchor="middle">15 届题一（抛物柱面）</text>
+  <ellipse cx="398" cy="398" rx="128" ry="42" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="398" y="390" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">第 3 章 · 切平面与切锥面</text>
+  <text x="398" y="406" font-size="10.5" fill="#3d7a70" text-anchor="middle">16 届题一：双叶的上半叶</text>
+  <text x="398" y="421" font-size="10.5" fill="#3d7a70" text-anchor="middle">先判型，才谈得上"哪一叶"</text>
+  <ellipse cx="620" cy="398" rx="96" ry="42" fill="#ecf8f5" stroke="#0f766e" stroke-width="2"/>
+  <text x="620" y="390" font-size="12" fill="#0f766e" text-anchor="middle" font-weight="bold">第 4 章 · 直纹面</text>
+  <text x="620" y="406" font-size="10.5" fill="#3d7a70" text-anchor="middle">14 届题一：单叶的</text>
+  <text x="620" y="421" font-size="10.5" fill="#3d7a70" text-anchor="middle">两族直母线</text>
+</svg>
+<figcaption>本章地图：一个符号的差异 ⟶ 二次型特征值（高代第 9 章的桥梁）⟶ 九类标准形 ⟶ 三件识别武器 ⟶ 三条出口（判型题、切锥面、直纹面）。</figcaption>
+</figure>
+
+<div class="net box" data-tag="画面感锚点（记这些，不记条文）">
+  <table>
+    <tr><th>节点</th><th>一句话画面</th><th>擅长场景</th></tr>
+    <tr><td>一个符号两种命运</td><td>$x^2+y^2-z^2=1$ 能焊直钢丝，$=-1$ 中间是空的</td><td>开场谜题；单叶双叶一秒区分</td></tr>
+    <tr><td>二次型 ⟷ 特征值</td><td>交叉项只是坐标轴歪了，正交变换把曲面"摆正"</td><td>一切杂烩方程判型的理论兜底</td></tr>
+    <tr><td>九类标准形</td><td>三排全家福：有心四张脸、无心两只碗（一鞍）、柱面三块板</td><td>判型的"答案库"</td></tr>
+    <tr><td>主轴化流程</td><td>排矩阵 → 特征值 → 配方 → 报名字，流水线作业</td><td>"判断曲面类型"的标准解法</td></tr>
+    <tr><td>截痕法</td><td>菜刀式读图：$z=h$ 切一刀，看等高线怎么变</td><td>$z=f(x,y)$ 型方程；验证判型结果</td></tr>
+    <tr><td>符号规则</td><td>右端跟多数派同号连一片，异号裂两半，零是锥</td><td>考场上两秒判型的反射</td></tr>
+  </table>
+  <p><strong>和你已学知识的焊接点</strong>：① 高代第 9 章的"实对称矩阵正交对角化"就是本章主轴化的发动机——同一个定理，那边化二次型，这边摆曲面；② 平面向里的圆锥曲线分类（椭圆/双曲/抛物，由 $B^2-4AC$ 判别）是本章的二维前辈，符号规则是它的三维升级；③ 多元微分里的梯度 $\nabla F$ 与切平面公式，到第 3 章会接在"已判型的曲面"上使用。</p>
+</div>
+
+<h2>§8 计算示范：先看真人怎么想，再看卷面怎么写</h2>
+
+<h3>例 1 · 判曲面类型并化标准形（约 10 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>任务是"判型 + 化标准形"——这不是 $\forall\exists$ 型证明，而是<strong>划归型计算任务</strong>（工具六 · 划归）：把一切二次方程划归九类标准形。骨架由 §3.1 四步流程机械给出，不需要灵感。</p>
+  <p><span class="stage">【盘点】</span>方程 $3x^2+2xy+3y^2+6z^2+4x+4y-12z=6$ 的产出清单：① 二次部分有交叉项 $2xy$ ⟹ 矩阵 $A$ 的 $(1,2),(2,1)$ 位置各放 $1$（<strong>劈半</strong>）；② $z$ 方向无交叉项，$6z^2$ 自带一个特征方向；③ 一次项 $4x+4y-12z$ 是配方素材；④ 右端 $6$ 是 $d$ 的毛坯。</p>
+  <p><span class="stage">【会师】</span>倒推链：要报名字 ⟸ 需 $\lambda$ 的符号型与 $d$ 的符号 ⟸ 特征多项式 $\det(A-\lambda I)$ 求根 ⟸ 试根 $\pm1,\pm2,\pm3$。$A=\begin{pmatrix}3&1&0\\1&3&0\\0&0&6\end{pmatrix}$ 是分块结构（$z$ 独立），$\det(A-\lambda I)=(6-\lambda)\bigl[(3-\lambda)^2-1\bigr]=(6-\lambda)(\lambda-2)(\lambda-4)$，特征值 $2,4,6$——<strong>三正，判型到此已经结束</strong>：椭球面族，$d$ 必正（正定型左端恒 $\ge$ 某值……配方见分晓）。要写标准方程才需要特征向量：$\lambda=4$ 时 $(A-4I)v=0$ 给 $v\parallel(1,1,0)$；$\lambda=2$ 给 $(1,-1,0)$；$\lambda=6$ 给 $(0,0,1)$。</p>
+  <p><span class="stage">【定型前 · 自查】</span>配方得到的中心必须用<strong>梯度为零</strong>独立验证：$\nabla F=(6x+2y+4,\ 2x+6y+4,\ 12z-12)=\vec0$ 解出 $(-\tfrac12,-\tfrac12,1)$，与配方结果对照——这是草稿纸上的保险丝，考场上 30 秒，能挡住整题崩盘。</p>
+</div>
+
+<div class="keymove">
+  <strong>关键动作 · 判型只需特征值</strong>：特征向量、正交矩阵 $Q$、配方，全是"写标准方程"才用的奢侈品。若题目只问"什么曲面"，$\det(A-\lambda I)$ 求出三个根、看符号、看右端，报名字走人——省下的时间是后面大题的。
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 1</strong>　判断曲面 $3x^2+2xy+3y^2+6z^2+4x+4y-12z=6$ 的类型，并化为标准方程。</p>
+  <hr>
+  <p class="proof-line"><strong>解</strong>　二次型部分的矩阵为
+  $$A=\begin{pmatrix}3&1&0\\1&3&0\\0&0&6\end{pmatrix}\qquad(\text{交叉项 }2xy\text{ 系数劈半}).$$<span class="step-score">（2 分）</span></p>
+  <p class="proof-line"><strong>① 特征值</strong>：
+  $$\det(A-\lambda I)=(6-\lambda)\bigl[(3-\lambda)^2-1\bigr]=(6-\lambda)(\lambda-2)(\lambda-4),$$
+  特征值 $\lambda_1=4,\lambda_2=2,\lambda_3=6$，对应单位特征向量 $\frac1{\sqrt2}(1,1,0)^{\mathsf T}$、$\frac1{\sqrt2}(1,-1,0)^{\mathsf T}$、$(0,0,1)^{\mathsf T}$。<span class="step-score">（4 分）</span></p>
+  <p class="proof-line"><strong>② 正交变换</strong>：令 $X=\dfrac{x+y}{\sqrt2},\ Y=\dfrac{x-y}{\sqrt2},\ Z=z$（旋转坐标轴，形状不变），二次部分化为 $4X^2+2Y^2+6Z^2$；一次部分 $4x+4y=4\sqrt2\,X$，$-12z=-12Z$。方程变为
+  $$4X^2+2Y^2+6Z^2+4\sqrt2\,X-12Z=6.$$<span class="step-score">（6 分）</span></p>
+  <p class="proof-line"><strong>③ 配方平移</strong>：
+  $$4\Bigl(X+\tfrac{\sqrt2}{2}\Bigr)^2+2Y^2+6(Z-1)^2=14,$$
+  即
+  $$\frac{\widetilde X^2}{7/2}+\frac{\widetilde Y^2}{7}+\frac{\widetilde Z^2}{7/3}=1,\qquad \widetilde X=X+\tfrac{\sqrt2}{2},\ \widetilde Y=Y,\ \widetilde Z=Z-1.$$<span class="step-score">（9 分）</span></p>
+  <p class="proof-line"><strong>④ 判型</strong>：三个特征值全正、右端 $14&gt;0$ $\Rightarrow$ <strong>椭球面</strong>，半轴 $\sqrt{\tfrac72},\ \sqrt7,\ \sqrt{\tfrac73}$，中心在 $(x,y,z)=\bigl(-\tfrac12,-\tfrac12,1\bigr)$。<span class="step-score">（10 分）</span></p>
+  <p class="aside">书写点评：交叉项劈半（第 ① 步前）与特征值计算是分点；③中每个配方各值一分。若只问类型，写到"特征值 $4,2,6$ 全正，故为椭球面"即可收分——②③的特征向量与配方全部可省。</p>
+</div>
+
+<div class="scratch">
+  <p>草稿纸自查（不抄上卷面）：配方声称中心是 $(-\frac12,-\frac12,1)$。验证 $\nabla F=0$：$F_x=6x+2y+4=-3-1+4=0$ ✓；$F_y=2x+6y+4=-1-3+4=0$ ✓；$F_z=12z-12=0$ ✓。再验右端：$F(-\frac12,-\frac12,1)=\frac34+\frac12+\frac34+6-2-2-12=-8$，平移后右端应为 $6-(-8)=14$ ✓。30 秒换整题保险。</p>
+</div>
+
+<h3>例 2 · 截痕法识别马鞍面（约 8 分的书写量）</h3>
+
+<div class="mind" data-tag="按总纲拆解（程序见第 0.5 章）">
+  <p><span class="stage">【拆目标】</span>"识别 $z=\frac{x^2}{4}-y^2$ 并画草图"——方程已解出 $z$，矩阵工具不趁手（$z$ 带着一次项），改用<strong>截痕法</strong>：划归"曲面 ⟷ 截面曲线族"（工具六），每组截面是两行计算。</p>
+  <p><span class="stage">【盘点】</span>方程特点三条：$z$ 一次（抛物面类信号）；$x^2,y^2$ 异号（马鞍信号，区别于碗）；无交叉项（轴已摆正，不用碰矩阵）。</p>
+  <p><span class="stage">【会师】</span>三组截面分工：$z=h$ 看等高线——$h$ 变号时双曲线换开口方向、$h=0$ 是两条直线，<strong>马鞍签名</strong>；$x=h$ 与 $y=h$ 看剖面——两族抛物线开口<strong>相反</strong>，确认马鞍而非碗（碗是两族同向，§9 模仿 2）。三条证据链合一，定名双曲抛物面。再用特征值语言复述一遍作保险：$\frac{x^2}{4}-y^2-z=0$ 的二次部分特征值 $\frac14,-1,0$，一正一负一零、一次项 $-z$ 配不掉 $\Rightarrow$ 双曲抛物面——几何代数两面对上，才算会师。</p>
+  <p><span class="stage">【定型】</span>卷面按"三组截面 + 结论"写，每组两行；草图画出两组反向抛物线即可（正文给示范图）。</p>
+</div>
+
+<div class="calc box" data-tag="卷面书写">
+  <p><strong>例 2</strong>　用截痕法判定曲面 $z=\dfrac{x^2}{4}-y^2$ 的类型，并画出草图。</p>
+  <hr>
+  <p class="proof-line"><strong>解　① 水平截面 $z=h$</strong>：$\dfrac{x^2}{4}-y^2=h$。$h&gt;0$ 时是实轴沿 $x$ 轴的双曲线；$h&lt;0$ 时是实轴沿 $y$ 轴的双曲线（开口方向互换）；$h=0$ 时退化为<strong>两条直线</strong> $y=\pm\dfrac{x}{2}$。<span class="step-score">（3 分）</span></p>
+  <p class="proof-line"><strong>② 竖直截面</strong>：$x=h$ 截得 $z=\dfrac{h^2}{4}-y^2$，开口<strong>向下</strong>的抛物线；$y=h$ 截得 $z=\dfrac{x^2}{4}-h^2$，开口<strong>向上</strong>的抛物线。两族剖面抛物线开口方向相反。<span class="step-score">（6 分）</span></p>
+  <p class="proof-line"><strong>③ 结论</strong>：等高线为换向双曲线（过 $h=0$ 时穿过一对直线）、两族剖面抛物线反向 $\Rightarrow$ 曲面为<strong>双曲抛物面（马鞍面）</strong>，鞍点在原点。草图如下。<span class="step-score">（8 分）</span></p>
+  <svg viewBox="0 0 360 190" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="马鞍面草图" style="max-width:360px;display:block;margin:0.5em auto">
+    <path d="M 40,150 C 90,60 130,45 180,45 C 230,45 270,60 320,150" fill="none" stroke="#15803d" stroke-width="2.2"/>
+    <path d="M 80,50 C 105,110 130,125 180,125 C 230,125 255,110 280,50" fill="none" stroke="#b45309" stroke-width="2.2"/>
+    <line x1="60" y1="60" x2="300" y2="140" stroke="#8a8175" stroke-width="1" stroke-dasharray="4 3"/>
+    <line x1="300" y1="60" x2="60" y2="140" stroke="#8a8175" stroke-width="1" stroke-dasharray="4 3"/>
+    <circle cx="180" cy="95" r="3" fill="#be123c"/>
+    <text x="192" y="92" font-size="11" fill="#be123c">鞍点</text>
+    <text x="180" y="180" font-size="11" fill="#5c554b" text-anchor="middle">绿：x=h 剖面（向下弯）　橙：y=h 剖面（向上弯）</text>
+  </svg>
+  <p class="aside">书写点评：马鞍面证明的采分点是"<strong>换向</strong>"与"<strong>两直线</strong>"两处——只写"$z=h$ 截线是双曲线"漏掉换向，等于没认出马鞍；$h=0$ 的两条直线 $y=\pm x/2$ 正是它的两族直母线过原点的代表（呼应 §4 动作三）。</p>
+</div>
+
+<h2>§9 配套题目</h2>
+
+<p>铁律：<strong>先写在纸上，写到写不动再展开答案</strong>。模仿题照例 1、例 2 的卷面格式写；判型题全程计时——考场上这类题应该 10 分钟内收工。</p>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 1</span>判断曲面 $5x^2+5y^2+8z^2-8xy-2x-2y=4$ 的类型，并化为标准方程。</p>
+  <details class="answer">
+    <summary>参考答案（约 10 分书写量）</summary>
+    <p>矩阵 $A=\begin{pmatrix}5&-4&0\\-4&5&0\\0&0&8\end{pmatrix}$（交叉项 $-8xy$ 劈半放 $-4$，2 分）。</p>
+    <p>$\det(A-\lambda I)=(8-\lambda)\bigl[(5-\lambda)^2-16\bigr]=(8-\lambda)(\lambda-1)(\lambda-9)$，特征值 $1,9,8$ 全正 $\Rightarrow$ 椭球面族（5 分）。</p>
+    <p>令 $X=\frac{x+y}{\sqrt2}$（属 $\lambda=1$）、$Y=\frac{x-y}{\sqrt2}$（属 $\lambda=9$）、$Z=z$，则二次部分化为 $X^2+9Y^2+8Z^2$，一次部分 $-2x-2y=-2\sqrt2\,X$。配方：
+    $$(X-\sqrt2)^2+9Y^2+8Z^2=6,\qquad\text{即}\qquad \frac{\widetilde X^2}{6}+\frac{\widetilde Y^2}{2/3}+\frac{\widetilde Z^2}{3/4}=1.$$（9 分）</p>
+    <p>结论：<strong>椭球面</strong>，半轴 $\sqrt6,\ \sqrt{\frac23},\ \frac{\sqrt3}{2}$，中心 $(x,y,z)=(1,1,0)$（10 分）。</p>
+    <p><strong>自查与易错</strong>：梯度检验 $F_x=10x-8y-2=0,\ F_y=10y-8x-2=0,\ F_z=16z=0$ 解出 $(1,1,0)$ ✓；$F(1,1,0)=5+5-8-2-2=-2$，右端 $4-(-2)=6$ ✓。易错点：$-8xy$ 忘记劈半，或 $X,Y$ 与特征值 $1,9$ 配错对。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv1">模仿 2</span>用截痕法判定 $z=x^2+\dfrac{y^2}{4}$ 的类型，并与马鞍面对照。</p>
+  <details class="answer">
+    <summary>参考答案（约 8 分书写量）</summary>
+    <p>① $z=h$：$x^2+\frac{y^2}{4}=h$——$h&gt;0$ 椭圆，$h=0$ 缩成原点，$h&lt;0$ 空集（3 分）。</p>
+    <p>② $x=h$：$z=h^2+\frac{y^2}{4}$，开口向上的抛物线；$y=h$：$z=x^2+\frac{h^2}{4}$，开口向上的抛物线——<strong>两族同向</strong>（6 分）。</p>
+    <p>③ 结论：<strong>椭圆抛物面</strong>（一只碗），顶点在原点（8 分）。</p>
+    <p><strong>对照马鞍</strong>：马鞍的等高线是双曲线且随 $h$ 变号换向、$h=0$ 是两条直线；碗的等高线是椭圆、$h=0$ 缩成点、$h&lt;0$ 消失。剖面抛物线"同向=碗，反向=鞍"。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 1</span>判断曲面 $2xy+2yz+2zx=-1$ 的类型（没有平方项，照样判）。</p>
+  <details class="answer">
+    <summary>参考答案与思路</summary>
+    <p><strong>思路</strong>：没有平方项 ≠ 没有二次型——二次项全在交叉项里。矩阵对角线是 $0$，交叉项系数 $2$ 劈半放 $1$。</p>
+    <p>$$A=\begin{pmatrix}0&1&1\\1&0&1\\1&1&0\end{pmatrix}=J-I,\qquad \det(A-\lambda I)=-\lambda^3+3\lambda+2=-(\lambda-2)(\lambda+1)^2,$$
+    特征值 $2,-1,-1$（一正两负），右端 $d=-1&lt;0$。按符号规则"右端与多数派（负）同号 $\Rightarrow$ 连一片"：<strong>单叶双曲面</strong>。写标准形：$2X^2-Y^2-Z^2=-1$ 即 $Y^2+Z^2-X^2=1$，对称轴沿特征值 $2$ 的方向 $(1,1,1)$。</p>
+    <p><strong>点评</strong>：本题是 §3 思考题的正式版——"轴歪了"的极端情形：连主轴方向 $(1,1,1)$ 都要靠特征向量找。判型全程不需要特征向量（符号规则够用了），需要对称轴方向才回头求它。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv2">变式 2</span>讨论曲面 $x^2+y^2+kz^2=1$ 的类型随参数 $k\in\mathbb{R}$ 的变化；若右端改为 $-1$ 呢？</p>
+  <details class="answer">
+    <summary>参考答案</summary>
+    <p>右端为 $1$ 时：</p>
+    <ul>
+      <li>$k&gt;0$：三正，$d=1&gt;0$ $\Rightarrow$ <strong>椭球面</strong>（$k=1$ 时为单位球面；$k&gt;1$ 扁球、$0&lt;k&lt;1$ 长球）；</li>
+      <li>$k=0$：$x^2+y^2=1$，秩 2 且缺 $z$ $\Rightarrow$ <strong>圆柱面</strong>；</li>
+      <li>$k&lt;0$：两正一负，$d=1&gt;0$ 与多数派同号 $\Rightarrow$ <strong>单叶双曲面</strong>（绕 $z$ 轴，喉圆半径 1）。</li>
+    </ul>
+    <p>右端改为 $-1$ 时：</p>
+    <ul>
+      <li>$k&gt;0$：三正而 $d&lt;0$ $\Rightarrow$ <strong>无轨迹</strong>（虚椭球）；</li>
+      <li>$k=0$：$x^2+y^2=-1$，空集；</li>
+      <li>$k&lt;0$：两正一负，$d=-1$ 与多数派异号 $\Rightarrow$ <strong>双叶双曲面</strong>（裂两半，$|z|\ge1/\sqrt{-k}$）。</li>
+    </ul>
+    <p><strong>点评</strong>：一题扫过符号规则大半张表。注意 $k=0$ 不是"极限情形的长相"，而是秩从 3 掉到 2 的跳变——退化（不变量那节说的秩与符号差）就发生在这里。</p>
+  </details>
+</div>
+
+<div class="exq">
+  <p><span class="qlevel lv3">真题节选</span><strong>（第 13 届题一，15 分）</strong>设不全为零的 $a,b,c\in\mathbb{R}$，求直线
+  $$\frac{x-1}{a}=\frac{y-1}{b}=\frac{z-1}{c}$$
+  绕 $z$ 轴旋转所得的旋转曲面方程。</p>
+  <p>本题主体（纬圆法求方程）属于第 4 章，但它的<strong>判型收尾</strong>——从配出的方程认出"圆柱面 / 圆锥面 / 旋转单叶双曲面 / 退化平面"——是纯正的本章动作。先回答三个梯子问题（写在纸上）：</p>
+  <p>（i）直线上一点 $M_0(x_0,y_0,z_0)$ 绕 $z$ 轴转到 $M(x,y,z)$，哪两个量保持不变？（这就是纬圆法的两个方程）；<br>
+  （ii）当 $a=b$（直线与 $z$ 轴共面）时，为什么只剩"平面 / 圆柱面 / 圆锥面"三种结果？分别对应直线与轴的什么位置关系？<br>
+  （iii）异面情形官方得到 $x^2+y^2=Az^2+2Bz+C$（$A=\frac{a^2+b^2}{c^2}$ 等）。要判型，下一步动作是什么？判别量 $AC-B^2=\frac{(a-b)^2}{c^2}&gt;0$ 保证了什么？</p>
+  <details class="answer">
+    <summary>梯子参考答案</summary>
+    <p>（i）高度不变：$z=z_0$；到轴距离不变：$x^2+y^2=x_0^2+y_0^2$。两个方程消去参数即得曲面方程。</p>
+    <p>（ii）共面时直线与轴只有三种位置关系：垂直相交（$c=0$）$\Rightarrow$ 转出平面 $z=1$；平行（$a=b\ne0,\ c=0$ 之外的平行情形，即方向 $(a,a,c)$ 中……按官方分类：$L_2\parallel L_1$）$\Rightarrow$ 圆柱面 $x^2+y^2=2$；相交 $\Rightarrow$ 圆锥面。位置关系三种 ⟹ 曲面三种。</p>
+    <p>（iii）下一步：<strong>配方</strong>——$Az^2+2Bz+C=A\bigl(z+\frac BA\bigr)^2+\frac{AC-B^2}{A}$，移项整理成
+    $$\frac{A}{AC-B^2}(x^2+y^2)-\frac{A^2}{AC-B^2}\Bigl(z+\frac BA\Bigr)^2=1.$$
+    $AC-B^2&gt;0$ 保证两个系数一正一负、右端为 $1&gt;0$：两正一负右端正 $\Rightarrow$ <strong>单叶双曲面</strong>。没有 $AC-B^2&gt;0$ 这一估计，标准形根本摆不出来。</p>
+  </details>
+  <details class="answer">
+    <summary>官方解答骨架（转录自官方参考答案）</summary>
+    <p>记 $z$ 轴为 $L_1$（过 $M_1(0,0,0)$，方向 $\vec s_1=(0,0,1)$），所给直线为 $L_2$（过 $M_2(1,1,1)$，方向 $\vec s_2=(a,b,c)$），混合积 $\bigl(\vec s_1,\vec s_2,\overrightarrow{M_1M_2}\bigr)=a-b$（2 分）。</p>
+    <p>当 $a=b$ 时 $L_2$ 与 $L_1$ 共面，分三种情形：$c=0$（垂直）得平面 $z=1$；$L_2\parallel L_1$ 得圆柱面 $x^2+y^2=2$；$L_1$ 与 $L_2$ 相交得圆锥面 $x^2+y^2-\dfrac{2a^2}{c^2}\Bigl(z-\dfrac{a-c}{a}\Bigr)^2=0$，顶点 $\bigl(0,0,\frac{a-c}{a}\bigr)$（8 分）。</p>
+    <p>当 $a\ne b$（异面）且不垂直（$c\ne0$）时，设 $M_0(x_0,y_0,z_0)\in L_2$，纬圆上点 $M(x,y,z)$ 满足 $\overrightarrow{M_0M}\cdot\vec s_1=0$、$\bigl|\overrightarrow{M_1M_0}\bigr|=\bigl|\overrightarrow{M_1M}\bigr|$，参数化 $x_0=1+at,\ y_0=1+bt,\ z_0=1+ct$，由 $t=\frac{z-1}{c}$ 消去得
+    $$x^2+y^2=\Bigl[1+\frac{a}{c}(z-1)\Bigr]^2+\Bigl[1+\frac{b}{c}(z-1)\Bigr]^2=Az^2+2Bz+C,$$
+    其中 $A=\dfrac{a^2+b^2}{c^2}$，$B=\dfrac{a(c-a)+b(c-b)}{c^2}$，$C=\dfrac{(c-a)^2+(c-b)^2}{c^2}$，且 $AC-B^2=\dfrac{(a-b)^2}{c^2}>0$，配方得
+    $$\frac{A}{AC-B^2}\bigl(x^2+y^2\bigr)-\frac{A^2}{AC-B^2}\Bigl(z+\frac{B}{A}\Bigr)^2=1,$$
+    即旋转单叶双曲面（13 分）。</p>
+    <p>当 $L_1$ 与 $L_2$ 异面且垂直（$c=0$）时，所得曲面为平面 $z=1$ 挖去一个以 $(0,0,1)$ 为圆心、半径等于两异面直线距离 $\dfrac{|a-b|}{\sqrt{a^2+b^2}}$ 的圆盘（15 分）。</p>
+    <p><strong>复盘</strong>：本题 15 分里，判型收尾约值 2–4 分——但它是"满分与 13 分"的差别：很多人配出 $Az^2+2Bz+C$ 就停笔，漏了"报名字"这个结论动作。判型动作就是本章 §3.1 的第 3–4 步（配方 + 符号规则），而 $AC-B^2&gt;0$ 正是"右端 $d&gt;0$"的替身。共面情形的圆柱面、圆锥面则是"缺变量识别"与锥面标准形的直接调用。<em>（题目与解答骨架转录自第 13 届官方 PDF，见 <a href="真题索引/第13届_2021.md">真题索引</a>。）</em></p>
+  </details>
+</div>
+
+<h2>§9.5 熟练度训练场</h2>
+
+<p>判型是<strong>速度活</strong>——考场上它应该只花你两分钟，省下的时间留给后面的证明。两种训练，每天 10 分钟：</p>
+
+<h3>训练一 · 翻卡快测（目标：每卡 10 秒内出答案）</h3>
+<div class="quiz" data-quiz="ch23-drill"></div>
+
+<h3>训练二 · 计时默写（写在纸上，掐表）</h3>
+<div class="calc box" data-tag="默写清单">
+  <p>① <strong>90 秒</strong>：默写九类标准方程 + 各一句话特征（椭球/单叶/双叶/椭圆抛物面/马鞍/锥/三种柱面）；</p>
+  <p>② <strong>45 秒</strong>：默写符号规则口诀全文（"右端跟多数派同号 $\Rightarrow$ 连一片；异号 $\Rightarrow$ 裂两半；$d=0$ $\Rightarrow$ 锥面；三正恒椭球；有零特征值看一次项配不配得掉"）+ 判型总表三行；</p>
+  <p>③ <strong>3 分钟</strong>：默写主轴化四步流程，并完整走一遍 $2xy+2yz+2zx=-1$ 的判型（矩阵、特征多项式、特征值 $2,-1,-1$、结论单叶双曲面）。</p>
+  <p><strong>过关标准</strong>：连续两天全对才算过。做不到就回到 §3 对应小节重读，再默。</p>
+</div>
+
+<h2>§10 六方向自测卡</h2>
+
+<div class="selftest">
+  <h3>合上书，拿张白纸，默写以下六项</h3>
+  <div class="st-item">
+    <p class="st-q"><em>=（它是什么）</em>　二次曲面分类由哪两组数据唯一决定？默写九类标准形中任意六类的方程。</p>
+    <details><summary>对照</summary><p>由"特征值符号型（含零）+ 平移后右端常数 $d$ 的符号"唯一决定。对照默写：椭球 $x^2/a^2+y^2/b^2+z^2/c^2=1$；单叶 $x^2/a^2+y^2/b^2-z^2/c^2=1$；双叶（右端 $-1$）；椭圆抛物面 $z=x^2/a^2+y^2/b^2$；马鞍 $z=x^2/a^2-y^2/b^2$；锥面（右端 $0$）；柱面三种（缺一个变量）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>←（什么带来它）</em>　为什么特征值的符号能决定曲面的连通性？背后的定理是哪一条？</p>
+    <details><summary>对照</summary><p>实对称矩阵可正交对角化（谱定理，高代第 9 章）⟹ 正交变换是刚体旋转、不改形状，只把曲面"摆正"；摆正后平方项的正负号决定曲面沿哪些方向"张开"、右端符号决定朝哪边张开。负号方向的平方项与正号方向"对抗"，$d$ 偏向哪边，曲面就连向哪边或裂向哪边。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>→（它带来什么）</em>　学会判型后，直接解锁的三类考题是什么？</p>
+    <details><summary>对照</summary><p>① 判型题与轨迹题（13 届题一收尾、15 届题一"何种曲面"5 分结论分）；② 切平面/切锥面题的读题前提（16 届题一"上半叶 $z\ge\sqrt2$"来自双叶判型）；③ 直纹面题（14 届题一单叶直母线——知道单叶有两族直线才敢设方向代入）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>∈（实例）</em>　各写一个方程：单叶双曲面、双叶双曲面、抛物柱面，并说出判别依据。</p>
+    <details><summary>对照</summary><p>$x^2+y^2-z^2=1$（两正一负右端正，连一片）；$x^2+y^2-z^2=-1$（右端负，裂两半，$|z|\ge1$）；$z=\frac1{2a}(x^2+a^2)$（缺 $y$ ⟹ 柱面，底曲线是抛物线，15 届题一答案）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>≠（区分）</em>　单叶与双叶的三处不同；椭圆抛物面与马鞍的两处不同。</p>
+    <details><summary>对照</summary><p>单叶 vs 双叶：连通性（一片 vs 两半）、直母线（两族 vs 没有）、右端符号（与多数派同号 vs 异号）。椭圆抛物面 vs 马鞍：剖面抛物线开口（同向 vs 反向）、水平截线（椭圆 vs 换向双曲线）、特征值（同号 vs 异号）。</p></details>
+  </div>
+  <div class="st-item">
+    <p class="st-q"><em>（为何要有它）</em>　为什么不能只学"画图软件看一眼"？主轴化流程在证明题里代替了什么？</p>
+    <details><summary>对照</summary><p>竞赛闭卷无软件，且"判型"本身占分（15 届题一 5 分结论分）。主轴化把"我看不出来它长什么样"变成一条四步流水线，用代数计算代替空间想象——这正是解析几何的存在理由：把几何问题翻译成可计算的代数问题，算完再翻译回去。</p></details>
+  </div>
+</div>
+
+<div class="net box" data-tag="间隔复习安排">
+  <p><strong>1 天后</strong>：重做六方向自测卡（不翻书）+ 翻卡快测第二轮；<strong>3 天后</strong>：重做变式 1、变式 2 与真题节选的梯子问题（iii）+ 计时默写②③；<strong>1 周后</strong>：把符号规则判型总表默写一遍，用 widget 的 d 滑块再验证一次"单叶 → 锥 → 双叶"，确认翻卡全部"会了"。</p>
+  <p>本章是<strong>解几第 3 章</strong>（切平面、切锥面与截面——16 届题一的双叶双曲面在那里等你）与<strong>解几第 4 章</strong>（旋转曲面与直纹面——13、14 届题一）的直接地基；判型反射练熟后，这两章的题面会亲切得多。</p>
+</div>
+
+<div class="chapnav">
+  <span><a href="ch22.html">← 第 1 章 · 向量法通解</a></span>
+  <span><a href="index.html">首页</a></span>
+  <span><a href="ch24.html">第 3 章 · 切平面、切锥面与截面：解几最高频家族 →</a></span>
+</div>
+
+</div>
+
+<script src="assets/quiz.js"></script>
+<script>
+/* §9.5 翻卡数据 */
+registerQuiz("ch23-drill", [
+  { q: "$\\dfrac{x^2}{a^2}+\\dfrac{y^2}{b^2}+\\dfrac{z^2}{c^2}=1$ 是什么曲面？", a: "椭球面——连成一片的封闭蛋，有界。三特征值全正 + 右端正。" },
+  { q: "$x^2+y^2-z^2=1$ 与 $x^2+y^2-z^2=-1$，哪个裂成两半？", a: "$=-1$ 那个（双叶，$|z|\\ge1$，中间空）。$=1$ 是单叶：连一片、有喉圆、两族直母线。" },
+  { q: "马鞍面（双曲抛物面）的标准方程？", a: "$z=\\dfrac{x^2}{a^2}-\\dfrac{y^2}{b^2}$。特征：$x^2,y^2$ 异号 + $z$ 一次。" },
+  { q: "把 $6xy$ 写进二次型矩阵，$(1,2)$ 位置填几？", a: "$3$——交叉项系数劈半，$(1,2)$ 与 $(2,1)$ 各放一半。" },
+  { q: "特征值两正一负，右端 $d>0$、$=0$、$<0$ 各是什么曲面？", a: "$d>0$ 单叶（连一片）；$d=0$ 二次锥面；$d<0$ 双叶（裂两半）。口诀：右端跟多数派同号连一片。" },
+  { q: "题目只问「曲面是什么类型」，需要求特征向量吗？", a: "不需要。特征值符号 + 右端符号即可判型；特征向量只在要求写标准方程时才用。" },
+  { q: "空间曲面 $z=x^2+1$ 是什么？", a: "抛物柱面——缺 $y$，沿 $y$ 轴平移不变；底曲线是抛物线。（第 15 届题一同款识别）" },
+  { q: "$x^2+y^2-z^2=-1$ 被 $z=h$ 截，什么时候截不到点？", a: "$|h|<1$ 时为空集——「裂两半」的精确含义；$|h|=1$ 缩成点（碗底），$|h|>1$ 是圆。" },
+  { q: "主轴化四步流程？", a: "① 排矩阵（交叉项劈半）→ ② 正交对角化求特征值 → ③ 一次项配方平移定中心 → ④ 读特征值符号 + 右端符号判型。" },
+  { q: "特征值里出现一个零，说明什么？", a: "抛物面或柱面类：对应一次项配不掉 $\\Rightarrow$ 抛物面（另两特征值同号 = 椭圆抛物面，异号 = 马鞍）；一次项也消失 $\\Rightarrow$ 柱面或退化。" }
+]);
+</script>
+
+<script>
+/* §3.4 截痕法探索器 */
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  var left = document.getElementById("secw-left");
+  var right = document.getElementById("secw-right");
+  var out = document.getElementById("secw-out");
+  var dSlider = document.getElementById("secw-d");
+  var hSlider = document.getElementById("secw-h");
+  var dRow = document.getElementById("secw-d-row");
+  function curSurf() {
+    var r = document.querySelector("input[name=secw-surf]:checked");
+    return r ? r.value : "family";
+  }
+  function mk(svg, tag, attrs) {
+    var el = document.createElementNS(NS, tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    svg.appendChild(el);
+    return el;
+  }
+  function txt(svg, x, y, s, attrs) {
+    var t = mk(svg, "text", attrs || {});
+    t.setAttribute("x", x); t.setAttribute("y", y);
+    t.textContent = s;
+    return t;
+  }
+  function pathFrom(pts, close) {
+    var d = "M " + pts.map(function (p) { return p[0].toFixed(1) + "," + p[1].toFixed(1); }).join(" L ");
+    return close ? d + " Z" : d;
+  }
+  /* 坐标映射：左图 (x,z)，右图 (x,y) */
+  function LX(x) { return 160 + 55 * x; }
+  function LZ(z) { return 140 - 52 * z; }
+  function RX(x) { return 160 + 52 * x; }
+  function RY(y) { return 140 - 52 * y; }
+  function hypBranch(s, a, b, swap, cx, cy, tmax) {
+    /* x = s·a·cosh t, y = b·sinh t（swap 时交换两个轴），映射 (cx,cy) */
+    var pts = [], i, n = 44, t, u, v;
+    for (i = 0; i <= n; i++) {
+      t = -tmax + 2 * tmax * i / n;
+      u = s * a * Math.cosh(t); v = b * Math.sinh(t);
+      pts.push(swap ? [cx(v), cy(u)] : [cx(u), cy(v)]);
+    }
+    return pts;
+  }
+  function frame(svg, xlab, ylab) {
+    mk(svg, "rect", { x: 8, y: 8, width: 304, height: 254, fill: "#fdfcf9", stroke: "#d6cfc4", "stroke-width": 1 });
+    mk(svg, "line", { x1: 16, y1: 140, x2: 304, y2: 140, stroke: "#c9c2b5", "stroke-width": 1 });
+    mk(svg, "line", { x1: 160, y1: 16, x2: 160, y2: 254, stroke: "#c9c2b5", "stroke-width": 1 });
+    txt(svg, 300, 134, xlab, { "font-size": 12, fill: "#8a8175", "text-anchor": "end" });
+    txt(svg, 166, 28, ylab, { "font-size": 12, fill: "#8a8175" });
+  }
+  function drawEmpty(svg, msg) {
+    txt(svg, 160, 130, "∅", { "font-size": 40, fill: "#b45309", "text-anchor": "middle", "font-weight": "bold" });
+    txt(svg, 160, 162, msg, { "font-size": 12, fill: "#b45309", "text-anchor": "middle" });
+  }
+  function drawDot(svg, px, py, msg) {
+    mk(svg, "circle", { cx: px, cy: py, r: 5, fill: "#be123c" });
+    txt(svg, px, py + 24, msg, { "font-size": 12, fill: "#be123c", "text-anchor": "middle" });
+  }
+  function update() {
+    var surf = curSurf();
+    var d = parseFloat(dSlider.value);
+    var h = parseFloat(hSlider.value);
+    var eps = 1e-9, verdict, eqn;
+    dSlider.disabled = (surf !== "family");
+    dRow.style.opacity = (surf === "family") ? "1" : "0.45";
+    left.innerHTML = ""; right.innerHTML = "";
+    frame(left, "x", "z");
+    frame(right, "x", "y");
+    txt(left, 160, 20, "竖直剖面（下刀位置：橙色虚线）", { "font-size": 11, fill: "#5c554b", "text-anchor": "middle" });
+    txt(right, 160, 20, "截面 z=h 的内视图（截线真实形状）", { "font-size": 11, fill: "#5c554b", "text-anchor": "middle" });
+    /* 下刀线 */
+    mk(left, "line", { x1: 14, y1: LZ(h), x2: 306, y2: LZ(h), stroke: "#b45309", "stroke-width": 2, "stroke-dasharray": "7 5" });
+    txt(left, 300, LZ(h) - 5, "z = " + h.toFixed(2), { "font-size": 11, fill: "#b45309", "text-anchor": "end" });
+
+    if (surf === "family") {
+      /* 剖面 x²−z²=d */
+      if (d > 0.02) {
+        var a1 = Math.sqrt(d);
+        [-1, 1].forEach(function (s) {
+          mk(left, "path", { d: pathFrom(hypBranch(s, a1, a1, false, LX, LZ, 1.25)), fill: "none", stroke: "#1d4ed8", "stroke-width": 2.4 });
+        });
+      } else if (d < -0.02) {
+        var a2 = Math.sqrt(-d);
+        [-1, 1].forEach(function (s) {
+          mk(left, "path", { d: pathFrom(hypBranch(s, a2, a2, true, LX, LZ, 1.1)), fill: "none", stroke: "#7c3aed", "stroke-width": 2.4 });
+        });
+      } else {
+        mk(left, "line", { x1: LX(-2.2), y1: LZ(-2.2), x2: LX(2.2), y2: LZ(2.2), stroke: "#1d4ed8", "stroke-width": 2.4 });
+        mk(left, "line", { x1: LX(-2.2), y1: LZ(2.2), x2: LX(2.2), y2: LZ(-2.2), stroke: "#1d4ed8", "stroke-width": 2.4 });
+      }
+      /* 截线 x²+y² = d+h² */
+      var r2 = d + h * h;
+      eqn = "截线：x²+y² = d+h² = " + r2.toFixed(2);
+      if (r2 > 0.004) {
+        mk(right, "circle", { cx: 160, cy: 140, r: 52 * Math.sqrt(r2), fill: "none", stroke: "#15803d", "stroke-width": 2.4 });
+        verdict = "圆（半径 " + Math.sqrt(r2).toFixed(2) + "）";
+      } else if (r2 > -0.004) {
+        drawDot(right, 160, 140, "缩成一个点");
+        verdict = "一个点（" + (d >= 0 ? "锥尖" : "碗底") + "）";
+      } else {
+        drawEmpty(right, "截面穿过空档，一个点都没有");
+        verdict = "空集 ∅";
+      }
+      var famName = d > 0.02 ? "单叶双曲面（连成一片" + (Math.abs(d - 1) < 0.03 ? "，h=0 处是喉圆" : "") + "）"
+        : d < -0.02 ? "双叶双曲面（裂成两半，|z|≥" + Math.sqrt(-d).toFixed(2) + " 才有点）"
+        : "二次锥面（两叶在锥尖相碰）";
+      out.innerHTML = "<strong>d = " + d.toFixed(2) + "：</strong>" + famName + "<br>" + eqn + "　⟹　<strong>" + verdict + "</strong>";
+    } else if (surf === "ellipsoid") {
+      mk(left, "ellipse", { cx: 160, cy: 140, rx: 110, ry: 52, fill: "none", stroke: "#1d4ed8", "stroke-width": 2.4 });
+      eqn = "截线：x²/4+y² = 1−h² = " + (1 - h * h).toFixed(2);
+      if (Math.abs(h) < 1 - 1e-9) {
+        var rr = Math.sqrt(1 - h * h);
+        mk(right, "ellipse", { cx: 160, cy: 140, rx: 104 * rr, ry: 52 * rr, fill: "none", stroke: "#15803d", "stroke-width": 2.4 });
+        verdict = "椭圆";
+      } else if (Math.abs(Math.abs(h) - 1) < 0.026) {
+        drawDot(right, 160, 140, "封顶：缩成一个点");
+        verdict = "一个点";
+      } else if (Math.abs(h) > 1) {
+        drawEmpty(right, "刀举得太高/太低，截不到");
+        verdict = "空集 ∅";
+      } else {
+        drawDot(right, 160, 140, "封顶：缩成一个点");
+        verdict = "一个点";
+      }
+      out.innerHTML = "<strong>椭球面（有界封闭，上下封顶）：</strong><br>" + eqn + "　⟹　<strong>" + verdict + "</strong>　　|h|>1 恒为空——椭球被包在 −1≤z≤1 里。";
+    } else if (surf === "saddle") {
+      var par = [], i;
+      for (i = 0; i <= 50; i++) { var xx = -2.2 + 4.4 * i / 50; par.push([LX(xx), LZ(xx * xx * 0.55)]); }
+      mk(left, "path", { d: pathFrom(par), fill: "none", stroke: "#1d4ed8", "stroke-width": 2.4 });
+      txt(left, 160, 254, "剖面 z=x²（另一方向剖面 z=−y² 开口向下）", { "font-size": 11, fill: "#5c554b", "text-anchor": "middle" });
+      eqn = "截线：x²−y² = h = " + h.toFixed(2);
+      if (h > 0.02) {
+        var ah = Math.sqrt(h);
+        [-1, 1].forEach(function (s) {
+          mk(right, "path", { d: pathFrom(hypBranch(s, ah, ah, false, RX, RY, 1.2)), fill: "none", stroke: "#15803d", "stroke-width": 2.4 });
+        });
+        verdict = "双曲线（开口沿 x 轴）";
+      } else if (h < -0.02) {
+        var ah2 = Math.sqrt(-h);
+        [-1, 1].forEach(function (s) {
+          mk(right, "path", { d: pathFrom(hypBranch(s, ah2, ah2, true, RX, RY, 1.2)), fill: "none", stroke: "#7c3aed", "stroke-width": 2.4 });
+        });
+        verdict = "双曲线（开口沿 y 轴——方向换了！）";
+      } else {
+        mk(right, "line", { x1: RX(-2.3), y1: RY(-2.3), x2: RX(2.3), y2: RY(2.3), stroke: "#be123c", "stroke-width": 2.2 });
+        mk(right, "line", { x1: RX(-2.3), y1: RY(2.3), x2: RX(2.3), y2: RY(-2.3), stroke: "#be123c", "stroke-width": 2.2 });
+        verdict = "两条直线 y=±x（马鞍签名）";
+      }
+      out.innerHTML = "<strong>双曲抛物面（马鞍面）：</strong><br>" + eqn + "　⟹　<strong>" + verdict + "</strong>";
+    } else {
+      /* cone */
+      mk(left, "line", { x1: LX(-2.2), y1: LZ(-2.2), x2: LX(2.2), y2: LZ(2.2), stroke: "#1d4ed8", "stroke-width": 2.4 });
+      mk(left, "line", { x1: LX(-2.2), y1: LZ(2.2), x2: LX(2.2), y2: LZ(-2.2), stroke: "#1d4ed8", "stroke-width": 2.4 });
+      mk(left, "circle", { cx: 160, cy: 140, r: 3, fill: "#be123c" });
+      eqn = "截线：x²+y² = h² = " + (h * h).toFixed(2);
+      if (Math.abs(h) > 0.02) {
+        mk(right, "circle", { cx: 160, cy: 140, r: 52 * Math.abs(h), fill: "none", stroke: "#15803d", "stroke-width": 2.4 });
+        verdict = "圆（半径 |h|）";
+      } else {
+        drawDot(right, 160, 140, "锥尖：缩成一个点");
+        verdict = "一个点（锥尖）";
+      }
+      out.innerHTML = "<strong>二次锥面（单叶与双叶的分界墙）：</strong><br>" + eqn + "　⟹　<strong>" + verdict + "</strong>";
+    }
+  }
+  var radios = document.querySelectorAll("input[name=secw-surf]");
+  for (var i = 0; i < radios.length; i++) radios[i].addEventListener("change", update);
+  dSlider.addEventListener("input", update);
+  hSlider.addEventListener("input", update);
+  update();
+})();
+</script>
+
+</body>
+</html>
