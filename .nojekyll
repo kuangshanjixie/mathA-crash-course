@@ -1,0 +1,2 @@
+# This file disables Jekyll processing for GitHub Pages.
+# Keeps files/folders starting with underscore (e.g. KaTeX fonts) intact.
